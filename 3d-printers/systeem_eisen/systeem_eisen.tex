@@ -1,0 +1,74 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{float}
+\usepackage{caption}
+
+\usepackage{pifont}
+\newcommand{\cmark}{\textcolor{green}{\ding{51}}}%
+\newcommand{\xmark}{\textcolor{red}{\ding{55}}}%
+
+
+\RequirePackage{tabularx}   % Tabulars with adjustable-width columns
+
+
+\usepackage[table]{xcolor} 
+\definecolor{myblue}{HTML}{CCF4FF}
+\definecolor{myorange}{HTML}{FCAD68}
+
+
+\begin{document}
+\pagestyle{empty}
+
+\begin{center}
+  \Large \textbf{3D Printers - Systeem en Functie Eisen}
+\end{center}
+
+\noindent Dit document is gesplits in systeem en functie eisen. De systeem eisen zijn losjes gedefineerde eisen en motiveren om 3D prints met een gestructureerde werkwijze te behandelen. De functie eisen zijn meetbare eisen gemaakt om te helpen bij de implementatie van de functies.
+
+\section*{Systeem Eisen:}
+\begin{itemize}
+  \item Een Student Assistent (SA) die bezig is met de 3D printers moet op ieder moment weg kunnen lopen, een andere SA moet probleemloos het 3D printen kunnen voortzetten.
+  \item Bestanden om te 3D printen kunnen via de mail of met usb stick worden aangeleverd.
+  \item Het moet overzichtelijk zijn welke nog-te-printen prints een lange print- en korte printtijd hebben.
+  \item Er wordt een log bijgehouden van welke functies zijn gebruikt en wat deze hebben gedaan. 
+\end{itemize}
+
+\section*{Functie Eisen:}
+Er zijn twee type functies. Functies die meerdere (een \textit{x} aantal) ingeleverde 3D print bestanden behandelen en functies die een enkele 3D print behandelen. 
+
+\begin{table}[H]
+    \centering
+    \rowcolors{2}{gray!25}{white}
+    \begin{tabular}%
+    {>{\raggedright\arraybackslash}p{0.25\textwidth}%
+    |>{\centering\arraybackslash}p{0.20\textwidth}
+    |>{\centering\arraybackslash}p{0.20\textwidth}}
+    \rowcolor{myblue} Functie & Behandeld meerdere 3D prints & Behandeld een enkele 3D print\\\hline
+    inbox &\cmark&\xmark\\
+    usb &\xmark&\cmark\\
+    afgekeurd &\xmark&\cmark\\
+    gesliced &\xmark&\cmark\\
+    geprint &\xmark&\cmark\\
+  \end{tabular}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \rowcolors{2}{gray!25}{white}
+    \begin{tabular}%
+    {>{\raggedright\arraybackslash}p{0.15\textwidth}%
+    |>{\raggedright\arraybackslash}p{0.75\textwidth}}
+    \rowcolor{myblue} Functie & Eisen\\\hline
+    inbox & todo\\
+    usb & thing \\
+    afgekeurd & thing \\
+    gesliced & thing \\
+    geprint & thing \\
+    \end{tabular}
+    \caption*{}%
+\end{table}
+
+
+
+\end{document}
