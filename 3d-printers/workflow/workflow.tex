@@ -42,14 +42,14 @@
     \pgfmathsetlengthmacro{\beta}{0.4cm} % straight bit before the curve
 
     % arrows
-    \draw[>=stealth, ->, line width=1.0pt] ([xshift=-1.0cm]wachtrij.west) to node[xshift=-0.5cm,left]{\textit{inbox} of \textit{selecteer bestand}} (wachtrij.west);
+    \draw[>=stealth, ->, line width=1.0pt] ([xshift=-1.0cm]wachtrij.west) to node[xshift=-0.5cm,left]{\textit{inbox}} (wachtrij.west);
     \draw[>=stealth, ->, line width=1.0pt] (wachtrij.north) to node[left] {\textit{afgekeurd}} (afgekeurd.south);
     \draw[>=stealth, ->, line width=1.0pt] (wachtrij.south) to node[left] {\textit{gesliced}} (gesliced.north);
     \draw[>=stealth, -, line width=1.0pt] (aan_het_printen.east) -- ++(\beta,0)  to[out=0, in=-90] ++(\alpha, \alpha) -- node[right]{\textit{afgekeurd}} ([xshift=\alpha+\beta,yshift=\negalpha]afgekeurd.east -| aan_het_printen.east);
     \draw[>=stealth, <-, line width=1.0pt] (afgekeurd.east) -- ([xshift=\beta] afgekeurd -| aan_het_printen.east)  to[out=0, in=90] ++(\alpha,\negalpha);
     \draw[>=stealth, -, line width=1.0pt] (gesliced.east) -- ([xshift=\beta] gesliced -| aan_het_printen.east) to[out=0, in=-90] ++(\alpha,\alpha);
     \draw[>=stealth, ->, line width=1.0pt] (gesliced.south) to node[left] {\textit{printer\_aangezet}} (aan_het_printen.north);
-    \draw[>=stealth, ->, line width=1.0pt] (aan_het_printen.south) to node[left] {\textit{geprint}} (verwerkt.north);
+    \draw[>=stealth, ->, line width=1.0pt] (aan_het_printen.south) to node[left] {\textit{print\_klaar}} (verwerkt.north);
 
   \end{tikzpicture}
 }

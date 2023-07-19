@@ -43,7 +43,7 @@ doel van de handleidng : na het lezen moet een SA de workflow van het 3D printen
 
 
     % arrows
-  \draw[>=stealth, ->, line width=1.0pt] ([xshift=-1.0cm]wachtrij.west) to node[xshift=-0.5cm,left]{\textit{inbox.sh} of \textit{usb.sh}} (wachtrij.west);
+\draw[>=stealth, ->, line width=1.0pt] ([xshift=-1.0cm]wachtrij.west) to node[xshift=-0.5cm,left]{\shortstack[]{\textit{inbox.sh} of\\\textit{selecteer\_bestand.sh}}} (wachtrij.west);
 \draw[>=stealth, ->, line width=1.0pt] (wachtrij.north) to node[left] {\textit{afgekeurd.sh}} (afgekeurd.south);
 \draw[>=stealth, ->, line width=1.0pt] (wachtrij.south) to node[left] {\textit{gesliced.sh}} (gesliced.north);
 
@@ -54,36 +54,51 @@ doel van de handleidng : na het lezen moet een SA de workflow van het 3D printen
     \draw[>=stealth, -, line width=1.0pt] (gesliced.east) -- ([xshift=\beta] gesliced -| aan_het_printen.east) to[out=0, in=-90] ++(\alpha,\alpha);
 
   \draw[>=stealth, ->, line width=1.0pt] (gesliced.south) to node[left] {\textit{printer\_aangezet.sh}} (aan_het_printen.north);
-      \draw[>=stealth, ->, line width=1.0pt] (aan_het_printen.south) to node[left] {\textit{geprint.sh}} (verwerkt.north);
+      \draw[>=stealth, ->, line width=1.0pt] (aan_het_printen.south) to node[left] {\textit{print\_klaar.sh}} (verwerkt.north);
 
 \end{tikzpicture}
 \caption*{\textbf{Workflow gaat zo}, ingeleverde .stl bestanden worden door \textit{bash} functies verplaatst van/naar de folders aangegeven met hoofdletters.}%
 \end{figure}
 
 \section*{\hspace{-1cm}Functie Beschrijving:}
+
 \begin{table}[H]
-    \centering
+\hspace{-2cm}
     \rowcolors{2}{gray!25}{white}
     \begin{tabular}%
-    {>{\raggedright\arraybackslash}p{0.20\textwidth}%
-    |>{\raggedright\arraybackslash}p{0.80\textwidth}}
+    {>{\raggedright\arraybackslash}p{0.25\textwidth}%
+    |>{\raggedright\arraybackslash}p{1.05\textwidth}}
     \rowcolor{myblue}
     Functie & beschrijving\\\hline
-  \textit{inbox.sh}& Vraag of alle \textit{x} binnengekomen mails of een enkele ($x=1$) mail behandeld moet worden. Bij een enkele mail selecteer welke via interactief keuzemenu in de terminal.\newline Maak voor iedere mail die .stl bestanden bevat een folder aan in met naam /Documents/WACHTRIJ/\textit{naam}/ waarbij \textit{naam} de naam is van de persoon die de mail heeft gestuurd. Download de .stl attachments en de binnen gekomen mail naar de respectivelijke \textit{naam} folder. Maak voor ieder van de \textit{x} folders een \textit{afkeur.sh}functie en plaats deze in de respectivelijke \textit{naam} folder.\\
 
-\textit{usb.sh}& Vraag of alle \textit{x} binnengekomen mails of een enkele ($x=1$) mail behandeld moet worden. Bij een enkele mail selecteer welke via interactief keuzemenu in de terminal.\newline Maak voor iedere mail die .stl bestanden bevat een folder aan in met naam /Documents/WACHTRIJ/\textit{naam}/ waarbij \textit{naam} de naam is van de persoon die de mail heeft gestuurd. Download de .stl attachments en de binnen gekomen mail naar de respectivelijke \textit{naam} folder. Maak voor ieder van de \textit{x} folders een \textit{afkeur.sh}functie en plaats deze in de respectivelijke \textit{naam} folder.\\
+  \textit{inbox.sh}& Vraag of alle \textit{x} binnengekomen mails of een enkele ($x=1$) mail behandeld moet worden. Bij een enkele mail selecteer welke via interactief keuzemenu in de terminal. Maak voor iedere mail die .stl bestanden bevat een folder WACHTRIJ/\textit{naam}/ aan waarbij \textit{naam} de naam is van de persoon die de mail heeft gestuurd. Download de .stl attachments en de binnen gekomen mail naar de respectivelijke \textit{naam} folder. Maak voor ieder van de \textit{x} folders de \textit{gesliced.sh} en \textit{afkeur.sh} functies en plaats deze in de respectivelijke WACHTRIJ/\textit{naam}/ folder.\\
 
+\textit{selecteer\_bestand.sh}& Deze functie is wachtwoord beveiligd, voer eerst het wachtwoord in. Open verkenner om een locale folder of 3D print bestand te selecteren. Vraag interactief om een \textit{naam} in te voeren, maak een folder WACHTRIJ/\textit{naam}/ en verplaats de inhoud van de geselecteerde folder of 3D print bestand naar folder \textit{naam}. Maak de \textit{gesliced.sh} en \textit{afkeur.sh} functies en plaats deze in de WACHTRIJ/\textit{naam}/ folder.\\
 
+\textit{afgekeurd.sh}& 
+Maak de folder AFGEKEURD/\textit{MM}-\textit{DD}\_\textit{naam}/ hierbij is \textit{MM-DD} vandaag. Verplaats de inhoud van de folder waarin \textit{afgekeurd.sh} zich bevind van de WACHTRIJ, GESLICED of AAN\_HET\_PRINTEN folder naar de AFGEKEURD/\textit{MM}-\textit{DD}\_\textit{naam}/ folder en verwijder de lege folder. Als er een mail thread in de folder zit, popup een mail reactie voor met de `afkeur' handtekening voor de SA om aan te passen en te versturen.\\
 
-\textit{afgekeurd.sh}& Verplaats de inhoud van de folder waarin \textit{afgekeurd.sh}zich bevind van de WACHTRIJ of GESLICED\_PRINTEN folder naar de Documents/AFGEKEURD/\textit{MM}-\textit{DD}\_\textit{naam} folder, hierbij is \textit{MM-DD} vandaag. Popup een mail reactie voor met de 'afkeur' handtekening voor de SA om aan te passen en te versturen.\\
-\textit{gesliced.sh}& Vraag of alle \textit{y} folders in WACHTRIJ of een enkele ($y=1$) folder behandeld moet worden. Bij een enkele folder selecteer welke via interactief keuzemenu in de terminal. Plaats de inhoud van de \textit{y} folders van WACHTRIJ/\textit{naam} in \textit{y} GESLICED\_PRINTEN/\textit{hh}h\_\textit{mm}m\_\textit{naam}/ folders, hierbij is \textit{hh} het aantal uren van de print en \textit{mm} het aantal minuten van de print.
-Maak voor ieder van de \textit{y} folders een \textit{geprint.sh}functie en plaats deze in de respectivelijke \textit{hh}h\_\textit{mm}m\_\textit{naam} folder.
-    \\
-\textit{geprint.sh}& Verplaats de inhoud van GESLICED\_PRINTEN/\textit{hh}h\_\textit{mm}m\_\textit{naam}/ naar VERWERKT/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam}/ waarbij \textit{MM-DD} vandaag is. Popup een mail reactie met de 'geprint' handtekening voor een SA om aan te passen en te versturen.\\
+\textit{gesliced.sh}& Maak de folder GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam}/ hierbij is \textit{hh} het aantal uren van de print en \textit{mm} het aantal minuten van de print. Verplaats de inhoud van WACHTRIJ/\textit{naam}/ (waarin \textit{gesliced.sh} zich bevind) naar de GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam}/ folder, verwijder de lege folder. Maak een \textit{printer\_aangezet.sh} functie en plaats deze in de GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam}/ folder.\\
+
+\textit{printer\_aangezet.sh}& 
+Maak de folder AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam}/ waarbij \textit{MM-DD} vandaag is. Verplaats de inhoud van GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam} (waarin \textit{printer\_aangezet.sh} zich bevind) naar de AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam} folder en verwijder lege de GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam} folder. Maak de \textit{print\_klaar.sh} functie en plaats deze in de AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam}/ folder.\\
+
+\textit{print\_klaar.sh}& Maak de folder VERWERKT/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam}/ en verplaats de inhoud van AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam} (waarin \textit{print\_klaar.sh} zich bevind) naar de VERWERKT/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam} en verwijder lege de folder. Als er een mail thread in de folder zit, popup een mail reactie met de `print klaar' handtekening voor een SA om aan te passen en te versturen.\\
+
     \end{tabular}
-    \caption*{}%
+    % \caption*{}%
 \end{table}
+
+\noindent\textbf{Een print job}: Een folder met daarin alle bestanden gerelateerd aan het .stl file, deze gerelateerde bestanden kunnen zijn: een mail gesprek, gcode, een van de bash functies (\textit{afgekeurd.sh}, \textit{gesliced.sh}, \textit{printer\_aangezet.sh} of \textit{printer\_klaar.sh}), of overige bestanden. Een print job wordt aangemaakt door de \textit{inbox.sh} functie vanuit de mail inbox, of via de \textit{selecteer\_bestand.sh} functie.\\
+
+Er zijn vijf folders, deze 
+
+
+
 
 
 \end{document}
+
+
+
 

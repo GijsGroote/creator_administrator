@@ -1,15 +1,21 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 
+
+\usepackage{graphicx}
+
 \usepackage{float}
 \usepackage{caption}
+
 
 \usepackage{pifont}
 \newcommand{\cmark}{\textcolor{green}{\ding{51}}}%
 \newcommand{\xmark}{\textcolor{red}{\ding{55}}}%
 
 
-\RequirePackage{tabularx}   % Tabulars with adjustable-width columns
+\usepackage{tabularx}   % Tabulars with adjustable-width columns
+\usepackage{multirow}
+
 
 
 \usepackage[table]{xcolor} 
@@ -24,14 +30,14 @@
   \Large \textbf{3D Printers - Systeem en Functie Eisen}
 \end{center}
 
-\noindent Dit document is gesplits in systeem en functie eisen. De systeem eisen zijn losjes gedefineerde eisen en motiveren om 3D prints met een gestructureerde werkwijze te behandelen. De functie eisen zijn meetbare eisen gemaakt om te helpen bij de implementatie van de functies.
+\noindent Dit document is gesplits in systeem en functie eisen. De systeem eisen zijn losjes gedefineerde eisen en motiveren om 3D prints met een gestructureerde werkwijze te behandelen. De functie eisen zijn meetbare eisen gemaakt om te helpen bij de implementatie van de functies.\\
 
 \section*{Systeem Eisen:}
 \begin{itemize}
-  \item Een Student Assistent (SA) die bezig is met de 3D printers moet op ieder moment weg kunnen lopen, een andere SA moet probleemloos het 3D printen kunnen voortzetten.
-  \item Bestanden om te 3D printen kunnen via de mail of met usb stick worden aangeleverd.
-  \item Het moet overzichtelijk zijn welke nog-te-printen prints een lange print- en korte printtijd hebben.
-  \item Er wordt een log bijgehouden van welke functies zijn gebruikt en wat deze hebben gedaan. 
+  \item Continuiteit: Een Student Assistent (SA) die bezig is met de 3D printers moet op ieder moment weg kunnen lopen, een andere SA moet probleemloos het 3D printen kunnen voortzetten.
+  \item Bestanden om te 3D printen kunnen via de mail worden aangeleverd of als lokaal bestand worden geselecteerd.
+  \item Het moet overzichtelijk zijn welke nog-te-printen prints een lange print- en korte print tijd hebben.
+  \item Er wordt een log bijgehouden van welke functies wanneer zijn gebruikt en wat deze hebben gedaan. 
 \end{itemize}
 
 \section*{Functie Eisen:}
@@ -44,31 +50,128 @@ Er zijn twee type functies. Functies die meerdere (een \textit{x} aantal) ingele
     {>{\raggedright\arraybackslash}p{0.25\textwidth}%
     |>{\centering\arraybackslash}p{0.20\textwidth}
     |>{\centering\arraybackslash}p{0.20\textwidth}}
-    \rowcolor{myblue} Functie & Behandeld meerdere 3D prints & Behandeld een enkele 3D print\\\hline
+    \rowcolor{myblue} Functie & Behandeld meerdere print jobs & Behandeld een enkele print job\\\hline
     inbox &\cmark&\xmark\\
-    usb &\xmark&\cmark\\
+    selecteer\_bestand&\xmark&\cmark\\
     afgekeurd &\xmark&\cmark\\
     gesliced &\xmark&\cmark\\
-    geprint &\xmark&\cmark\\
+    printer\_aangezet &\xmark&\cmark\\
+    print\_klaar &\xmark&\cmark\\
   \end{tabular}
 \end{table}
 
+% INBOX
 \begin{table}[H]
     \centering
     \rowcolors{2}{gray!25}{white}
     \begin{tabular}%
-    {>{\raggedright\arraybackslash}p{0.15\textwidth}%
-    |>{\raggedright\arraybackslash}p{0.75\textwidth}}
-    \rowcolor{myblue} Functie & Eisen\\\hline
-    inbox & todo\\
-    usb & thing \\
-    afgekeurd & thing \\
-    gesliced & thing \\
-    geprint & thing \\
+    {>{\raggedright\arraybackslash}p{0.25\textwidth}%
+    |>{\raggedright\arraybackslash}p{0.7\textwidth}}
+    \rowcolor{myblue}\multicolumn{2}{c}{\rule{0pt}{13pt}Functie: {\Large \textit{inbox.sh}}}\\\hline
+    Beschrijving & 
+% Vraag of alle \textit{x} binnengekomen mails of een enkele ($x=1$) mail behandeld moet worden. Bij een enkele mail selecteer welke via interactief keuzemenu in de terminal. Maak voor iedere mail die~.stl bestanden bevat een folder WACHTRIJ/\textit{naam}/ aan waarbij \textit{naam} de naam is van de persoon die de mail heeft gestuurd.
+    Maak voor iedere binnengekomen mail uit postvak in met een of meerdere~.stl attachments een nieuwe folder WACHTRIJ/\textit{naam}/ waarbij \textit{naam} de naam is van de persoon die de mail heeft gestuurd. Download de~.stl bestanden naar de respectivelijke WACHTRIJ/\textit{naam}/ folder. Maak voor ieder van folders een \textit{gesliced.sh} en een \textit{afkeur.sh} functie en plaats deze in de respectivelijke WACHTRIJ/\textit{naam}/ folder.\\
+  Eisen & 
+\begin{itemize} 
+\item Maak enkel een folder voor mails met een of meerdere~.stl bestanden
+\item Als de WACHTRIJ folder al een folder zit met de naam \textit{naam}, noem het de nieuwe folder \textit{naam}\_(1), als deze al bestaat noem de folder \textit{naam}\_(2), etc.
+\item Als er meer dan 4 en minder dan 10 of 10~.stl bestanden in de bijlage van een mail zitten, geef een waarschuwing met de folder naam en het aantal~.stl bestanden.
+\item Als er meer dan 10~.stl bestanden in een bijlage van een mail zitten geef een popup met informatie over het aantal~.stl bestanden en vraag of ze wel of niet omgezet moeten worden tot een print job. 
+\item (Optioneel) Als de bestanden van een mail meer dan 1000 Mb zijn, geef een popup met informatie over het totaal aantal Mb's in de bijlage en vraag of ze wel of niet omgezet moeten worden tot een print job. 
+\end{itemize} \\
+  Update Log& Log de functie naam \textit{inbox}, alle \textit{namen} van aangemaakte folders, de datum, de tijd en het aantal print jobs aangemaakt.\\
     \end{tabular}
-    \caption*{}%
 \end{table}
 
+% SELECTEER BESTAND
+\begin{table}[H]
+    \centering
+    \rowcolors{2}{gray!25}{white}
+    \begin{tabular}%
+    {>{\raggedright\arraybackslash}p{0.25\textwidth}%
+    |>{\raggedright\arraybackslash}p{0.75\textwidth}}
+    \rowcolor{myblue}\multicolumn{2}{c}{\rule{0pt}{13pt}Functie: {\Large selecteer\_bestand.sh}} \\\hline
+    Beschrijving & Deze functie is wachtwoord beveiligd, voer eerst het wachtwoord in. Open verkenner om een lokale folder of 3D print bestand te selecteren. Vraag interactief om een \textit{naam} in te voeren, maak een folder WACHTRIJ/\textit{naam}/ en kopieer de inhoud van de geselecteerde folder of 3D print bestand naar folder WACHTRIJ/\textit{naam}/. Maak de \textit{gesliced.sh} en \textit{afkeur.sh} functies en plaats deze in de WACHTRIJ/\textit{naam}/ folder.\\
+    Eisen & 
+    \begin{itemize} 
+\item De functie moet wachtwoord beveiligd zijn.
+\item Bij het selecteren van een folder, check of er een of meerdere~.stl bestanden in zitten. Zit er geen~.stl bestand in de folder, vraag opnieuw een folder (met een of meerdere~.stl bestanden) te selecteren. 
+\item Bij het selecteren van een file, check of het een~.stl file is, zo niet, vraag de user opnieuw een file (met~.stl extensie) te selecteren.
+\item (Optioneel) Als de totale grote van de geselecteerde folder of het geselecteerde bestand meer dan 1000 Mb zijn, geef een popup met informatie over het totaal aantal Mb's in de bijlage en vraag of ze wel of niet omgezet moeten worden tot een print job. 
+\end{itemize} \\
+    Update Log& Log de functie naam \textit{selecteer\_bestand}, de \textit{naam} van de print job, de datum, de tijd en het aantal~.stl bestanden in de print job.\\
+    \end{tabular}
+\end{table}
 
+% AFGEKEURD
+\begin{table}[H]
+    \centering
+    \rowcolors{2}{gray!25}{white}
+    \begin{tabular}%
+    {>{\raggedright\arraybackslash}p{0.25\textwidth}%
+    |>{\raggedright\arraybackslash}p{0.75\textwidth}}
+    \rowcolor{myblue} \multicolumn{2}{c}{\rule{0pt}{13pt}Functie: {\Large afgekeurd.sh}} \\\hline
+    Beschrijving & Maak de folder AFGEKEURD/\textit{MM}-\textit{DD}\_\textit{naam}/ hierbij is \textit{MM-DD} vandaag. Verplaats de inhoud van de folder waarin \textit{afgekeurd.sh} zich bevind van de WACHTRIJ, GESLICED of AAN\_HET\_PRINTEN folder naar de AFGEKEURD/\textit{MM}-\textit{DD}\_\textit{naam}/ folder en verwijder de lege folder. Als er een mail thread in de folder zit, popup een mail reactie voor met de `afkeur' handtekening voor de SA om aan te passen en te versturen.\\
+    Eisen & 
+    \begin{itemize} 
+\item Als er een mail gesprek in de print job zit, genereer een afkeur mail met de \textit{naam} ingeladen.
+\item Hou bij in de logs of er een afkeur mail is verzonden.
+\end{itemize} \\
+  Update Log& Log de functie naam \textit{afgekeurd}, de \textit{naam} van de print job, de datum, de tijd, vanuit welke folder (WACHTRIJ, GESLICED of AAN\_HET\_PRINTEN) de print job is afgekeurd en of er een afkeur mail is verzonden.\\
+    \end{tabular}
+\end{table}
+
+% GESLICED
+\begin{table}[H]
+    \centering
+    \rowcolors{2}{gray!25}{white}
+    \begin{tabular}%
+    {>{\raggedright\arraybackslash}p{0.25\textwidth}%
+    |>{\raggedright\arraybackslash}p{0.75\textwidth}}
+    \rowcolor{myblue} \multicolumn{2}{c}{\rule{0pt}{13pt}Functie: {\Large gesliced.sh}} \\\hline
+    Beschrijving & Maak de folder GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam}/ hierbij is \textit{hh} het aantal uren van de print en \textit{mm} het aantal minuten van de print. Verplaats de inhoud van WACHTRIJ/\textit{naam}/ (waarin \textit{gesliced.sh} zich bevind) naar de GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam}/ folder, verwijder de lege folder. Maak een \textit{printer\_aangezet.sh} functie en plaats deze in de GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam}/ folder.\\
+    Eisen & 
+    \begin{itemize} 
+\item Check of er een~.gcode file in de print job zit. Als er geen~.gcode in de print job zit, geef een waarschuwing en verplaats geen print job van WACHTRIJ naar GESLICED.
+\end{itemize} \\
+    Update Log& Log de functie naam \textit{gesliced}, de \textit{naam} van het print job, de datum, de tijd en de print tijd.\\
+    \end{tabular}
+\end{table}
+
+% PRINTER_AANGEZET
+\begin{table}[H]
+    \centering
+    \rowcolors{2}{gray!25}{white}
+    \begin{tabular}%
+    {>{\raggedright\arraybackslash}p{0.25\textwidth}%
+    |>{\raggedright\arraybackslash}p{0.75\textwidth}}
+    \rowcolor{myblue} \multicolumn{2}{c}{\rule{0pt}{13pt}Functie: {\Large printer\_aangezet.sh}} \\\hline
+    Beschrijving & Maak de folder AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam}/ waarbij \textit{MM-DD} vandaag is. Verplaats de inhoud van GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam} (waarin \textit{printer\_aangezet.sh} zich bevind) naar de AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam} folder en verwijder lege de GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam} folder. Maak de \textit{print\_klaar.sh} functie en plaats deze in de AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam}/ folder.\\
+    Eisen & 
+    \begin{itemize} 
+\item - geen eisen -
+\end{itemize} \\
+  Update Log&Log de functie naam \textit{printer\_aangezet}, de \textit{naam} van de print job, de datum, de tijd.\\
+    \end{tabular}
+\end{table}
+
+% PRINT_KLAAR
+\begin{table}[H]
+    \centering
+    \rowcolors{2}{gray!25}{white}
+    \begin{tabular}%
+    {>{\raggedright\arraybackslash}p{0.25\textwidth}%
+    |>{\raggedright\arraybackslash}p{0.75\textwidth}}
+    \rowcolor{myblue} \multicolumn{2}{c}{\rule{0pt}{13pt}Functie: {\Large printer\_klaar.sh}} \\\hline
+    Beschrijving & Maak de folder VERWERKT/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam}/ en verplaats de inhoud van AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam} (waarin \textit{print\_klaar.sh} zich bevind) naar de VERWERKT/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam} en verwijder lege de folder. Als er een mail thread in de folder zit, popup een mail reactie met de `print klaar' handtekening voor een SA om aan te passen en te versturen.\\
+
+    Eisen & 
+    \begin{itemize} 
+\item Als er een mail gesprek in de print job zit, genereer een `print klaar' mail met de \textit{naam} en print tijd ingeladen.
+\end{itemize} \\
+  Update Log& Log de functie naam \textit{printer\_klaar}, de \textit{naam} van de print job, de datum, de tijd en of er een `print klaar
+   mail verstuurd is.\\
+    \end{tabular}
+\end{table}
 
 \end{document}
