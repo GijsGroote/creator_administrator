@@ -16,7 +16,7 @@
 \usepackage{tabularx}   % Tabulars with adjustable-width columns
 \usepackage{multirow}
 
-
+\newcommand{\quotes}[1]{``#1''}
 
 \usepackage[table]{xcolor} 
 \definecolor{myblue}{HTML}{CCF4FF}
@@ -75,7 +75,7 @@ Er zijn twee type functies. Functies die meerdere (een \textit{x} aantal) ingele
 \begin{itemize} 
 \item Maak enkel een folder voor mails met een of meerdere~.stl bestanden
 \item Als de WACHTRIJ folder al een folder zit met de naam \textit{naam}, noem het de nieuwe folder \textit{naam}\_(1), als deze al bestaat noem de folder \textit{naam}\_(2), etc.
-\item Als er meer dan 4 en minder dan 10 of 10~.stl bestanden in de bijlage van een mail zitten, geef een waarschuwing met de folder naam en het aantal~.stl bestanden.
+\item Als er meer dan 4 en minder dan 10 of 10~.stl bestanden in de bijlage van een mail zitten, geef een waarschuwing: \quotes{\textit{naam} bevat \textit{X}~.stl bestanden}.
 \item Als er meer dan 10~.stl bestanden in een bijlage van een mail zitten geef een popup met informatie over het aantal~.stl bestanden en vraag of ze wel of niet omgezet moeten worden tot een print job. 
 \item (Optioneel) Als de bestanden van een mail meer dan 1000 Mb zijn, geef een popup met informatie over het totaal aantal Mb's in de bijlage en vraag of ze wel of niet omgezet moeten worden tot een print job. 
 \end{itemize} \\
@@ -132,7 +132,8 @@ Er zijn twee type functies. Functies die meerdere (een \textit{x} aantal) ingele
     Beschrijving & Maak de folder GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam}/ hierbij is \textit{hh} het aantal uren van de print en \textit{mm} het aantal minuten van de print. Verplaats de inhoud van WACHTRIJ/\textit{naam}/ (waarin \textit{gesliced.sh} zich bevind) naar de GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam}/ folder, verwijder de lege folder. Maak een \textit{printer\_aangezet.sh} functie en plaats deze in de GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam}/ folder.\\
     Eisen & 
     \begin{itemize} 
-\item Check of er een~.gcode file in de print job zit. Als er geen~.gcode in de print job zit, geef een waarschuwing en verplaats geen print job van WACHTRIJ naar GESLICED.
+      \item Check of er een~.gcode file in de print job zit. Als er geen~.gcode in de print job zit, geef waarschuwing \quotes{geen~.gcode file gevonden!, slice~.stl file}. Verplaats geen print job van WACHTRIJ naar GESLICED.
+\item Check of er meerdere~.stl files in de folder zitten. Zo ja, geef een waarschuwing: \quotes{meerdere~.stl files gedetecteerd, zijn deze allemaal gesliced (Y/n)?} Bij input `n', `no', `N' of `nee' geef waarschuwing, \quotes{slice eerst alle~.stl files}. Bij iedere andere input verplaats de print job van WACHTRIJ naar GESLICED.  
 \end{itemize} \\
     Update Log& Log de functie naam \textit{gesliced}, de \textit{naam} van het print job, de datum, de tijd en de print tijd.\\
     \end{tabular}
@@ -146,10 +147,10 @@ Er zijn twee type functies. Functies die meerdere (een \textit{x} aantal) ingele
     {>{\raggedright\arraybackslash}p{0.25\textwidth}%
     |>{\raggedright\arraybackslash}p{0.75\textwidth}}
     \rowcolor{myblue} \multicolumn{2}{c}{\rule{0pt}{13pt}Functie: {\Large printer\_aangezet.sh}} \\\hline
-    Beschrijving & Maak de folder AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam}/ waarbij \textit{MM-DD} vandaag is. Verplaats de inhoud van GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam} (waarin \textit{printer\_aangezet.sh} zich bevind) naar de AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam} folder en verwijder lege de GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam} folder. Maak de \textit{print\_klaar.sh} functie en plaats deze in de AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam}/ folder.\\
-    Eisen & 
+    Beschrijving & Maak de folder AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam}/ waarbij \textit{MM-DD} vandaag is. Verplaats de inhoud van GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam} (waarin \textit{printer\_aangezet.sh} zich bevind) naar de AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam} folder en verwijder lege de GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam} folder. Maak de \textit{print\_klaar.sh} functie en plaats deze in de AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam}/ folder.\\ Eisen & 
     \begin{itemize} 
-\item - geen eisen -
+  \item Als er al een folder bestaat in AAN\_HET\_PRINTEN met dezelfde \textit{naam} van de print job, vraag of de inhoud van de folder samengevoegd moet worden. Zo ja, voeg de inhoud samen. Zo nee, maak een folder naam \textit{naam}\_(1), bestaat deze al maak \textit{naam}\_(2), etc.
+  \item Check of er meerdere~.gcode files in de folder zitten. Zo ja, geef een waarschuwing \quotes{meerdere~.gcode files gedetecteerd, zijn deze allemaal aan het printen (Y/n)?} Bij input `n', `no', `N' of `nee' vraag: Welke files zijn aan het printen? Geef een keuzemenu met alle~.gcode files erin die individueel geselecteerd en gedeselecteerd kunnen worden. Als minimaal 1 optie is geselecteerd, kopieer alle niet~.stl en~.gcode bestanden naar de nieuwe folder, verplaats enkel de geselecteerde~.gcode en corresponderende~.stl files naar de nieuwe folder. Bij ieder andere input verplaats de gehele print job naar de nieuwe folder.
 \end{itemize} \\
   Update Log&Log de functie naam \textit{printer\_aangezet}, de \textit{naam} van de print job, de datum, de tijd.\\
     \end{tabular}
@@ -163,10 +164,9 @@ Er zijn twee type functies. Functies die meerdere (een \textit{x} aantal) ingele
     {>{\raggedright\arraybackslash}p{0.25\textwidth}%
     |>{\raggedright\arraybackslash}p{0.75\textwidth}}
     \rowcolor{myblue} \multicolumn{2}{c}{\rule{0pt}{13pt}Functie: {\Large printer\_klaar.sh}} \\\hline
-    Beschrijving & Maak de folder VERWERKT/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam}/ en verplaats de inhoud van AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam} (waarin \textit{print\_klaar.sh} zich bevind) naar de VERWERKT/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam} en verwijder lege de folder. Als er een mail thread in de folder zit, popup een mail reactie met de `print klaar' handtekening voor een SA om aan te passen en te versturen.\\
-
-    Eisen & 
+    Beschrijving & Maak de folder VERWERKT/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam}/ en verplaats de inhoud van AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam} (waarin \textit{print\_klaar.sh} zich bevind) naar de VERWERKT/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam} en verwijder lege de folder. Als er een mail thread in de folder zit, popup een mail reactie met de `print klaar' handtekening voor een SA om aan te passen en te versturen.\\ Eisen & 
     \begin{itemize} 
+      \item check of er in folder GESLICED/ een subfolder zit met \textit{naam} in de subfolder naam. Zo ja, geef een waarschuwing: \quotes{subfolder \textit{naam} bestaat in folder GESLICED/, weet je zeker dat deze print job helemaal klaar is (Y/n)?}. Bij input `n', `no', `N' of `nee' verplaats geen folder. Bij iedere andere input verplaats de folder.
 \item Als er een mail gesprek in de print job zit, genereer een `print klaar' mail met de \textit{naam} en print tijd ingeladen.
 \end{itemize} \\
   Update Log& Log de functie naam \textit{printer\_klaar}, de \textit{naam} van de print job, de datum, de tijd en of er een `print klaar
