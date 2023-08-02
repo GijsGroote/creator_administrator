@@ -1,2 +1,2 @@
-#!/usr/bin/bash
+#! /usr/bin/sh
 echo "hi from bash"
