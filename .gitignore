@@ -1,9 +1,3 @@
-# ignore pyinstaller files 
-*.spec
-*.html
-*.pyc
-
-
 
 # ignore Latex files
 *.acn
