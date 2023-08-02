@@ -67,10 +67,10 @@ Er zijn twee type functies. Functies die meerdere (een \textit{x} aantal) ingele
     \begin{tabular}%
     {>{\raggedright\arraybackslash}p{0.25\textwidth}%
     |>{\raggedright\arraybackslash}p{0.7\textwidth}}
-    \rowcolor{myblue}\multicolumn{2}{c}{\rule{0pt}{13pt}Functie: {\Large \textit{inbox.sh}}}\\\hline
+    \rowcolor{myblue}\multicolumn{2}{c}{\rule{0pt}{13pt}Functie: {\Large \textit{inbox.exe}}}\\\hline
     Beschrijving & 
 % Vraag of alle \textit{x} binnengekomen mails of een enkele ($x=1$) mail behandeld moet worden. Bij een enkele mail selecteer welke via interactief keuzemenu in de terminal. Maak voor iedere mail die~.stl bestanden bevat een folder WACHTRIJ/\textit{naam}/ aan waarbij \textit{naam} de naam is van de persoon die de mail heeft gestuurd.
-    Maak voor iedere binnengekomen mail uit postvak in met een of meerdere~.stl attachments een nieuwe folder WACHTRIJ/\textit{naam}/ waarbij \textit{naam} de naam is van de persoon die de mail heeft gestuurd. Download de~.stl bestanden naar de respectivelijke WACHTRIJ/\textit{naam}/ folder. Maak voor ieder van folders een \textit{gesliced.sh} en een \textit{afkeur.sh} functie en plaats deze in de respectivelijke WACHTRIJ/\textit{naam}/ folder.\\
+    Maak voor iedere binnengekomen mail uit postvak in met een of meerdere~.stl attachments een nieuwe folder WACHTRIJ/\textit{naam}/ waarbij \textit{naam} de naam is van de persoon die de mail heeft gestuurd. Download de~.stl bestanden naar de respectivelijke WACHTRIJ/\textit{naam}/ folder. Maak voor ieder van folders een \textit{gesliced.exe} en een \textit{afkeur.exe} functie en plaats deze in de respectivelijke WACHTRIJ/\textit{naam}/ folder.\\
   Eisen & 
 \begin{itemize} 
 \item Maak enkel een folder voor mails met een of meerdere~.stl bestanden
@@ -90,8 +90,8 @@ Er zijn twee type functies. Functies die meerdere (een \textit{x} aantal) ingele
     \begin{tabular}%
     {>{\raggedright\arraybackslash}p{0.25\textwidth}%
     |>{\raggedright\arraybackslash}p{0.75\textwidth}}
-    \rowcolor{myblue}\multicolumn{2}{c}{\rule{0pt}{13pt}Functie: {\Large selecteer\_bestand.sh}} \\\hline
-    Beschrijving & Deze functie is wachtwoord beveiligd, voer eerst het wachtwoord in. Open verkenner om een lokale folder of 3D print bestand te selecteren. Vraag interactief om een \textit{naam} in te voeren, maak een folder WACHTRIJ/\textit{naam}/ en kopieer de inhoud van de geselecteerde folder of 3D print bestand naar folder WACHTRIJ/\textit{naam}/. Maak de \textit{gesliced.sh} en \textit{afkeur.sh} functies en plaats deze in de WACHTRIJ/\textit{naam}/ folder.\\
+    \rowcolor{myblue}\multicolumn{2}{c}{\rule{0pt}{13pt}Functie: {\Large selecteer\_bestand.exe}} \\\hline
+    Beschrijving & Deze functie is wachtwoord beveiligd, voer eerst het wachtwoord in. Open verkenner om een lokale folder of 3D print bestand te selecteren. Vraag interactief om een \textit{naam} in te voeren, maak een folder WACHTRIJ/\textit{naam}/ en kopieer de inhoud van de geselecteerde folder of 3D print bestand naar folder WACHTRIJ/\textit{naam}/. Maak de \textit{gesliced.exe} en \textit{afkeur.exe} functies en plaats deze in de WACHTRIJ/\textit{naam}/ folder.\\
     Eisen & 
     \begin{itemize} 
 \item De functie moet wachtwoord beveiligd zijn.
@@ -110,8 +110,8 @@ Er zijn twee type functies. Functies die meerdere (een \textit{x} aantal) ingele
     \begin{tabular}%
     {>{\raggedright\arraybackslash}p{0.25\textwidth}%
     |>{\raggedright\arraybackslash}p{0.75\textwidth}}
-    \rowcolor{myblue} \multicolumn{2}{c}{\rule{0pt}{13pt}Functie: {\Large afgekeurd.sh}} \\\hline
-    Beschrijving & Maak de folder AFGEKEURD/\textit{MM}-\textit{DD}\_\textit{naam}/ hierbij is \textit{MM-DD} vandaag. Verplaats de inhoud van de folder waarin \textit{afgekeurd.sh} zich bevind van de WACHTRIJ, GESLICED of AAN\_HET\_PRINTEN folder naar de AFGEKEURD/\textit{MM}-\textit{DD}\_\textit{naam}/ folder en verwijder de lege folder. Als er een mail thread in de folder zit, popup een mail reactie voor met de `afkeur' handtekening voor de SA om aan te passen en te versturen.\\
+    \rowcolor{myblue} \multicolumn{2}{c}{\rule{0pt}{13pt}Functie: {\Large afgekeurd.exe}} \\\hline
+    Beschrijving & Maak de folder AFGEKEURD/\textit{MM}-\textit{DD}\_\textit{naam}/ hierbij is \textit{MM-DD} vandaag. Verplaats de inhoud van de folder waarin \textit{afgekeurd.exe} zich bevind van de WACHTRIJ, GESLICED of AAN\_HET\_PRINTEN folder naar de AFGEKEURD/\textit{MM}-\textit{DD}\_\textit{naam}/ folder en verwijder de lege folder. Als er een mail thread in de folder zit, popup een mail reactie voor met de `afkeur' handtekening voor de SA om aan te passen en te versturen.\\
     Eisen & 
     \begin{itemize} 
 \item Als er een mail gesprek in de print job zit, genereer een afkeur mail met de \textit{naam} ingeladen.
@@ -128,8 +128,8 @@ Er zijn twee type functies. Functies die meerdere (een \textit{x} aantal) ingele
     \begin{tabular}%
     {>{\raggedright\arraybackslash}p{0.25\textwidth}%
     |>{\raggedright\arraybackslash}p{0.75\textwidth}}
-    \rowcolor{myblue} \multicolumn{2}{c}{\rule{0pt}{13pt}Functie: {\Large gesliced.sh}} \\\hline
-    Beschrijving & Maak de folder GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam}/ hierbij is \textit{hh} het aantal uren van de print en \textit{mm} het aantal minuten van de print. Verplaats de inhoud van WACHTRIJ/\textit{naam}/ (waarin \textit{gesliced.sh} zich bevind) naar de GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam}/ folder, verwijder de lege folder. Maak een \textit{printer\_aangezet.sh} functie en plaats deze in de GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam}/ folder.\\
+    \rowcolor{myblue} \multicolumn{2}{c}{\rule{0pt}{13pt}Functie: {\Large gesliced.exe}} \\\hline
+    Beschrijving & Maak de folder GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam}/ hierbij is \textit{hh} het aantal uren van de print en \textit{mm} het aantal minuten van de print. Verplaats de inhoud van WACHTRIJ/\textit{naam}/ (waarin \textit{gesliced.exe} zich bevind) naar de GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam}/ folder, verwijder de lege folder. Maak een \textit{printer\_aangezet.exe} functie en plaats deze in de GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam}/ folder.\\
     Eisen & 
     \begin{itemize} 
       \item Check of er een~.gcode file in de print job zit. Als er geen~.gcode in de print job zit, geef waarschuwing \quotes{geen~.gcode file gevonden!, slice~.stl file}. Verplaats geen print job van WACHTRIJ naar GESLICED.
@@ -146,8 +146,8 @@ Er zijn twee type functies. Functies die meerdere (een \textit{x} aantal) ingele
     \begin{tabular}%
     {>{\raggedright\arraybackslash}p{0.25\textwidth}%
     |>{\raggedright\arraybackslash}p{0.75\textwidth}}
-    \rowcolor{myblue} \multicolumn{2}{c}{\rule{0pt}{13pt}Functie: {\Large printer\_aangezet.sh}} \\\hline
-    Beschrijving & Maak de folder AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam}/ waarbij \textit{MM-DD} vandaag is. Verplaats de inhoud van GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam} (waarin \textit{printer\_aangezet.sh} zich bevind) naar de AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam} folder en verwijder lege de GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam} folder. Maak de \textit{print\_klaar.sh} functie en plaats deze in de AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam}/ folder.\\ Eisen & 
+    \rowcolor{myblue} \multicolumn{2}{c}{\rule{0pt}{13pt}Functie: {\Large printer\_aangezet.exe}} \\\hline
+    Beschrijving & Maak de folder AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam}/ waarbij \textit{MM-DD} vandaag is. Verplaats de inhoud van GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam} (waarin \textit{printer\_aangezet.exe} zich bevind) naar de AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam} folder en verwijder lege de GESLICED/\textit{hh}h\_\textit{mm}m\_\textit{naam} folder. Maak de \textit{print\_klaar.exe} functie en plaats deze in de AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam}/ folder.\\ Eisen & 
     \begin{itemize} 
   \item Als er al een folder bestaat in AAN\_HET\_PRINTEN met dezelfde \textit{naam} van de print job, vraag of de inhoud van de folder samengevoegd moet worden. Zo ja, voeg de inhoud samen. Zo nee, maak een folder naam \textit{naam}\_(1), bestaat deze al maak \textit{naam}\_(2), etc.
   \item Check of er meerdere~.gcode files in de folder zitten. Zo ja, geef een waarschuwing \quotes{meerdere~.gcode files gedetecteerd, zijn deze allemaal aan het printen (Y/n)?} Bij input `n', `no', `N' of `nee' vraag: Welke files zijn aan het printen? Geef een keuzemenu met alle~.gcode files erin die individueel geselecteerd en gedeselecteerd kunnen worden. Als minimaal 1 optie is geselecteerd, kopieer alle niet~.stl en~.gcode bestanden naar de nieuwe folder, verplaats enkel de geselecteerde~.gcode en corresponderende~.stl files naar de nieuwe folder. Bij ieder andere input verplaats de gehele print job naar de nieuwe folder.
@@ -163,8 +163,8 @@ Er zijn twee type functies. Functies die meerdere (een \textit{x} aantal) ingele
     \begin{tabular}%
     {>{\raggedright\arraybackslash}p{0.25\textwidth}%
     |>{\raggedright\arraybackslash}p{0.75\textwidth}}
-    \rowcolor{myblue} \multicolumn{2}{c}{\rule{0pt}{13pt}Functie: {\Large printer\_klaar.sh}} \\\hline
-    Beschrijving & Maak de folder VERWERKT/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam}/ en verplaats de inhoud van AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam} (waarin \textit{print\_klaar.sh} zich bevind) naar de VERWERKT/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam} en verwijder lege de folder. Als er een mail thread in de folder zit, popup een mail reactie met de `print klaar' handtekening voor een SA om aan te passen en te versturen.\\ Eisen & 
+    \rowcolor{myblue} \multicolumn{2}{c}{\rule{0pt}{13pt}Functie: {\Large printer\_klaar.exe}} \\\hline
+    Beschrijving & Maak de folder VERWERKT/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam}/ en verplaats de inhoud van AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam} (waarin \textit{print\_klaar.exe} zich bevind) naar de VERWERKT/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{mm}m\_\textit{naam} en verwijder lege de folder. Als er een mail thread in de folder zit, popup een mail reactie met de `print klaar' handtekening voor een SA om aan te passen en te versturen.\\ Eisen & 
     \begin{itemize} 
       \item check of er in folder GESLICED/ een subfolder zit met \textit{naam} in de subfolder naam. Zo ja, geef een waarschuwing: \quotes{subfolder \textit{naam} bestaat in folder GESLICED/, weet je zeker dat deze print job helemaal klaar is (Y/n)?}. Bij input `n', `no', `N' of `nee' verplaats geen folder. Bij iedere andere input verplaats de folder.
 \item Als er een mail gesprek in de print job zit, genereer een `print klaar' mail met de \textit{naam} en print tijd ingeladen.
