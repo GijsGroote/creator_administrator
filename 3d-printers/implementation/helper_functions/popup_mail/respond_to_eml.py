@@ -2,6 +2,8 @@ import os
 
 import email
 import subprocess
+from global_variables import OUTLOOK_PATH
+from helper_functions import *
 from email import generator
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -11,27 +13,24 @@ def send_response_mail(incoming_mail_path, response_text):
     with open(incoming_mail_path, 'r') as file:
         original_email = email.message_from_file(file)
 
-    tbirdPath = '/usr/bin/thunderbird'
-    to = original_email["From"]
     subject = 'Re: ' + original_email['Subject']
-    body = f"""<html><body>
-        <p>Hi {original_email["From"]}</p> 
-        <h3>{response_text}</h3>
-        <p>Kind regards<br><br> The IWS </p> 
-    </body></html>"""
-    composeCommand = 'format=html,to={},subject={},body={}'.format(to, subject, body)
-    subprocess.Popen([tbirdPath, '-compose', composeCommand])
 
+    body = f"""Dear {mail_to_name(original_email['From'])},
+    
+    {response_text}
+    
+    Kind Regards,
+    
+    The IWS
+    """
 
-# def write_eml_file(mail):
+    compose = '/c ipm.note'
+    recipients = f'/m "{original_email["from"]}?Subject={subject}&Body={body}"'
+    # attachment = f'/a {incoming_mail_path}'
+    attachment = ' '
 
-#     # filename = str(uuid.uuid4()) + ".eml"
-#     filename = str("response.eml")
-
-#     with open(filename, 'w') as file:
-#         emlGenerator = generator.Generator(file)
-#         emlGenerator.flatten(mail)
-
+    command = ' '.join([OUTLOOK_PATH, compose, attachment, recipients])
+    process = subprocess.Popen(command, shell=False, stdout=subprocess.PIPE)
 
 def main():
 
