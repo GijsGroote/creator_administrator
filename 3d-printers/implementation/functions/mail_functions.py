@@ -2,9 +2,9 @@
 
 import email
 import subprocess
-from email import generator
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+import re
+
+from global_variables import OUTLOOK_PATH
 
 
 def send_response_mail(incoming_mail_path, response_text):

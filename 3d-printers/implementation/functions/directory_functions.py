@@ -1,22 +1,9 @@
 #! /usr/bin/env python3
 
-def move_print_job(source_dir, target_dir):
-    """ move print job from source_dir to target_dir """
+import os
+import shutil
 
-    # TODO: check if source dir exist
-    # check if target dir does not yet exist, and create it
-
-    for item in os.listdir(source_dir):
-        source_item = os.path.join(source_dir, item)
-        target_item = os.path.join(target_dir, item)
-
-        if os.path.isdir(source_item):
-            shutil.move(source_item, target_item)
-            move_print_job(source_item, target_item)
-        else:
-            shutil.move(source_item, target_dir)
-
-    shutil.rmtree(source_dir)
+from global_variables import PRINT_DIR_HOME
 
 def make_local_folder(local_path: str):
     """ make a new folder"""
@@ -42,6 +29,23 @@ def make_local_folder(local_path: str):
 
     return unique_local_path
 
+def move_print_job(source_dir, target_dir):
+    """ move print job from source_dir to target_dir """
+
+    # TODO: check if source dir exist
+    # check if target dir does not yet exist, and create it
+
+    for item in os.listdir(source_dir):
+        source_item = os.path.join(source_dir, item)
+        target_item = os.path.join(target_dir, item)
+
+        if os.path.isdir(source_item):
+            shutil.move(source_item, target_item)
+            move_print_job(source_item, target_item)
+        else:
+            shutil.move(source_item, target_dir)
+
+    shutil.rmtree(source_dir)
 
 def get_print_job_absolute_paths():
     """ return full path for all print jobs """

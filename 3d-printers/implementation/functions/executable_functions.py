@@ -1,7 +1,10 @@
 #! /usr/bin/env python3
 
-from global_variables import *
+import os
 import PyInstaller.__main__
+
+from global_variables import PRINT_DIR_HOME, FIG_DIR_HOME
+
 
 def python_to_exe(python_path: str, local_path: str, arguments=None):
     """ convert a python file to an executable file an move to local_path. """
@@ -18,6 +21,7 @@ def python_to_exe(python_path: str, local_path: str, arguments=None):
             f'--distpath={global_path}',
             f'--icon={os.path.join(FIG_DIR_HOME, "download.ico")}',
             f'--python-option={arguments}',
+            # pyinstaller - -collect - submodules < folder - name >
         ])
 
     except FileExistsError as exc:

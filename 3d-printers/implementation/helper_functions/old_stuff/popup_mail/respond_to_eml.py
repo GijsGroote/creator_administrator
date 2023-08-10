@@ -4,9 +4,7 @@ import email
 import subprocess
 from global_variables import OUTLOOK_PATH
 from mail_functions import *
-from email import generator
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+
 
 def send_response_mail(incoming_mail_path, response_text):
     # Load the original email

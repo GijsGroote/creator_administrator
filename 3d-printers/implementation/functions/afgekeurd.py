@@ -3,7 +3,6 @@
 import sys
 import glob
 
-from global_variables import *
 from directory_functions import *
 from mail_functions import *
 
