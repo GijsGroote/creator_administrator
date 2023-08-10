@@ -3,7 +3,7 @@ import os
 import email
 import subprocess
 from global_variables import OUTLOOK_PATH
-from helper_functions import *
+from mail_functions import *
 from email import generator
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText

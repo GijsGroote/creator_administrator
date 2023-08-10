@@ -1,9 +1,12 @@
 #! /usr/bin/env python3
+
 import sys
 import glob
 
 from global_variables import *
-from helper_functions import *
+from directory_functions import *
+from mail_functions import *
+
 
 def create_afgekeurd(job_name):
     """ move print job from current folder to AFGEKEURD folder and popup a email response """
@@ -35,6 +38,3 @@ def create_afgekeurd(job_name):
 
 if __name__ == '__main__':
     create_afgekeurd(sys.argv[1])
-
-
-

@@ -1,7 +1,9 @@
 # ! /usr/bin/env python3
 
 from global_variables import *
-from helper_functions import *
+from directory_functions import *
+from executable_functions import python_to_exe
+
 import imaplib
 import email
 import os
