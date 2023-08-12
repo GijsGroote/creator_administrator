@@ -6,13 +6,14 @@ from mail_functions import mail_to_name
 
 import imaplib
 import email
+import datetime
 import os
 import re
 
 from email.header import decode_header
 
 def is_print_job_name_unique(job_name: str) -> bool:
-    """ check if the print job name is unqiue, return boolean """
+    """ check if the print job name is unique, return boolean """
 
     for folder_name in get_print_job_folder_names():
         if job_name in folder_name:
@@ -91,11 +92,15 @@ def create_print_job(msg, raw_email: bytes):
     """ create a 'print job' or folder in WACHTRIJ and put all corresponding files in the print job """
 
     job_name = mail_to_print_job_name(msg)
-    local_job_dir = make_local_folder("WACHTRIJ/" + job_name)
-    global_job_dir = os.path.join(PRINT_DIR_HOME, local_job_dir)
+
+    today = datetime.date.today()
+    job_folder_name = str(today.strftime("%d")) + "-" + str(today.strftime('%m')) + "_" + job_name
+
+    print_job_global_path = os.path.join(os.path.join(PRINT_DIR_HOME, "WACHTRIJ", job_folder_name))
+    os.mkdir(print_job_global_path)
 
     # Save the email as a .eml file
-    with open(os.path.join(global_job_dir, "mail.eml"), "wb") as eml_file:
+    with open(os.path.join(print_job_global_path, "mail.eml"), "wb") as eml_file:
         eml_file.write(raw_email)
 
     # Save the .stl files
@@ -106,7 +111,7 @@ def create_print_job(msg, raw_email: bytes):
             filename = part.get_filename()
             if filename and filename.lower().endswith(".stl"):
                 decoded_filename = decode_header(filename)[0][0]
-                file_path = os.path.join(global_job_dir, decoded_filename)
+                file_path = os.path.join(print_job_global_path, decoded_filename)
                 with open(file_path, "wb") as f:
                     f.write(part.get_payload(decode=True))
                 print("Saved attachment:", decoded_filename)
@@ -127,7 +132,7 @@ def main():
 
     # Connect to the IMAP server
     mail = imaplib.IMAP4_SSL(IMAP_SERVER)
-    mail.login(EMAIL_ADRES, EMAIL_PASSWORD)
+    mail.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
     mail.select("inbox")
 
     # Loop over all new mails
