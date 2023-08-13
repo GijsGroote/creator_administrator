@@ -1,16 +1,24 @@
 # ! /usr/bin/env python3
 
-from global_variables import *
-from directory_functions import *
-from mail_functions import mail_to_name
-
 import imaplib
-import email
 import datetime
 import os
 import re
-
+import email
 from email.header import decode_header
+
+from global_variables import (
+    IMPLEMENTATION_DIR_HOME,
+    IMAP_SERVER,
+    PRINT_DIR_HOME,
+    EMAIL_PASSWORD,
+    EMAIL_ADDRESS)
+
+from directory_functions import (
+    get_print_job_folder_names,
+)
+from executable_functions import python_to_exe
+from mail_functions import mail_to_name
 
 def is_print_job_name_unique(job_name: str) -> bool:
     """ check if the print job name is unique, return boolean """
@@ -117,9 +125,8 @@ def create_print_job(msg, raw_email: bytes):
                 print("Saved attachment:", decoded_filename)
 
     # create afgekeurd.exe
-    # TODO: create afgekeurd.exe
-    # python_path = os.path.join(IMPLEMENTATION_DIR_HOME, "functions/afgekeurd.py")
-    # python_to_exe(python_path, os.path.join(PRINT_DIR_HOME + "/WACHTRIJ/", job_name))
+    python_path = os.path.join(IMPLEMENTATION_DIR_HOME, 'functions/afgekeurd.py')
+    python_to_exe(python_path, job_name)
 
     # create gesliced.exe
     # TODO: create gesliced.exe
