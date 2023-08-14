@@ -1,13 +1,15 @@
 #! /usr/bin/env python3
 
 import glob
+import os
+from pathlib import Path
 
 from mail_functions import send_response_mail
 from directory_functions import job_name_to_global_path, move_print_job
 from executable_functions import read_job_name_file
 
 
-def create_afgekeurd():
+if __name__ == '__main__':
     """ move print job from current folder to AFGEKEURD folder and popup a email response """
 
     job_name = read_job_name_file()
@@ -31,7 +33,3 @@ def create_afgekeurd():
 
     input("press any key to continue")
     move_print_job(job_name, "AFGEKEURD")
-
-
-if __name__ == '__main__':
-    create_afgekeurd()

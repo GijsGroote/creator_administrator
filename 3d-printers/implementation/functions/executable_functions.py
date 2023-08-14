@@ -4,10 +4,10 @@ import os
 import sys
 import PyInstaller.__main__
 
-from global_variables import FIG_DIR_HOME
+from global_variables import FIGURES_DIR_HOME
 from directory_functions import job_name_to_global_path
 
-def read_job_name_file():
+def read_job_name_file() -> str:
     """ read and return the content from job_name.txt """
     # Check if MEIPASS attribute is available in sys else return current file path
     bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
@@ -26,13 +26,15 @@ def python_to_exe(python_path: str, job_name: str):
     with open("job_name.txt", "w") as file:
         file.write(job_name)
 
+    # TODO: create an executable like this takes a really long time, speed it up
+
     try:
         PyInstaller.__main__.run([
             python_path,
             '--onefile',
             '--console',
             f'--distpath={global_path}',
-            f'--icon={os.path.join(FIG_DIR_HOME, "download.ico")}',
+            f'--icon={os.path.join(FIGURES_DIR_HOME, "download.ico")}',
             '--add-data=job_name.txt;.',
         ])
 

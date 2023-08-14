@@ -2,11 +2,17 @@ import json
 import os
 
 # global paths
-IMPLEMENTATION_DIR_HOME = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FIG_DIR_HOME = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "figures")
+REPO_DIR_HOME = r'C:\Users\gijsg\Documents\laserhok-workflow'
+FUNCTIONS_DIR_HOME = os.path.join(
+    REPO_DIR_HOME,
+    r'3d-printers\implementation\functions')
+
+FIGURES_DIR_HOME = os.path.join(
+    REPO_DIR_HOME,
+    r'3d-printers\implementation\figures')
+
 PRINT_DIR_HOME = r'C:\Users\gijsg\Desktop\3d-print-test-env'
 OUTLOOK_PATH = r'C:\Program Files\Microsoft Office\root\Office16\OUTLOOK.EXE'
-
 
 # email login info
 IMAP_SERVER = 'outlook.office365.com'

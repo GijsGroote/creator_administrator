@@ -1,17 +1,27 @@
 #! /usr/bin/env python3
 
 import os
+import re
+import sys
 import shutil
+from typing import List
 
 from global_variables import PRINT_DIR_HOME
+from conversion_functions import (
+    job_folder_name_to_date,
+    gcode_files_to_max_print_time)
 
-
-def get_print_job_global_paths():
+def get_print_job_global_paths(search_in_main_folder=None) -> List[str]:
     """ return global path for all print jobs """
 
     print_job_global_paths = []
 
-    for main_folder in os.listdir(PRINT_DIR_HOME):
+    if search_in_main_folder is None:
+        main_folders = os.listdir(PRINT_DIR_HOME)
+    else:
+        main_folders = [search_in_main_folder]
+
+    for main_folder in main_folders:
         temp_print_job_global_paths = [os.path.join(PRINT_DIR_HOME, main_folder, job_folder_name)
                                        for job_folder_name in os.listdir(os.path.join(PRINT_DIR_HOME, main_folder))]
 
@@ -21,12 +31,17 @@ def get_print_job_global_paths():
     return print_job_global_paths
 
 
-def get_print_job_folder_names():
+def get_print_job_folder_names(search_in_main_folder=None) -> List[str]:
     """ return all print job names """
 
     print_job_names = []
 
-    for main_folder in os.listdir(PRINT_DIR_HOME):
+    if search_in_main_folder is None:
+        main_folders = os.listdir(PRINT_DIR_HOME)
+    else:
+        main_folders = [search_in_main_folder]
+
+    for main_folder in main_folders:
         temp_print_job_names = [print_job_name for print_job_name in
                                 os.listdir(os.path.join(PRINT_DIR_HOME, main_folder))]
 
@@ -36,54 +51,57 @@ def get_print_job_folder_names():
     return print_job_names
 
 
-def job_name_to_global_path(job_name: str) -> str:
+def job_name_to_global_path(job_name: str, search_in_main_folder=None) -> str:
     """ return global path of print job """
 
-    for print_job_global_path in get_print_job_global_paths():
+    # TODO: job A_B is creatd, A_B_(1) is created,  A_B is removed. Using this function
+    # the job called A_B will return job A_B_(1), which IS A DIFFERENT JOB
+    # edit this function so that it raises a valueError('no job found')
+    # when A_B is searched but only A_B_(1) is present
+
+    for print_job_global_path in get_print_job_global_paths(search_in_main_folder):
         if job_name in print_job_global_path:
             return print_job_global_path
 
     raise ValueError(f"no print job path found for print job with name {job_name}")
 
 
+def job_name_to_job_folder_name(job_name: str, search_in_main_folder=None) -> str:
+    """ get the job folder name from a job name """
+
+    for print_job_folder_name in get_print_job_folder_names(search_in_main_folder):
+        if job_name in print_job_folder_name:
+            return print_job_folder_name
+
+    raise ValueError(f'could not find job folder name for job name: {job_name}')
+
+def does_job_exist_in_main_folder(job_name: str, main_folder: str) -> bool:
+    """ check if a job exists in a main folder """
+    for print_job_folder_name in get_print_job_folder_names(main_folder):
+        if job_name in print_job_folder_name:
+            return True
+
+
 def get_new_job_folder_name(job_name: str, source_dir_global_path: str, target_main_folder: str) -> str:
     """ get a job folder name for a print job moved to a main folder """
 
-    job_folder_name = None
-    for print_job_folder_name in get_print_job_folder_names():
-        if job_name in print_job_folder_name:
-            job_folder_name = print_job_folder_name
-    assert job_folder_name is not None, \
-        f'could not find job folder name for job name: {job_name}'
+    job_folder_name = job_name_to_job_folder_name(job_name)
 
     if target_main_folder in ['AFGEKEURD', 'WACHTRIJ', 'VERWERKT']:
         return job_folder_name
 
     elif target_main_folder == 'GESLICED':
-        date = ""
-        if '-' in job_folder_name:
-            date_day = job_folder_name.split('-')[0][-2:]
-            date_hours = job_folder_name.split('-')[1][:2]
-            date = date_day + '-' + date_hours + '_'
 
+        date = job_folder_name_to_date(job_folder_name)
 
         gcode_files = [file for file in os.listdir(source_dir_global_path) if file.lower().endswith(".gcode")]
-        print(gcode_files)
-        assert len(gcode_files) > 0, f'no .gcode found in print job: {job_name}, slice .stl first'
 
-        max_print_time = ""
-        max_print_hours = 0
-        max_print_minutes = 0
-        for gcode_file in gcode_files:
-            if '_' in gcode_file:
-                temp_hours = gcode_file.split('_')[0][-3:-1]
-                temp_minutes = gcode_file.split('_')[1][:2]
-                if (int(temp_hours) > max_print_hours or
-                        int(temp_hours) == max_print_hours and
-                        int(temp_minutes) > max_print_minutes):
-                    max_print_time = temp_hours + 'h_' + temp_minutes + 'm_'
-                    max_print_hours = int(temp_hours)
-                    max_print_minutes = int(temp_minutes)
+        if len(gcode_files) > 0:
+            print(f'no .gcode found in print job: {job_name}, slice .stl first')
+            input('press enter to continue...')
+            sys.exit(0)
+
+        max_print_time = gcode_files_to_max_print_time(gcode_files)
 
         return date + max_print_time + job_name
 
@@ -101,30 +119,47 @@ def move_directory_recursive(source_dir_global: str, target_dir_global: str):
     except Exception as e:
         print(f"An error occurred: {e}")
 
+def copy_directory_recursive(source_dir_global: str, target_dir_global: str):
+    """ copy directory and subdirectories recursively """
+    try:
+        shutil.copy(source_dir_global, target_dir_global)
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
-def move_print_job(job_name: str, target_main_folder: str):
-    """ move print job to target_dir """
+
+
+
+def move_print_job(job_name: str, target_main_folder: str, source_main_folder=None):
+    """ move print job to target_main_folder """
+    # TODO: this function is to long and does to much, split this function into multiple
 
     assert target_main_folder in ["AFGEKEURD", "WACHTRIJ", "GESLICED", "AAN_HET_PRINTEN", "VERWERKT"], \
         f"folder {target_main_folder} is not a main folder"
+    assert source_main_folder in [None, "AFGEKEURD", "WACHTRIJ", "GESLICED", "AAN_HET_PRINTEN", "VERWERKT"], \
+        f"folder {target_main_folder} is not a main folder or None"
 
     # find source directory
-    source_dir_global_path = job_name_to_global_path(job_name)
+    source_dir_global_path = job_name_to_global_path(job_name, source_main_folder)
 
-    # make target directory
-    target_dir_local_path = os.path.join(
-        target_main_folder,
-        get_new_job_folder_name(
-            job_name,
-            source_dir_global_path,
-            target_main_folder))
+    if (target_main_folder == 'AAN_HET_PRINTEN' and
+        does_job_exist_in_main_folder(job_name, 'AAN_HET_PRINTEN')):
+        target_dir_global_path = job_name_to_global_path(
+                job_name, search_in_main_folder='AAN_HET_PRINTEN')
+    else:
+        # make target directory
+        target_dir_global_path = os.path.join(
+            PRINT_DIR_HOME,
+            target_main_folder,
+            get_new_job_folder_name(
+                job_name,
+                source_dir_global_path,
+                target_main_folder))
 
-    target_dir_global_path = os.path.join(PRINT_DIR_HOME, target_dir_local_path)
-    assert target_dir_global_path != source_dir_global_path, \
-        'the source directory is equal to the target directory'
+        assert target_dir_global_path != source_dir_global_path, \
+            'the source directory is equal to the target directory'
+        os.mkdir(target_dir_global_path)
 
-    os.mkdir(target_dir_global_path)
-
+    # move items from source to target directory
     for item in os.listdir(source_dir_global_path):
         source_item = os.path.join(source_dir_global_path, item)
         target_item = os.path.join(target_dir_global_path, item)
@@ -135,4 +170,62 @@ def move_print_job(job_name: str, target_main_folder: str):
             # TODO: you will get problems moving because op files (especially .stl) which are still open
             shutil.move(source_item, target_item)
 
+    # todo: a problem is that a .exe file cannot simply remove the folder it resides in
+    # todo: to do such a thing, do the following:
+    # You can create exe that after start makes copy of
+    # itself into temp folder, then starts this copy and
+    # stops original process. Then the second process can
+    # delete whole folder. Then after some time OS should
+    # delete file left in temp folder on it's own.
+
     shutil.rmtree(source_dir_global_path)
+
+def move_print_job_partly(job_name: str, exclude_files: List):
+    """ partly move, partly copy print job from GESLICED to AAN_HET_PRINTEN folder """
+
+    # find source directory
+    source_dir_global_path = job_name_to_global_path(job_name, 'GESLICED')
+
+    if does_job_exist_in_main_folder(job_name, 'AAN_HET_PRINTEN'):
+        target_dir_global_path = job_name_to_global_path(
+            job_name, search_in_main_folder='AAN_HET_PRINTEN')
+    else:
+        date = job_folder_name_to_date(
+            job_name_to_job_folder_name(job_name))
+
+        printing_gcode_files = [file for file in os.listdir(source_dir_global_path)
+                                if (file.lower().endswith(".gcode") and
+                                    file not in exclude_files)]
+
+        max_print_time = gcode_files_to_max_print_time(printing_gcode_files)
+        new_job_folder_name = date + max_print_time + job_name
+
+        target_dir_global_path = os.path.join(
+            PRINT_DIR_HOME,
+            'AAN_HET_PRINTEN',
+            new_job_folder_name)
+        os.mkdir(target_dir_global_path)
+
+    # partly move some files to target
+    # move items from source to target directory
+    for item in os.listdir(source_dir_global_path):
+        if item.lower().endswith('.gcode'):
+            if item in exclude_files:
+                print(f'not moveing {item}')
+                # pass
+            else:
+                print(f'moveing {item}')
+                shutil.move(
+                    os.path.join(source_dir_global_path, item),
+                    os.path.join(target_dir_global_path, item))
+        else:
+            source_item = os.path.join(source_dir_global_path, item)
+            target_item = os.path.join(target_dir_global_path, item)
+
+            if os.path.isdir(source_item):
+                copy_directory_recursive(source_item, target_dir_global_path)
+            else:
+                # TODO: you will get problems moving because op files (especially .stl) which are still open
+                shutil.copy(source_item, target_item)
+
+        # update name of the source_dir_global_path

@@ -6,9 +6,10 @@ import os
 import re
 import email
 from email.header import decode_header
+from typing import Tuple
 
 from global_variables import (
-    IMPLEMENTATION_DIR_HOME,
+    FUNCTIONS_DIR_HOME,
     IMAP_SERVER,
     PRINT_DIR_HOME,
     EMAIL_PASSWORD,
@@ -19,9 +20,16 @@ from directory_functions import (
 )
 from executable_functions import python_to_exe
 from mail_functions import mail_to_name
+from talk_to_sa import yes_or_no
+
 
 def is_print_job_name_unique(job_name: str) -> bool:
     """ check if the print job name is unique, return boolean """
+
+    # TODO (AGAIN): job A_B is creatd, A_B_(1) is created,  A_B is removed. Using this function
+    # the job called A_B will return job A_B_(1), which IS A DIFFERENT JOB
+    # edit this function so that it raises a valueError('no job found')
+    # when A_B is searched but only A_B_(1) is present
 
     for folder_name in get_print_job_folder_names():
         if job_name in folder_name:
@@ -29,7 +37,8 @@ def is_print_job_name_unique(job_name: str) -> bool:
 
     return True
 
-def mail_to_print_job_name(msg: str):
+
+def mail_to_print_job_name(msg: [email.message.Message, str]) -> str:
     """ extract senders from mail and convert to a print job name """
 
     if isinstance(msg, email.message.Message):
@@ -65,7 +74,8 @@ def mail_to_print_job_name(msg: str):
 
     return unique_job_name
 
-def is_valid_print_job_request(msg):
+
+def is_valid_print_job_request(msg: email.message.Message) -> Tuple[bool, str]:
     """ check if the requirements are met for a valid print job """
 
     # Initialize a counter for attachments with .stl extension
@@ -82,21 +92,22 @@ def is_valid_print_job_request(msg):
                     stl_attachment_count += 1
 
     if stl_attachment_count == 0:
-        return False, "no .stl attachment found"
+        return False, 'no .stl attachment found'
 
     elif stl_attachment_count > 5 and stl_attachment_count <= 10:
-        print(f"warning! there are: {stl_attachment_count} .stl files in the mail")
+        print(f'warning! there are: {stl_attachment_count} .stl files in the mail')
 
     elif stl_attachment_count > 10:
-        answer = input(f'{stl_attachment_count} .stl files found do you want to create an print job (Y/n)?')
+        if yes_or_no(f'{stl_attachment_count} .stl files found do '
+                     f'you want to create an print job (Y/n)?'):
+            return True, f'you decided that: {stl_attachment_count} .stl is oke'
+        else:
+            return False, f'you decided that: {stl_attachment_count} .stl files are to much'
 
-        if answer in ["n", "N", "nee", "NEE"]:
-            return False, f"you decided that: {stl_attachment_count} .stl files are to much"
-
-    return True, " "
+    return True, ' '
 
 
-def create_print_job(msg, raw_email: bytes):
+def create_print_job(msg: email.message.Message, raw_email: bytes):
     """ create a 'print job' or folder in WACHTRIJ and put all corresponding files in the print job """
 
     job_name = mail_to_print_job_name(msg)
@@ -125,14 +136,13 @@ def create_print_job(msg, raw_email: bytes):
                 print("Saved attachment:", decoded_filename)
 
     # create afgekeurd.exe
-    python_path = os.path.join(IMPLEMENTATION_DIR_HOME, 'functions/afgekeurd.py')
-    python_to_exe(python_path, job_name)
+    python_to_exe(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), job_name)
 
     # create gesliced.exe
-    # TODO: create gesliced.exe
+    python_to_exe(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), job_name)
 
 
-def main():
+if __name__ == '__main__':
     """
     Loop over inbox, download all valid 3D print jobs to a unique folder in WACHTRIJ.
     """
@@ -151,23 +161,25 @@ def main():
 
     new_print_job = False
     if len(email_ids) == 0:
-
-        print("no unread mails found")
+        print('no unread mails found')
+    else:
+        print(f'processing {len(email_ids)} new mails')
 
     # Loop over email IDs and fetch emails
     for email_id in email_ids:
 
-        status, msg_data = mail.fetch(email_id, "(RFC822)")
+        status, msg_data = mail.fetch(email_id, '(RFC822)')
 
-        if status != "OK":
-            raise Exception(f"fetching mail with id: {email_id} did not return 'OK' status")
+        if status != 'OK':
+            raise Exception(f'fetching mail with id: {email_id} did not return "OK" status')
 
         raw_email = msg_data[0][1]
         msg = email.message_from_bytes(raw_email)
 
-        print(f"processing incoming mail from: {msg.get('From')}")
+        print(f'processing incoming mail from: {msg.get("From")}')
 
         (is_valid, invalid_reason) = is_valid_print_job_request(msg)
+
         if is_valid:
             new_print_job = True
             print_job_name = mail_to_print_job_name(msg)
@@ -176,17 +188,15 @@ def main():
             print(f'print job: {print_job_name} created\n')
 
         else:
-            print(f"mail from {msg.get('From')} is not a valid request because:\n {invalid_reason}, abort!\n")
+            print(f'mail from {msg.get("From")} is not a valid request because:\n {invalid_reason}, abort!\n')
 
     # Logout and close the connection
     mail.logout()
 
     if new_print_job:
         input('press ENTER to open WACHTRIJ directory')
-        os.startfile(PRINT_DIR_HOME + "/WACHTRIJ")
+        os.startfile(os.path.join(PRINT_DIR_HOME, 'WACHTRIJ'))
     else:
         input('press ENTER to continue...')
 
-if __name__ == '__main__':
-    main()
 
