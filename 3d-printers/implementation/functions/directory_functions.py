@@ -11,6 +11,7 @@ from conversion_functions import (
     job_folder_name_to_date,
     gcode_files_to_max_print_time)
 
+
 def get_print_job_global_paths(search_in_main_folder=None) -> List[str]:
     """ return global path for all print jobs """
 
@@ -75,6 +76,7 @@ def job_name_to_job_folder_name(job_name: str, search_in_main_folder=None) -> st
 
     raise ValueError(f'could not find job folder name for job name: {job_name}')
 
+
 def does_job_exist_in_main_folder(job_name: str, main_folder: str) -> bool:
     """ check if a job exists in a main folder """
     for print_job_folder_name in get_print_job_folder_names(main_folder):
@@ -96,10 +98,8 @@ def get_new_job_folder_name(job_name: str, source_dir_global_path: str, target_m
 
         gcode_files = [file for file in os.listdir(source_dir_global_path) if file.lower().endswith(".gcode")]
 
-        if len(gcode_files) > 0:
-            print(f'no .gcode found in print job: {job_name}, slice .stl first')
-            input('press enter to continue...')
-            sys.exit(0)
+        assert len(gcode_files) > 0, \
+            f'no .gcode found in print job: {job_name}, slice .stl first'
 
         max_print_time = gcode_files_to_max_print_time(gcode_files)
 
@@ -119,14 +119,13 @@ def move_directory_recursive(source_dir_global: str, target_dir_global: str):
     except Exception as e:
         print(f"An error occurred: {e}")
 
+
 def copy_directory_recursive(source_dir_global: str, target_dir_global: str):
     """ copy directory and subdirectories recursively """
     try:
         shutil.copy(source_dir_global, target_dir_global)
     except Exception as e:
         print(f"An error occurred: {e}")
-
-
 
 
 def move_print_job(job_name: str, target_main_folder: str, source_main_folder=None):
@@ -142,9 +141,9 @@ def move_print_job(job_name: str, target_main_folder: str, source_main_folder=No
     source_dir_global_path = job_name_to_global_path(job_name, source_main_folder)
 
     if (target_main_folder == 'AAN_HET_PRINTEN' and
-        does_job_exist_in_main_folder(job_name, 'AAN_HET_PRINTEN')):
+            does_job_exist_in_main_folder(job_name, 'AAN_HET_PRINTEN')):
         target_dir_global_path = job_name_to_global_path(
-                job_name, search_in_main_folder='AAN_HET_PRINTEN')
+            job_name, search_in_main_folder='AAN_HET_PRINTEN')
     else:
         # make target directory
         target_dir_global_path = os.path.join(
@@ -179,6 +178,7 @@ def move_print_job(job_name: str, target_main_folder: str, source_main_folder=No
     # delete file left in temp folder on it's own.
 
     shutil.rmtree(source_dir_global_path)
+
 
 def move_print_job_partly(job_name: str, exclude_files: List):
     """ partly move, partly copy print job from GESLICED to AAN_HET_PRINTEN folder """

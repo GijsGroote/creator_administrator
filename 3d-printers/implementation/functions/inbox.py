@@ -1,23 +1,23 @@
 # ! /usr/bin/env python3
 
-import imaplib
 import datetime
 import os
 import re
 import email
 from email.header import decode_header
 from typing import Tuple
+import imaplib
 
 from global_variables import (
     FUNCTIONS_DIR_HOME,
-    IMAP_SERVER,
     PRINT_DIR_HOME,
+    IMAP_SERVER,
     EMAIL_PASSWORD,
     EMAIL_ADDRESS)
 
 from directory_functions import (
-    get_print_job_folder_names,
-)
+    get_print_job_folder_names)
+
 from executable_functions import python_to_exe
 from mail_functions import mail_to_name
 from talk_to_sa import yes_or_no
@@ -161,6 +161,7 @@ if __name__ == '__main__':
 
     new_print_job = False
     if len(email_ids) == 0:
+        # todo: this line below can be printed if there are email found
         print('no unread mails found')
     else:
         print(f'processing {len(email_ids)} new mails')

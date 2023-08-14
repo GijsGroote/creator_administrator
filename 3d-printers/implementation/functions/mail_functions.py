@@ -7,6 +7,7 @@ import re
 from global_variables import OUTLOOK_PATH
 
 
+
 def send_response_mail(incoming_mail_path, response_text):
     """ send a response to incoming mail """
 

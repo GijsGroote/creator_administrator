@@ -1,11 +1,8 @@
 #! /usr/bin/env python3
 
-import glob
 import os
 import sys
-from pathlib import Path
 
-from mail_functions import send_response_mail
 from directory_functions import (
     job_name_to_global_path,
     move_print_job,
@@ -19,7 +16,6 @@ if __name__ == '__main__':
     """ move print job from current folder to PRINTER_AANGEZET """
 
     job_name = read_job_name_file()
-    job_name = "Gijs_Groote"
     job_global_path = job_name_to_global_path(job_name, search_in_main_folder="GESLICED")
 
     # check if there multiple .gcode files
@@ -39,10 +35,10 @@ if __name__ == '__main__':
 
         print(f'warning! {len(gcode_files)} .gcode files detected')
         if yes_or_no('is the entire print job now printing/printed (Y/n)?'):
-            move_print_job(job_name, "AAN_HET_PRINTEN")
+            move_print_job(job_name, 'AAN_HET_PRINTEN', source_main_folder='GESLICED')
         else:
             gcode_files_to_print_later = choose_option(
-                "please select which .gcode files should be printed later", gcode_files)
+                'please select which .gcode files should be printed later', gcode_files)
 
             # move everything except gcode_files_to_print_later
             move_print_job_partly(job_name, gcode_files_to_print_later)
@@ -50,6 +46,7 @@ if __name__ == '__main__':
             # update both print jobs folder names
             print(gcode_files_to_print_later)
 
-            # split the print job for the moment
-            input("press any key to continue")
+            input('press any key to continue')
+
+            # todo: create print_klaar.exe
 

@@ -1,8 +1,6 @@
 #! /usr/bin/env python3
 
 import glob
-import os
-from pathlib import Path
 
 from mail_functions import send_response_mail
 from directory_functions import job_name_to_global_path, move_print_job
@@ -27,9 +25,6 @@ if __name__ == '__main__':
         send_response_mail(eml_file_paths[0], afgekeurd_reason)
     else:
         print(f'folder: {job_global_path} does not contain any .eml files, no response mail can be send')
-
-
-    print(f'actually first close the file folder toward path {job_global_path}')
 
     input("press any key to continue")
     move_print_job(job_name, "AFGEKEURD")
