@@ -3,8 +3,9 @@
 import os
 import sys
 
-from directory_functions import job_name_to_global_path, move_print_job
-from executable_functions import read_job_name_file
+from directory_functions import job_name_to_global_path, copy_print_job
+from executable_functions import read_job_name_file, unlock_and_delete_folder
+
 
 
 if __name__ == '__main__':
@@ -23,6 +24,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     input("press any key to continue")
-    move_print_job(job_name, 'GESLICED', source_main_folder='WACHTRIJ')
+    copy_print_job(job_name, 'GESLICED', source_main_folder='WACHTRIJ')
+    unlock_and_delete_folder(job_global_path)
 
     # todo: make the printer_aangezet.exe

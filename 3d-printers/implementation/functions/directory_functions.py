@@ -128,7 +128,7 @@ def copy_directory_recursive(source_dir_global: str, target_dir_global: str):
         print(f"An error occurred: {e}")
 
 
-def move_print_job(job_name: str, target_main_folder: str, source_main_folder=None):
+def copy_print_job(job_name: str, target_main_folder: str, source_main_folder=None):
     """ move print job to target_main_folder """
     # TODO: this function is to long and does to much, split this function into multiple
 
@@ -164,20 +164,11 @@ def move_print_job(job_name: str, target_main_folder: str, source_main_folder=No
         target_item = os.path.join(target_dir_global_path, item)
 
         if os.path.isdir(source_item):
-            move_directory_recursive(source_item, target_dir_global_path)
+            copy_directory_recursive(source_item, target_dir_global_path)
         else:
             # TODO: you will get problems moving because op files (especially .stl) which are still open
-            shutil.move(source_item, target_item)
+            shutil.copy(source_item, target_item)
 
-    # todo: a problem is that a .exe file cannot simply remove the folder it resides in
-    # todo: to do such a thing, do the following:
-    # You can create exe that after start makes copy of
-    # itself into temp folder, then starts this copy and
-    # stops original process. Then the second process can
-    # delete whole folder. Then after some time OS should
-    # delete file left in temp folder on it's own.
-
-    shutil.rmtree(source_dir_global_path)
 
 
 def move_print_job_partly(job_name: str, exclude_files: List):

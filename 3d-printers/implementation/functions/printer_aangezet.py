@@ -5,11 +5,11 @@ import sys
 
 from directory_functions import (
     job_name_to_global_path,
-    move_print_job,
+    copy_print_job,
     move_print_job_partly)
 
 from talk_to_sa import choose_option, yes_or_no
-from executable_functions import read_job_name_file
+from executable_functions import read_job_name_file, unlock_and_delete_folder
 
 
 if __name__ == '__main__':
@@ -27,26 +27,29 @@ if __name__ == '__main__':
         print('warning! no .gcode files detected, there should .gcode in this folder')
         input('press any key to continue...')
         sys.exit(0)
+
     elif len(gcode_files) == 1:
-        move_print_job(job_name, 'AAN_HET_PRINTEN', source_main_folder='GESLICED')
+        copy_print_job(job_name, 'AAN_HET_PRINTEN', source_main_folder='GESLICED')
+        # todo: create print_klaar.exe
+        unlock_and_delete_folder(job_global_path)
     elif len(gcode_files) > 1:
-        # TODO: the following is quite annoying if there
-        # TODO: are more than 5 .gcode files in a single print job
+
 
         print(f'warning! {len(gcode_files)} .gcode files detected')
         if yes_or_no('is the entire print job now printing/printed (Y/n)?'):
-            move_print_job(job_name, 'AAN_HET_PRINTEN', source_main_folder='GESLICED')
+
+            copy_print_job(job_name, 'AAN_HET_PRINTEN', source_main_folder='GESLICED')
+            # todo: create print_klaar.exe
+            unlock_and_delete_folder(job_global_path)
         else:
             gcode_files_to_print_later = choose_option(
                 'please select which .gcode files should be printed later', gcode_files)
 
             # move everything except gcode_files_to_print_later
             move_print_job_partly(job_name, gcode_files_to_print_later)
-
-            # update both print jobs folder names
-            print(gcode_files_to_print_later)
-
-            input('press any key to continue')
-
             # todo: create print_klaar.exe
+
+    input('press any key to continue...')
+
+
 

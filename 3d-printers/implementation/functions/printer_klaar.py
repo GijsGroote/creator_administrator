@@ -3,14 +3,18 @@
 import glob
 import sys
 import os
+import subprocess
 
+from global_variables import FUNCTIONS_DIR_HOME
 from mail_functions import send_response_mail
 from directory_functions import (
     job_name_to_global_path,
-    move_print_job,
+    copy_print_job,
     does_job_exist_in_main_folder,
     job_name_to_job_folder_name)
-from executable_functions import read_job_name_file
+from executable_functions import (
+    read_job_name_file,
+    unlock_and_delete_folder)
 from talk_to_sa import yes_or_no
 
 
@@ -18,7 +22,6 @@ if __name__ == '__main__':
     """ move print to VERWERKT and send response mail """
 
     job_name = read_job_name_file()
-    job_name = 'Gijs_Groote'
     job_global_path = job_name_to_global_path(
         job_name, search_in_main_folder='AAN_HET_PRINTEN')
 
@@ -46,5 +49,10 @@ if __name__ == '__main__':
     else:
         print(f'folder: {job_global_path} does not contain any .eml files, no response mail can be send')
 
-    input("press any key to continue")
-    move_print_job(job_name, "VERWERKT", source_main_folder='AAN_HET_PRINTEN')
+
+
+
+    copy_print_job(job_name, "VERWERKT", source_main_folder='AAN_HET_PRINTEN')
+    unlock_and_delete_folder(job_global_path)
+
+

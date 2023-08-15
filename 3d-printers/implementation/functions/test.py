@@ -22,9 +22,9 @@ def main(options_dict):
             print("Invalid option. Please choose from available options or 'q' to quit.")
 
 if __name__ == "__main__":
-    choose_option()
-    available_options = ['a', 'b', 'c', 'ahahh']  # Example options list
-    main(available_options)
-    # python_path = os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py')
-    # python_to_exe(python_path, 'Gijs_Groote')
+    # choose_option()
+    # available_options = ['a', 'b', 'c', 'ahahh']  # Example options list
+    # main(available_options)
+    python_path = os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py')
+    python_to_exe(python_path, 'Gijs_Groote')
 
