@@ -3,9 +3,8 @@
 import glob
 import sys
 import os
-import subprocess
 
-from global_variables import FUNCTIONS_DIR_HOME
+
 from mail_functions import send_response_mail
 from directory_functions import (
     job_name_to_global_path,
@@ -49,9 +48,7 @@ if __name__ == '__main__':
     else:
         print(f'folder: {job_global_path} does not contain any .eml files, no response mail can be send')
 
-
-
-
+    input('press enter if the print is ready mail has been sent')
     copy_print_job(job_name, "VERWERKT", source_main_folder='AAN_HET_PRINTEN')
     unlock_and_delete_folder(job_global_path)
 

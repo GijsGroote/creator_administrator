@@ -9,7 +9,11 @@ from directory_functions import (
     move_print_job_partly)
 
 from talk_to_sa import choose_option, yes_or_no
-from executable_functions import read_job_name_file, unlock_and_delete_folder
+from executable_functions import (
+    read_job_name_file,
+    unlock_and_delete_folder,
+    python_to_batch)
+from global_variables import FUNCTIONS_DIR_HOME
 
 
 if __name__ == '__main__':
@@ -30,16 +34,17 @@ if __name__ == '__main__':
 
     elif len(gcode_files) == 1:
         copy_print_job(job_name, 'AAN_HET_PRINTEN', source_main_folder='GESLICED')
-        # todo: create print_klaar.exe
+        # create the printer_klaar.exe
+        python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name)
         unlock_and_delete_folder(job_global_path)
     elif len(gcode_files) > 1:
-
 
         print(f'warning! {len(gcode_files)} .gcode files detected')
         if yes_or_no('is the entire print job now printing/printed (Y/n)?'):
 
             copy_print_job(job_name, 'AAN_HET_PRINTEN', source_main_folder='GESLICED')
-            # todo: create print_klaar.exe
+            # create print_klaar.exe
+            python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name)
             unlock_and_delete_folder(job_global_path)
         else:
             gcode_files_to_print_later = choose_option(
@@ -47,9 +52,11 @@ if __name__ == '__main__':
 
             # move everything except gcode_files_to_print_later
             move_print_job_partly(job_name, gcode_files_to_print_later)
-            # todo: create print_klaar.exe
+            # TODO: check if the printer_klaar.exe goes to the ./AAN_HET_PRINTEN/job_folder_name
+            # TODO: and not to ./GESLICED/job_folder_name
+            python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name)
 
-    input('press any key to continue...')
+
 
 
 

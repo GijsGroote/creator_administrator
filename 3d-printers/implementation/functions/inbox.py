@@ -18,7 +18,7 @@ from global_variables import (
 from directory_functions import (
     get_print_job_folder_names)
 
-from executable_functions import python_to_exe
+from executable_functions import python_to_batch
 from mail_functions import mail_to_name
 from talk_to_sa import yes_or_no
 
@@ -136,10 +136,10 @@ def create_print_job(msg: email.message.Message, raw_email: bytes):
                 print("Saved attachment:", decoded_filename)
 
     # create afgekeurd.exe
-    python_to_exe(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), job_name)
+    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), job_name)
 
     # create gesliced.exe
-    python_to_exe(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), job_name)
+    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), job_name)
 
 
 if __name__ == '__main__':
