@@ -14,6 +14,7 @@ FIGURES_DIR_HOME = os.path.join(
 PRINT_DIR_HOME = r'C:\Users\gijsg\Desktop\3d-print-test-env'
 OUTLOOK_PATH = r'C:\Program Files\Microsoft Office\root\Office16\OUTLOOK.EXE'
 LOCKHUNTER_PATH = r'C:\Program Files\LockHunter\LockHunter.exe'
+PYTHON_DIR_HOME = r'C:\Users\gijsg\AppData\Local\Programs\Python\Python311\python.exe'
 
 # email login info
 IMAP_SERVER = 'outlook.office365.com'
