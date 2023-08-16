@@ -7,6 +7,12 @@ import email
 from email.header import decode_header
 from typing import Tuple
 import imaplib
+import win32com.client
+
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.application import MIMEApplication
+import tempfile
 
 from global_variables import (
     FUNCTIONS_DIR_HOME,
@@ -142,59 +148,121 @@ def create_print_job(msg: email.message.Message, raw_email: bytes):
     python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), job_name)
 
 
+def convert_win32_msg_to_email_msg(win32_msg):
+    email_msg = MIMEMultipart()
+    email_msg['From'] = win32_msg.SenderName
+    email_msg['To'] = win32_msg.To
+    email_msg['Subject'] = win32_msg.Subject
+    # email_msg['Date'] = win32_msg.SentOn
+    
+    email_body = MIMEText(message.Body, _charset="utf-8")
+    email_msg.attach(email_body)
+    for attachment in message.Attachments:
+        # Save attachment to a temporary file
+        temp_dir = tempfile.gettempdir()
+        temp_filename = os.path.join(temp_dir, attachment.FileName)
+        attachment.SaveAsFile(temp_filename)
+
+        # Read attachment content and create MIMEApplication object
+        with open(temp_filename, "rb") as attachment_file:
+            attachment_content = attachment_file.read()
+
+        mime_attachment = MIMEApplication(attachment_content)
+        mime_attachment.add_header('content-disposition', 'attachment', filename=attachment.FileName)
+
+        # Attach the attachment to the email
+        email_msg.attach(mime_attachment)
+
+        # Remove the temporary file
+        os.remove(temp_filename)
+    return email_msg
+
+
+
 if __name__ == '__main__':
     """
     Loop over inbox, download all valid 3D print jobs to a unique folder in WACHTRIJ.
     """
 
-    # Connect to the IMAP server
-    mail = imaplib.IMAP4_SSL(IMAP_SERVER)
-    mail.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-    mail.select("inbox")
+    # open outlook
+    outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
+    inbox = outlook.GetDefaultFolder(6)
 
-    # Loop over all new mails
-    status, email_ids = mail.search(None, "UNSEEN")
-    if status != "OK":
-        raise Exception("Searching for unseen mails did not return 'OK' status")
-
-    email_ids = email_ids[0].split()
-
+    # read unread mails and convert to the email format and mark them as read
+    msgs = []
     new_print_job = False
-    if len(email_ids) == 0:
-        # todo: this line below can be printed if there are email found
+    for message in inbox.Items:
+        if message.UnRead:
+            converted_email = convert_win32_msg_to_email_msg(message)
+            msgs.append(converted_email)
+            message.UnRead = False
+            message.Save()
+
+    # print how many mails are processed
+    if len(msgs) == 0:
         print('no unread mails found')
     else:
-        print(f'processing {len(email_ids)} new mails')
+        print(f'processing {len(msgs)} new mails')
 
-    # Loop over email IDs and fetch emails
-    for email_id in email_ids:
-
-        status, msg_data = mail.fetch(email_id, '(RFC822)')
-
-        if status != 'OK':
-            raise Exception(f'fetching mail with id: {email_id} did not return "OK" status')
-
-        raw_email = msg_data[0][1]
-        msg = email.message_from_bytes(raw_email)
-
+    # loop over all mails, check if they are valid and create print jobs
+    for msg in msgs:
         print(f'processing incoming mail from: {msg.get("From")}')
 
         (is_valid, invalid_reason) = is_valid_print_job_request(msg)
-
+        
         if is_valid:
             new_print_job = True
             print_job_name = mail_to_print_job_name(msg)
             print(f'mail from: {msg.get("From")} is valid request, create print job: {print_job_name}')
-            create_print_job(msg, raw_email)
+            create_print_job(msg, msg.as_bytes())
             print(f'print job: {print_job_name} created\n')
 
         else:
             print(f'mail from {msg.get("From")} is not a valid request because:\n {invalid_reason}, abort!\n')
-
-    # Logout and close the connection
-    mail.logout()
-
+        
+    # open the 'WACHTRIJ' folder if new print jobs are created
     if new_print_job:
         os.startfile(os.path.join(PRINT_DIR_HOME, 'WACHTRIJ'))
 
 
+# OLD CODE WITH IMAP
+    # # Connect to the IMAP server
+    # mail = imaplib.IMAP4_SSL(IMAP_SERVER)
+    # mail.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+    # mail.select("inbox")
+
+    # # Loop over all new mails
+    # status, email_ids = mail.search(None, "UNSEEN")
+    # if status != "OK":
+    #     raise Exception("Searching for unseen mails did not return 'OK' status")
+
+    # email_ids = email_ids[0].split()
+        
+    # new_print_job = False
+    # if len(email_ids) == 0:
+    #     # todo: this line below can be printed if there are email found
+    #     print('no unread mails found')
+    # else:
+    #     print(f'processing {len(email_ids)} new mails')
+
+    # # Loop over email IDs and fetch emails
+    # for email_id in email_ids:
+
+    #     status, msg_data = mail.fetch(email_id, '(RFC822)')
+
+    #     if status != 'OK':
+    #         raise Exception(f'fetching mail with id: {email_id} did not return "OK" status')
+
+    #     raw_email = msg_data[0][1]
+    #     msg = email.message_from_bytes(raw_email)
+
+    #     print(f'processing incoming mail from: {msg.get("From")}')
+
+    #     (is_valid, invalid_reason) = is_valid_print_job_request(msg)
+
+    #     if is_valid:
+    #         new_print_job = True
+    #         print_job_name = mail_to_print_job_name(msg)
+    #         print(f'mail from: {msg.get("From")} is valid request, create print job: {print_job_name}')
+    #         create_print_job(msg, raw_email)
+    #         print(f'print job: {print_job_name} created\n')

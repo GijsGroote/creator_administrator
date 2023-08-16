@@ -5,6 +5,7 @@
 # ignore pycharm env and settings
 venv/
 .idea
+*.pyc
 
 
 # ignore Latex files
