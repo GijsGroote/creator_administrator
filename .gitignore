@@ -1,6 +1,11 @@
+# ignore python temp files
+__pycache__
+*.pyc
+
 # ignore pycharm env and settings
 venv/
 .idea
+
 
 # ignore Latex files
 *.acn
