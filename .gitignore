@@ -1,5 +1,6 @@
 # ignore python temp files
 **/__pycache__/
+__pycache__/
 *.pyc
 
 # ignore pycharm env and settings

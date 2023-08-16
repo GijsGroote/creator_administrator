@@ -5,8 +5,8 @@ import os
 #### EDIT/CHECK THESE VARIABLES ####
 ####################################
 # absolute path to the repository
-REPO_DIR_HOME = r'C:\Users\IWS\Documents\laserhok-workflow'
-PRINT_DIR_HOME = r'C:\Users\IWS\Desktop\test'
+REPO_DIR_HOME = r'C:\Users\IWS\laserhok-workflow'
+PRINT_DIR_HOME = r'C:\Users\IWS\Desktop\3D PRINT HOME'
 OUTLOOK_PATH = r'C:\Program Files\Microsoft Office\root\Office16\OUTLOOK.EXE'
 LOCKHUNTER_PATH = r'C:\Program Files\LockHunter\LockHunter.exe'
 PYTHON_DIR_HOME = r'C:\Users\<user>\AppData\Local\Programs\Python\Python311\python.exe'
