@@ -195,9 +195,6 @@ if __name__ == '__main__':
     mail.logout()
 
     if new_print_job:
-        input('press ENTER to open WACHTRIJ directory')
         os.startfile(os.path.join(PRINT_DIR_HOME, 'WACHTRIJ'))
-    else:
-        input('press ENTER to continue...')
 
 
