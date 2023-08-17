@@ -5,7 +5,6 @@ import sys
 
 from directory_functions import job_name_to_global_path, copy_print_job
 from executable_functions import (
-    read_job_name_file,
     unlock_and_delete_folder,
     python_to_batch)
 from global_variables import FUNCTIONS_DIR_HOME

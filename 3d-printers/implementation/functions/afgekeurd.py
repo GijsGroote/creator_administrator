@@ -8,7 +8,6 @@ from directory_functions import (
     job_name_to_global_path,
     copy_print_job)
 from executable_functions import (
-    read_job_name_file,
     unlock_and_delete_folder)
 
 

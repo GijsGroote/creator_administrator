@@ -10,7 +10,6 @@ from directory_functions import (
 
 from talk_to_sa import choose_option, yes_or_no
 from executable_functions import (
-    read_job_name_file,
     unlock_and_delete_folder,
     python_to_batch)
 from global_variables import FUNCTIONS_DIR_HOME
@@ -19,7 +18,7 @@ from global_variables import FUNCTIONS_DIR_HOME
 if __name__ == '__main__':
     """ move print job from current folder to PRINTER_AANGEZET """
 
-    job_name = read_job_name_file()
+    job_name = sys.argv[1]
     job_global_path = job_name_to_global_path(job_name, search_in_main_folder="GESLICED")
 
     # check if there multiple .gcode files

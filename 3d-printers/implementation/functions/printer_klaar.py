@@ -12,7 +12,6 @@ from directory_functions import (
     does_job_exist_in_main_folder,
     job_name_to_job_folder_name)
 from executable_functions import (
-    read_job_name_file,
     unlock_and_delete_folder)
 from talk_to_sa import yes_or_no
 
@@ -20,7 +19,7 @@ from talk_to_sa import yes_or_no
 if __name__ == '__main__':
     """ move print to VERWERKT and send response mail """
 
-    job_name = read_job_name_file()
+    job_name = sys.argv[1]
     job_global_path = job_name_to_global_path(
         job_name, search_in_main_folder='AAN_HET_PRINTEN')
 

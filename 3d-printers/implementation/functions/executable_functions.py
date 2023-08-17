@@ -9,15 +9,6 @@ from global_variables import (
     PYTHON_PATH)
 from directory_functions import job_name_to_global_path
 
-def read_job_name_file() -> str:
-    """ read and return the content from job_name.txt """
-    # Check if MEIPASS attribute is available in sys else return current file path
-    bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
-
-    with open(os.path.abspath(os.path.join(
-                bundle_dir, 'job_name.txt')), "r+") as job_name_file:
-        return job_name_file.read()
-
 def python_to_batch(python_path: str, job_name: str):
     """ convert a python file to an batch file. """
 
