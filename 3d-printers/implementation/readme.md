@@ -17,7 +17,13 @@ Before you begin, make sure you have the following dependencies installed:
    git clone git@github.com:GijsGroote/laserhok-workflow.git
    ```
 
-2. **Create the file C:\Users\<your_user_name>\.ssh\mail_credentials.json**
+2. - **_Either do_: Create mail_credentials.json**
+
+    ```
+   C:\Users\<your_user_name>\.ssh\mail_credentials.json
+   ```
+
+   that contains:
 
     ```json
     {
@@ -25,7 +31,10 @@ Before you begin, make sure you have the following dependencies installed:
         "password": "<MAIL_PASSWORD>"
     }
     ```
+   replace <MAIL_ADDRESS> and <MAIL_PASSWORD> with your mail and password.
 
+   - **_Or do_: Login on outlook on your local machine**  
+   
 3. **Create the folder <PRINT_DIR_HOME> on a desired location (~/Desktop is recommended), that folder should contain the following 5 subfolders**
 
     ```text
@@ -37,13 +46,20 @@ Before you begin, make sure you have the following dependencies installed:
     └───WACHTRIJ
     ```
    
-3. **Find and update global_variables.py file**
+   you can give <PRINT_DIR_HOME> any name which pleases you.
+   
+4. **Update some variables in 3d-printers/implementation/functions/global_variables.py**  
+   In global_variables.py it is indicated which variables to edit.
 
-4. **make the inbox.bat:**
+5. **make inbox.bat:**
 
    ```bash
-   python3 <path_to_repository>/3d-printers/implementation/functions/create_inbox.py
+   python3 <REPO_DIR_HOME>/3d-printers/implementation/functions/create_inbox.py
    ```
+   inbox.bat will be placed in the parent directory of <PRINT_DIR_HOME>
+   
+6. **Dubble click on inbox.bat to start.**  
+(tip: file 3d-printers/documentation/handleiding/handleiding.pdf might help)
 
 
     

@@ -1,8 +1,17 @@
+<<<<<<< HEAD
 
+=======
+# ignore python temp files
+**/__pycache__/
+__pycache__/
+*.pyc
+>>>>>>> 0b94c85c8f2c489444ee63d9d8e171fcf5cf85c5
 
 # ignore pycharm env and settings
 venv/
 .idea
+*.pyc
+
 
 # ignore Latex files
 *.acn
