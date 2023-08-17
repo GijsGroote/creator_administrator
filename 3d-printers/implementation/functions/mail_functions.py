@@ -40,13 +40,14 @@ def mail_to_name(mail_name: str):
 
     matches = re.match(r"(.*?)\s*<(.*)>", mail_name)
 
-
     if matches:
         if len(matches.group(1)) > 0:
             name = matches.group(1)
         elif len(matches.group(2)):
             name = matches.group(2).split('@')[0]
     else:
-        name = mail_name
-    
+        if '@' in mail_name:
+            name = mail_name.split('@')[0]
+        else:
+            name = mail_name
     return name
