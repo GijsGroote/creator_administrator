@@ -38,6 +38,8 @@ def mail_to_name(mail_name: str):
     """ convert mail in form first_name lastname <mail@adres.com> to a more friendly name """
 
     matches = re.match(r"(.*?)\s*<(.*)>", mail_name)
+    
+    print(matches)
 
 
     if matches:
@@ -46,6 +48,8 @@ def mail_to_name(mail_name: str):
         elif len(matches.group(2)):
             name = matches.group(2).split('@')[0]
     else:
-        name = mail_name
-    
+        if '@' in mail_name:
+            name = mail_name.split('@')[0]
+        else:
+            name = mail_name
     return name

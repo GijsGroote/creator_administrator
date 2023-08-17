@@ -47,6 +47,7 @@ def is_print_job_name_unique(job_name: str) -> bool:
 def mail_to_print_job_name(msg: [email.message.Message, str]) -> str:
     """ extract senders from mail and convert to a print job name """
 
+    print(type(msg))
     if isinstance(msg, email.message.Message):
         from_field = msg.get("From")
         # Decode the "From" field
@@ -55,13 +56,16 @@ def mail_to_print_job_name(msg: [email.message.Message, str]) -> str:
         # If the sender's name is bytes, decode it using the charset
         if isinstance(decoded_sender, bytes):
             decoded_sender = decoded_sender.decode(charset)
-
+            
+    elif isinstance(msg, email.mime.multipart.MIMEMultipart):
+        decoded_sender = msg.get("From")
     elif isinstance(msg, str):
         decoded_sender = msg
     else:
         raise ValueError(f"could not convert {msg} to a job name")
 
     job_name = re.sub(r'[^\w\s]', '', mail_to_name(decoded_sender)).replace(" ", "_")
+    print(job_name)
 
     # check if print job name is unique
     unique_job_name = job_name
@@ -150,7 +154,7 @@ def create_print_job(msg: email.message.Message, raw_email: bytes):
 
 def convert_win32_msg_to_email_msg(win32_msg):
     email_msg = MIMEMultipart()
-    email_msg['From'] = win32_msg.SenderName
+    email_msg['From'] = win32_msg.SenderEmailAddress
     email_msg['To'] = win32_msg.To
     email_msg['Subject'] = win32_msg.Subject
     # email_msg['Date'] = win32_msg.SentOn
@@ -223,46 +227,3 @@ if __name__ == '__main__':
     # open the 'WACHTRIJ' folder if new print jobs are created
     if new_print_job:
         os.startfile(os.path.join(PRINT_DIR_HOME, 'WACHTRIJ'))
-
-
-# OLD CODE WITH IMAP
-    # # Connect to the IMAP server
-    # mail = imaplib.IMAP4_SSL(IMAP_SERVER)
-    # mail.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-    # mail.select("inbox")
-
-    # # Loop over all new mails
-    # status, email_ids = mail.search(None, "UNSEEN")
-    # if status != "OK":
-    #     raise Exception("Searching for unseen mails did not return 'OK' status")
-
-    # email_ids = email_ids[0].split()
-        
-    # new_print_job = False
-    # if len(email_ids) == 0:
-    #     # todo: this line below can be printed if there are email found
-    #     print('no unread mails found')
-    # else:
-    #     print(f'processing {len(email_ids)} new mails')
-
-    # # Loop over email IDs and fetch emails
-    # for email_id in email_ids:
-
-    #     status, msg_data = mail.fetch(email_id, '(RFC822)')
-
-    #     if status != 'OK':
-    #         raise Exception(f'fetching mail with id: {email_id} did not return "OK" status')
-
-    #     raw_email = msg_data[0][1]
-    #     msg = email.message_from_bytes(raw_email)
-
-    #     print(f'processing incoming mail from: {msg.get("From")}')
-
-    #     (is_valid, invalid_reason) = is_valid_print_job_request(msg)
-
-    #     if is_valid:
-    #         new_print_job = True
-    #         print_job_name = mail_to_print_job_name(msg)
-    #         print(f'mail from: {msg.get("From")} is valid request, create print job: {print_job_name}')
-    #         create_print_job(msg, raw_email)
-    #         print(f'print job: {print_job_name} created\n')
