@@ -5,9 +5,8 @@ import sys
 import subprocess
 
 from global_variables import (
-    FIGURES_DIR_HOME,
     LOCKHUNTER_PATH,
-    PYTHON_DIR_HOME)
+    PYTHON_PATH)
 from directory_functions import job_name_to_global_path
 
 def read_job_name_file() -> str:
@@ -31,7 +30,7 @@ def python_to_batch(python_path: str, job_name: str):
     myBat = open(os.path.join(job_global_path, f'{function_name}.bat'), 'w+')
     myBat.write(rf"""
 @echo off
-"{PYTHON_DIR_HOME}" "{python_path}" "{job_name}"
+"{PYTHON_PATH}" "{python_path}" "{job_name}"
 pause
 """)
     myBat.close()

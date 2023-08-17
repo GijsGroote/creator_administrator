@@ -4,7 +4,7 @@ import os
 
 from global_variables import (
     PRINT_DIR_HOME,
-    PYTHON_DIR_HOME,
+    PYTHON_PATH,
     FUNCTIONS_DIR_HOME)
 
 
@@ -14,7 +14,7 @@ if __name__ == "__main__":
     myBat = open(os.path.join(PRINT_DIR_HOME, '../', 'inbox.bat'), 'w+')
     myBat.write(rf"""
     @echo off
-    "{PYTHON_DIR_HOME}" "{python_path}"
+    "{PYTHON_PATH}" "{python_path}"
     pause
     """)
     myBat.close()
