@@ -44,6 +44,7 @@ def is_print_job_name_unique(job_name: str) -> bool:
 def mail_to_print_job_name(msg: [email.message.Message, str]) -> str:
     """ extract senders from mail and convert to a print job name """
 
+    print(type(msg))
     if isinstance(msg, email.message.Message):
         from_field = msg.get("From")
         # Decode the "From" field
@@ -52,13 +53,16 @@ def mail_to_print_job_name(msg: [email.message.Message, str]) -> str:
         # If the sender's name is bytes, decode it using the charset
         if isinstance(decoded_sender, bytes):
             decoded_sender = decoded_sender.decode(charset)
-
+            
+    elif isinstance(msg, email.mime.multipart.MIMEMultipart):
+        decoded_sender = msg.get("From")
     elif isinstance(msg, str):
         decoded_sender = msg
     else:
         raise ValueError(f"could not convert {msg} to a job name")
 
     job_name = re.sub(r'[^\w\s]', '', mail_to_name(decoded_sender)).replace(" ", "_")
+    print(job_name)
 
     # check if print job name is unique
     unique_job_name = job_name
@@ -147,7 +151,7 @@ def create_print_job(msg: email.message.Message, raw_email: bytes):
 
 def convert_win32_msg_to_email_msg(win32_msg):
     email_msg = MIMEMultipart()
-    email_msg['From'] = win32_msg.SenderName
+    email_msg['From'] = win32_msg.SenderEmailAddress
     email_msg['To'] = win32_msg.To
     email_msg['Subject'] = win32_msg.Subject
     # email_msg['Date'] = win32_msg.SentOn
