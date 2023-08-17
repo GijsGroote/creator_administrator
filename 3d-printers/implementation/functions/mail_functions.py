@@ -32,6 +32,7 @@ The IWS
 
     command = ' '.join([OUTLOOK_PATH, compose, recipients])
     process = subprocess.Popen(command, shell=False, stdout=subprocess.PIPE)
+    process.wait()
 
 
 def mail_to_name(mail_name: str):

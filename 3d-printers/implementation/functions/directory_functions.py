@@ -220,3 +220,7 @@ def move_print_job_partly(job_name: str, exclude_files: List):
                 shutil.copy(source_item, target_item)
 
         # update name of the source_dir_global_path
+
+def close_python_process_and_cmd():
+    """ exit python with a 999 exit status which closes the cmd that runs the batch process """
+    sys.exit(999)

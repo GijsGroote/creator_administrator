@@ -21,9 +21,16 @@ def python_to_batch(python_path: str, job_name: str):
     myBat = open(os.path.join(job_global_path, f'{function_name}.bat'), 'w+')
     myBat.write(rf"""
 @echo off
+
 "{PYTHON_PATH}" "{python_path}" "{job_name}"
-pause
+
+if %errorlevel% equ 999 (
+    exit
+) else (
+    pause
+)
 """)
+
     myBat.close()
 
 def unlock_and_delete_folder(folder_global_path: str):
@@ -31,7 +38,7 @@ def unlock_and_delete_folder(folder_global_path: str):
 
     # TODO: this is a dangerous functions and needs extra care.
 
-    print(f'unlocking and deleting the directory {folder_global_path}')
-
     command = ' '.join([LOCKHUNTER_PATH, f'/delete /silent {folder_global_path}'])
-    subprocess.Popen(command)
+    process = subprocess.Popen(command)
+    process.wait()
+

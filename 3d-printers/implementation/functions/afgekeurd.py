@@ -27,9 +27,7 @@ if __name__ == '__main__':
 
     if len(eml_file_paths) > 0:
         send_response_mail(eml_file_paths[0], afgekeurd_reason)
-        # TODO: this could be more robust I think
-        # todo now you MUST first send response mail, then press enter
-        input('press enter (after sending mail) to move print job to AFGEKEURD folder')
+
     else:
         print(f'folder: {job_global_path} does not contain any .eml files, no response mail can be send')
 

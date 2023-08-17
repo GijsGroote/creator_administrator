@@ -1,7 +1,8 @@
 import json
 import os
 
-global_path = os.path.abspath(r'C:\Users\iws\.ssh\global_variables.json')
+# global_path = os.path.abspath(r'C:\Users\iws\.ssh\global_variables.json')
+global_path = os.path.abspath(r'C:\Users\gijsg\.ssh\global_variables.json')
 
 with open(global_path, 'r') as json_file:
     json_data = json.load(json_file)

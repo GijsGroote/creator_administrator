@@ -4,6 +4,7 @@ import os
 import sys
 
 from directory_functions import (
+    close_python_process_and_cmd,
     job_name_to_global_path,
     copy_print_job,
     move_print_job_partly)
@@ -28,7 +29,6 @@ if __name__ == '__main__':
 
     if len(gcode_files) == 0:
         print('warning! no .gcode files detected, there should .gcode in this folder')
-        input('press any key to continue...')
         sys.exit(0)
 
     elif len(gcode_files) == 1:
@@ -36,6 +36,7 @@ if __name__ == '__main__':
         # create the printer_klaar.exe
         python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name)
         unlock_and_delete_folder(job_global_path)
+        close_python_process_and_cmd()
     elif len(gcode_files) > 1:
 
         print(f'warning! {len(gcode_files)} .gcode files detected')
@@ -54,6 +55,7 @@ if __name__ == '__main__':
             # TODO: check if the printer_klaar.exe goes to the ./AAN_HET_PRINTEN/job_folder_name
             # TODO: and not to ./GESLICED/job_folder_name
             python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name)
+
 
 
 
