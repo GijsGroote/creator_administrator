@@ -170,7 +170,6 @@ def copy_print_job(job_name: str, target_main_folder: str, source_main_folder=No
             shutil.copy(source_item, target_item)
 
 
-
 def move_print_job_partly(job_name: str, exclude_files: List):
     """ partly move, partly copy print job from GESLICED to AAN_HET_PRINTEN folder """
 
@@ -221,6 +220,4 @@ def move_print_job_partly(job_name: str, exclude_files: List):
 
         # update name of the source_dir_global_path
 
-def close_python_process_and_cmd():
-    """ exit python with a 999 exit status which closes the cmd that runs the batch process """
-    sys.exit(999)
+

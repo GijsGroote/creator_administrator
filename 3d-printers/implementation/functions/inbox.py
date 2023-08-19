@@ -18,6 +18,8 @@ from global_variables import (
     FUNCTIONS_DIR_HOME,
     PRINT_DIR_HOME)
 
+from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
+
 from directory_functions import (
     get_print_job_folder_names)
 
@@ -180,7 +182,6 @@ def convert_win32_msg_to_email_msg(win32_msg) -> email.mime.multipart.MIMEMultip
     return email_msg
 
 
-
 if __name__ == '__main__':
     """
     Loop over inbox, download all valid 3D print jobs to a unique folder in WACHTRIJ.
@@ -224,4 +225,5 @@ if __name__ == '__main__':
         
     # open the 'WACHTRIJ' folder if new print jobs are created
     if new_print_job:
-        os.startfile(os.path.join(PRINT_DIR_HOME, 'WACHTRIJ'))
+        open_wachtrij_folder_cmd_farewell()
+

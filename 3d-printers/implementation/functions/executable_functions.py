@@ -6,6 +6,7 @@ import subprocess
 
 from global_variables import (
     LOCKHUNTER_PATH,
+    FUNCTIONS_DIR_HOME,
     PYTHON_PATH)
 from directory_functions import job_name_to_global_path
 
@@ -24,12 +25,17 @@ def python_to_batch(python_path: str, job_name: str):
 
 "{PYTHON_PATH}" "{python_path}" "{job_name}"
 
-if %errorlevel% equ 999 (
+rem custom exit code summary:
+rem 900 - close cmd that runs .bat file
+rem 901 - open the WACHTRIJ folder
+
+if %errorlevel% equ 900 (
     exit
+) else if %errorlevel% gtr 900 (
+"{PYTHON_PATH}" "{os.path.join(FUNCTIONS_DIR_HOME, 'cmd_farewell_handler.py')}" "%errorlevel%
 ) else (
     pause
-)
-""")
+)""")
 
     myBat.close()
 
