@@ -12,6 +12,7 @@ custom exit code summary:
 0 - (default) display "press any key to continue. . ." message
 900 - close cmd that runs .bat file
 901 - open the WACHTRIJ folder
+902 - open the GESLICED folder
 
 """
 
@@ -24,6 +25,9 @@ def open_wachtrij_folder_cmd_farewell():
     """ exit python with a 901 exit status which open the WACHTRIJ folder """
     sys.exit(901)
 
+def open_gesliced_folder_cmd_farewell():
+    """ exit python with a 901 exit status which open the GESLICED folder """
+    sys.exit(902)
 
 if __name__ == '__main__':
     """ handle the cmd farewell based on the exit_status """
@@ -32,5 +36,8 @@ if __name__ == '__main__':
 
     if exit_status == 901:
         os.startfile(os.path.join(PRINT_DIR_HOME, 'WACHTRIJ'))
+
+    if exit_status == 902:
+        os.startfile(os.path.join(PRINT_DIR_HOME, 'GESLICED'))
     else:
         input(f'No behavior defined for exit status {exit_status}')

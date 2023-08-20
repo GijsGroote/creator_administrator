@@ -14,6 +14,7 @@ from directory_functions import (
 from executable_functions import (
     unlock_and_delete_folder)
 from talk_to_sa import yes_or_no
+from cmd_farewell_handler import open_gesliced_folder_cmd_farewell
 
 
 if __name__ == '__main__':
@@ -28,10 +29,11 @@ if __name__ == '__main__':
             job_name, search_in_main_folder="GESLICED")}
         print(f'Warning! found GESLICED/{job_name_folder}, the print job is not yet ready')
         if yes_or_no(f'do you want to open GESLICED/{job_name_folder} (Y/n)?'):
-            os.startfile(job_name_to_global_path(job_name, search_in_main_folder='GESLICED'))
-            sys.exit(0)
+            # TODO: open the gesliced/job, not gesliced
+            open_gesliced_folder_cmd_farewell()
+
         elif not yes_or_no('you are really sure this print job is done (Y/n)?'):
-            input('aborting, press enter to close...')
+            print('aborting...')
             sys.exit(0)
 
     # send response mail
