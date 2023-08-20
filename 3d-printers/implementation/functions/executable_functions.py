@@ -23,6 +23,10 @@ def python_to_batch(python_path: str, job_name: str):
     myBat.write(rf"""
 @echo off
 
+REM Get the folder path of the batch script
+set "script_folder=%~dp0"
+echo The batch script is located in: %script_folder%
+
 "{PYTHON_PATH}" "{python_path}" "{job_name}"
 
 rem custom exit code summary:
@@ -31,6 +35,10 @@ rem 901 - open the WACHTRIJ folder
 
 if %errorlevel% equ 900 (
     exit
+) else if %errorlevel% equ 1000 (
+set "script_folder=%~dp0"
+"C:\Program Files (x86)\IObit\IObit Unlocker\IObitUnlocker.exe" "/Delete" "%script_folder%"
+pause
 ) else if %errorlevel% gtr 900 (
 "{PYTHON_PATH}" "{os.path.join(FUNCTIONS_DIR_HOME, 'cmd_farewell_handler.py')}" "%errorlevel%
 ) else (
@@ -43,8 +51,10 @@ def unlock_and_delete_folder(folder_global_path: str):
     """ remove a file folder using lockhunter """
 
     # TODO: this is a dangerous functions and needs extra care.
-
-    command = ' '.join([LOCKHUNTER_PATH, f'/delete /silent {folder_global_path}'])
-    process = subprocess.Popen(command)
-    process.wait()
+    sys.exit(1000)
+    #
+    # command = ' '.join([LOCKHUNTER_PATH, f' /delete /silent {folder_global_path}'])
+    # subprocess.Popen(command)
+    # sys.exit(0) # stop process, so lockhunter can remove the folder
+    # process.wait()
 

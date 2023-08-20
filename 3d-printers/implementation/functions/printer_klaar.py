@@ -50,6 +50,7 @@ if __name__ == '__main__':
         print(f'folder: {job_global_path} does not contain any .eml files, no response mail can be send')
 
     copy_print_job(job_name, "VERWERKT", source_main_folder='AAN_HET_PRINTEN')
+
     unlock_and_delete_folder(job_global_path)
 
 
