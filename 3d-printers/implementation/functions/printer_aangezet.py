@@ -4,11 +4,10 @@ import os
 import sys
 
 from directory_functions import (
-    close_python_process_and_cmd,
     job_name_to_global_path,
     copy_print_job,
     move_print_job_partly)
-
+from cmd_farewell_handler import exit_cmd_farewell
 from talk_to_sa import choose_option, yes_or_no
 from executable_functions import (
     unlock_and_delete_folder,
@@ -36,7 +35,7 @@ if __name__ == '__main__':
         # create the printer_klaar.exe
         python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name)
         unlock_and_delete_folder(job_global_path)
-        close_python_process_and_cmd()
+        exit_cmd_farewell()
     elif len(gcode_files) > 1:
 
         print(f'warning! {len(gcode_files)} .gcode files detected')

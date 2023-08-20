@@ -18,6 +18,7 @@ if __name__ == "__main__":
 if %errorlevel% equ 900 (
     exit
 ) else if %errorlevel% gtr 900 (
+    pause
 "{PYTHON_PATH}" "{os.path.join(FUNCTIONS_DIR_HOME, 'cmd_farewell_handler.py')}" "%errorlevel%"
 ) else (
     pause
