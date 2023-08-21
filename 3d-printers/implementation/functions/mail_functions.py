@@ -9,9 +9,8 @@ import re
 from global_variables import OUTLOOK_PATH
 
 
-
 def send_response_mail(incoming_mail_path, response_text):
-    """ send a response to incoming mail """
+    """ Send a response to incoming mail. """
 
     # Load the original email
     with open(incoming_mail_path, 'r') as file:
@@ -36,7 +35,7 @@ The IWS
 
 
 def mail_to_name(mail_name: str):
-    """ convert mail in form first_name lastname <mail@adres.com> to a more friendly name """
+    """ Convert mail in form first_name lastname <mail@adres.com> to a more friendly name. """
 
     matches = re.match(r"(.*?)\s*<(.*)>", mail_name)
 

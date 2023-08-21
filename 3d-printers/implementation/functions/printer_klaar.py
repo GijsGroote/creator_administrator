@@ -18,7 +18,6 @@ from cmd_farewell_handler import (
     remove_directory_and_close_cmd_farewell)
 
 if __name__ == '__main__':
-    """ move print to VERWERKT and send response mail """
 
     job_name = sys.argv[1]
     job_global_path = job_name_to_global_path(

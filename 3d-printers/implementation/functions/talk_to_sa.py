@@ -3,7 +3,7 @@ Communicate with Student Assistent (SA).
 """
 
 def choose_option(question: str, options: list) -> list:
-    """ ask SA to select/deselect a number of options """
+    """ Ask SA to select/deselect a number of options. """
 
     options = {option_number+1: [False, option] for
                (option_number, option) in enumerate(options)}
@@ -33,7 +33,7 @@ def choose_option(question: str, options: list) -> list:
     return [value[1] for (key, value) in options.items() if value[0]]
 
 def yes_or_no(question: str) -> bool:
-    """ ask SA to answer question with yes (True) or no (False) """
+    """ Ask SA to answer question with yes (True) or no (False). """
     answer = input(question)
 
     if answer in ["n", "N", "nee", "NEE"]:

@@ -14,7 +14,6 @@ from create_batch_file import python_to_batch
 from global_variables import FUNCTIONS_DIR_HOME
 
 if __name__ == '__main__':
-    """ move print job from WACHTRIJ to GESLICED folder """
 
     job_name = sys.argv[1]
     job_global_path = job_name_to_global_path(job_name, search_in_main_folder='WACHTRIJ')

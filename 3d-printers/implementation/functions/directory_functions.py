@@ -7,16 +7,12 @@ import shutil
 from typing import List
 
 from global_variables import PRINT_DIR_HOME
-from conversion_functions import (
+from convert_functions import (
     job_folder_name_to_date,
     gcode_files_to_max_print_time)
 
 def get_print_job_global_paths(search_in_main_folder=None) -> List[str]:
-    """
-    TODO: this docstring
-
-    return global path for all print jobs
-    """
+    """ Return global paths for all print jobs. """
 
     print_job_global_paths = []
 
@@ -36,7 +32,7 @@ def get_print_job_global_paths(search_in_main_folder=None) -> List[str]:
 
 
 def get_print_job_folder_names(search_in_main_folder=None) -> List[str]:
-    """ return all print job names """
+    """ Return all folder names corresponding to a print job name.  """
 
     print_job_names = []
 
@@ -56,7 +52,7 @@ def get_print_job_folder_names(search_in_main_folder=None) -> List[str]:
 
 
 def job_name_to_global_path(job_name: str, search_in_main_folder=None) -> str:
-    """ return global path of print job """
+    """ Return global path of print job. """
 
     # TODO: job A_B is creatd, A_B_(1) is created,  A_B is removed. Using this function
     # the job called A_B will return job A_B_(1), which IS A DIFFERENT JOB
@@ -71,7 +67,7 @@ def job_name_to_global_path(job_name: str, search_in_main_folder=None) -> str:
 
 
 def job_name_to_job_folder_name(job_name: str, search_in_main_folder=None) -> str:
-    """ get the job folder name from a job name """
+    """ Get the job folder name from a job name. """
 
     for print_job_folder_name in get_print_job_folder_names(search_in_main_folder):
         if job_name in print_job_folder_name:
@@ -81,15 +77,16 @@ def job_name_to_job_folder_name(job_name: str, search_in_main_folder=None) -> st
 
 
 def does_job_exist_in_main_folder(job_name: str, main_folder: str) -> bool:
-    """ check if a job exists in a main folder """
+    """ Check if a job exists in a main folder. """
     for print_job_folder_name in get_print_job_folder_names(main_folder):
         if job_name in print_job_folder_name:
             return True
     return False
 
 
-def get_new_job_folder_name(job_name: str, source_dir_global_path: str, target_main_folder: str) -> str:
-    """ get a job folder name for a print job moved to a main folder """
+def get_new_job_folder_name(job_name: str, source_dir_global_path: str,
+                            target_main_folder: str) -> str:
+    """ Get a job folder name for a print job moved to a main folder. """
 
     job_folder_name = job_name_to_job_folder_name(job_name)
 
@@ -117,7 +114,7 @@ def get_new_job_folder_name(job_name: str, source_dir_global_path: str, target_m
 
 
 def move_directory_recursive(source_dir_global: str, target_dir_global: str):
-    """ move directory and subdirectories recursively """
+    """ Move directory and subdirectories recursively. """
     try:
         shutil.move(source_dir_global, target_dir_global)
     except Exception as e:
@@ -125,7 +122,7 @@ def move_directory_recursive(source_dir_global: str, target_dir_global: str):
 
 
 def copy_directory_recursive(source_dir_global: str, target_dir_global: str):
-    """ copy directory and subdirectories recursively """
+    """ Copy directory and subdirectories recursively. """
     try:
         shutil.copy(source_dir_global, target_dir_global)
     except Exception as e:
@@ -133,7 +130,7 @@ def copy_directory_recursive(source_dir_global: str, target_dir_global: str):
 
 
 def copy_print_job(job_name: str, target_main_folder: str, source_main_folder=None):
-    """ move print job to target_main_folder """
+    """ Move print job to target_main_folder. """
     # TODO: this function is to long and does to much, split this function into multiple
 
     assert target_main_folder in ["AFGEKEURD", "WACHTRIJ", "GESLICED", "AAN_HET_PRINTEN", "VERWERKT"], \
@@ -175,7 +172,7 @@ def copy_print_job(job_name: str, target_main_folder: str, source_main_folder=No
 
 
 def move_print_job_partly(job_name: str, exclude_files: List):
-    """ partly move, partly copy print job from GESLICED to AAN_HET_PRINTEN folder """
+    """ Partly move, partly copy print job from GESLICED to AAN_HET_PRINTEN folder. """
 
     # find source directory
     source_dir_global_path = job_name_to_global_path(job_name, 'GESLICED')

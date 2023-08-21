@@ -13,7 +13,12 @@ from directory_functions import job_name_to_global_path
 
 
 def python_to_batch(python_path: str, job_name: str):
-    """ convert a python file to an batch file. """
+    """ Convert a python file to an batch file.
+
+    Args:
+        python_path: global path to python executable
+        job_name: name of the print job
+    """
 
     assert os.path.isfile(python_path), f"file {python_path} does not exist."
     job_global_path = job_name_to_global_path(job_name)
