@@ -14,8 +14,7 @@ from directory_functions import (
 from talk_to_sa import yes_or_no
 from cmd_farewell_handler import (
     open_gesliced_folder_cmd_farewell,
-    remove_directory_cmd_farewell)
-
+    remove_directory_and_close_cmd_farewell)
 
 if __name__ == '__main__':
     """ move print to VERWERKT and send response mail """
@@ -46,9 +45,10 @@ if __name__ == '__main__':
     if len(eml_file_paths) > 0:
         # TODO: this is not a proper response mail bro, fix that
         send_response_mail(eml_file_paths[0], "Your print is finito, you can pick it up")
+        input('press enter to continue. . .')
     else:
         print(f'folder: {job_global_path} does not contain any .eml files, no response mail can be send')
 
     copy_print_job(job_name, "VERWERKT", source_main_folder='AAN_HET_PRINTEN')
-    remove_directory_cmd_farewell()
+    remove_directory_and_close_cmd_farewell()
 

@@ -7,7 +7,7 @@ from directory_functions import (
     job_name_to_global_path,
     copy_print_job)
 
-from cmd_farewell_handler import remove_directory_cmd_farewell
+from cmd_farewell_handler import remove_directory_and_close_cmd_farewell
 
 from executable_functions import (
     python_to_batch)
@@ -31,5 +31,5 @@ if __name__ == '__main__':
     python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_aangezet.py'), job_name)
 
     copy_print_job(job_name, 'GESLICED', source_main_folder='WACHTRIJ')
-    remove_directory_cmd_farewell()
+    remove_directory_and_close_cmd_farewell()
 

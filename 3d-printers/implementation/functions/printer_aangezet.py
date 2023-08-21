@@ -7,9 +7,10 @@ from directory_functions import (
     job_name_to_global_path,
     copy_print_job,
     move_print_job_partly)
-from cmd_farewell_handler import exit_cmd_farewell
+from cmd_farewell_handler import (
+    remove_directory_and_close_cmd_farewell,
+    remove_directory_cmd_farewell)
 from talk_to_sa import choose_option, yes_or_no
-from cmd_farewell_handler import remove_directory_cmd_farewell
 from executable_functions import (
     python_to_batch)
 from global_variables import FUNCTIONS_DIR_HOME
@@ -32,19 +33,15 @@ if __name__ == '__main__':
 
     elif len(gcode_files) == 1:
         copy_print_job(job_name, 'AAN_HET_PRINTEN', source_main_folder='GESLICED')
-        # create the printer_klaar.exe
         python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name)
+        remove_directory_and_close_cmd_farewell()
 
-        # TODO: 2 cmd farewells, that is not possible
-        remove_directory_cmd_farewell()
-        exit_cmd_farewell()
     elif len(gcode_files) > 1:
 
         print(f'warning! {len(gcode_files)} .gcode files detected')
         if yes_or_no('is the entire print job now printing/printed (Y/n)?'):
 
             copy_print_job(job_name, 'AAN_HET_PRINTEN', source_main_folder='GESLICED')
-            # create print_klaar.exe
             python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name)
             remove_directory_cmd_farewell()
         else:

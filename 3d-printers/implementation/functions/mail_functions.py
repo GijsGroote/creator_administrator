@@ -28,10 +28,8 @@ The IWS
 
     compose = '/c ipm.note'
     recipients = f'/m "{original_email["from"]}?Subject={subject}&Body={body}"'
-    # attachment = f'/a {incoming_mail_path}'
-
     command = ' '.join([OUTLOOK_PATH, compose, recipients])
-    process = subprocess.Popen(command, shell=False, stdout=subprocess.PIPE)
+    process = subprocess.Popen(command, shell=False)
     process.wait()
 
 
