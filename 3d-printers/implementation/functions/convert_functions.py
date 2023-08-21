@@ -3,7 +3,13 @@ Extract information from input.
 """
 
 from typing import List
+import os
 import re
+import email
+import tempfile
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.application import MIMEApplication
 
 def gcode_files_to_max_print_time(gcode_files: List[str]) -> str:
     """ Get the maximum print time from list of gcode files. """
@@ -48,11 +54,11 @@ def convert_win32_msg_to_email_msg(win32_msg) -> email.mime.multipart.MIMEMultip
     email_msg['To'] = win32_msg.To
     email_msg['Subject'] = win32_msg.Subject
 
-    email_body = MIMEText(message.Body, _charset="utf-8")
+    email_body = MIMEText(win32_msg.Body, _charset="utf-8")
     email_msg.attach(email_body)
 
     # Loop over attachments and add them to the email message
-    for attachment in message.Attachments:
+    for attachment in win32_msg.Attachments:
         # Save attachment to a temporary file
         temp_dir = tempfile.gettempdir()
         temp_filename = os.path.join(temp_dir, attachment.FileName)

@@ -5,8 +5,7 @@ Communicate with Student Assistent (SA).
 def choose_option(question: str, options: list) -> list:
     """ Ask SA to select/deselect a number of options. """
 
-    options = {option_number+1: [False, option] for
-               (option_number, option) in enumerate(options)}
+    options = {option_number+1: [False, option] for (option_number, option) in enumerate(options)}
 
     while True:
         print(question)

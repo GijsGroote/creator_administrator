@@ -36,7 +36,7 @@ if __name__ == '__main__':
             sys.exit(0)
 
     # send response mail
-    eml_file_paths = [eml_file for eml_file in glob.glob(job_global_path + "/*.eml")]
+    eml_file_paths = list(glob.glob(job_global_path + "/*.eml"))
 
     if len(eml_file_paths) > 1:
         print(f'Warning! more than one: {len(eml_file_paths)} .eml files detected')
@@ -47,8 +47,8 @@ if __name__ == '__main__':
         send_response_mail(eml_file_paths[0], "Your print is finito, you can pick it up")
         input('press enter to continue. . .')
     else:
-        print(f'folder: {job_global_path} does not contain any .eml files, no response mail can be send')
+        print(f'folder: {job_global_path} does not contain any .eml files,'\
+                f'no response mail can be send')
 
     copy_print_job(job_name, "VERWERKT", source_main_folder='AAN_HET_PRINTEN')
     remove_directory_and_close_cmd_farewell()
-
