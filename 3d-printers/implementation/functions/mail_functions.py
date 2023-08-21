@@ -1,4 +1,6 @@
-#! /usr/bin/env python3
+"""
+Handle mail functionality.
+"""
 
 import email
 import subprocess
@@ -7,9 +9,8 @@ import re
 from global_variables import OUTLOOK_PATH
 
 
-
 def send_response_mail(incoming_mail_path, response_text):
-    """ send a response to incoming mail """
+    """ Send a response to incoming mail. """
 
     # Load the original email
     with open(incoming_mail_path, 'r') as file:
@@ -34,18 +35,16 @@ The IWS
 
 
 def mail_to_name(mail_name: str):
-    """ convert mail in form first_name lastname <mail@adres.com> to a more friendly name """
+    """ Convert mail in form first_name last_name <mail@adres.com> to a more friendly name. """
 
     matches = re.match(r"(.*?)\s*<(.*)>", mail_name)
 
     if matches:
         if len(matches.group(1)) > 0:
-            name = matches.group(1)
-        elif len(matches.group(2)):
-            name = matches.group(2).split('@')[0]
+            return matches.group(1)
+        if len(matches.group(2)):
+            return matches.group(2).split('@')[0]
     else:
         if '@' in mail_name:
-            name = mail_name.split('@')[0]
-        else:
-            name = mail_name
-    return name
+            return mail_name.split('@')[0]
+    return mail_name

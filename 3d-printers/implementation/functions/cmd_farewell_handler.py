@@ -1,17 +1,18 @@
-#! /usr/bin/env python3
+"""
+Specify behavior when cmd is closing, the cmd saying farewell.
+
+Communication from the python process to the cmd is through a exist status.
+"""
 
 import sys
 import os
+
 from global_variables import (
     PRINT_DIR_HOME,
     PYTHON_PATH,
     FUNCTIONS_DIR_HOME,
     IOBIT_UNLOCKER_PATH)
 
-"""
-below this point cmd_farewell functions. That specify the behavior of the cmd prompt when
-closing. communication from the python process to the cmd is through a custom exist code
-"""
 
 cmd_farewells = rf"""rem custom exit code summary:
 rem 0 (default) - display "press any key to continue. . ." message
@@ -38,37 +39,35 @@ if %errorlevel% equ 900 (
 
 
 def exit_cmd_farewell():
-    """ exit python with a 900 exit status which closes the cmd that runs the batch process """
+    """ Exit python with a 900 exit status which closes the cmd that runs the batch process. """
     sys.exit(900)
 
 
 def remove_directory_cmd_farewell():
-    """ exit python and remove the directory that holds the .bat script """
+    """ Exit python and remove the directory that holds the .bat script. """
     # TODO: much more needs to be checked, this is outright dangurous
 
     sys.exit(901)
 
 
 def remove_directory_and_close_cmd_farewell():
-    """ exit python, remove the directory
-    and close cmd that holds the .bat script """
+    """ Exit python, remove the directory and close cmd that holds the .bat script. """
     # TODO: much more needs to be checked, this is outright dangurous
 
     sys.exit(902)
 
 
 def open_wachtrij_folder_cmd_farewell():
-    """ exit python with a 911 exit status which open the WACHTRIJ folder """
+    """ Exit python with a 911 exit status which open the WACHTRIJ folder. """
     sys.exit(911)
 
 
 def open_gesliced_folder_cmd_farewell():
-    """ exit python with a 912 exit status which open the GESLICED folder """
+    """ Exit python with a 912 exit status which open the GESLICED folder. """
     sys.exit(912)
 
 
 if __name__ == '__main__':
-    """ handle the cmd farewell based on the exit_status """
 
     exit_status = int(sys.argv[1])
 

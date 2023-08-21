@@ -1,4 +1,6 @@
-#! /usr/bin/env python3
+"""
+Move a print job to the folder AFGEKEURD.
+"""
 
 import os
 import sys
@@ -7,17 +9,20 @@ from directory_functions import (
     job_name_to_global_path,
     copy_print_job,
     move_print_job_partly)
+
 from cmd_farewell_handler import (
     remove_directory_and_close_cmd_farewell,
     remove_directory_cmd_farewell)
-from talk_to_sa import choose_option, yes_or_no
-from executable_functions import (
-    python_to_batch)
+
+from talk_to_sa import (
+        choose_option,
+        yes_or_no)
+
+from create_batch_file import python_to_batch
 from global_variables import FUNCTIONS_DIR_HOME
 
 
 if __name__ == '__main__':
-    """ move print job from current folder to PRINTER_AANGEZET """
 
     job_name = sys.argv[1]
     job_global_path = job_name_to_global_path(job_name, search_in_main_folder="GESLICED")
@@ -53,9 +58,3 @@ if __name__ == '__main__':
             # TODO: check if the printer_klaar.exe goes to the ./AAN_HET_PRINTEN/job_folder_name
             # TODO: and not to ./GESLICED/job_folder_name
             python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name)
-
-
-
-
-
-
