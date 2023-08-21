@@ -30,31 +30,23 @@ echo The batch script is located in: %script_folder%
 "{PYTHON_PATH}" "{python_path}" "{job_name}"
 
 rem custom exit code summary:
+rem 0 (default) - display "press any key to continue. . ." message
 rem 900 - close cmd that runs .bat file
-rem 901 - open the WACHTRIJ folder
+rem 901 - remove folder that runs .bat file
+rem [902, 910] - reserved error status numbers
+rem >910 - call python script and pass exit status
 
 if %errorlevel% equ 900 (
     exit
-) else if %errorlevel% equ 1000 (
+) else if %errorlevel% equ 901 (
 set "script_folder=%~dp0"
 "C:\Program Files (x86)\IObit\IObit Unlocker\IObitUnlocker.exe" "/Delete" "%script_folder%"
 pause
-) else if %errorlevel% gtr 900 (
+) else if %errorlevel% gtr 910(
 "{PYTHON_PATH}" "{os.path.join(FUNCTIONS_DIR_HOME, 'cmd_farewell_handler.py')}" "%errorlevel%
 ) else (
     pause
 )""")
 
     myBat.close()
-
-def unlock_and_delete_folder(folder_global_path: str):
-    """ remove a file folder using lockhunter """
-
-    # TODO: this is a dangerous functions and needs extra care.
-    sys.exit(1000)
-    #
-    # command = ' '.join([LOCKHUNTER_PATH, f' /delete /silent {folder_global_path}'])
-    # subprocess.Popen(command)
-    # sys.exit(0) # stop process, so lockhunter can remove the folder
-    # process.wait()
 

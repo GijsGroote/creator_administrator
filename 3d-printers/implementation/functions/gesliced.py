@@ -10,7 +10,6 @@ from directory_functions import (
 from cmd_farewell_handler import remove_directory_cmd_farewell
 
 from executable_functions import (
-    unlock_and_delete_folder,
     python_to_batch)
 from global_variables import FUNCTIONS_DIR_HOME
 
@@ -33,6 +32,4 @@ if __name__ == '__main__':
 
     copy_print_job(job_name, 'GESLICED', source_main_folder='WACHTRIJ')
     remove_directory_cmd_farewell()
-
-    # exit_cmd_farewell()
 

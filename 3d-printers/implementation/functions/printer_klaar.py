@@ -2,7 +2,6 @@
 
 import glob
 import sys
-import os
 
 
 from mail_functions import send_response_mail
@@ -11,10 +10,11 @@ from directory_functions import (
     copy_print_job,
     does_job_exist_in_main_folder,
     job_name_to_job_folder_name)
-from executable_functions import (
-    unlock_and_delete_folder)
+
 from talk_to_sa import yes_or_no
-from cmd_farewell_handler import open_gesliced_folder_cmd_farewell
+from cmd_farewell_handler import (
+    open_gesliced_folder_cmd_farewell,
+    remove_directory_cmd_farewell)
 
 
 if __name__ == '__main__':
@@ -50,7 +50,5 @@ if __name__ == '__main__':
         print(f'folder: {job_global_path} does not contain any .eml files, no response mail can be send')
 
     copy_print_job(job_name, "VERWERKT", source_main_folder='AAN_HET_PRINTEN')
-
-    unlock_and_delete_folder(job_global_path)
-
+    remove_directory_cmd_farewell()
 

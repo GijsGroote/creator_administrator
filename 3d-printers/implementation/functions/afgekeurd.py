@@ -7,9 +7,8 @@ from mail_functions import send_response_mail
 from directory_functions import (
     job_name_to_global_path,
     copy_print_job)
-from executable_functions import (
-    unlock_and_delete_folder)
 
+from cmd_farewell_handler import remove_directory_cmd_farewell
 
 if __name__ == '__main__':
     """ move print job from current folder to AFGEKEURD folder and popup a email response """
@@ -32,5 +31,5 @@ if __name__ == '__main__':
         print(f'folder: {job_global_path} does not contain any .eml files, no response mail can be send')
 
     copy_print_job(job_name, "AFGEKEURD")
-    unlock_and_delete_folder(job_global_path)
+    remove_directory_cmd_farewell()
 

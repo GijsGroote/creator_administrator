@@ -9,8 +9,8 @@ from directory_functions import (
     move_print_job_partly)
 from cmd_farewell_handler import exit_cmd_farewell
 from talk_to_sa import choose_option, yes_or_no
+from cmd_farewell_handler import remove_directory_cmd_farewell
 from executable_functions import (
-    unlock_and_delete_folder,
     python_to_batch)
 from global_variables import FUNCTIONS_DIR_HOME
 
@@ -34,7 +34,9 @@ if __name__ == '__main__':
         copy_print_job(job_name, 'AAN_HET_PRINTEN', source_main_folder='GESLICED')
         # create the printer_klaar.exe
         python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name)
-        unlock_and_delete_folder(job_global_path)
+
+        # TODO: 2 cmd farewells, that is not possible
+        remove_directory_cmd_farewell()
         exit_cmd_farewell()
     elif len(gcode_files) > 1:
 
@@ -44,7 +46,7 @@ if __name__ == '__main__':
             copy_print_job(job_name, 'AAN_HET_PRINTEN', source_main_folder='GESLICED')
             # create print_klaar.exe
             python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name)
-            unlock_and_delete_folder(job_global_path)
+            remove_directory_cmd_farewell()
         else:
             gcode_files_to_print_later = choose_option(
                 'please select which .gcode files should be printed later', gcode_files)
