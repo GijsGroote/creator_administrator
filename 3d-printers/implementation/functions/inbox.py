@@ -187,6 +187,8 @@ if __name__ == '__main__':
     Loop over inbox, download all valid 3D print jobs to a unique folder in WACHTRIJ.
     """
 
+    print('searching for new mail...')
+
     # open outlook
     outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
     inbox = outlook.GetDefaultFolder(6)

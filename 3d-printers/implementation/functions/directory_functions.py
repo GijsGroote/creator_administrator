@@ -11,7 +11,6 @@ from conversion_functions import (
     job_folder_name_to_date,
     gcode_files_to_max_print_time)
 
-
 def get_print_job_global_paths(search_in_main_folder=None) -> List[str]:
     """ return global path for all print jobs """
 

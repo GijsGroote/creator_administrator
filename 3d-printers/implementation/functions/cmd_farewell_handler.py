@@ -2,20 +2,34 @@
 
 import sys
 import os
-from global_variables import PRINT_DIR_HOME
+from global_variables import (
+    PRINT_DIR_HOME,
+    PYTHON_PATH,
+    FUNCTIONS_DIR_HOME)
 
 """
 below this point cmd_farewell functions. That specify the behavior of the cmd prompt when
 closing. communication from the python process to the cmd is through a custom exist code
-
-custom exit code summary:
-0 - (default) display "press any key to continue. . ." message
-900 - close cmd that runs .bat file
-901 - remove folder that runs .bat file
-[902, 910] - reserved error status numbers
->910 - call python script and pass exit status
-
 """
+
+cmd_farewells =rf"""rem custom exit code summary:
+rem 0 (default) - display "press any key to continue. . ." message
+rem 900 - close cmd that runs .bat file
+rem 901 - remove folder that runs .bat file
+rem [902, 910] - reserved error status numbers
+rem >910 - call python script and pass exit status
+
+if %errorlevel% equ 900 (
+    exit
+) else if %errorlevel% equ 901 (
+rem set "script_folder=%~dp0"
+"C:\Program Files (x86)\IObit\IObit Unlocker\IObitUnlocker.exe" "/Delete" "%~dp0"
+) else if %errorlevel% gtr 910 (
+    pause
+"{PYTHON_PATH}" "{os.path.join(FUNCTIONS_DIR_HOME, 'cmd_farewell_handler.py')}" "%errorlevel%
+) else (
+    pause
+)"""
 
 def exit_cmd_farewell():
     """ exit python with a 900 exit status which closes the cmd that runs the batch process """
