@@ -1,3 +1,7 @@
+"""
+Global variables specific for the local machine.
+"""
+
 import json
 import os
 

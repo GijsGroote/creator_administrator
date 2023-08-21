@@ -1,4 +1,6 @@
-#! /usr/bin/env python3
+"""
+Move a print job to the folder AFGEKEURD.
+"""
 
 import os
 import sys
@@ -11,8 +13,7 @@ from cmd_farewell_handler import (
     remove_directory_and_close_cmd_farewell,
     remove_directory_cmd_farewell)
 from talk_to_sa import choose_option, yes_or_no
-from executable_functions import (
-    python_to_batch)
+from python_to_batch import python_to_batch
 from global_variables import FUNCTIONS_DIR_HOME
 
 

@@ -1,4 +1,6 @@
-# ! /usr/bin/env python3
+"""
+Create new print jobs from mail box and move to the WACHTRIJ folder.
+"""
 
 import datetime
 import os

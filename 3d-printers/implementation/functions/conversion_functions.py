@@ -1,4 +1,6 @@
-#! /usr/bin/env python3
+"""
+Extract information from input.
+"""
 
 from typing import List
 import re

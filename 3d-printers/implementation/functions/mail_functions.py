@@ -1,4 +1,6 @@
-#! /usr/bin/env python3
+"""
+Handle mail functionality.
+"""
 
 import email
 import subprocess

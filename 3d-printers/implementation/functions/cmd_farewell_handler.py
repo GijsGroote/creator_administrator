@@ -1,16 +1,17 @@
-#! /usr/bin/env python3
+"""
+Specify behavior when cmd is closing, the cmd saying farewell.
+
+Communication from the python process to the cmd is through a exist status.
+"""
 
 import sys
 import os
+
 from global_variables import (
     PRINT_DIR_HOME,
     PYTHON_PATH,
     FUNCTIONS_DIR_HOME)
 
-"""
-below this point cmd_farewell functions. That specify the behavior of the cmd prompt when
-closing. communication from the python process to the cmd is through a custom exist code
-"""
 
 cmd_farewells =rf"""rem custom exit code summary:
 rem 0 (default) - display "press any key to continue. . ." message

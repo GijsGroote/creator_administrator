@@ -1,8 +1,8 @@
-#! /usr/bin/env python3
+"""
+Functionality for moving/copying or searching in directories.
+"""
 
 import os
-import re
-import sys
 import shutil
 from typing import List
 
@@ -12,7 +12,11 @@ from conversion_functions import (
     gcode_files_to_max_print_time)
 
 def get_print_job_global_paths(search_in_main_folder=None) -> List[str]:
-    """ return global path for all print jobs """
+    """
+    TODO: this docstring
+
+    return global path for all print jobs
+    """
 
     print_job_global_paths = []
 
@@ -81,6 +85,7 @@ def does_job_exist_in_main_folder(job_name: str, main_folder: str) -> bool:
     for print_job_folder_name in get_print_job_folder_names(main_folder):
         if job_name in print_job_folder_name:
             return True
+    return False
 
 
 def get_new_job_folder_name(job_name: str, source_dir_global_path: str, target_main_folder: str) -> str:

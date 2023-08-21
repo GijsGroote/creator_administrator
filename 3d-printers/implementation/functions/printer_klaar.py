@@ -1,4 +1,6 @@
-#! /usr/bin/env python3
+"""
+Move a print job to the folder VERWERKT.
+"""
 
 import glob
 import sys

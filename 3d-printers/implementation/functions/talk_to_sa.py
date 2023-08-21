@@ -1,4 +1,6 @@
-# ! /usr/bin/env python3
+"""
+Communicate with Student Assistent (SA).
+"""
 
 def choose_option(question: str, options: list) -> list:
     """ ask SA to select/deselect a number of options """
