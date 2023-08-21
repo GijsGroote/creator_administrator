@@ -5,7 +5,6 @@ Move a print job to the folder VERWERKT.
 import glob
 import sys
 
-
 from mail_functions import send_response_mail
 from directory_functions import (
     job_name_to_global_path,

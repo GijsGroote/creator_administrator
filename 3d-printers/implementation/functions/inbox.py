@@ -25,7 +25,7 @@ from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from directory_functions import (
     get_print_job_folder_names)
 
-from executable_functions import python_to_batch
+from create_batch_file import python_to_batch
 from mail_functions import mail_to_name
 from talk_to_sa import yes_or_no
 
