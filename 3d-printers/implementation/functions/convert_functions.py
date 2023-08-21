@@ -76,4 +76,5 @@ def convert_win32_msg_to_email_msg(win32_msg) -> email.mime.multipart.MIMEMultip
 
         # Remove the temporary file
         os.remove(temp_filename)
+
     return email_msg
