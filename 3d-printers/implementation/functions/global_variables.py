@@ -9,7 +9,7 @@ with open(global_path, 'r') as json_file:
     REPO_DIR_HOME = json_data['REPO_DIR_HOME']
     PRINT_DIR_HOME = json_data['PRINT_DIR_HOME']
     OUTLOOK_PATH = json_data['OUTLOOK_PATH']
-    LOCKHUNTER_PATH = json_data['LOCKHUNTER_PATH']
+    IOBIT_UNLOCKER_PATH = json_data['IOBIT_UNLOCKER_PATH']
     PYTHON_PATH = json_data['PYTHON_PATH']
 
 FUNCTIONS_DIR_HOME = os.path.join(

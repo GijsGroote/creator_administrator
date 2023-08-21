@@ -4,7 +4,7 @@ This repository is intended for Windows OS.
 Before you begin, make sure you have the following dependencies installed:
 
 - Python 3.10 or higher
-- [LockHunter](https://lockhunter.com/download.htm) 
+- [IO Bit Unlocker](https://www.iobit.com/nl/iobit-unlocker.php#) 
 - [Outlook](https://microsoft-outlook.en.softonic.com/)
 
 ## Installation Steps
@@ -38,9 +38,9 @@ Before you begin, make sure you have the following dependencies installed:
    {
        "REPO_DIR_HOME":  "C:\\Users\\user\\Documents\\laserhok-workflow",
        "PRINT_DIR_HOME":  "C:\\Users\\user\\Desktop\\3D PRINT HOME",
-       "OUTLOOK_PATH":  "C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE",
-       "LOCKHUNTER_PATH": "C:\\Program Files\\LockHunter\\LockHunter.exe",
-       "PYTHON_PATH": "C:Program Files\\Python311\\python.exe"
+       "PYTHON_PATH": "C:Program Files\\Python311\\python.exe",
+       "IOBIT_UNLOCKER_PATH": "C:\\Program Files (x86)\\IObit\\IObit Unlocker\\IObitUnlocker.exe",
+       "OUTLOOK_PATH":  "C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE"
    }
    ```
 

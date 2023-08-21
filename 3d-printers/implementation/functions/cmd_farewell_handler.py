@@ -5,14 +5,15 @@ import os
 from global_variables import (
     PRINT_DIR_HOME,
     PYTHON_PATH,
-    FUNCTIONS_DIR_HOME)
+    FUNCTIONS_DIR_HOME,
+    IOBIT_UNLOCKER_PATH)
 
 """
 below this point cmd_farewell functions. That specify the behavior of the cmd prompt when
 closing. communication from the python process to the cmd is through a custom exist code
 """
 
-cmd_farewells =rf"""rem custom exit code summary:
+cmd_farewells = rf"""rem custom exit code summary:
 rem 0 (default) - display "press any key to continue. . ." message
 rem 900 - close cmd that runs .bat file
 rem 901 - remove folder that runs .bat file
@@ -23,10 +24,10 @@ rem >910 - call python script and pass exit status
 if %errorlevel% equ 900 (
     exit
 ) else if %errorlevel% equ 901 (
-    "C:\Program Files (x86)\IObit\IObit Unlocker\IObitUnlocker.exe" "/Delete" "%~dp0"\
+    "{IOBIT_UNLOCKER_PATH}" "/Delete" "%~dp0"
     pause
 ) else if %errorlevel% equ 902 (
-    "C:\Program Files (x86)\IObit\IObit Unlocker\IObitUnlocker.exe" "/Delete" "%~dp0"
+    "{IOBIT_UNLOCKER_PATH}" "/Delete" "%~dp0"
     exit
 ) else if %errorlevel% gtr 910 (
     pause
@@ -35,15 +36,18 @@ if %errorlevel% equ 900 (
     pause
 )"""
 
+
 def exit_cmd_farewell():
     """ exit python with a 900 exit status which closes the cmd that runs the batch process """
     sys.exit(900)
+
 
 def remove_directory_cmd_farewell():
     """ exit python and remove the directory that holds the .bat script """
     # TODO: much more needs to be checked, this is outright dangurous
 
     sys.exit(901)
+
 
 def remove_directory_and_close_cmd_farewell():
     """ exit python, remove the directory
@@ -52,9 +56,11 @@ def remove_directory_and_close_cmd_farewell():
 
     sys.exit(902)
 
+
 def open_wachtrij_folder_cmd_farewell():
     """ exit python with a 911 exit status which open the WACHTRIJ folder """
     sys.exit(911)
+
 
 def open_gesliced_folder_cmd_farewell():
     """ exit python with a 912 exit status which open the GESLICED folder """
