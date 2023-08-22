@@ -145,10 +145,10 @@ def create_print_job(msg: email.message.Message, raw_email: bytes):
                 print('Saved attachment: ', decoded_filename)
 
     # create afgekeurd.exe
-    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), job_name)
+    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), job_name=job_name)
 
     # create gesliced.exe
-    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), job_name)
+    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), job_name=job_name)
 
 
 def convert_win32_msg_to_email_msg(win32_msg) -> email.mime.multipart.MIMEMultipart:

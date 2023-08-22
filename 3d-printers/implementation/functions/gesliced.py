@@ -27,7 +27,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     # create the printer_aangezet.bat
-    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_aangezet.py'), job_name)
+    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_aangezet.py'), job_name=job_name)
 
     copy_print_job(job_name, 'GESLICED', source_main_folder='WACHTRIJ')
     remove_directory_and_close_cmd_farewell()

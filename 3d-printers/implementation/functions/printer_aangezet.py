@@ -38,7 +38,7 @@ if __name__ == '__main__':
 
     elif len(gcode_files) == 1:
         copy_print_job(job_name, 'AAN_HET_PRINTEN', source_main_folder='GESLICED')
-        python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name)
+        python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name=job_name)
         remove_directory_and_close_cmd_farewell()
 
     elif len(gcode_files) > 1:
@@ -47,7 +47,7 @@ if __name__ == '__main__':
         if yes_or_no('is the entire print job now printing/printed (Y/n)?'):
 
             copy_print_job(job_name, 'AAN_HET_PRINTEN', source_main_folder='GESLICED')
-            python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name)
+            python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name=job_name)
             remove_directory_cmd_farewell()
         else:
             gcode_files_to_print_later = choose_option(
@@ -57,4 +57,4 @@ if __name__ == '__main__':
             move_print_job_partly(job_name, gcode_files_to_print_later)
             # TODO: check if the printer_klaar.exe goes to the ./AAN_HET_PRINTEN/job_folder_name
             # TODO: and not to ./GESLICED/job_folder_name
-            python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name)
+            python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name=job_name)
