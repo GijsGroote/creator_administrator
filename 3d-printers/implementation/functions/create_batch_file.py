@@ -22,7 +22,8 @@ def python_to_batch(python_path: str, job_name=None):
         assert os.path.exists(batch_file_global_path), f"path {batch_file_global_path} does not exist."
         python_command = f'"{PYTHON_PATH}" "{python_path}" "{job_name}"'
     else:
-        batch_file_global_path = os.path.join(PRINT_DIR_HOME, '../')
+        batch_file_global_path = os.path.join(FUNCTIONS_DIR_HOME, '../batch_files')
+        assert os.path.exists(batch_file_global_path), f"path {batch_file_global_path} does not exist."
         python_command = f'"{PYTHON_PATH}" "{python_path}"'
 
 
