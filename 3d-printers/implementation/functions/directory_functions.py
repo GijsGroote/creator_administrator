@@ -11,6 +11,24 @@ from convert_functions import (
     job_folder_name_to_date,
     gcode_files_to_max_print_time)
 
+
+
+def is_print_job_name_unique(job_name: str) -> bool:
+    """ Check if the print job name is unique, return boolean. """
+
+    # TODO (AGAIN): job A_B is creatd, A_B_(1) is created,  A_B is removed.
+    # Using this function
+    # the job called A_B will return job A_B_(1), which IS A DIFFERENT JOB
+    # edit this function so that it raises a valueError('no job found')
+    # when A_B is searched but only A_B_(1) is present
+
+    for folder_name in get_print_job_folder_names():
+        if job_name in folder_name:
+            return False
+
+    return True
+
+
 def get_print_job_global_paths(search_in_main_folder=None) -> List[str]:
     """ Return global paths for all print jobs. """
 
