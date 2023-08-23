@@ -27,7 +27,7 @@ if __name__ == '__main__':
     job_name = sys.argv[1]
     job_global_path = job_name_to_global_path(job_name, search_in_main_folder="GESLICED")
 
-    # check if there multiple .gcode files
+    # check if there are multiple .gcode files
     gcode_files = [gcode_file for
                    gcode_file in os.listdir(job_global_path)
                    if gcode_file.lower().endswith('.gcode')]
@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
             copy_print_job(job_name, 'AAN_HET_PRINTEN', source_main_folder='GESLICED')
             python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name)
-            remove_directory_cmd_farewell()
+            remove_directory_and_close_cmd_farewell()
         else:
             gcode_files_to_print_later = choose_option(
                 'please select which .gcode files should be printed later', gcode_files)
