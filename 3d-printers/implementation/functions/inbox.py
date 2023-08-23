@@ -25,6 +25,7 @@ from create_batch_file import python_to_batch
 from mail_functions import mail_to_name
 from talk_to_sa import yes_or_no
 
+from email_manager import EmailManager
 
 def is_print_job_name_unique(job_name: str) -> bool:
     """ Check if the print job name is unique, return boolean. """
@@ -42,26 +43,12 @@ def is_print_job_name_unique(job_name: str) -> bool:
     return True
 
 
-def mail_to_print_job_name(msg: [email.message.Message, str]) -> str:
+def mail_to_print_job_name(msg) -> str:
     """ Extract senders from mail and convert to a print job name. """
 
-    if isinstance(msg, email.message.Message):
-        from_field = msg.get('From')
-        # Decode the "From" field
-        decoded_sender, charset = decode_header(from_field)[0]
+    sender = str(msg.Sender)
 
-        # If the sender's name is bytes, decode it using the charset
-        if isinstance(decoded_sender, bytes):
-            decoded_sender = decoded_sender.decode(charset)
-
-    elif isinstance(msg, email.mime.multipart.MIMEMultipart):
-        decoded_sender = msg.get('From')
-    elif isinstance(msg, str):
-        decoded_sender = msg
-    else:
-        raise ValueError(f'could not convert {msg} to a job name')
-
-    job_name = re.sub(r'[^\w\s]', '', mail_to_name(decoded_sender)).replace(' ', '_')
+    job_name = re.sub(r'[^\w\s]', '', mail_to_name(sender)).replace(' ', '_')
 
     # check if print job name is unique
     unique_job_name = job_name
@@ -83,22 +70,18 @@ def mail_to_print_job_name(msg: [email.message.Message, str]) -> str:
     return unique_job_name
 
 
-def is_valid_print_job_request(msg: email.message.Message) -> Tuple[bool, str]:
+def is_valid_print_job_request(msg) -> Tuple[bool, str]:
     """ Check if the requirements are met for a valid print job. """
 
     # Initialize a counter for attachments with .stl extension
     stl_attachment_count = 0
 
-    if msg.get_content_maintype() == 'multipart':
-        for part in msg.walk():
-            if part.get_content_maintype() == 'multipart' or part.get('Content-Disposition') is None:
-                continue
-            filename = part.get_filename()
-            if filename:
-                decoded_filename = decode_header(filename)[0][0]
-                if decoded_filename.lower().endswith('.stl'):
-                    stl_attachment_count += 1
-
+    attachments = msg.Attachments
+    
+    for attachment in attachments:
+        if attachment.FileName.lower().endswith('.stl'):
+            stl_attachment_count += 1
+    
     if stl_attachment_count == 0:
         return False, 'no .stl attachment found'
 
@@ -115,7 +98,7 @@ def is_valid_print_job_request(msg: email.message.Message) -> Tuple[bool, str]:
     return True, ' '
 
 
-def create_print_job(msg: email.message.Message, raw_email: bytes):
+def create_print_job(msg):
     """ Create a 'print job' or folder in WACHTRIJ and
     put all corresponding files in the print job. """
 
@@ -128,21 +111,12 @@ def create_print_job(msg: email.message.Message, raw_email: bytes):
     os.mkdir(print_job_global_path)
 
     # Save the email as a .eml file
-    with open(os.path.join(print_job_global_path, 'mail.eml'), 'wb') as eml_file:
-        eml_file.write(raw_email)
+    msg.SaveAs(os.path.join(print_job_global_path, 'mail.msg'))
 
     # Save the .stl files
-    if msg.get_content_maintype() == 'multipart':
-        for part in msg.walk():
-            if part.get_content_maintype() == 'multipart' or part.get('Content-Disposition') is None:
-                continue
-            filename = part.get_filename()
-            if filename and filename.lower().endswith('.stl'):
-                decoded_filename = decode_header(filename)[0][0]
-                file_path = os.path.join(print_job_global_path, decoded_filename)
-                with open(file_path, 'wb') as f:
-                    f.write(part.get_payload(decode=True))
-                print('Saved attachment: ', decoded_filename)
+    for attachment in msg.Attachments:
+        if attachment.FileName.lower().endswith('.stl'):
+            attachment.SaveAsFile(os.path.join(print_job_global_path, attachment.FileName))
 
     # create afgekeurd.exe
     python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), job_name)
@@ -151,55 +125,16 @@ def create_print_job(msg: email.message.Message, raw_email: bytes):
     python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), job_name)
 
 
-def convert_win32_msg_to_email_msg(win32_msg) -> email.mime.multipart.MIMEMultipart:
-    """ Convert a win32 message to an email message. """
-    # create a new email message and copy the win32 message fields to the email message
-    email_msg = MIMEMultipart()
-    email_msg['From'] = win32_msg.SenderEmailAddress
-    email_msg['To'] = win32_msg.To
-    email_msg['Subject'] = win32_msg.Subject
-
-    email_body = MIMEText(message.Body, _charset='utf-8')
-    email_msg.attach(email_body)
-
-    # Loop over attachments and add them to the email message
-    for attachment in message.Attachments:
-        # Save attachment to a temporary file
-        temp_dir = tempfile.gettempdir()
-        temp_filename = os.path.join(temp_dir, attachment.FileName)
-        attachment.SaveAsFile(temp_filename)
-
-        # Read attachment content and create MIMEApplication object
-        with open(temp_filename, 'rb') as attachment_file:
-            attachment_content = attachment_file.read()
-
-        mime_attachment = MIMEApplication(attachment_content)
-        mime_attachment.add_header('content-disposition', 'attachment', filename=attachment.FileName)
-
-        # Attach the attachment to the email
-        email_msg.attach(mime_attachment)
-
-        # Remove the temporary file
-        os.remove(temp_filename)
-    return email_msg
 if __name__ == '__main__':
 
     print('searching for new mail...')
 
     # open outlook
-    outlook = win32com.client.Dispatch('Outlook.Application').GetNamespace('MAPI')
-    inbox = outlook.GetDefaultFolder(6)
+    email_manager = EmailManager()
 
     # read unread mails and convert to the email format and mark them as read
-    msgs = []
+    msgs = email_manager.get_unread_emails()
     new_print_job = False
-    for message in inbox.Items:
-        # TODO: this is slow, loop only over unread mail (not over all mail and then use an if statement to see which are unread)
-        if message.UnRead:
-            converted_email = convert_win32_msg_to_email_msg(message)
-            msgs.append(converted_email)
-            message.UnRead = False
-            message.Save()
 
     # print how many mails are processed
     if len(msgs) == 0:
@@ -209,20 +144,20 @@ if __name__ == '__main__':
 
     # loop over all mails, check if they are valid and create print jobs
     for msg in msgs:
-        print(f'processing incoming mail from: {msg.get("From")}')
+        print(f'processing incoming mail from: {msg.Sender}')
 
         (is_valid, invalid_reason) = is_valid_print_job_request(msg)
 
         if is_valid:
             new_print_job = True
             print_job_name = mail_to_print_job_name(msg)
-            print(f'mail from: {msg.get("From")} is valid request,' \
+            print(f'mail from: {msg.Sender} is valid request,' \
                     f' create print job: {print_job_name}')
-            create_print_job(msg, msg.as_bytes())
+            create_print_job(msg)
             print(f'print job: {print_job_name} created\n')
 
         else:
-            print(f'mail from {msg.get("From")} is not a valid request '\
+            print(f'mail from {msg.Sender} is not a valid request '\
                   f'because:\n {invalid_reason}, abort!\n')
 
     # open the 'WACHTRIJ' folder if new print jobs are created

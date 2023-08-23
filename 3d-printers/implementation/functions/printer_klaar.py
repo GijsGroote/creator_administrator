@@ -36,18 +36,18 @@ if __name__ == '__main__':
             sys.exit(0)
 
     # send response mail
-    eml_file_paths = list(glob.glob(job_global_path + "/*.eml"))
+    msg_file_paths = list(glob.glob(job_global_path + "/*.msg"))
 
-    if len(eml_file_paths) > 1:
-        print(f'Warning! more than one: {len(eml_file_paths)} .eml files detected')
+    if len(msg_file_paths) > 1:
+        print(f'Warning! more than one: {len(msg_file_paths)} .msg files detected')
         input('press enter to send response mail...')
 
-    if len(eml_file_paths) > 0:
+    if len(msg_file_paths) > 0:
         # TODO: this is not a proper response mail bro, fix that
-        send_response_mail(eml_file_paths[0], "Your print is finito, you can pick it up")
+        send_response_mail(msg_file_paths[0], "standard_response.html", {'{response_text}': "Your print is finished! You can pick it up in the IWS"})
         input('press enter to continue. . .')
     else:
-        print(f'folder: {job_global_path} does not contain any .eml files,'\
+        print(f'folder: {job_global_path} does not contain any .msg files,'\
                 f'no response mail can be send')
 
     copy_print_job(job_name, "VERWERKT", source_main_folder='AAN_HET_PRINTEN')

@@ -17,15 +17,15 @@ if __name__ == '__main__':
     job_global_path = job_name_to_global_path(job_name)
 
     # send response mail
-    eml_file_paths = list(glob.glob(job_global_path + "/*.eml"))
+    msg_file_paths = list(glob.glob(job_global_path + "/*.msg"))
 
-    if len(eml_file_paths) > 0:
+    if len(msg_file_paths) > 0:
         afgekeurd_reason = input("Why is the print job rejected?")
-        if len(eml_file_paths) > 1:
-            print(f'Warning! more than one: {len(eml_file_paths)} .eml files detected')
+        if len(msg_file_paths) > 1:
+            print(f'Warning! more than one: {len(msg_file_paths)} .eml files detected')
             input('press enter to send response mail. . .')
 
-        send_response_mail(eml_file_paths[0], afgekeurd_reason)
+        send_response_mail(msg_file_paths[0], "standard_response.html", {'{response_text}': afgekeurd_reason})
         input('press enter to continue. . .')
 
     else:

@@ -2,36 +2,20 @@
 Handle mail functionality.
 """
 
-import email
-import subprocess
+import os
 import re
+from email_manager import EmailManager
 
-from global_variables import OUTLOOK_PATH
 
 
-def send_response_mail(incoming_mail_path, response_text):
+def send_response_mail(incoming_mail_path: str, template: str, template_content: dict):
     """ Send a response to incoming mail. """
+    email_manager = EmailManager()
+    email_manager.reply_to_email_from_file_using_template(
+        incoming_mail_path,
+        template,
+        template_content)
 
-    # Load the original email
-    with open(incoming_mail_path, 'r') as file:
-        original_email = email.message_from_file(file)
-
-    subject = 'Re: ' + original_email['Subject']
-
-    body = f"""Dear {mail_to_name(original_email['From'])},
-
-{response_text}
-
-Kind Regards,
-
-The IWS
-    """
-
-    compose = '/c ipm.note'
-    recipients = f'/m "{original_email["from"]}?Subject={subject}&Body={body}"'
-    command = ' '.join([OUTLOOK_PATH, compose, recipients])
-    process = subprocess.Popen(command, shell=False)
-    process.wait()
 
 
 def mail_to_name(mail_name: str):
@@ -48,3 +32,8 @@ def mail_to_name(mail_name: str):
         if '@' in mail_name:
             return mail_name.split('@')[0]
     return mail_name
+
+if __name__ == '__main__':
+    send_response_mail(os.path.join(r'C:\Users\levij\Desktop\3d-print-test\WACHTRIJ\23-08_levijn_De_Jager', 'mail.msg'),
+                       'standard_response.html',
+                       {'{recipient_name}': 'levijn', '{response_text}': 'test'})
