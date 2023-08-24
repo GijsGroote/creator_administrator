@@ -23,11 +23,11 @@ Before you begin, make sure you have the following dependencies installed:
 
     ```text
    └───<PRINT_DIR_HOME>
-    ├───AAN_HET_PRINTEN
-    ├───AFGEKEURD
-    ├───GESLICED
-    ├───VERWERKT
-    └───WACHTRIJ
+      ├───AAN_HET_PRINTEN
+      ├───AFGEKEURD
+      ├───GESLICED
+      ├───VERWERKT
+      └───WACHTRIJ
     ```
    
    you can give <PRINT_DIR_HOME> any name which pleases you.

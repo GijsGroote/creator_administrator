@@ -6,24 +6,24 @@ import datetime
 import os
 import re
 from typing import Tuple
-import email
-from email.header import decode_header
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.application import MIMEApplication
-import tempfile
-import win32com.client
 
-from convert_functions import convert_win32_msg_to_email_msg
 from global_variables import (
     FUNCTIONS_DIR_HOME,
     PRINT_DIR_HOME)
-from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
-from directory_functions import (
-    get_print_job_folder_names)
+
 from create_batch_file import python_to_batch
 from mail_functions import mail_to_name
 from talk_to_sa import yes_or_no
+
+from convert_functions import convert_win32_msg_to_email_msg
+from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
+from mail_functions import (
+    is_mail_a_valid_print_job_request,
+    mail_to_print_job,
+    mail_to_print_job_name)
+from directory_functions import (
+    get_print_job_folder_names,
+)
 
 from email_manager import EmailManager
 
@@ -98,7 +98,7 @@ def is_valid_print_job_request(msg) -> Tuple[bool, str]:
     return True, ' '
 
 
-def create_print_job(msg):
+def mail_to_print_job(msg):
     """ Create a 'print job' or folder in WACHTRIJ and
     put all corresponding files in the print job. """
 
@@ -118,12 +118,8 @@ def create_print_job(msg):
         if attachment.FileName.lower().endswith('.stl'):
             attachment.SaveAsFile(os.path.join(print_job_global_path, attachment.FileName))
 
-    # create afgekeurd.exe
     python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), job_name)
-
-    # create gesliced.exe
     python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), job_name)
-
 
 if __name__ == '__main__':
 
@@ -146,20 +142,22 @@ if __name__ == '__main__':
     for msg in msgs:
         print(f'processing incoming mail from: {msg.Sender}')
 
-        (is_valid, invalid_reason) = is_valid_print_job_request(msg)
+        (is_valid, invalid_reason) = is_mail_a_valid_print_job_request(msg)
 
         if is_valid:
-            new_print_job = True
+            created_print_jobs = True
             print_job_name = mail_to_print_job_name(msg)
-            print(f'mail from: {msg.Sender} is valid request,' \
-                    f' create print job: {print_job_name}')
-            create_print_job(msg)
+            print(f'mail from: {msg.Sender} is valid request,'
+                  f' create print job: {print_job_name}')
+
+            mail_to_print_job(msg, msg.as_bytes())
+
             print(f'print job: {print_job_name} created\n')
 
         else:
-            print(f'mail from {msg.Sender} is not a valid request '\
+            print(f'mail from {msg.Sender} is not a valid request '
                   f'because:\n {invalid_reason}, abort!\n')
 
     # open the 'WACHTRIJ' folder if new print jobs are created
-    if new_print_job:
+    if created_print_jobs:
         open_wachtrij_folder_cmd_farewell()
