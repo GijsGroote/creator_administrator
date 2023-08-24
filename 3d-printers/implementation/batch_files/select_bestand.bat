@@ -1,6 +1,6 @@
 @echo off
     
-"C:\Users\gijsg\AppData\Local\Programs\Python\Python311\python.exe" "C:\Users\gijsg\Documents\laserhok-workflow\3d-printers\implementation\functions\inbox.py"
+"C:\Users\gijsg\AppData\Local\Programs\Python\Python311\python.exe" "C:\Users\gijsg\Documents\laserhok-workflow\3d-printers\implementation\functions\select_bestand.py"
 
 rem custom exit code summary:
 rem 0 (default) - display "press any key to continue. . ." message

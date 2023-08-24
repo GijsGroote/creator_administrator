@@ -1,6 +1,7 @@
 """
-Communicate with Student Assistent (SA).
+Communicate with Student Assistant (SA).
 """
+import sys
 
 def choose_option(question: str, options: list) -> list:
     """ Ask SA to select/deselect a number of options. """
@@ -38,3 +39,17 @@ def yes_or_no(question: str) -> bool:
     if answer in ["n", "N", "nee", "NEE"]:
         return False
     return True
+
+def password_please():
+    """ input password to continue python process """
+    attempt = 1
+    while attempt <= 3:
+        password_given = input('Enter password:')
+        if password_given == '3D PRINTER':
+            print('password correct')
+            return
+        else:
+            print(f'password: {password_given} is incorrect')
+            attempt += 1
+    print('3 incorrect attempts, abort. . .')
+    sys.exit(0)

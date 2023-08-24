@@ -11,6 +11,44 @@ from convert_functions import (
     job_folder_name_to_date,
     gcode_files_to_max_print_time)
 
+
+
+def is_print_job_name_unique(job_name: str) -> bool:
+    """ Check if the print job name is unique, return boolean. """
+
+    # TODO (AGAIN): job A_B is creatd, A_B_(1) is created,  A_B is removed.
+    # Using this function
+    # the job called A_B will return job A_B_(1), which IS A DIFFERENT JOB
+    # edit this function so that it raises a valueError('no job found')
+    # when A_B is searched but only A_B_(1) is present
+
+    for folder_name in get_print_job_folder_names():
+        if job_name in folder_name:
+            return False
+
+    return True
+
+def make_print_job_unique(job_name: str) -> str:
+    """ Append _(NUMBER) to job name to make it unique. """
+
+    unique_job_name = job_name
+    if not is_print_job_name_unique(unique_job_name):
+        existing_job_names = [job_name]
+        unique_job_name = job_name + '_(' + str(len(existing_job_names)) + ')'
+
+        while not is_print_job_name_unique(unique_job_name):
+            existing_job_names.append(unique_job_name)
+            unique_job_name = job_name + '_(' + str(len(existing_job_names)) + ')'
+
+        if len(existing_job_names) == 1:
+            print(f'Warning! print job name {existing_job_names[0]} already exist,' \
+                  f'create name: {unique_job_name}')
+        else:
+            print(f'Warning! print job names {existing_job_names} already exist,' \
+                  f'create name: {unique_job_name}')
+    return unique_job_name
+
+
 def get_print_job_global_paths(search_in_main_folder=None) -> List[str]:
     """ Return global paths for all print jobs. """
 
@@ -112,21 +150,30 @@ def get_new_job_folder_name(job_name: str, source_dir_global_path: str,
     else:
         raise ValueError(f'{target_main_folder} is not a main folder')
 
-
-def move_directory_recursive(source_dir_global: str, target_dir_global: str):
+def move(source_dir_global: str, target_dir_global: str):
     """ Move directory and subdirectories recursively. """
-    try:
-        shutil.move(source_dir_global, target_dir_global)
-    except Exception as e:
-        print(f"An error occurred: {e}")
+
+    if os.path.isdir(source_dir_global):
+        for file_or_folder in os.listdir(source_dir_global):
+            move(os.path.join(source_dir_global, file_or_folder), target_dir_global)
+    else:
+        try:
+            shutil.move(source_dir_global, target_dir_global)
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
 
-def copy_directory_recursive(source_dir_global: str, target_dir_global: str):
+def copy(source_dir_global: str, target_dir_global: str):
     """ Copy directory and subdirectories recursively. """
-    try:
-        shutil.copy(source_dir_global, target_dir_global)
-    except Exception as e:
-        print(f"An error occurred: {e}")
+
+    if os.path.isdir(source_dir_global):
+        for file_or_folder in os.listdir(source_dir_global):
+            copy(os.path.join(source_dir_global, file_or_folder), target_dir_global)
+    else:
+        try:
+            shutil.copy(source_dir_global, target_dir_global)
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
 
 def copy_print_job(job_name: str, target_main_folder: str, source_main_folder=None):
@@ -165,7 +212,7 @@ def copy_print_job(job_name: str, target_main_folder: str, source_main_folder=No
         target_item = os.path.join(target_dir_global_path, item)
 
         if os.path.isdir(source_item):
-            copy_directory_recursive(source_item, target_dir_global_path)
+            copy(source_item, target_dir_global_path)
         else:
             # TODO: you will get problems moving because op files (especially .stl) which are still open
             shutil.copy(source_item, target_item)
@@ -214,7 +261,7 @@ def move_print_job_partly(job_name: str, exclude_files: List):
             target_item = os.path.join(target_dir_global_path, item)
 
             if os.path.isdir(source_item):
-                copy_directory_recursive(source_item, target_dir_global_path)
+                copy(source_item, target_dir_global_path)
             else:
                 # TODO: you will get problems moving because op files (especially .stl) which are still open
                 shutil.copy(source_item, target_item)
