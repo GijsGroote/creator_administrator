@@ -15,17 +15,13 @@ from create_batch_file import python_to_batch
 from mail_functions import mail_to_name
 from talk_to_sa import yes_or_no
 
-from convert_functions import convert_win32_msg_to_email_msg
 from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from mail_functions import (
     is_mail_a_valid_print_job_request,
-    mail_to_print_job,
     mail_to_print_job_name)
-from directory_functions import (
-    get_print_job_folder_names,
-)
+from directory_functions import get_print_job_folder_names
 
-from email_manager import EmailManager
+from mail_functions import EmailManager
 
 def is_print_job_name_unique(job_name: str) -> bool:
     """ Check if the print job name is unique, return boolean. """
@@ -150,7 +146,7 @@ if __name__ == '__main__':
             print(f'mail from: {msg.Sender} is valid request,'
                   f' create print job: {print_job_name}')
 
-            mail_to_print_job(msg, msg.as_bytes())
+            mail_to_print_job(msg)
 
             print(f'print job: {print_job_name} created\n')
 

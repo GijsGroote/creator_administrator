@@ -4,28 +4,83 @@ Handle mail functionality.
 
 import os
 import re
-from email_manager import EmailManager
-
 import datetime
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.application import MIMEApplication
 import tempfile
-import subprocess
 import re
+import win32com.client
 import email
 from email.header import decode_header
 from typing import Tuple
 
 from global_variables import (
-    OUTLOOK_PATH,
+    EMAIL_TEMPLATES_DIR_HOME,
     PRINT_DIR_HOME,
     FUNCTIONS_DIR_HOME)
 from create_batch_file import python_to_batch
-from directory_functions import (
-    make_print_job_unique)
+from directory_functions import make_print_job_unique
 from talk_to_sa import yes_or_no
 
+class EmailManager:
+    """
+    Class for managing emails using win32com.client
+    can be used to:
+    - get unread emails
+    - save emails to file
+    - reply to emails
+    - reply to emails from file
+    """
+    def __init__(self):
+        self.outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
+        self.inbox = self.outlook.GetDefaultFolder(6)
+
+
+    def get_unread_emails(self):
+        """get all unread emails from inbox"""
+        unread_emails = []
+        for message in self.inbox.Items:
+            if message.UnRead:
+                unread_emails.append(message)
+                message.UnRead = False
+                message.Save()
+        return unread_emails
+
+
+    def save_emails(self, emails, folder):
+        """save list of emails to file"""
+        for email in emails:
+            self.save_email(email, folder, filename=f"{email.Sender}.msg")
+
+
+    def save_email(self, email, folder, filename="email.msg"):
+        """save email to file"""
+        email.SaveAs(os.path.join(folder, filename))
+
+    def reply_to_email(self, email, reply_body=""):
+        """reply to email that is in mailitem format"""
+        reply = email.Reply()
+        reply.HTMLBody = reply_body + "\n" + reply.HTMLBody
+        reply.Display(True)
+
+    def reply_to_email_from_file(self, file_path, reply_body=""):
+        """reply to email that is saved to .msg file"""
+        msg = self.outlook.OpenSharedItem(file_path)
+        self.reply_to_email(msg, reply_body=reply_body)
+        
+    def reply_to_email_from_file_using_template(self, file_path, template_file_name, template_content):
+        """reply to email that is saved to .msg file"""
+        template_path = os.path.join(EMAIL_TEMPLATES_DIR_HOME, template_file_name)
+        msg = self.outlook.OpenSharedItem(file_path)
+        sender_name = msg.SenderName
+        
+        with open(template_path, "r") as file:
+            html_content = file.read()
+        
+        html_content = html_content.replace("{recipient_name}", sender_name)
+        
+        for key, value in template_content.items():
+            html_content = html_content.replace(key, value)
+        
+        self.reply_to_email(msg, reply_body=html_content)
 
 
 def send_response_mail(incoming_mail_path: str, template: str, template_content: dict):
@@ -52,6 +107,7 @@ def mail_to_name(mail_name: str):
             return mail_name.split('@')[0]
     return mail_name
 
+
 def mail_to_print_job_name(msg: [email.message.Message, str]) -> str:
     """ Extract senders from mail and convert to a print job name. """
 
@@ -77,21 +133,17 @@ def mail_to_print_job_name(msg: [email.message.Message, str]) -> str:
     return make_print_job_unique(job_name)
 
 
-def is_mail_a_valid_print_job_request(msg: email.message.Message) -> Tuple[bool, str]:
+def is_mail_a_valid_print_job_request(msg) -> Tuple[bool, str]:
     """ Check if the requirements are met for a valid print job. """
 
     # Initialize a counter for attachments with .stl extension
     stl_attachment_count = 0
 
-    if msg.get_content_maintype() == 'multipart':
-        for part in msg.walk():
-            if part.get_content_maintype() == 'multipart' or part.get('Content-Disposition') is None:
-                continue
-            filename = part.get_filename()
-            if filename:
-                decoded_filename = decode_header(filename)[0][0]
-                if decoded_filename.lower().endswith('.stl'):
-                    stl_attachment_count += 1
+    attachments = msg.Attachments
+    
+    for attachment in attachments:
+        if attachment.FileName.lower().endswith('.stl'):
+            stl_attachment_count += 1
 
     if stl_attachment_count == 0:
         return False, 'no .stl attachment found'
@@ -109,40 +161,41 @@ def is_mail_a_valid_print_job_request(msg: email.message.Message) -> Tuple[bool,
     return True, ' '
 
 
-def convert_win32_msg_to_email_msg(win32_msg) -> email.mime.multipart.MIMEMultipart:
-    """ Convert a win32 message to an email message. """
-    # create a new email message and copy the win32 message fields to the email message
-    email_msg = MIMEMultipart()
-    email_msg['From'] = win32_msg.SenderEmailAddress
-    email_msg['To'] = win32_msg.To
-    email_msg['Subject'] = win32_msg.Subject
+# def convert_win32_msg_to_email_msg(win32_msg) -> email.mime.multipart.MIMEMultipart:
+#     #!OLD FUNCTION THAT IS NOT USED ANYMORE
+#     """ Convert a win32 message to an email message. """
+#     # create a new email message and copy the win32 message fields to the email message
+#     email_msg = MIMEMultipart()
+#     email_msg['From'] = win32_msg.SenderEmailAddress
+#     email_msg['To'] = win32_msg.To
+#     email_msg['Subject'] = win32_msg.Subject
 
-    email_body = MIMEText(win32_msg.Body, _charset='utf-8')
-    email_msg.attach(email_body)
+#     email_body = MIMEText(win32_msg.Body, _charset='utf-8')
+#     email_msg.attach(email_body)
 
-    # Loop over attachments and add them to the email message
-    for attachment in win32_msg.Attachments:
-        # Save attachment to a temporary file
-        temp_dir = tempfile.gettempdir()
-        temp_filename = os.path.join(temp_dir, attachment.FileName)
-        attachment.SaveAsFile(temp_filename)
+#     # Loop over attachments and add them to the email message
+#     for attachment in win32_msg.Attachments:
+#         # Save attachment to a temporary file
+#         temp_dir = tempfile.gettempdir()
+#         temp_filename = os.path.join(temp_dir, attachment.FileName)
+#         attachment.SaveAsFile(temp_filename)
 
-        # Read attachment content and create MIMEApplication object
-        with open(temp_filename, 'rb') as attachment_file:
-            attachment_content = attachment_file.read()
+#         # Read attachment content and create MIMEApplication object
+#         with open(temp_filename, 'rb') as attachment_file:
+#             attachment_content = attachment_file.read()
 
-        mime_attachment = MIMEApplication(attachment_content)
-        mime_attachment.add_header('content-disposition', 'attachment', filename=attachment.FileName)
+#         mime_attachment = MIMEApplication(attachment_content)
+#         mime_attachment.add_header('content-disposition', 'attachment', filename=attachment.FileName)
 
-        # Attach the attachment to the email
-        email_msg.attach(mime_attachment)
+#         # Attach the attachment to the email
+#         email_msg.attach(mime_attachment)
 
-        # Remove the temporary file
-        os.remove(temp_filename)
-    return email_msg
+#         # Remove the temporary file
+#         os.remove(temp_filename)
+#     return email_msg
 
 
-def mail_to_print_job(msg: email.message.Message, raw_email: bytes):
+def mail_to_print_job(msg):
     """ Create a 'print job' or folder in WACHTRIJ and
     put all corresponding files in the print job. """
 
@@ -155,22 +208,13 @@ def mail_to_print_job(msg: email.message.Message, raw_email: bytes):
     os.mkdir(print_job_global_path)
 
     # Save the email as a .eml file
-    with open(os.path.join(print_job_global_path, 'mail.eml'), 'wb') as eml_file:
-        eml_file.write(raw_email)
+    msg.SaveAs(os.path.join(print_job_global_path, 'mail.msg'))
 
     # Save the .stl files
-    if msg.get_content_maintype() == 'multipart':
-        for part in msg.walk():
-            if part.get_content_maintype() == 'multipart' or part.get('Content-Disposition') is None:
-                continue
-            filename = part.get_filename()
-            if filename and filename.lower().endswith('.stl'):
-                decoded_filename = decode_header(filename)[0][0]
-                file_path = os.path.join(print_job_global_path, decoded_filename)
-                with open(file_path, 'wb') as f:
-                    f.write(part.get_payload(decode=True))
-                print('Saved attachment: ', decoded_filename)
+    for attachment in msg.Attachments:
+        if attachment.FileName.lower().endswith('.stl'):
+            attachment.SaveAsFile(os.path.join(print_job_global_path, attachment.FileName))
 
-    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), job_name=job_name)
-    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), job_name=job_name)
+    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), job_name)
+    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), job_name)
 
