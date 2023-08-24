@@ -41,7 +41,7 @@ def python_to_batch(python_path: str, job_name=None):
 
 if __name__ == "__main__":
     # create inbox.bat
-    # python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'inbox.py'))
+    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'inbox.py'))
 
     # create select_bestand.bat
     python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'select_bestand.py'))

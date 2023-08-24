@@ -64,9 +64,9 @@ class EmailManager:
         self.reply_to_email(msg, reply_body=html_content)
         
     
-if __name__ == '__main__':
-    mail_manager = EmailManager()
-    unread_emails = mail_manager.get_unread_emails()
-    mail_manager.save_emails(unread_emails, "C:\\Users\\levij\\Programming\\IWS\\laserhok-workflow\\3d-printers\\implementation\\functions")
-    
-    
+# if __name__ == '__main__':
+#     mail_manager = EmailManager()
+#     unread_emails = mail_manager.get_unread_emails()
+#     mail_manager.save_emails(unread_emails, "C:\\Users\\levij\\Programming\\IWS\\laserhok-workflow\\3d-printers\\implementation\\functions")
+#
+
