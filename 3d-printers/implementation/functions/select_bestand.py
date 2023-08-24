@@ -40,6 +40,18 @@ if __name__ == '__main__':
 
     project_name = input(f'Where are the 3D prints for? Enter a name for the project:')
 
+    # number of potential print jobs
+    job_folders_global_path = [dirs for root, dirs, files in os.walk(folder_global_path)]
+
+
+    print(f'the number of subfolders is {job_folders_global_path}')
+
+
+
+    # for root, _, files in os.walk(root_dir):
+    #     for file in files:
+    #         if file.lower().endswith(".stl"):
+    #             stl_files.append(os.path.join(root, file))
 
     # loop through subfolders
 
