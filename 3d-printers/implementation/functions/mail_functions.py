@@ -19,7 +19,8 @@ from global_variables import (
     PRINT_DIR_HOME,
     FUNCTIONS_DIR_HOME)
 from create_batch_file import python_to_batch
-from directory_functions import is_print_job_name_unique
+from directory_functions import (
+    make_print_job_unique)
 from talk_to_sa import yes_or_no
 
 
@@ -63,6 +64,7 @@ def mail_to_name(mail_name: str):
             return mail_name.split('@')[0]
     return mail_name
 
+
 def mail_to_print_job_name(msg: [email.message.Message, str]) -> str:
     """ Extract senders from mail and convert to a print job name. """
 
@@ -85,23 +87,9 @@ def mail_to_print_job_name(msg: [email.message.Message, str]) -> str:
     job_name = re.sub(r'[^\w\s]', '', mail_to_name(decoded_sender)).replace(' ', '_')
 
     # check if print job name is unique
-    unique_job_name = job_name
-    if not is_print_job_name_unique(unique_job_name):
-        existing_job_names = [job_name]
-        unique_job_name = job_name + '_(' + str(len(existing_job_names)) + ')'
+    return make_print_job_unique(job_name)
 
-        while not is_print_job_name_unique(unique_job_name):
-            existing_job_names.append(unique_job_name)
-            unique_job_name = job_name + '_(' + str(len(existing_job_names)) + ')'
 
-        if len(existing_job_names) == 1:
-            print(f'Warning! print job name {existing_job_names[0]} already exist,'\
-                    f'create name: {unique_job_name}')
-        else:
-            print(f'Warning! print job names {existing_job_names} already exist,'\
-                f'create name: {unique_job_name}')
-
-    return unique_job_name
 
 
 def is_mail_a_valid_print_job_request(msg: email.message.Message) -> Tuple[bool, str]:
@@ -203,4 +191,3 @@ def mail_to_print_job(msg: email.message.Message, raw_email: bytes):
 
     # create gesliced.exe
     python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), job_name=job_name)
-

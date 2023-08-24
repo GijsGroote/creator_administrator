@@ -21,7 +21,7 @@ if __name__ == '__main__':
 
     # read unread mails and convert to the email format and mark them as read
     msgs = []
-    new_print_job = False
+    created_print_jobs = False
     for message in inbox.Items:
         # TODO: this is slow, loop only over unread mail (not over all mail and then use an if statement to see which are unread)
         if message.UnRead:
@@ -43,7 +43,7 @@ if __name__ == '__main__':
         (is_valid, invalid_reason) = is_mail_a_valid_print_job_request(msg)
 
         if is_valid:
-            new_print_job = True
+            created_print_jobs = True
             print_job_name = mail_to_print_job_name(msg)
             print(f'mail from: {msg.get("From")} is valid request,' \
                     f' create print job: {print_job_name}')
@@ -55,5 +55,5 @@ if __name__ == '__main__':
                   f'because:\n {invalid_reason}, abort!\n')
 
     # open the 'WACHTRIJ' folder if new print jobs are created
-    if new_print_job:
+    if created_print_jobs:
         open_wachtrij_folder_cmd_farewell()
