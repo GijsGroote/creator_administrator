@@ -161,40 +161,6 @@ def is_mail_a_valid_print_job_request(msg) -> Tuple[bool, str]:
     return True, ' '
 
 
-# def convert_win32_msg_to_email_msg(win32_msg) -> email.mime.multipart.MIMEMultipart:
-#     #!OLD FUNCTION THAT IS NOT USED ANYMORE
-#     """ Convert a win32 message to an email message. """
-#     # create a new email message and copy the win32 message fields to the email message
-#     email_msg = MIMEMultipart()
-#     email_msg['From'] = win32_msg.SenderEmailAddress
-#     email_msg['To'] = win32_msg.To
-#     email_msg['Subject'] = win32_msg.Subject
-
-#     email_body = MIMEText(win32_msg.Body, _charset='utf-8')
-#     email_msg.attach(email_body)
-
-#     # Loop over attachments and add them to the email message
-#     for attachment in win32_msg.Attachments:
-#         # Save attachment to a temporary file
-#         temp_dir = tempfile.gettempdir()
-#         temp_filename = os.path.join(temp_dir, attachment.FileName)
-#         attachment.SaveAsFile(temp_filename)
-
-#         # Read attachment content and create MIMEApplication object
-#         with open(temp_filename, 'rb') as attachment_file:
-#             attachment_content = attachment_file.read()
-
-#         mime_attachment = MIMEApplication(attachment_content)
-#         mime_attachment.add_header('content-disposition', 'attachment', filename=attachment.FileName)
-
-#         # Attach the attachment to the email
-#         email_msg.attach(mime_attachment)
-
-#         # Remove the temporary file
-#         os.remove(temp_filename)
-#     return email_msg
-
-
 def mail_to_print_job(msg):
     """ Create a 'print job' or folder in WACHTRIJ and
     put all corresponding files in the print job. """
