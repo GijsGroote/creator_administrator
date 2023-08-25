@@ -10,14 +10,10 @@ from directory_functions import (
     copy_print_job,
     move_print_job_partly)
 
-from cmd_farewell_handler import (
-    remove_directory_and_close_cmd_farewell,
-    remove_directory_cmd_farewell)
-
+from cmd_farewell_handler import remove_directory_and_close_cmd_farewell
 from talk_to_sa import (
         choose_option,
         yes_or_no)
-
 from create_batch_file import python_to_batch
 from global_variables import FUNCTIONS_DIR_HOME
 

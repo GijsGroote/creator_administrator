@@ -5,12 +5,10 @@ Convert python code to clickable batch functions.
 import os
 
 from global_variables import (
-    PRINT_DIR_HOME,
     PYTHON_PATH,
     FUNCTIONS_DIR_HOME)
 from cmd_farewell_handler import cmd_farewells
 from directory_functions import job_name_to_global_path
-
 
 def python_to_batch(python_path: str, job_name=None):
     """ Convert a python file to an batch file. """
@@ -38,8 +36,8 @@ def python_to_batch(python_path: str, job_name=None):
 
     bat_file.close()
 
-
 if __name__ == "__main__":
+
     # create inbox.bat
     python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'inbox.py'))
 

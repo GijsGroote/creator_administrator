@@ -11,7 +11,6 @@ from directory_functions import (
     copy_print_job,
     does_job_exist_in_main_folder,
     job_name_to_job_folder_name)
-
 from talk_to_sa import yes_or_no
 from cmd_farewell_handler import (
     open_gesliced_folder_cmd_farewell,

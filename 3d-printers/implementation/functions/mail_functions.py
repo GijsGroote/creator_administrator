@@ -3,9 +3,7 @@ Handle mail functionality.
 """
 
 import os
-import re
 import datetime
-import tempfile
 import re
 import win32com.client
 import email

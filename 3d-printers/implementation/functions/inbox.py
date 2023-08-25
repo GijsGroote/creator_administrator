@@ -10,17 +10,14 @@ from typing import Tuple
 from global_variables import (
     FUNCTIONS_DIR_HOME,
     PRINT_DIR_HOME)
-
 from create_batch_file import python_to_batch
 from mail_functions import mail_to_name
 from talk_to_sa import yes_or_no
-
 from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from mail_functions import (
     is_mail_a_valid_print_job_request,
     mail_to_print_job_name)
 from directory_functions import get_print_job_folder_names
-
 from mail_functions import EmailManager
 
 def is_print_job_name_unique(job_name: str) -> bool:
@@ -37,7 +34,6 @@ def is_print_job_name_unique(job_name: str) -> bool:
             return False
 
     return True
-
 
 def mail_to_print_job_name(msg) -> str:
     """ Extract senders from mail and convert to a print job name. """
@@ -154,6 +150,5 @@ if __name__ == '__main__':
             print(f'mail from {msg.Sender} is not a valid request '
                   f'because:\n {invalid_reason}, abort!\n')
 
-    # open the 'WACHTRIJ' folder if new print jobs are created
     if created_print_jobs:
         open_wachtrij_folder_cmd_farewell()

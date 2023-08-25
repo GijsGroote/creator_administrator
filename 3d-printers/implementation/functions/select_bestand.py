@@ -1,25 +1,22 @@
 """
 Convert subfolders in a selected folder to print jobs.
 """
-
-
 import os
 import sys
 import datetime
 from typing import Tuple
+from tkinter import filedialog
 
 from create_batch_file import python_to_batch
 from directory_functions import (
     copy,
     make_print_job_unique)
-
 from global_variables import (
     FUNCTIONS_DIR_HOME,
     PRINT_DIR_HOME)
 from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from talk_to_sa import password_please
-import tkinter as tk
-from tkinter import filedialog
+
 
 def is_folder_a_valid_print_job(global_path: str) -> Tuple[bool, str]:
     """ Check if a folder can be converted to a print job. """

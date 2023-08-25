@@ -12,7 +12,6 @@ from convert_functions import (
     gcode_files_to_max_print_time)
 
 
-
 def is_print_job_name_unique(job_name: str) -> bool:
     """ Check if the print job name is unique, return boolean. """
 
@@ -267,5 +266,3 @@ def move_print_job_partly(job_name: str, exclude_files: List):
                 shutil.copy(source_item, target_item)
 
         # update name of the source_dir_global_path
-
-
