@@ -45,16 +45,23 @@ def exit_cmd_farewell():
 
 def remove_directory_cmd_farewell():
     """ Exit python and remove the directory that holds the .bat script. """
-    # TODO: much more needs to be checked, this is outright dangurous
+    if os.getcwd().startswith(PRINT_DIR_HOME):
+        sys.exit(901)
+    else:
+        raise ValueError(f'the working directory must be a subdirectory of {PRINT_DIR_HOME} '
+                         f'and the working directory is {os.getcwd()}')
 
-    sys.exit(901)
 
 
 def remove_directory_and_close_cmd_farewell():
     """ Exit python, remove the directory and close cmd that holds the .bat script. """
-    # TODO: much more needs to be checked, this is outright dangurous
 
-    sys.exit(902)
+    if os.getcwd().startswith(PRINT_DIR_HOME):
+        sys.exit(902)
+    else:
+        raise ValueError(f'the working directory must be a subdirectory of {PRINT_DIR_HOME} '
+                         f'and the working directory is {os.getcwd()}')
+
 
 
 def open_wachtrij_folder_cmd_farewell():
