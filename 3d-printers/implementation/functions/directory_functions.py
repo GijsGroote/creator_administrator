@@ -195,7 +195,6 @@ def file_should_be_skipped(source_file_global_path: str,
 
 def copy_print_job(job_name: str, target_main_folder: str, source_main_folder=None):
     """ Move print job to target_main_folder. """
-    # TODO: this function is to long and does to much, split this function into multiple
 
     assert target_main_folder in ["AFGEKEURD", "WACHTRIJ", "GESLICED", "AAN_HET_PRINTEN", "VERWERKT"], \
         f"folder {target_main_folder} is not a main folder"
