@@ -10,13 +10,13 @@ from global_variables import (
 from cmd_farewell_handler import cmd_farewells
 from directory_functions import job_name_to_global_path
 
-def python_to_batch(python_path: str, job_name=None):
+def python_to_batch(python_path: str, job_name=None, search_in_main_folder=None):
     """ Convert a python file to an batch file. """
 
     assert os.path.isfile(python_path), f"file {python_path} does not exist."
 
     if job_name is not None:
-        batch_file_global_path = job_name_to_global_path(job_name)
+        batch_file_global_path = job_name_to_global_path(job_name, search_in_main_folder)
         assert os.path.exists(batch_file_global_path), f"path {batch_file_global_path} does not exist."
         python_command = f'"{PYTHON_PATH}" "{python_path}" "{job_name}"'
     else:

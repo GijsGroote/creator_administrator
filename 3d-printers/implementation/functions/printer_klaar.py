@@ -26,8 +26,7 @@ if __name__ == '__main__':
         job_name_folder = {job_name_to_job_folder_name(
             job_name, search_in_main_folder="GESLICED")}
         print(f'Warning! found GESLICED/{job_name_folder}, the print job is not yet ready')
-        if yes_or_no(f'do you want to open GESLICED/{job_name_folder} (Y/n)?'):
-            # TODO: open the gesliced/job, not gesliced
+        if yes_or_no('do you want to open GESLICED/ (Y/n)?'):
             open_gesliced_folder_cmd_farewell()
 
         elif not yes_or_no('you are really sure this print job is done (Y/n)?'):
@@ -42,7 +41,6 @@ if __name__ == '__main__':
         input('press enter to send response mail...')
 
     if len(msg_file_paths) > 0:
-        # TODO: this is not a proper response mail bro, fix that
         send_response_mail(msg_file_paths[0], "standard_response.html", {'{response_text}': "Your print is finished! You can pick it up in the IWS"})
         input('press enter to continue. . .')
     else:

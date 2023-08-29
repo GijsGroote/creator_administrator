@@ -51,6 +51,5 @@ if __name__ == '__main__':
 
             # move everything except gcode_files_to_print_later
             move_print_job_partly(job_name, gcode_files_to_print_later)
-            # TODO: check if the printer_klaar.exe goes to the ./AAN_HET_PRINTEN/job_folder_name
-            # TODO: and not to ./GESLICED/job_folder_name
-            python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name=job_name)
+            python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'),
+                            job_name=job_name, search_in_main_folder='AAN_HET_PRINTEN')

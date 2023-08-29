@@ -244,18 +244,15 @@ def move_print_job_partly(job_name: str, exclude_files: List):
     source_dir_global_path = job_name_to_global_path(job_name, 'GESLICED')
 
     if does_job_exist_in_main_folder(job_name, 'AAN_HET_PRINTEN'):
+        print('job exists in main folder aan het printen')
         target_dir_global_path = job_name_to_global_path(
             job_name, search_in_main_folder='AAN_HET_PRINTEN')
     else:
+        print('job does nto exist create a new one')
         date = job_folder_name_to_date(
             job_name_to_job_folder_name(job_name))
 
-        printing_gcode_files = [file for file in os.listdir(source_dir_global_path)
-                                if (file.lower().endswith(".gcode") and
-                                    file not in exclude_files)]
-
-        max_print_time = gcode_files_to_max_print_time(printing_gcode_files)
-        new_job_folder_name = date + max_print_time + job_name
+        new_job_folder_name = date + job_name
 
         target_dir_global_path = os.path.join(
             PRINT_DIR_HOME,
@@ -276,12 +273,10 @@ def move_print_job_partly(job_name: str, exclude_files: List):
                 move(source_item, target_item)
                 continue
 
-        if os.path.isdir(source_item):
+        elif os.path.isdir(source_item):
             copy(source_item, target_dir_global_path)
         else:
             if file_should_be_skipped(source_item, target_item):
                 continue
             else:
                 copy(source_item, target_item)
-
-        # TODO update name of the source_dir_global_path
