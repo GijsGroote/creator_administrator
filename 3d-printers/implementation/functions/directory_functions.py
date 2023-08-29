@@ -23,6 +23,9 @@ def is_print_job_name_unique(job_name: str) -> bool:
 
 def make_print_job_unique(job_name: str) -> str:
     """ Append _(NUMBER) to job name to make it unique. """
+    # NOTE: print job Gijs_Groote should not be created when print job
+    # Gijs_Groote_(1) already exists, then Gijs_Groote_(2) must be created
+    # TODO: update code to above note
 
     unique_job_name = job_name
     if not is_print_job_name_unique(unique_job_name):
