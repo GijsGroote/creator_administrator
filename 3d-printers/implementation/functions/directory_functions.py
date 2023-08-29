@@ -15,18 +15,11 @@ from convert_functions import (
 def is_print_job_name_unique(job_name: str) -> bool:
     """ Check if the print job name is unique, return boolean. """
 
-    # TODO (AGAIN): job A_B is creatd, A_B_(1) is created,  A_B is removed.
-    # Using this function
-    # the job called A_B will return job A_B_(1), which IS A DIFFERENT JOB
-    # edit this function so that it raises a valueError('no job found')
-    # when A_B is searched but only A_B_(1) is present
-
     for folder_name in get_print_job_folder_names():
-        if job_name in folder_name:
+        if folder_name.endswith(job_name):
             return False
 
     return True
-
 
 def make_print_job_unique(job_name: str) -> str:
     """ Append _(NUMBER) to job name to make it unique. """
@@ -86,13 +79,8 @@ def get_print_job_folder_names(search_in_main_folder=None) -> List[str]:
 def job_name_to_global_path(job_name: str, search_in_main_folder=None) -> str:
     """ Return global path of print job. """
 
-    # TODO: job A_B is creatd, A_B_(1) is created,  A_B is removed. Using this function
-    # the job called A_B will return job A_B_(1), which IS A DIFFERENT JOB
-    # edit this function so that it raises a valueError('no job found')
-    # when A_B is searched but only A_B_(1) is present
-
     for print_job_global_path in get_print_job_global_paths(search_in_main_folder):
-        if job_name in print_job_global_path:
+        if print_job_global_path.endswith(job_name):
             return print_job_global_path
 
     raise ValueError(f"no print job path found for print job with name {job_name}")
@@ -246,7 +234,7 @@ def copy_print_job(job_name: str, target_main_folder: str, source_main_folder=No
             if file_should_be_skipped(source_item, target_item):
                 continue
             else:
-                shutil.copy(source_item, target_item)
+                copy(source_item, target_item)
 
 
 def move_print_job_partly(job_name: str, exclude_files: List):
@@ -285,7 +273,7 @@ def move_print_job_partly(job_name: str, exclude_files: List):
             if item in exclude_files:
                 continue
             else:
-                shutil.move(source_item, target_item)
+                move(source_item, target_item)
                 continue
 
         if os.path.isdir(source_item):
@@ -294,6 +282,6 @@ def move_print_job_partly(job_name: str, exclude_files: List):
             if file_should_be_skipped(source_item, target_item):
                 continue
             else:
-                shutil.copy(source_item, target_item)
+                copy(source_item, target_item)
 
         # TODO update name of the source_dir_global_path

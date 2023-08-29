@@ -17,23 +17,8 @@ from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from mail_functions import (
     is_mail_a_valid_print_job_request,
     mail_to_print_job_name)
-from directory_functions import get_print_job_folder_names
+from directory_functions import is_print_job_name_unique
 from mail_functions import EmailManager
-
-def is_print_job_name_unique(job_name: str) -> bool:
-    """ Check if the print job name is unique, return boolean. """
-
-    # TODO (AGAIN): job A_B is creatd, A_B_(1) is created,  A_B is removed.
-    # Using this function
-    # the job called A_B will return job A_B_(1), which IS A DIFFERENT JOB
-    # edit this function so that it raises a valueError('no job found')
-    # when A_B is searched but only A_B_(1) is present
-
-    for folder_name in get_print_job_folder_names():
-        if job_name in folder_name:
-            return False
-
-    return True
 
 def mail_to_print_job_name(msg) -> str:
     """ Extract senders from mail and convert to a print job name. """
