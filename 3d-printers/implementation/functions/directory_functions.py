@@ -27,6 +27,7 @@ def is_print_job_name_unique(job_name: str) -> bool:
 
     return True
 
+
 def make_print_job_unique(job_name: str) -> str:
     """ Append _(NUMBER) to job name to make it unique. """
 
@@ -39,12 +40,6 @@ def make_print_job_unique(job_name: str) -> str:
             existing_job_names.append(unique_job_name)
             unique_job_name = job_name + '_(' + str(len(existing_job_names)) + ')'
 
-        if len(existing_job_names) == 1:
-            print(f'Warning! print job name {existing_job_names[0]} already exist,' \
-                  f'create name: {unique_job_name}')
-        else:
-            print(f'Warning! print job names {existing_job_names} already exist,' \
-                  f'create name: {unique_job_name}')
     return unique_job_name
 
 
@@ -149,6 +144,7 @@ def get_new_job_folder_name(job_name: str, source_dir_global_path: str,
     else:
         raise ValueError(f'{target_main_folder} is not a main folder')
 
+
 def move(source_dir_global: str, target_dir_global: str):
     """ Move directory and subdirectories recursively. """
 
@@ -173,6 +169,40 @@ def copy(source_dir_global: str, target_dir_global: str):
             shutil.copy(source_dir_global, target_dir_global)
         except Exception as e:
             print(f"An error occurred: {e}")
+
+
+def file_should_be_skipped(source_file_global_path: str,
+                           target_file_global_path: str) -> bool:
+    """ Return boolean indicating if the file should be skipped when moving to the target folder."""
+
+    if target_file_global_path.startswith(os.path.join(PRINT_DIR_HOME, 'AFGEKEURD')) and \
+            (source_file_global_path.endswith('afgekeurd.bat') and
+             target_file_global_path.endswith('afgekeurd.bat')) or \
+            (source_file_global_path.endswith('gesliced.bat') and
+             target_file_global_path.endswith('gesliced.bat')):
+        return True
+
+    elif source_file_global_path.startswith(os.path.join(PRINT_DIR_HOME, 'WACHTRIJ')) and \
+            target_file_global_path.startswith(os.path.join(PRINT_DIR_HOME, 'GESLICED')) and \
+            source_file_global_path.endswith('gesliced.bat') and \
+            target_file_global_path.endswith('gesliced.bat'):
+        return True
+
+    elif source_file_global_path.startswith(os.path.join(PRINT_DIR_HOME, 'GESLICED')) and \
+            target_file_global_path.startswith(os.path.join(PRINT_DIR_HOME, 'AAN_HET_PRINTEN')) and \
+            source_file_global_path.endswith('printer_aangezet.bat') and \
+            target_file_global_path.endswith('printer_aangezet.bat'):
+        return True
+
+    elif source_file_global_path.startswith(os.path.join(PRINT_DIR_HOME, 'AAN_HET_PRINTEN')) and \
+            target_file_global_path.startswith(os.path.join(PRINT_DIR_HOME, 'VERWERKT')) and \
+            (source_file_global_path.endswith('printer_klaar.bat') and
+             target_file_global_path.endswith('printer_klaar.bat')) or \
+            (source_file_global_path.endswith('afgekeurd.bat') and
+             target_file_global_path.endswith('afgekeurd.bat')):
+        return True
+    else:
+        return False
 
 
 def copy_print_job(job_name: str, target_main_folder: str, source_main_folder=None):
@@ -213,8 +243,10 @@ def copy_print_job(job_name: str, target_main_folder: str, source_main_folder=No
         if os.path.isdir(source_item):
             copy(source_item, target_dir_global_path)
         else:
-            # TODO: you will get problems moving because op files (especially .stl) which are still open
-            shutil.copy(source_item, target_item)
+            if file_should_be_skipped(source_item, target_item):
+                continue
+            else:
+                shutil.copy(source_item, target_item)
 
 
 def move_print_job_partly(job_name: str, exclude_files: List):
@@ -246,23 +278,22 @@ def move_print_job_partly(job_name: str, exclude_files: List):
     # partly move some files to target
     # move items from source to target directory
     for item in os.listdir(source_dir_global_path):
+        source_item = os.path.join(source_dir_global_path, item)
+        target_item = os.path.join(target_dir_global_path, item)
+
         if item.lower().endswith('.gcode'):
             if item in exclude_files:
-                print(f'not moveing {item}')
-                # pass
+                continue
             else:
-                print(f'moveing {item}')
-                shutil.move(
-                    os.path.join(source_dir_global_path, item),
-                    os.path.join(target_dir_global_path, item))
-        else:
-            source_item = os.path.join(source_dir_global_path, item)
-            target_item = os.path.join(target_dir_global_path, item)
+                shutil.move(source_item, target_item)
+                continue
 
-            if os.path.isdir(source_item):
-                copy(source_item, target_dir_global_path)
+        if os.path.isdir(source_item):
+            copy(source_item, target_dir_global_path)
+        else:
+            if file_should_be_skipped(source_item, target_item):
+                continue
             else:
-                # TODO: you will get problems moving because op files (especially .stl) which are still open
                 shutil.copy(source_item, target_item)
 
-        # update name of the source_dir_global_path
+        # TODO update name of the source_dir_global_path

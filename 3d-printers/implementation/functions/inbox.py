@@ -52,13 +52,6 @@ def mail_to_print_job_name(msg) -> str:
             existing_job_names.append(unique_job_name)
             unique_job_name = job_name + '_(' + str(len(existing_job_names)) + ')'
 
-        if len(existing_job_names) == 1:
-            print(f'Warning! print job name {existing_job_names[0]} already exist,'\
-                    f'create name: {unique_job_name}')
-        else:
-            print(f'Warning! print job names {existing_job_names} already exist,'\
-                f'create name: {unique_job_name}')
-
     return unique_job_name
 
 
