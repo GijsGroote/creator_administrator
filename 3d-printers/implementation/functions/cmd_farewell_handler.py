@@ -31,6 +31,7 @@ if %errorlevel% equ 900 (
     "{IOBIT_UNLOCKER_PATH}" "/Delete" "%~dp0"
     exit
 ) else if %errorlevel% gtr 910 (
+rem error level could be higher than 910 and should not do this
     pause
 "{PYTHON_PATH}" "{os.path.join(FUNCTIONS_DIR_HOME, 'cmd_farewell_handler.py')}" "%errorlevel%
 ) else (
@@ -45,6 +46,7 @@ def exit_cmd_farewell():
 
 def remove_directory_cmd_farewell():
     """ Exit python and remove the directory that holds the .bat script. """
+
     if os.getcwd().startswith(PRINT_DIR_HOME):
         sys.exit(901)
     else:
@@ -56,7 +58,7 @@ def remove_directory_cmd_farewell():
 def remove_directory_and_close_cmd_farewell():
     """ Exit python, remove the directory and close cmd that holds the .bat script. """
 
-    if os.getcwd().startswith(PRINT_DIR_HOME):
+    if os.getcwd().lower().startswith(PRINT_DIR_HOME.lower()):
         sys.exit(902)
     else:
         raise ValueError(f'the working directory must be a subdirectory of {PRINT_DIR_HOME} '
@@ -76,11 +78,11 @@ def open_gesliced_folder_cmd_farewell():
 
 if __name__ == '__main__':
 
-    exit_status = int(sys.argv[1])
+    error_level = int(sys.argv[1])
 
-    if exit_status == 911:
+    if error_level == 911:
         os.startfile(os.path.join(PRINT_DIR_HOME, 'WACHTRIJ'))
-    elif exit_status == 912:
+    elif error_level == 912:
         os.startfile(os.path.join(PRINT_DIR_HOME, 'GESLICED'))
     else:
-        input(f'No behavior defined for exit status {exit_status}')
+        input(f'No behavior defined for exit status {error_level}')
