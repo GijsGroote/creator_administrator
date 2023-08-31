@@ -21,6 +21,7 @@ def is_print_job_name_unique(job_name: str) -> bool:
 
     return True
 
+
 def make_print_job_unique(job_name: str) -> str:
     """ Append _(NUMBER) to job name to make it unique. """
     # NOTE: print job Gijs_Groote should not be created when print job
@@ -171,26 +172,33 @@ def file_should_be_skipped(source_file_global_path: str,
              target_file_global_path.endswith('afgekeurd.bat')) or \
             (source_file_global_path.endswith('gesliced.bat') and
              target_file_global_path.endswith('gesliced.bat')):
+        print(f'haah1')
         return True
 
     elif source_file_global_path.startswith(os.path.join(PRINT_DIR_HOME, 'WACHTRIJ')) and \
             target_file_global_path.startswith(os.path.join(PRINT_DIR_HOME, 'GESLICED')) and \
             source_file_global_path.endswith('gesliced.bat') and \
             target_file_global_path.endswith('gesliced.bat'):
+        print(f'haah2')
+
         return True
 
     elif source_file_global_path.startswith(os.path.join(PRINT_DIR_HOME, 'GESLICED')) and \
             target_file_global_path.startswith(os.path.join(PRINT_DIR_HOME, 'AAN_HET_PRINTEN')) and \
             source_file_global_path.endswith('printer_aangezet.bat') and \
             target_file_global_path.endswith('printer_aangezet.bat'):
+        print(f'haah3')
+
         return True
 
     elif source_file_global_path.startswith(os.path.join(PRINT_DIR_HOME, 'AAN_HET_PRINTEN')) and \
             target_file_global_path.startswith(os.path.join(PRINT_DIR_HOME, 'VERWERKT')) and \
-            (source_file_global_path.endswith('printer_klaar.bat') and
-             target_file_global_path.endswith('printer_klaar.bat')) or \
-            (source_file_global_path.endswith('afgekeurd.bat') and
-             target_file_global_path.endswith('afgekeurd.bat')):
+            ((source_file_global_path.endswith('printer_klaar.bat') and
+              target_file_global_path.endswith('printer_klaar.bat')) or
+             (source_file_global_path.endswith('afgekeurd.bat') and
+              target_file_global_path.endswith('afgekeurd.bat'))):
+        print(f'haah4')
+
         return True
     else:
         return False
@@ -234,6 +242,7 @@ def copy_print_job(job_name: str, target_main_folder: str, source_main_folder=No
             copy(source_item, target_dir_global_path)
         else:
             if file_should_be_skipped(source_item, target_item):
+                print(f'skpping file {source_item}')
                 continue
             else:
                 copy(source_item, target_item)
