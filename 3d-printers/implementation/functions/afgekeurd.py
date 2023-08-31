@@ -10,6 +10,7 @@ from directory_functions import (
     job_name_to_global_path,
     copy_print_job)
 from cmd_farewell_handler import remove_directory_and_close_cmd_farewell
+from csv_job_tracker import JobTrackerCSV
 
 if __name__ == '__main__':
 
@@ -33,4 +34,5 @@ if __name__ == '__main__':
               '.eml files, no response mail can be send')
 
     copy_print_job(job_name, "AFGEKEURD")
+    JobTrackerCSV().update_job_status(job_name, "AFGEKEURD")
     remove_directory_and_close_cmd_farewell()
