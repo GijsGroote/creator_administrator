@@ -1,0 +1,3 @@
+print_job_name,sender,subject,date_sent,current_state,split_job
+levijn_De_Jager,levijn De Jager,meerdere stl bestanden,2023-08-23,WACHTRIJ,False
+levijn_De_Jager_(1),levijn De Jager,meerdere stl bestanden,2023-08-23,VERWERKT,False

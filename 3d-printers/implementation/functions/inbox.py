@@ -9,7 +9,8 @@ from typing import Tuple
 
 from global_variables import (
     FUNCTIONS_DIR_HOME,
-    PRINT_DIR_HOME)
+    PRINT_DIR_HOME,
+    LOG_DIR_HOME)
 from create_batch_file import python_to_batch
 from mail_functions import mail_to_name
 from talk_to_sa import yes_or_no
@@ -19,6 +20,7 @@ from mail_functions import (
     mail_to_print_job_name)
 from directory_functions import make_print_job_name_unique
 from mail_functions import EmailManager
+from csv_job_tracker import JobTrackerCSV, check_health_folders
 
 def mail_to_print_job_name(msg) -> str:
     """ Extract senders from mail and convert to a print job name. """
@@ -87,7 +89,14 @@ if __name__ == '__main__':
 
     # open outlook
     email_manager = EmailManager()
+    
+    # open/create csv log
+    job_tracker = JobTrackerCSV()
 
+    # check if all folders exist
+    print("checking and repairing printer workflow")
+    check_health_folders()
+    
     # read unread mails and convert to the email format and mark them as read
     msgs = email_manager.get_unread_emails()
     created_print_jobs = False
@@ -114,6 +123,11 @@ if __name__ == '__main__':
 
             print(f'print job: {print_job_name} created\n')
 
+            job_tracker.add_job(print_job_name=print_job_name, 
+                                sender=msg.Sender, 
+                                subject=msg.Subject, 
+                                date_sent=msg.SentOn.strftime("%Y-%m-%d"), 
+                                current_state="WACHTRIJ")
         else:
             print(f'mail from {msg.Sender} is not a valid request '
                   f'because:\n {invalid_reason}, abort!\n')

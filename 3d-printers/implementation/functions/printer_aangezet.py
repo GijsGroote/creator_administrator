@@ -16,10 +16,11 @@ from talk_to_sa import (
         yes_or_no)
 from create_batch_file import python_to_batch
 from global_variables import FUNCTIONS_DIR_HOME
+from csv_job_tracker import JobTrackerCSV
 
 
 if __name__ == '__main__':
-
+    
     job_name = sys.argv[1]
     job_global_path = job_name_to_global_path(job_name, search_in_main_folder="GESLICED")
 
@@ -35,6 +36,7 @@ if __name__ == '__main__':
     elif len(gcode_files) == 1:
         copy_print_job(job_name, 'AAN_HET_PRINTEN', source_main_folder='GESLICED')
         python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name=job_name)
+        JobTrackerCSV().update_job_status(job_name, "AAN_HET_PRINTEN")
         remove_directory_and_close_cmd_farewell()
 
     elif len(gcode_files) > 1:
@@ -44,6 +46,7 @@ if __name__ == '__main__':
 
             copy_print_job(job_name, 'AAN_HET_PRINTEN', source_main_folder='GESLICED')
             python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name)
+            JobTrackerCSV().update_job_status(job_name, "AAN_HET_PRINTEN")
             remove_directory_and_close_cmd_farewell()
         else:
             gcode_files_to_print_later = choose_option(
@@ -53,3 +56,4 @@ if __name__ == '__main__':
             move_print_job_partly(job_name, gcode_files_to_print_later)
             python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'),
                             job_name=job_name, search_in_main_folder='AAN_HET_PRINTEN')
+            JobTrackerCSV().split_job(job_name)
