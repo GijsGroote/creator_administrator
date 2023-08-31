@@ -172,23 +172,18 @@ def file_should_be_skipped(source_file_global_path: str,
              target_file_global_path.endswith('afgekeurd.bat')) or \
             (source_file_global_path.endswith('gesliced.bat') and
              target_file_global_path.endswith('gesliced.bat')):
-        print(f'haah1')
         return True
 
     elif source_file_global_path.startswith(os.path.join(PRINT_DIR_HOME, 'WACHTRIJ')) and \
             target_file_global_path.startswith(os.path.join(PRINT_DIR_HOME, 'GESLICED')) and \
             source_file_global_path.endswith('gesliced.bat') and \
             target_file_global_path.endswith('gesliced.bat'):
-        print(f'haah2')
-
         return True
 
     elif source_file_global_path.startswith(os.path.join(PRINT_DIR_HOME, 'GESLICED')) and \
             target_file_global_path.startswith(os.path.join(PRINT_DIR_HOME, 'AAN_HET_PRINTEN')) and \
             source_file_global_path.endswith('printer_aangezet.bat') and \
             target_file_global_path.endswith('printer_aangezet.bat'):
-        print(f'haah3')
-
         return True
 
     elif source_file_global_path.startswith(os.path.join(PRINT_DIR_HOME, 'AAN_HET_PRINTEN')) and \
@@ -197,12 +192,21 @@ def file_should_be_skipped(source_file_global_path: str,
               target_file_global_path.endswith('printer_klaar.bat')) or
              (source_file_global_path.endswith('afgekeurd.bat') and
               target_file_global_path.endswith('afgekeurd.bat'))):
-        print(f'haah4')
-
         return True
     else:
         return False
 
+def rename_target_item(job_name: str, target_item: str) -> str:
+    """ Rename the target item. """
+
+    if target_item.lower().endswith('.gcode') and \
+            'GESLICED' in target_item:
+
+        dir_path, filename = os.path.split(target_item)
+
+        return os.path.join(dir_path, job_name + '_' + filename)
+    else:
+        return target_item
 
 def copy_print_job(job_name: str, target_main_folder: str, source_main_folder=None):
     """ Move print job to target_main_folder. """
@@ -242,24 +246,24 @@ def copy_print_job(job_name: str, target_main_folder: str, source_main_folder=No
             copy(source_item, target_dir_global_path)
         else:
             if file_should_be_skipped(source_item, target_item):
-                print(f'skpping file {source_item}')
                 continue
             else:
+                target_item = rename_target_item(job_name, target_item)
                 copy(source_item, target_item)
 
 
 def move_print_job_partly(job_name: str, exclude_files: List):
     """ Partly move, partly copy print job from GESLICED to AAN_HET_PRINTEN folder. """
 
+    # TODO: Assert that this can only be used from gesliced to aan_het_printen
+
     # find source directory
     source_dir_global_path = job_name_to_global_path(job_name, 'GESLICED')
 
     if does_job_exist_in_main_folder(job_name, 'AAN_HET_PRINTEN'):
-        print('job exists in main folder aan het printen')
         target_dir_global_path = job_name_to_global_path(
             job_name, search_in_main_folder='AAN_HET_PRINTEN')
     else:
-        print('job does nto exist create a new one')
         date = job_folder_name_to_date(
             job_name_to_job_folder_name(job_name))
 
