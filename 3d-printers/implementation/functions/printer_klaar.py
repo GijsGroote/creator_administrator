@@ -15,6 +15,7 @@ from talk_to_sa import yes_or_no
 from cmd_farewell_handler import (
     open_gesliced_folder_cmd_farewell,
     remove_directory_and_close_cmd_farewell)
+from csv_job_tracker import JobTrackerCSV
 
 if __name__ == '__main__':
 
@@ -48,4 +49,6 @@ if __name__ == '__main__':
                 f'no response mail can be send')
 
     copy_print_job(job_name, "VERWERKT", source_main_folder='AAN_HET_PRINTEN')
+    JobTrackerCSV().merge_job(job_name)
+    JobTrackerCSV().update_job_status(job_name, "VERWERKT")
     remove_directory_and_close_cmd_farewell()

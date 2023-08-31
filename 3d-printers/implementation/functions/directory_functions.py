@@ -3,6 +3,7 @@ Functionality for moving/copying or searching in directories.
 """
 
 import os
+import re
 import shutil
 from typing import List
 
@@ -12,32 +13,24 @@ from convert_functions import (
     gcode_files_to_max_print_time)
 
 
-def is_print_job_name_unique(job_name: str) -> bool:
-    """ Check if the print job name is unique, return boolean. """
-
-    for folder_name in get_print_job_folder_names():
-        if folder_name.endswith(job_name):
-            return False
-
-    return True
-
-def make_print_job_unique(job_name: str) -> str:
+def make_print_job_name_unique(job_name: str) -> str:
     """ Append _(NUMBER) to job name to make it unique. """
-    # NOTE: print job Gijs_Groote should not be created when print job
-    # Gijs_Groote_(1) already exists, then Gijs_Groote_(2) must be created
-    # TODO: update code to above note
 
-    unique_job_name = job_name
-    if not is_print_job_name_unique(unique_job_name):
-        existing_job_names = [job_name]
-        unique_job_name = job_name + '_(' + str(len(existing_job_names)) + ')'
+    max_job_number = 0
+    for folder_name in get_print_job_folder_names():
 
-        while not is_print_job_name_unique(unique_job_name):
-            existing_job_names.append(unique_job_name)
-            unique_job_name = job_name + '_(' + str(len(existing_job_names)) + ')'
+        match_job_number= re.search(rf'.*{job_name}_\((\d+)\)$', folder_name)
 
-    return unique_job_name
+        if match_job_number:
 
+            job_number = int(match_job_number.group(1))
+            if job_number > max_job_number:
+                max_job_number = job_number
+
+    if max_job_number == 0:
+        return job_name
+    else:
+        return job_name + '_(' + str(max_job_number + 1) + ')'
 
 def get_print_job_global_paths(search_in_main_folder=None) -> List[str]:
     """ Return global paths for all print jobs. """
@@ -187,14 +180,25 @@ def file_should_be_skipped(source_file_global_path: str,
 
     elif source_file_global_path.startswith(os.path.join(PRINT_DIR_HOME, 'AAN_HET_PRINTEN')) and \
             target_file_global_path.startswith(os.path.join(PRINT_DIR_HOME, 'VERWERKT')) and \
-            (source_file_global_path.endswith('printer_klaar.bat') and
-             target_file_global_path.endswith('printer_klaar.bat')) or \
-            (source_file_global_path.endswith('afgekeurd.bat') and
-             target_file_global_path.endswith('afgekeurd.bat')):
+            ((source_file_global_path.endswith('printer_klaar.bat') and
+              target_file_global_path.endswith('printer_klaar.bat')) or
+             (source_file_global_path.endswith('afgekeurd.bat') and
+              target_file_global_path.endswith('afgekeurd.bat'))):
         return True
     else:
         return False
 
+def rename_target_item(job_name: str, target_item: str) -> str:
+    """ Rename the target item. """
+
+    if target_item.lower().endswith('.gcode') and \
+            'GESLICED' in target_item:
+
+        dir_path, filename = os.path.split(target_item)
+
+        return os.path.join(dir_path, job_name + '_' + filename)
+    else:
+        return target_item
 
 def copy_print_job(job_name: str, target_main_folder: str, source_main_folder=None):
     """ Move print job to target_main_folder. """
@@ -236,21 +240,22 @@ def copy_print_job(job_name: str, target_main_folder: str, source_main_folder=No
             if file_should_be_skipped(source_item, target_item):
                 continue
             else:
+                target_item = rename_target_item(job_name, target_item)
                 copy(source_item, target_item)
 
 
 def move_print_job_partly(job_name: str, exclude_files: List):
     """ Partly move, partly copy print job from GESLICED to AAN_HET_PRINTEN folder. """
 
+    # TODO: Assert that this can only be used from gesliced to aan_het_printen
+
     # find source directory
     source_dir_global_path = job_name_to_global_path(job_name, 'GESLICED')
 
     if does_job_exist_in_main_folder(job_name, 'AAN_HET_PRINTEN'):
-        print('job exists in main folder aan het printen')
         target_dir_global_path = job_name_to_global_path(
             job_name, search_in_main_folder='AAN_HET_PRINTEN')
     else:
-        print('job does nto exist create a new one')
         date = job_folder_name_to_date(
             job_name_to_job_folder_name(job_name))
 

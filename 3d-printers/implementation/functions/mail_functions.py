@@ -15,7 +15,7 @@ from global_variables import (
     PRINT_DIR_HOME,
     FUNCTIONS_DIR_HOME)
 from create_batch_file import python_to_batch
-from directory_functions import make_print_job_unique
+from directory_functions import make_print_job_name_unique
 from talk_to_sa import yes_or_no
 
 class EmailManager:
@@ -128,7 +128,7 @@ def mail_to_print_job_name(msg: [email.message.Message, str]) -> str:
     job_name = re.sub(r'[^\w\s]', '', mail_to_name(decoded_sender)).replace(' ', '_')
 
     # check if print job name is unique
-    return make_print_job_unique(job_name)
+    return make_print_job_name_unique(job_name)
 
 
 def is_mail_a_valid_print_job_request(msg) -> Tuple[bool, str]:

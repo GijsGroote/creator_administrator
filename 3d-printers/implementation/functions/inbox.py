@@ -9,7 +9,8 @@ from typing import Tuple
 
 from global_variables import (
     FUNCTIONS_DIR_HOME,
-    PRINT_DIR_HOME)
+    PRINT_DIR_HOME,
+    LOG_DIR_HOME)
 from create_batch_file import python_to_batch
 from mail_functions import mail_to_name
 from talk_to_sa import yes_or_no
@@ -17,8 +18,9 @@ from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from mail_functions import (
     is_mail_a_valid_print_job_request,
     mail_to_print_job_name)
-from directory_functions import is_print_job_name_unique
+from directory_functions import make_print_job_name_unique
 from mail_functions import EmailManager
+from csv_job_tracker import JobTrackerCSV, check_health_folders
 
 def mail_to_print_job_name(msg) -> str:
     """ Extract senders from mail and convert to a print job name. """
@@ -27,43 +29,33 @@ def mail_to_print_job_name(msg) -> str:
 
     job_name = re.sub(r'[^\w\s]', '', mail_to_name(sender)).replace(' ', '_')
 
-    # check if print job name is unique
-    unique_job_name = job_name
-    if not is_print_job_name_unique(unique_job_name):
-        existing_job_names = [job_name]
-        unique_job_name = job_name + '_(' + str(len(existing_job_names)) + ')'
-
-        while not is_print_job_name_unique(unique_job_name):
-            existing_job_names.append(unique_job_name)
-            unique_job_name = job_name + '_(' + str(len(existing_job_names)) + ')'
-
-    return unique_job_name
+    return make_print_job_name_unique(job_name)
 
 
 def is_valid_print_job_request(msg) -> Tuple[bool, str]:
     """ Check if the requirements are met for a valid print job. """
 
     # Initialize a counter for attachments with .stl extension
-    stl_attachment_count = 0
+    print_file_count = 0
 
     attachments = msg.Attachments
     
     for attachment in attachments:
-        if attachment.FileName.lower().endswith('.stl'):
-            stl_attachment_count += 1
+        if attachment.FileName.lower().endswith(('.stl', '.obj', '.3mf', '.amf', '.zip.amf', '.xml', '.step', '.stp')):
+            print_file_count += 1
     
-    if stl_attachment_count == 0:
+    if print_file_count == 0:
         return False, 'no .stl attachment found'
 
-    elif stl_attachment_count > 5 and stl_attachment_count <= 10:
-        print(f'warning! there are: {stl_attachment_count} .stl files in the mail')
+    elif print_file_count > 5 and print_file_count <= 10:
+        print(f'warning! there are: {print_file_count} .stl files in the mail')
 
-    elif stl_attachment_count > 10:
-        if yes_or_no(f'{stl_attachment_count} .stl files found do '
+    elif print_file_count > 10:
+        if yes_or_no(f'{print_file_count} .stl files found do '
                      f'you want to create an print job (Y/n)?'):
-            return True, f'you decided that: {stl_attachment_count} .stl is oke'
+            return True, f'you decided that: {print_file_count} .stl is oke'
         else:
-            return False, f'you decided that: {stl_attachment_count} .stl files are to much'
+            return False, f'you decided that: {print_file_count} .stl files are to much'
 
     return True, ' '
 
@@ -97,7 +89,14 @@ if __name__ == '__main__':
 
     # open outlook
     email_manager = EmailManager()
+    
+    # open/create csv log
+    job_tracker = JobTrackerCSV()
 
+    # check if all folders exist
+    print("checking and repairing printer workflow")
+    check_health_folders()
+    
     # read unread mails and convert to the email format and mark them as read
     msgs = email_manager.get_unread_emails()
     created_print_jobs = False
@@ -124,6 +123,11 @@ if __name__ == '__main__':
 
             print(f'print job: {print_job_name} created\n')
 
+            job_tracker.add_job(print_job_name=print_job_name, 
+                                sender=msg.Sender, 
+                                subject=msg.Subject, 
+                                date_sent=msg.SentOn.strftime("%Y-%m-%d"), 
+                                current_state="WACHTRIJ")
         else:
             print(f'mail from {msg.Sender} is not a valid request '
                   f'because:\n {invalid_reason}, abort!\n')

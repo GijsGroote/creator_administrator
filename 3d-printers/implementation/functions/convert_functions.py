@@ -19,8 +19,8 @@ def gcode_files_to_max_print_time(gcode_files: List[str]) -> str:
 
     for gcode_file in gcode_files:
 
-        match_hour_minute = re.search(r'_(\d+)h(\d+)m\.gcode', gcode_file)
-        match_minute = re.search(r'_(\d+)m\.gcode', gcode_file)
+        match_hour_minute = re.search(r'_(\d+)h(\d+)m\.gcode$', gcode_file)
+        match_minute = re.search(r'_(\d+)m\.gcode$', gcode_file)
 
         if match_hour_minute:
             temp_hours = int(match_hour_minute.group(1))
