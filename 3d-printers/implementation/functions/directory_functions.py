@@ -3,6 +3,7 @@ Functionality for moving/copying or searching in directories.
 """
 
 import os
+import re
 import shutil
 from typing import List
 
@@ -12,33 +13,24 @@ from convert_functions import (
     gcode_files_to_max_print_time)
 
 
-def is_print_job_name_unique(job_name: str) -> bool:
-    """ Check if the print job name is unique, return boolean. """
-
-    for folder_name in get_print_job_folder_names():
-        if folder_name.endswith(job_name):
-            return False
-
-    return True
-
-
-def make_print_job_unique(job_name: str) -> str:
+def make_print_job_name_unique(job_name: str) -> str:
     """ Append _(NUMBER) to job name to make it unique. """
-    # NOTE: print job Gijs_Groote should not be created when print job
-    # Gijs_Groote_(1) already exists, then Gijs_Groote_(2) must be created
-    # TODO: update code to above note
 
-    unique_job_name = job_name
-    if not is_print_job_name_unique(unique_job_name):
-        existing_job_names = [job_name]
-        unique_job_name = job_name + '_(' + str(len(existing_job_names)) + ')'
+    max_job_number = 0
+    for folder_name in get_print_job_folder_names():
 
-        while not is_print_job_name_unique(unique_job_name):
-            existing_job_names.append(unique_job_name)
-            unique_job_name = job_name + '_(' + str(len(existing_job_names)) + ')'
+        match_job_number= re.search(rf'.*{job_name}_\((\d+)\)$', folder_name)
 
-    return unique_job_name
+        if match_job_number:
 
+            job_number = int(match_job_number.group(1))
+            if job_number > max_job_number:
+                max_job_number = job_number
+
+    if max_job_number == 0:
+        return job_name
+    else:
+        return job_name + '_(' + str(max_job_number + 1) + ')'
 
 def get_print_job_global_paths(search_in_main_folder=None) -> List[str]:
     """ Return global paths for all print jobs. """

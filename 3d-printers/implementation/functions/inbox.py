@@ -17,7 +17,7 @@ from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from mail_functions import (
     is_mail_a_valid_print_job_request,
     mail_to_print_job_name)
-from directory_functions import is_print_job_name_unique
+from directory_functions import make_print_job_name_unique
 from mail_functions import EmailManager
 
 def mail_to_print_job_name(msg) -> str:
@@ -27,17 +27,7 @@ def mail_to_print_job_name(msg) -> str:
 
     job_name = re.sub(r'[^\w\s]', '', mail_to_name(sender)).replace(' ', '_')
 
-    # check if print job name is unique
-    unique_job_name = job_name
-    if not is_print_job_name_unique(unique_job_name):
-        existing_job_names = [job_name]
-        unique_job_name = job_name + '_(' + str(len(existing_job_names)) + ')'
-
-        while not is_print_job_name_unique(unique_job_name):
-            existing_job_names.append(unique_job_name)
-            unique_job_name = job_name + '_(' + str(len(existing_job_names)) + ')'
-
-    return unique_job_name
+    return make_print_job_name_unique(job_name)
 
 
 def is_valid_print_job_request(msg) -> Tuple[bool, str]:

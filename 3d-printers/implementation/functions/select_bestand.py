@@ -10,7 +10,7 @@ from tkinter import filedialog
 from create_batch_file import python_to_batch
 from directory_functions import (
     copy,
-    make_print_job_unique)
+    make_print_job_name_unique)
 from global_variables import (
     FUNCTIONS_DIR_HOME,
     PRINT_DIR_HOME)
@@ -49,7 +49,7 @@ def create_print_job(job_name: str, job_content_global_path: str):
 
 def local_path_to_job_name(job_content_local_path: str) -> str:
     """ return a unique print job name. """
-    return make_print_job_unique(job_content_local_path.replace(' ', '_'))
+    return make_print_job_name_unique(job_content_local_path.replace(' ', '_'))
 
 
 if __name__ == '__main__':
