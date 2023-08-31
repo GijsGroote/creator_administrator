@@ -21,55 +21,62 @@ fill=myblue, align=center, rounded corners, minimum width = 2cm, minimum height=
 
 \usepackage{todonotes}
 \setuptodonotes{inline}
+\usepackage{quotes}
 
+\newcommand{\quotes}[1]{``#1''}
 
+\input{../workflow/tikz_packages}
 
 \begin{document}
+
+
 \pagestyle{empty}
 \large
 
-\section*{\hspace{-1cm}3D printers - Handleiding}
+\section*{\centering\hspace{-1cm}3D printers - Handleiding}
+Na deze handleiding weet je hoe je efficient 3D print aanvragen kan verwerken. Er wordt vanuit gegaan dat je al weet hoe de 3D printers werken, zoals materiaal vervangen, het bed schoonmaken, 3D bestanden slicen tot gcode en de meest voorkomende errors weet aan te pakken.\\
 
-\todo{ TODO: maak deze handleiding. }
-
-doel van de handleidng : na het lezen moet een SA de workflow van het 3D printen kunnen snappen
-\begin{figure}[H]
-\centering
-\begin{tikzpicture}[node distance = 3.0cm, line width=1pt]
-    % Nodes
-    \node [block] (wachtrij) {WACHTRIJ};
-    \node [block, above of=wachtrij]  (afgekeurd) {AFGEKEURD};
-    \node [block, below of=wachtrij]  (gesliced) {GESLICED};
-    \node [block, below of=gesliced]  (aan_het_printen) {AAN\_HET\_PRINTEN};
-    \node [block, below of=aan_het_printen] (verwerkt) {VERWERKT};
-
-    % define lengths
- \pgfmathsetlengthmacro{\alpha}{0.7cm} % curve radius
-  \pgfmathsetlengthmacro{\negalpha}{-\alpha}
-  \pgfmathsetlengthmacro{\beta}{0.4cm} % straight bit before the curve
+Na deze handleiding weet je ook hoe je gestructureerd en efficient 3D print aanvragen kan verwerken. Mail wordt vrijwel volledig geautomatiseerd beantwoorden en de continuiteit wordt behouden. Versta onder continuiteit, je kan meteen aan de slag en hoeft niet uit te zoeken wat je voorganger heeft gedaan voordat je aan de slag kan.\\
 
 
-    % arrows
-\draw[>=stealth, ->, line width=1.0pt] ([xshift=-1.0cm]wachtrij.west) to node[xshift=-0.5cm,left]{\shortstack[]{\textit{inbox.exe} of\\\textit{selecteer\_bestand.exe}}} (wachtrij.west);
-\draw[>=stealth, ->, line width=1.0pt] (wachtrij.north) to node[left] {\textit{afgekeurd.exe}} (afgekeurd.south);
-\draw[>=stealth, ->, line width=1.0pt] (wachtrij.south) to node[left] {\textit{gesliced.exe}} (gesliced.north);
+\section*{Termologie}
+\noindent\textbf{Een print job}: Een folder met daarin alle bestanden gerelateerd aan het .stl file, deze gerelateerde bestanden kunnen zijn: een mail gesprek, gcode, een van de~.exe functies (\textit{afgekeurd.exe}, \textit{gesliced.exe}, \textit{printer\_aangezet.exe} of \textit{printer\_klaar.exe}), of overige bestanden. Een print job wordt aangemaakt door de \textit{inbox.exe} functie vanuit de mail inbox, of via de \textit{selecteer\_bestand.exe} functie.\\
 
-\draw[>=stealth, -, line width=1.0pt] (aan_het_printen.east) -- ++(\beta,0)  to[out=0, in=-90] ++(\alpha, \alpha) -- node[right]{\textit{afgekeurd.exe}} ([xshift=\alpha+\beta,yshift=\negalpha]afgekeurd.east -| aan_het_printen.east);
-    \draw[>=stealth, <-, line width=1.0pt] (afgekeurd.east) -- ([xshift=\beta] afgekeurd -| aan_het_printen.east)  to[out=0, in=90] ++(\alpha,\negalpha);
+\todo{welke andere }
 
 
-    \draw[>=stealth, -, line width=1.0pt] (gesliced.east) -- ([xshift=\beta] gesliced -| aan_het_printen.east) to[out=0, in=-90] ++(\alpha,\alpha);
+\section*{Globaal Overzicht}
+Een 3D print aanvraag wordt omgezet tot een \quotes{print job}, dit is een folder met daarin alle bestanden die bij een 3D print aanvraag horen. 
 
-  \draw[>=stealth, ->, line width=1.0pt] (gesliced.south) to node[left] {\textit{printer\_aangezet.exe}} (aan_het_printen.north);
-      \draw[>=stealth, ->, line width=1.0pt] (aan_het_printen.south) to node[left] {\textit{print\_klaar.exe}} (verwerkt.north);
 
-\end{tikzpicture}
-\caption*{\textbf{Workflow gaat zo}, ingeleverde .stl bestanden worden door \textit{.exe} functies verplaatst van/naar de folders aangegeven met hoofdletters.}%
-\end{figure}
+\todo{maak een actie bolletjesc}
 
-\section*{\hspace{-1cm}Functie Beschrijving:}
+Door batch files aan te roepen (batch file met extensie .bat roept een python script aan) kan je 
+
+
+Er zijn vijf folders, deze \todo{laat SA naar folders kijken}
+
+
+
+
+\begin{center}
+\scalebox{0.7}{
+  \input{../workflow/tikz_figure}
+}
+\end{center}
+
+\section*{Functie Beschrijving:}
 
 \todo{Update deze functie beschrijvingen}
+
+
+\section*{Let Hier Op!}
+niet wegklikken van cmd
+
+
+
+
+Je bent klaar! Optioneel kan je het overzicht van de batch files doorlezen.\\
 
 \begin{table}[H]
 \hspace{-2cm}
@@ -98,16 +105,8 @@ Maak de folder AAN\_HET\_PRINTEN/\textit{MM}-\textit{DD}\_\textit{hh}h\_\textit{
     % \caption*{}%
 \end{table}
 
-\noindent\textbf{Een print job}: Een folder met daarin alle bestanden gerelateerd aan het .stl file, deze gerelateerde bestanden kunnen zijn: een mail gesprek, gcode, een van de~.exe functies (\textit{afgekeurd.exe}, \textit{gesliced.exe}, \textit{printer\_aangezet.exe} of \textit{printer\_klaar.exe}), of overige bestanden. Een print job wordt aangemaakt door de \textit{inbox.exe} functie vanuit de mail inbox, of via de \textit{selecteer\_bestand.exe} functie.\\
-
-Er zijn vijf folders, deze 
-
-
-
 
 
 \end{document}
-
-
 
 
