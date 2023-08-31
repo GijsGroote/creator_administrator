@@ -34,26 +34,26 @@ def is_valid_print_job_request(msg) -> Tuple[bool, str]:
     """ Check if the requirements are met for a valid print job. """
 
     # Initialize a counter for attachments with .stl extension
-    stl_attachment_count = 0
+    print_file_count = 0
 
     attachments = msg.Attachments
     
     for attachment in attachments:
-        if attachment.FileName.lower().endswith('.stl'):
-            stl_attachment_count += 1
+        if attachment.FileName.lower().endswith(('.stl', '.obj', '.3mf', '.amf', '.zip.amf', '.xml', '.step', '.stp')):
+            print_file_count += 1
     
-    if stl_attachment_count == 0:
+    if print_file_count == 0:
         return False, 'no .stl attachment found'
 
-    elif stl_attachment_count > 5 and stl_attachment_count <= 10:
-        print(f'warning! there are: {stl_attachment_count} .stl files in the mail')
+    elif print_file_count > 5 and print_file_count <= 10:
+        print(f'warning! there are: {print_file_count} .stl files in the mail')
 
-    elif stl_attachment_count > 10:
-        if yes_or_no(f'{stl_attachment_count} .stl files found do '
+    elif print_file_count > 10:
+        if yes_or_no(f'{print_file_count} .stl files found do '
                      f'you want to create an print job (Y/n)?'):
-            return True, f'you decided that: {stl_attachment_count} .stl is oke'
+            return True, f'you decided that: {print_file_count} .stl is oke'
         else:
-            return False, f'you decided that: {stl_attachment_count} .stl files are to much'
+            return False, f'you decided that: {print_file_count} .stl files are to much'
 
     return True, ' '
 
