@@ -21,14 +21,14 @@ from talk_to_sa import password_please
 def is_folder_a_valid_print_job(global_path: str) -> Tuple[bool, str]:
     """ Check if a folder can be converted to a print job. """
 
-    stl_file_count = 0
+    print_file_count = 0
 
     for root, _, files in os.walk(global_path):
         for file in files:
-            if file.lower().endswith(".stl"):
-                stl_file_count += 1
+            if file.lower().endswith(('.stl', '.obj', '.3mf', '.amf', '.zip.amf', '.xml', '.step', '.stp')):
+                print_file_count += 1
 
-    if stl_file_count == 0:
+    if print_file_count == 0:
         return False, 'no .stl attachment found'
 
     return True, ' '
