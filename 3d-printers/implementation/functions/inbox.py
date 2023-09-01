@@ -86,6 +86,9 @@ def mail_to_print_job(msg):
 if __name__ == '__main__':
 
     print('searching for new mail...')
+    print('searching for new mail...')
+    print('searching for new mail...')
+
 
     # open outlook
     email_manager = EmailManager()
