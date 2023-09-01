@@ -88,6 +88,8 @@ if __name__ == '__main__':
     print('searching for new mail...')
     print('searching for new mail...')
     print('searching for new mail...')
+    print('searching for new mail...')
+
 
 
     # open outlook
