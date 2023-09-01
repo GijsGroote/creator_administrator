@@ -13,6 +13,7 @@ from typing import Tuple
 from global_variables import (
     EMAIL_TEMPLATES_DIR_HOME,
     PRINT_DIR_HOME,
+    ACCEPTED_PRINT_EXTENSIONS,
     FUNCTIONS_DIR_HOME)
 from create_batch_file import python_to_batch
 from directory_functions import make_print_job_name_unique
@@ -135,26 +136,26 @@ def is_mail_a_valid_print_job_request(msg) -> Tuple[bool, str]:
     """ Check if the requirements are met for a valid print job. """
 
     # Initialize a counter for attachments with .stl extension
-    stl_attachment_count = 0
+    print_file_count = 0
 
     attachments = msg.Attachments
     
     for attachment in attachments:
-        if attachment.FileName.lower().endswith('.stl'):
-            stl_attachment_count += 1
+        if attachment.FileName.lower().endswith(ACCEPTED_PRINT_EXTENSIONS):
+            print_file_count += 1
 
-    if stl_attachment_count == 0:
+    if print_file_count == 0:
         return False, 'no .stl attachment found'
 
-    elif stl_attachment_count > 5 and stl_attachment_count <= 10:
-        print(f'warning! there are: {stl_attachment_count} .stl files in the mail')
+    elif print_file_count > 5 and print_file_count <= 10:
+        print(f'warning! there are: {print_file_count} .stl files in the mail')
 
-    elif stl_attachment_count > 10:
-        if yes_or_no(f'{stl_attachment_count} .stl files found do '
+    elif print_file_count > 10:
+        if yes_or_no(f'{print_file_count} .stl files found do '
                      f'you want to create an print job (Y/n)?'):
-            return True, f'you decided that: {stl_attachment_count} .stl is oke'
+            return True, f'you decided that: {print_file_count} .stl is oke'
         else:
-            return False, f'you decided that: {stl_attachment_count} .stl files are to much'
+            return False, f'you decided that: {print_file_count} .stl files are to much'
 
     return True, ' '
 
@@ -176,7 +177,7 @@ def mail_to_print_job(msg):
 
     # Save the .stl files
     for attachment in msg.Attachments:
-        if attachment.FileName.lower().endswith('.stl'):
+        if attachment.FileName.lower().endswith(ACCEPTED_PRINT_EXTENSIONS):
             attachment.SaveAsFile(os.path.join(print_job_global_path, attachment.FileName))
 
     python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), job_name)

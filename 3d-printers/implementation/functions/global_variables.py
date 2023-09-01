@@ -5,8 +5,8 @@ Global variables specific for the local machine.
 import json
 import os
 
-# global_path = os.path.abspath(r'C:\Users\IWS\.ssh\global_variables.json')
-global_path = os.path.abspath(r'C:\Users\levij\.ssh\global_variables.json')
+global_path = os.path.abspath(r'C:\Users\IWS\.ssh\global_variables.json')
+# global_path = os.path.abspath(r'C:\Users\levij\.ssh\global_variables.json')
 # global_path = os.path.abspath(r'C:\Users\gijsg\.ssh\global_variables.json')
 
 with open(global_path, 'r') as json_file:
@@ -32,3 +32,5 @@ LOG_DIR_HOME = os.path.join(
 FIGURES_DIR_HOME = os.path.join(
     REPO_DIR_HOME,
     r'3d-printers\implementation\figures')
+
+ACCEPTED_PRINT_EXTENSIONS = ('.stl', '.obj', '.3mf', '.amf', '.zip.amf', '.xml', '.step', '.stp')
