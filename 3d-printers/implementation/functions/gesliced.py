@@ -8,9 +8,9 @@ import sys
 from directory_functions import (
     job_name_to_global_path,
     copy_print_job)
-from cmd_farewell_handler import remove_directory_and_close_cmd_farewell
+from cmd_farewell_handler import remove_directory_and_close_cmd_farewell, goto_wachtrij_and_close_cmd_farewell
 from create_batch_file import python_to_batch
-from global_variables import FUNCTIONS_DIR_HOME
+from global_variables import FUNCTIONS_DIR_HOME, PRINT_DIR_HOME
 from csv_job_tracker import JobTrackerCSV
 
 if __name__ == '__main__':
@@ -31,6 +31,9 @@ if __name__ == '__main__':
 
 
     copy_print_job(job_name, 'GESLICED', source_main_folder='WACHTRIJ')
+
     JobTrackerCSV().update_job_status(job_name, "GESLICED")
     remove_directory_and_close_cmd_farewell()
+
+
 

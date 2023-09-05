@@ -13,8 +13,21 @@ from convert_functions import (
     gcode_files_to_max_print_time)
 
 
+def does_print_job_name_exist(job_name: str) -> bool:
+    """ Check if the print job name exist, return boolean. """
+
+    for folder_name in get_print_job_folder_names():
+        if folder_name.endswith(job_name):
+            return True
+
+    return False
+
 def make_print_job_name_unique(job_name: str) -> str:
-    """ Append _(NUMBER) to job name to make it unique. """
+    """ Make the print job name unique.
+
+    if the job name already exists append _(NUMBER) to job name to make it unique
+    if the job_name is unique but job_name_(NUMBER) exist then return job_name_(NUMBER+1).
+    """
 
     max_job_number = 0
     for folder_name in get_print_job_folder_names():
@@ -28,7 +41,10 @@ def make_print_job_name_unique(job_name: str) -> str:
                 max_job_number = job_number
 
     if max_job_number == 0:
-        return job_name
+        if does_print_job_name_exist(job_name):
+            return job_name + '_(1)'
+        else:
+            return job_name
     else:
         return job_name + '_(' + str(max_job_number + 1) + ')'
 

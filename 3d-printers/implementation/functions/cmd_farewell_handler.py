@@ -18,20 +18,23 @@ cmd_farewells = rf"""rem custom exit code summary:
 rem 0 (default) - display "press any key to continue. . ." message
 rem 900 - close cmd that runs .bat file
 rem 901 - remove folder that runs .bat file
-rem 902 - remove folder and close cmd that runs .bat file
-rem [903, 910] - reserved error status numbers
-rem >910 - call python script and pass exit status
+rem 902 - remove folder and close cmd that runs .bat file\
+rem 903 - 
+rem [904, 910] - reserved error status numbers
+rem [911 - 920] call python script and pass exit status
 
 if %errorlevel% equ 900 (
     exit
 ) else if %errorlevel% equ 901 (
     "{IOBIT_UNLOCKER_PATH}" "/Delete" "%~dp0"
     pause
-) else if %errorlevel% equ 902 (
-    "{IOBIT_UNLOCKER_PATH}" "/Delete" "%~dp0"
+) else if %errorlevel% equ 903 (
+    "{IOBIT_UNLOCKER_PATH}" "/Delete" "%~dp0"\
+    pause
+    cd "{os.path.join(PRINT_DIR_HOME, 'GESLICED')}"
+    start explorer.exe
     exit
-) else if %errorlevel% gtr 910 (
-rem error level could be higher than 910 and should not do this
+) else if %errorlevel% geq 911 if %errorlevel% leq 920 (
     pause
 "{PYTHON_PATH}" "{os.path.join(FUNCTIONS_DIR_HOME, 'cmd_farewell_handler.py')}" "%errorlevel%
 ) else (
@@ -45,7 +48,7 @@ def exit_cmd_farewell():
 
 
 def remove_directory_cmd_farewell():
-    """ Exit python and remove the directory that holds the .bat script. """
+    """ Exit python and remove the directory that contains the .bat script. """
 
     if os.getcwd().startswith(PRINT_DIR_HOME):
         sys.exit(901)
@@ -56,7 +59,7 @@ def remove_directory_cmd_farewell():
 
 
 def remove_directory_and_close_cmd_farewell():
-    """ Exit python, remove the directory and close cmd that holds the .bat script. """
+    """ Exit python, remove the directory and close cmd that contains the .bat script. """
 
     if os.getcwd().lower().startswith(PRINT_DIR_HOME.lower()):
         sys.exit(902)
@@ -64,7 +67,9 @@ def remove_directory_and_close_cmd_farewell():
         raise ValueError(f'the working directory must be a subdirectory of {PRINT_DIR_HOME} '
                          f'and the working directory is {os.getcwd()}')
 
-
+def goto_wachtrij_and_close_cmd_farewell():
+    """ Change directory to the WACHTRIJ main folder and close cmd that contains the .bat script."""
+    sys.exit(903)
 
 def open_wachtrij_folder_cmd_farewell():
     """ Exit python with a 911 exit status which open the WACHTRIJ folder. """
@@ -74,6 +79,11 @@ def open_wachtrij_folder_cmd_farewell():
 def open_gesliced_folder_cmd_farewell():
     """ Exit python with a 912 exit status which open the GESLICED folder. """
     sys.exit(912)
+
+def open_gesliced_folder_cmd_farewell():
+    """ Exit python with a 912 exit status which open the GESLICED folder. """
+    os.startfile(os.path.join(PRINT_DIR_HOME, 'GESLICED'))
+    sys.exit(0)
 
 
 if __name__ == '__main__':
