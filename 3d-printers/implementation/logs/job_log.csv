@@ -1,3 +1,14 @@
 print_job_name,sender,subject,date_sent,current_state,split_job
 levijn_De_Jager,levijn De Jager,meerdere stl bestanden,2023-08-23,WACHTRIJ,False
 levijn_De_Jager_(1),levijn De Jager,meerdere stl bestanden,2023-08-23,VERWERKT,False
+Limitha_Subbaiah_Kumar_Nangaru,Limitha Subbaiah Kumar Nangaru,Request to 3D print clamping bracket,2023-08-31,VERWERKT,False
+Daniel_Daniel_Albert_Hollando_Pasaribu,Daniel Daniel Albert Hollando Pasaribu,3D printen Tulp,2023-09-01,VERWERKT,False
+Florian_Simor,Florian Simor,Graag onderdeel printen,2023-09-04,VERWERKT,False
+Théophile_De_Backer,Théophile De Backer,3D printen 4 onderdelen,2023-09-04,WACHTRIJ,False
+Limitha_Subbaiah_Kumar_Nangaru,Limitha Subbaiah Kumar Nangaru,Request to 3D print clamping bracket,2023-09-04,WACHTRIJ,False
+Gijs_Groote,Gijs Groote,ha,2023-09-04,GESLICED,False
+Limitha_Subbaiah_Kumar_Nangaru,Limitha Subbaiah Kumar Nangaru,Request to 3D print a clamp,2023-09-04,WACHTRIJ,False
+Limitha_Subbaiah_Kumar_Nangaru,Limitha Subbaiah Kumar Nangaru,Request to 3D print clamping bracket,2023-09-04,WACHTRIJ,False
+Limitha_Subbaiah_Kumar_Nangaru,Limitha Subbaiah Kumar Nangaru,Request to 3D print a clamp,2023-09-04,WACHTRIJ,False
+Bart_de_Vries,Bart de Vries,,2023-08-29,AAN_HET_PRINTEN,False
+Chris_Bosselaar,Chris Bosselaar,Printopdracht,2023-09-05,GESLICED,False
