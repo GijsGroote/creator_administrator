@@ -90,6 +90,12 @@ def send_response_mail(incoming_mail_path: str, template: str, template_content:
         template,
         template_content)
 
+def print_mail_content(mail_path: str):
+    """" Print the content of an .msg file. """
+    outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
+    msg = outlook.OpenSharedItem(mail_path)
+
+    print(msg.Body)
 
 def mail_to_name(mail_name: str):
     """ Convert mail in form first_name last_name <mail@adres.com> to a more friendly name. """

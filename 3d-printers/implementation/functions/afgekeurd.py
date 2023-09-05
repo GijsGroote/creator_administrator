@@ -5,7 +5,8 @@ Move a print job to the folder AFGEKEURD.
 import sys
 import glob
 
-from mail_functions import send_response_mail
+
+from mail_functions import send_response_mail, print_mail_content
 from directory_functions import (
     job_name_to_global_path,
     copy_print_job)
@@ -21,6 +22,9 @@ if __name__ == '__main__':
     msg_file_paths = list(glob.glob(job_global_path + "/*.msg"))
 
     if len(msg_file_paths) > 0:
+
+        print(f'latest mail message:')
+        print_mail_content(msg_file_paths[0])
         afgekeurd_reason = input("Why is the print job rejected?")
         if len(msg_file_paths) > 1:
             print(f'Warning! more than one: {len(msg_file_paths)} .eml files detected')
