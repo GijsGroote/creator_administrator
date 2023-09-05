@@ -32,3 +32,5 @@ LOG_DIR_HOME = os.path.join(
 FIGURES_DIR_HOME = os.path.join(
     REPO_DIR_HOME,
     r'3d-printers\implementation\figures')
+
+ACCEPTED_PRINT_EXTENSIONS = ('.stl', '.obj', '.3mf', '.amf', '.zip.amf', '.xml', '.step', '.stp')

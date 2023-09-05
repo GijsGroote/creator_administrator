@@ -13,7 +13,8 @@ from directory_functions import (
     make_print_job_name_unique)
 from global_variables import (
     FUNCTIONS_DIR_HOME,
-    PRINT_DIR_HOME)
+    PRINT_DIR_HOME,
+    ACCEPTED_PRINT_EXTENSIONS)
 from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from talk_to_sa import password_please
 
@@ -25,7 +26,7 @@ def is_folder_a_valid_print_job(global_path: str) -> Tuple[bool, str]:
 
     for root, _, files in os.walk(global_path):
         for file in files:
-            if file.lower().endswith(('.stl', '.obj', '.3mf', '.amf', '.zip.amf', '.xml', '.step', '.stp')):
+            if file.lower().endswith(ACCEPTED_PRINT_EXTENSIONS):
                 print_file_count += 1
 
     if print_file_count == 0:

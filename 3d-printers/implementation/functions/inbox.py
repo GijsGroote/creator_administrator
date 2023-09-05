@@ -10,6 +10,7 @@ from typing import Tuple
 from global_variables import (
     FUNCTIONS_DIR_HOME,
     PRINT_DIR_HOME,
+    ACCEPTED_PRINT_EXTENSIONS,
     LOG_DIR_HOME)
 from create_batch_file import python_to_batch
 from mail_functions import mail_to_name
@@ -41,7 +42,8 @@ def is_valid_print_job_request(msg) -> Tuple[bool, str]:
     attachments = msg.Attachments
     
     for attachment in attachments:
-        if attachment.FileName.lower().endswith(('.stl', '.obj', '.3mf', '.amf', '.zip.amf', '.xml', '.step', '.stp')):
+        print(f'attachment.FileName i {attachment.FileName.lower()}')
+        if attachment.FileName.lower().endswith(ACCEPTED_PRINT_EXTENSIONS):
             print_file_count += 1
     
     if print_file_count == 0:
@@ -77,7 +79,8 @@ def mail_to_print_job(msg):
 
     # Save the .stl files
     for attachment in msg.Attachments:
-        if attachment.FileName.lower().endswith('.stl'):
+        print(f'attachment.FileName i {attachment.FileName.lower()}')
+        if attachment.FileName.lower().endswith(ACCEPTED_PRINT_EXTENSIONS):
             attachment.SaveAsFile(os.path.join(print_job_global_path, attachment.FileName))
 
     python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), job_name)
@@ -86,11 +89,6 @@ def mail_to_print_job(msg):
 if __name__ == '__main__':
 
     print('searching for new mail...')
-    print('searching for new mail...')
-    print('searching for new mail...')
-    print('searching for new mail...')
-
-
 
     # open outlook
     email_manager = EmailManager()
@@ -101,6 +99,12 @@ if __name__ == '__main__':
     # check if all folders exist
     print("checking and repairing printer workflow")
     check_health_folders()
+
+
+    print('searching for new mail...')
+
+    # open outlook
+    email_manager = EmailManager()
     
     # read unread mails and convert to the email format and mark them as read
     msgs = email_manager.get_unread_emails()
