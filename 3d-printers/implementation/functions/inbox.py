@@ -88,8 +88,6 @@ def mail_to_print_job(msg):
 
 if __name__ == '__main__':
 
-    print('searching for new mail...')
-
     # open outlook
     email_manager = EmailManager()
     
@@ -99,7 +97,6 @@ if __name__ == '__main__':
     # check if all folders exist
     print("checking and repairing printer workflow")
     check_health_folders()
-
 
     print('searching for new mail...')
 

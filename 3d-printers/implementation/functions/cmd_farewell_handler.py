@@ -19,8 +19,7 @@ rem 0 (default) - display "press any key to continue. . ." message
 rem 900 - close cmd that runs .bat file
 rem 901 - remove folder that runs .bat file
 rem 902 - remove folder and close cmd that runs .bat file\
-rem 903 - 
-rem [904, 910] - reserved error status numbers
+rem [903, 910] - reserved error status numbers
 rem [911 - 920] call python script and pass exit status
 
 if %errorlevel% equ 900 (
@@ -28,19 +27,17 @@ if %errorlevel% equ 900 (
 ) else if %errorlevel% equ 901 (
     "{IOBIT_UNLOCKER_PATH}" "/Delete" "%~dp0"
     pause
-) else if %errorlevel% equ 903 (
-    "{IOBIT_UNLOCKER_PATH}" "/Delete" "%~dp0"\
-    pause
-    cd "{os.path.join(PRINT_DIR_HOME, 'GESLICED')}"
-    start explorer.exe
+) else if %errorlevel% equ 902 (
+    "{IOBIT_UNLOCKER_PATH}" "/Delete" "%~dp0"
     exit
-) else if %errorlevel% geq 911 if %errorlevel% leq 920 (
-    pause
-"{PYTHON_PATH}" "{os.path.join(FUNCTIONS_DIR_HOME, 'cmd_farewell_handler.py')}" "%errorlevel%
+) else if %errorlevel% geq 911 (
+    if %errorlevel% leq 920 (
+        pause
+        "{PYTHON_PATH}" "{os.path.join(FUNCTIONS_DIR_HOME, 'cmd_farewell_handler.py')}" "%errorlevel%
+    )
 ) else (
-    pause
+pause
 )"""
-
 
 def exit_cmd_farewell():
     """ Exit python with a 900 exit status which closes the cmd that runs the batch process. """
