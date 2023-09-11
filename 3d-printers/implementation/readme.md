@@ -32,20 +32,21 @@ Before you begin, make sure you have the following dependencies installed:
    
    you can give <PRINT_DIR_HOME> any name which pleases you.
    
-4. **Create the file global_variables.json (~/.ssh/global_variables.json is recommended)**  
-   update the following template and insert in global_variables.json:
+4. **Create the file 3D_print_global_variables.json (~/.ssh/3D_print_global_variables.json is recommended)**  
+   update the following template and insert in 3D_print_global_variables.json:
    ```json
    {
        "REPO_DIR_HOME":  "C:\\Users\\user\\Documents\\laserhok-workflow",
        "PRINT_DIR_HOME":  "C:\\Users\\user\\Desktop\\3D PRINT HOME",
-       "CVS_FILE_PATH":  "C:\\Users\\user\\.ssh\\3D_print_job_log.cvs",
+       "CSV_FILE_PATH":  "C:\\Users\\user\\.ssh\\3D_print_job_log.csv",
        "PYTHON_PATH": "C:Program Files\\Python311\\python.exe",
        "IOBIT_UNLOCKER_PATH": "C:\\Program Files (x86)\\IObit\\IObit Unlocker\\IObitUnlocker.exe",
        "OUTLOOK_PATH":  "C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE"
    }
    ```
 
-5. **Update the path toward global_variables.json in laserhok-workflow\3d-printers\implementation\functions\global_variables.py**
+5. **Update the path toward 3D_print_global_variables.json:**
+    Find the file in `../laserhok-workflow\3d-printers\implementation\functions\global_variables.py`
 
 6. **make inbox.bat and select_bestand.bat:**
 
@@ -60,7 +61,7 @@ Before you begin, make sure you have the following dependencies installed:
    Optionally you can give the shortcuts an custom icon located in  
 `../laserhok-workflow/3d-printers/implementation/figures/`
 
-8. **Dubble click on inbox.bat to start.**  
+8. **Dubbel click on inbox.bat (or the shortcut toward inbox.bat) to start.**  
    tip: file 3d-printers/documentation/handleiding/handleiding.pdf might help
 
 

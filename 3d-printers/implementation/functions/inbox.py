@@ -10,8 +10,7 @@ from typing import Tuple
 from global_variables import (
     FUNCTIONS_DIR_HOME,
     PRINT_DIR_HOME,
-    ACCEPTED_PRINT_EXTENSIONS,
-    LOG_DIR_HOME)
+    ACCEPTED_PRINT_EXTENSIONS)
 from create_batch_file import python_to_batch
 from mail_functions import mail_to_name
 from talk_to_sa import yes_or_no

@@ -1,6 +1,6 @@
 import csv
 import os
-from global_variables import LOG_DIR_HOME, CVS_FILE_PATH
+from global_variables import CSV_FILE_PATH
 from directory_functions import get_print_job_global_paths, get_print_job_folder_names
 from collections import defaultdict
 import shutil
@@ -23,8 +23,7 @@ class JobTrackerCSV:
     - split_job
     """
     def __init__(self):
-        self.cvs_filename = CVS_FILE_PATH
-        # self.csv_filename = os.path.join(LOG_DIR_HOME, "job_log.csv")
+        self.csv_filename = CSV_FILE_PATH
         self.fieldnames = ['print_job_name', 'sender', 'subject', 'date_sent', 'current_state', 'split_job']
 
         # Create the CSV file if it doesn't exist
@@ -32,7 +31,6 @@ class JobTrackerCSV:
             with open(self.csv_filename, 'w', newline='') as csv_file:
                 writer = csv.DictWriter(csv_file, fieldnames=self.fieldnames)
                 writer.writeheader()
-
 
     def add_job(self, print_job_name: str, sender: str, subject: str, date_sent: str, current_state: str, split_job="False"):
         """Adds a job to the CSV file"""
@@ -47,7 +45,6 @@ class JobTrackerCSV:
                 'split_job': split_job
             })
 
-    
     def get_jobs_from_sender(self, sender):
         """returns a list of jobs from a specific sender"""
         with open(self.csv_filename, 'r', newline='') as csv_file:
@@ -57,7 +54,6 @@ class JobTrackerCSV:
                 if row['sender'] == sender:
                     jobs.append(row)
             return jobs
-
 
     def get_job_by_print_job_name(self, print_job_name):
         with open(self.csv_filename, 'r', newline='') as csv_file:
@@ -145,8 +141,6 @@ class JobTrackerCSV:
     def clean_csv_by_date(self, date):
         """removes all jobs before a certain date"""
         pass
-
-
 
 def check_health_folders():
     """Check if folders are in the right place and if duplicates exist, if so, delete them"""
