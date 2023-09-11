@@ -38,6 +38,7 @@ Before you begin, make sure you have the following dependencies installed:
    {
        "REPO_DIR_HOME":  "C:\\Users\\user\\Documents\\laserhok-workflow",
        "PRINT_DIR_HOME":  "C:\\Users\\user\\Desktop\\3D PRINT HOME",
+       "CVS_FILE_PATH":  "C:\\Users\\user\\.ssh\\3D_print_job_log.cvs",
        "PYTHON_PATH": "C:Program Files\\Python311\\python.exe",
        "IOBIT_UNLOCKER_PATH": "C:\\Program Files (x86)\\IObit\\IObit Unlocker\\IObitUnlocker.exe",
        "OUTLOOK_PATH":  "C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE"
@@ -46,15 +47,21 @@ Before you begin, make sure you have the following dependencies installed:
 
 5. **Update the path toward global_variables.json in laserhok-workflow\3d-printers\implementation\functions\global_variables.py**
 
-6. **make inbox.bat:**
+6. **make inbox.bat and select_bestand.bat:**
 
    ```bash
-   python3 <REPO_DIR_HOME>/3d-printers/implementation/functions/create_inbox.py
+   python3 <REPO_DIR_HOME>/3d-printers/implementation/functions/create_batch_file.py
    ```
-   inbox.bat will be placed in the parent directory of <PRINT_DIR_HOME>
-   
-7. **Dubble click on inbox.bat to start.**  
-(tip: file 3d-printers/documentation/handleiding/handleiding.pdf might help)
+7. **Create two desktop shortcuts:**  
+   link the shortcut to:  
+ `../laserhok-workflow/3d-printers/implementation/batch_files/inbox.bat`  
+ `../laserhok-workflow/3d-printers/implementation/batch_files/select_bestand.bat`  
+
+   Optionally you can give the shortcuts an custom icon located in  
+`../laserhok-workflow/3d-printers/implementation/figures/`
+
+8. **Dubble click on inbox.bat to start.**  
+   tip: file 3d-printers/documentation/handleiding/handleiding.pdf might help
 
 
     

@@ -1,6 +1,6 @@
 import csv
 import os
-from global_variables import LOG_DIR_HOME
+from global_variables import LOG_DIR_HOME, CVS_FILE_PATH
 from directory_functions import get_print_job_global_paths, get_print_job_folder_names
 from collections import defaultdict
 import shutil
@@ -23,7 +23,8 @@ class JobTrackerCSV:
     - split_job
     """
     def __init__(self):
-        self.csv_filename = os.path.join(LOG_DIR_HOME, "job_log.csv")
+        self.cvs_filename = CVS_FILE_PATH
+        # self.csv_filename = os.path.join(LOG_DIR_HOME, "job_log.csv")
         self.fieldnames = ['print_job_name', 'sender', 'subject', 'date_sent', 'current_state', 'split_job']
 
         # Create the CSV file if it doesn't exist
