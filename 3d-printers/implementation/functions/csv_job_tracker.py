@@ -31,7 +31,24 @@ class JobTrackerCSV:
             with open(self.csv_filename, 'w', newline='') as csv_file:
                 writer = csv.DictWriter(csv_file, fieldnames=self.fieldnames)
                 writer.writeheader()
+        
+        self.check_header()
 
+    def check_header(self):
+        """
+        Check if the header in the CSV file matches the expected header.
+        If not, replace it with the correct one.
+        """
+        with open(self.csv_filename, 'r', newline='') as csv_file:
+            reader = csv.reader(csv_file)
+            existing_header = next(reader, None)  # Read the existing header, if any.
+
+            if existing_header != self.fieldnames:
+                print("Header in the CSV file is incorrect. Replacing with the correct header.")
+                with open(self.csv_filename, 'w', newline='') as new_csv_file:
+                    writer = csv.DictWriter(new_csv_file, fieldnames=self.fieldnames)
+                    writer.writeheader()
+    
     def add_job(self, print_job_name: str, sender: str, subject: str, date_sent: str, current_state: str, split_job="False"):
         """Adds a job to the CSV file"""
         with open(self.csv_filename, 'a', newline='') as csv_file:
@@ -130,7 +147,10 @@ class JobTrackerCSV:
         date_difference = current_date - date_object
         return date_difference.days > number_of_days
         
-        
+    
+    def _fill_csv(self):
+        """developer function so the csv file is filled with data that matches current workflow"""
+        pass    
     
     #TODO: Maybe some useful functions to add:
     
