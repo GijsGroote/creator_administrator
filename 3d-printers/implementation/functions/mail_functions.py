@@ -31,18 +31,31 @@ class EmailManager:
     def __init__(self):
         self.outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
         self.inbox = self.outlook.GetDefaultFolder(6)
-
-
-    def get_unread_emails(self):
-        """get all unread emails from inbox"""
-        unread_emails = []
+        try:
+            self.verwerkt_folder = self.inbox.Parent.Folders.Item("Verwerkt")
+        except:
+            self.verwerkt_folder = self.inbox.Parent.Folders.Add("Verwerkt")
+            
+    def get_emails(self, unread_only=False):
+        """
+        get all unread emails from inbox
+        - To get all emails (not just unread) use: unread_only=False
+        """
+        emails = []
         for message in self.inbox.Items:
-            if message.UnRead:
-                unread_emails.append(message)
-                message.UnRead = False
-                message.Save()
-        return unread_emails
+            if unread_only:
+                if message.UnRead:
+                    emails.append(message)
+            else:
+                emails.append(message)
+            
+            message.UnRead = False
+            message.Save()
+        return emails
 
+    def move_email_to_verwerkt(self, email):
+        """move email to verwerkt folder"""
+        email.Move(self.verwerkt_folder)
 
     def save_emails(self, emails, folder):
         """save list of emails to file"""

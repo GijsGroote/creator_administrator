@@ -103,7 +103,7 @@ if __name__ == '__main__':
     email_manager = EmailManager()
     
     # read unread mails and convert to the email format and mark them as read
-    msgs = email_manager.get_unread_emails()
+    msgs = email_manager.get_emails(unread_only=True)
     created_print_jobs = False
 
     # print how many mails are processed
@@ -125,6 +125,7 @@ if __name__ == '__main__':
                   f' create print job: {print_job_name}')
 
             mail_to_print_job(msg)
+            email_manager.move_email_to_verwerkt(msg)
 
             print(f'print job: {print_job_name} created\n')
 
