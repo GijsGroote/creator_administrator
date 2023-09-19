@@ -31,6 +31,10 @@ if __name__ == '__main__':
             input('press enter to send response mail. . .')
 
         send_response_mail(msg_file_paths[0], "standard_response.html", {'{response_text}': afgekeurd_reason})
+        
+        # save reason for rejection to file so others can read it later
+        with open("afgekeurd_reden.txt", 'w') as file:
+            file.write(afgekeurd_reason)
         input('press enter to continue. . .')
 
     else:
