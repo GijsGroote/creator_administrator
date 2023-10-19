@@ -91,7 +91,7 @@ if __name__ == '__main__':
     email_manager = EmailManager()
     
     # open/create csv log
-    job_tracker = JobTrackerCSV()
+    # job_tracker = JobTrackerCSV()
 
     # check if all folders exist
     print("checking and repairing printer workflow")
@@ -129,11 +129,11 @@ if __name__ == '__main__':
 
             print(f'print job: {print_job_name} created\n')
 
-            job_tracker.add_job(print_job_name=print_job_name, 
-                                sender=msg.Sender, 
-                                subject=msg.Subject, 
-                                date_sent=msg.SentOn.strftime("%Y-%m-%d"), 
-                                current_state="WACHTRIJ")
+            # job_tracker.add_job(print_job_name=print_job_name,
+            #                     sender=msg.Sender,
+            #                     subject=msg.Subject,
+            #                     date_sent=msg.SentOn.strftime("%Y-%m-%d"),
+            #                     current_state="WACHTRIJ")
         else:
             print(f'mail from {msg.Sender} is not a valid request '
                   f'because:\n {invalid_reason}, abort!\n')
