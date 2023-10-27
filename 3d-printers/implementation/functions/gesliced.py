@@ -32,7 +32,7 @@ if __name__ == '__main__':
 
     copy_print_job(job_name, 'GESLICED', source_main_folder='WACHTRIJ')
 
-    JobTrackerCSV().update_job_status(job_name, "GESLICED")
+    # JobTrackerCSV().update_job_status(job_name, "GESLICED")
     remove_directory_and_close_cmd_farewell()
 
 

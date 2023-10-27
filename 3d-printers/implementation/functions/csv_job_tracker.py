@@ -219,4 +219,4 @@ def check_health_folders():
             
     
 if __name__ == '__main__':
-    check_health_folders()
+    # check_health_folders()
