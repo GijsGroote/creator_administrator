@@ -220,3 +220,4 @@ def check_health_folders():
     
 if __name__ == '__main__':
     # check_health_folders()
+    print("cvs job tracker turned off")
