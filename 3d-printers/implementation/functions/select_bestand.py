@@ -56,7 +56,7 @@ def local_path_to_job_name(job_content_local_path: str) -> str:
 
 if __name__ == '__main__':
 
-    check_health_folders()
+    # check_health_folders()
 
     print('You are using select_bestand.bat, the default method '
           ' is to click on the input.bat file')
@@ -78,7 +78,7 @@ if __name__ == '__main__':
                                   if os.path.isdir(os.path.join(folder_global_path, folder))]
 
     # open/create csv log
-    job_tracker = JobTrackerCSV()
+    # job_tracker = JobTrackerCSV()
 
 
 
@@ -105,11 +105,11 @@ if __name__ == '__main__':
             print(f'({job_number}/{n_potential_jobs}) created print job: {job_name}')
 
             # TODO: modify job tracker to properly add selected file names
-            job_tracker.add_job(print_job_name=job_name,
-                                sender=None,
-                                subject=None,
-                                date_sent=None,
-                                current_state="WACHTRIJ")
+            # job_tracker.add_job(print_job_name=job_name,
+            #                     sender=None,
+            #                     subject=None,
+            #                     date_sent=None,
+            #                     current_state="WACHTRIJ")
 
         else:
             print(f'({job_number}/{n_potential_jobs}) from folder {potential_job_local_path} not'

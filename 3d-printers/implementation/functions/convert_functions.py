@@ -19,17 +19,22 @@ def gcode_files_to_max_print_time(gcode_files: List[str]) -> str:
 
     for gcode_file in gcode_files:
 
+        match_days_hour_minute = re.search(r'_(\d+)d(\d+)h(\d+)m\.gcode$', gcode_file)
         match_hour_minute = re.search(r'_(\d+)h(\d+)m\.gcode$', gcode_file)
         match_minute = re.search(r'_(\d+)m\.gcode$', gcode_file)
 
-        if match_hour_minute:
+        if match_days_hour_minute:
+            temp_days = int(match_days_hour_minute.group(1))
+            temp_hours = int(match_days_hour_minute.group(2)) + temp_days * 24
+            temp_minutes = int(match_days_hour_minute.group(3))
+        elif match_hour_minute:
             temp_hours = int(match_hour_minute.group(1))
             temp_minutes = int(match_hour_minute.group(2))
         elif match_minute:
             temp_hours = 0
             temp_minutes = int(match_minute.group(1))
         else:
-            continue
+            continue    
 
         if (temp_hours > max_print_hours or
                 temp_hours == max_print_hours and

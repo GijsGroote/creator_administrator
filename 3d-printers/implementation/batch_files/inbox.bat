@@ -1,6 +1,6 @@
 @echo off
     
-"C:\Python311\python.exe" "C:\Users\iws\laserhok-workflow\3d-printers\implementation\functions\inbox.py"
+"C:\Users\gijsg\AppData\Local\Programs\Python\Python312\python.exe" "C:\Users\gijsg\Documents\laserhok-workflow\3d-printers\implementation\functions\inbox.py"
 
 rem custom exit code summary:
 rem 0 (default) - display "press any key to continue. . ." message
@@ -21,7 +21,7 @@ if %errorlevel% equ 900 (
 ) else if %errorlevel% geq 911 (
     if %errorlevel% leq 920 (
         pause
-        "C:\Python311\python.exe" "C:\Users\iws\laserhok-workflow\3d-printers\implementation\functions\cmd_farewell_handler.py" "%errorlevel%
+        "C:\Users\gijsg\AppData\Local\Programs\Python\Python312\python.exe" "C:\Users\gijsg\Documents\laserhok-workflow\3d-printers\implementation\functions\cmd_farewell_handler.py" "%errorlevel%
     )
 ) else (
 pause
