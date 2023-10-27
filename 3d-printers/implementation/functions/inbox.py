@@ -94,8 +94,8 @@ if __name__ == '__main__':
     # job_tracker = JobTrackerCSV()
 
     # check if all folders exist
-    print("checking and repairing printer workflow")
-    check_health_folders()
+    # print("checking and repairing printer workflow")
+    # check_health_folders()
 
     print('searching for new mail...')
 
