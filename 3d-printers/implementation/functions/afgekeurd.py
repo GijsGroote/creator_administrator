@@ -30,7 +30,7 @@ if __name__ == '__main__':
             print(f'Warning! more than one: {len(msg_file_paths)} .eml files detected')
             input('press enter to send response mail. . .')
 
-        send_response_mail(msg_file_paths[0], "standard_response.html", {'{response_text}': afgekeurd_reason})
+        send_response_mail(msg_file_paths[0], "afgekeurd.html", {'{response_text}': afgekeurd_reason})
         
         # save reason for rejection to file so others can read it later
         with open("afgekeurd_reden.txt", 'w') as file:
@@ -42,5 +42,5 @@ if __name__ == '__main__':
               '.eml files, no response mail can be send')
 
     copy_print_job(job_name, "AFGEKEURD")
-    JobTrackerCSV().update_job_status(job_name, "AFGEKEURD")
+    # JobTrackerCSV().update_job_status(job_name, "AFGEKEURD")
     remove_directory_and_close_cmd_farewell()

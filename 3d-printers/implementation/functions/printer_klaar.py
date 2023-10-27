@@ -42,13 +42,13 @@ if __name__ == '__main__':
         input('press enter to send response mail...')
 
     if len(msg_file_paths) > 0:
-        send_response_mail(msg_file_paths[0], "standard_response.html", {'{response_text}': "Your print is finished! You can pick it up in the IWS"})
+        send_response_mail(msg_file_paths[0], "print_klaar.html", {'{recipient_name}': "todo"})
         input('press enter to continue. . .')
     else:
         print(f'folder: {job_global_path} does not contain any .msg files,'\
                 f'no response mail can be send')
 
     copy_print_job(job_name, "VERWERKT", source_main_folder='AAN_HET_PRINTEN')
-    JobTrackerCSV().merge_job(job_name)
-    JobTrackerCSV().update_job_status(job_name, "VERWERKT")
+    # JobTrackerCSV().merge_job(job_name)
+    # JobTrackerCSV().update_job_status(job_name, "VERWERKT")
     remove_directory_and_close_cmd_farewell()
