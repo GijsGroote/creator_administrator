@@ -5,9 +5,18 @@ Global variables specific for the local machine.
 import json
 import os
 
-# global_path = os.path.abspath(r'C:\Users\IWS\.ssh\3D_print_global_variables.json')
-# global_path = os.path.abspath(r'C:\Users\levij\.ssh\3D_print_global_variables.json')
-global_path = os.path.abspath(r'C:\Users\gijsg\.ssh\3D_print_global_variables.json')
+if os.path.exists(r'C:\Users\IWS\.ssh\3D_print_global_variables.json'):
+    global_path = os.path.abspath(r'C:\Users\IWS\.ssh\3D_print_global_variables.json')
+
+elif os.path.exists(r'C:\Users\levij\.ssh\3D_print_global_variables.json'):
+    global_path = os.path.abspath(r'C:\Users\levij\.ssh\3D_print_global_variables.json')
+
+elif os.path.exists(r'C:\Users\gijsg\.ssh\3D_print_global_variables.json'):
+    global_path = os.path.abspath(r'C:\Users\gijsg\.ssh\3D_print_global_variables.json')
+
+else:
+    raise ValueError('could find 3D_print_global_variables')
+
 
 with open(global_path, 'r') as json_file:
     json_data = json.load(json_file)
