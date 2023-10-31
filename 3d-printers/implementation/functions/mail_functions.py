@@ -178,6 +178,13 @@ def is_mail_a_valid_print_job_request(msg) -> Tuple[bool, str]:
 
     return True, ' '
 
+def sent_download_confirmation_mail(msg, wait_list_length: int):
+    """ Send confirmation email as as response. """
+
+    # TODO: implement this function
+
+    return " " 
+
 
 def mail_to_print_job(msg):
     """ Create a 'print job' or folder in WACHTRIJ and
@@ -201,4 +208,3 @@ def mail_to_print_job(msg):
 
     python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), job_name)
     python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), job_name)
-

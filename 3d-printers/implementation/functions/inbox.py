@@ -125,6 +125,9 @@ if __name__ == '__main__':
                   f' create print job: {print_job_name}')
 
             mail_to_print_job(msg)
+
+            # send a confirmation mail with, "we've downloaded your mail."
+            email_manager.sent_download_confirmation_mail(msg)
             email_manager.move_email_to_verwerkt(msg)
 
             print(f'print job: {print_job_name} created\n')
