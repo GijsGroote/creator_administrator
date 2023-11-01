@@ -12,53 +12,54 @@ from global_variables import (
     PRINT_DIR_HOME,
     ACCEPTED_PRINT_EXTENSIONS)
 from create_batch_file import python_to_batch
-from mail_functions import mail_to_name
 from talk_to_sa import yes_or_no
 from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from mail_functions import (
     is_mail_a_valid_print_job_request,
     mail_to_print_job_name)
-from directory_functions import make_print_job_name_unique
-from mail_functions import EmailManager
+from directory_functions import make_print_job_name_unique, get_print_jobs_in_queue
+from mail_functions import EmailManager, sent_download_confirmation_mail
 from csv_job_tracker import JobTrackerCSV, check_health_folders
-
-def mail_to_print_job_name(msg) -> str:
-    """ Extract senders from mail and convert to a print job name. """
-
-    sender = str(msg.Sender)
-
-    job_name = re.sub(r'[^\w\s]', '', mail_to_name(sender)).replace(' ', '_')
-
-    return make_print_job_name_unique(job_name)
+from convert_functions import mail_to_name
 
 
-def is_valid_print_job_request(msg) -> Tuple[bool, str]:
-    """ Check if the requirements are met for a valid print job. """
+# def mail_to_print_job_name(msg) -> str:
+#     """ Extract senders from mail and convert to a print job name. """
 
-    # Initialize a counter for attachments with .stl extension
-    print_file_count = 0
+#     sender = str(msg.Sender)
 
-    attachments = msg.Attachments
+#     job_name = re.sub(r'[^\w\s]', '', mail_to_name(sender)).replace(' ', '_')
+
+#     return make_print_job_name_unique(job_name)
+
+
+# def is_valid_print_job_request(msg) -> Tuple[bool, str]:
+#     """ Check if the requirements are met for a valid print job. """
+
+#     # Initialize a counter for attachments with .stl extension
+#     print_file_count = 0
+
+#     attachments = msg.Attachments
     
-    for attachment in attachments:
-        print(f'attachment.FileName i {attachment.FileName.lower()}')
-        if attachment.FileName.lower().endswith(ACCEPTED_PRINT_EXTENSIONS):
-            print_file_count += 1
+#     for attachment in attachments:
+#         print(f'attachment.FileName i {attachment.FileName.lower()}')
+#         if attachment.FileName.lower().endswith(ACCEPTED_PRINT_EXTENSIONS):
+#             print_file_count += 1
     
-    if print_file_count == 0:
-        return False, 'no .stl attachment found'
+#     if print_file_count == 0:
+#         return False, 'no .stl attachment found'
 
-    elif print_file_count > 5 and print_file_count <= 10:
-        print(f'warning! there are: {print_file_count} .stl files in the mail')
+#     elif print_file_count > 5 and print_file_count <= 10:
+#         print(f'warning! there are: {print_file_count} .stl files in the mail')
 
-    elif print_file_count > 10:
-        if yes_or_no(f'{print_file_count} .stl files found do '
-                     f'you want to create an print job (Y/n)?'):
-            return True, f'you decided that: {print_file_count} .stl is oke'
-        else:
-            return False, f'you decided that: {print_file_count} .stl files are to much'
+#     elif print_file_count > 10:
+#         if yes_or_no(f'{print_file_count} .stl files found do '
+#                      f'you want to create an print job (Y/n)?'):
+#             return True, f'you decided that: {print_file_count} .stl is oke'
+#         else:
+#             return False, f'you decided that: {print_file_count} .stl files are to much'
 
-    return True, ' '
+#     return True, ' '
 
 
 def mail_to_print_job(msg):
@@ -126,8 +127,8 @@ if __name__ == '__main__':
 
             mail_to_print_job(msg)
 
-            # send a confirmation mail with, "we've downloaded your mail."
-            email_manager.sent_download_confirmation_mail(msg)
+            # send a confirmation mail with, "we've downloaded your mail."            
+            email_manager.sent_download_confirmation_mail(msg, get_print_jobs_in_queue())
             email_manager.move_email_to_verwerkt(msg)
 
             print(f'print job: {print_job_name} created\n')

@@ -303,3 +303,15 @@ def move_print_job_partly(job_name: str, exclude_files: List):
                 continue
             else:
                 copy(source_item, target_item)
+
+def get_print_jobs_in_queue() -> int:
+    """ return the print jobs in the main folders WACHTRIJ and GESLICED. """
+
+    n_dirs_in_wachtrij = len([job_folder_name for job_folder_name in os.listdir(os.path.join(PRINT_DIR_HOME, 'WACHTRIJ'))
+                              if os.path.isdir(os.path.join(PRINT_DIR_HOME, 'WACHTRIJ', job_folder_name))])
+    
+    n_dirs_in_gesliced = len([job_folder_name for job_folder_name in os.listdir(os.path.join(PRINT_DIR_HOME, 'GESLICED'))
+                              if os.path.isdir(os.path.join(PRINT_DIR_HOME, 'GESLICED', job_folder_name))])
+    
+    return n_dirs_in_wachtrij + n_dirs_in_gesliced
+    

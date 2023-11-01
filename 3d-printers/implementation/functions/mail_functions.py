@@ -18,6 +18,7 @@ from global_variables import (
 from create_batch_file import python_to_batch
 from directory_functions import make_print_job_name_unique
 from talk_to_sa import yes_or_no
+from convert_functions import mail_to_name
 
 class EmailManager:
     """
@@ -95,116 +96,103 @@ class EmailManager:
         self.reply_to_email(msg, reply_body=html_content)
 
 
-def send_response_mail(incoming_mail_path: str, template: str, template_content: dict):
-    """ Send a response to incoming mail. """
-    email_manager = EmailManager()
-    email_manager.reply_to_email_from_file_using_template(
-        incoming_mail_path,
-        template,
-        template_content)
+    def send_response_mail(incoming_mail_path: str, template: str, template_content: dict):
+        """ Send a response to incoming mail. """
+        email_manager = EmailManager()
+        email_manager.reply_to_email_from_file_using_template(
+            incoming_mail_path,
+            template,
+            template_content)
 
-def print_mail_content(mail_path: str):
-    """" Print the content of an .msg file. """
-    outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
-    msg = outlook.OpenSharedItem(mail_path)
+    def print_mail_content(mail_path: str):
+        """" Print the content of an .msg file. """
+        outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
+        msg = outlook.OpenSharedItem(mail_path)
 
-    print(msg.Body)
+        print(msg.Body)
 
-def mail_to_name(mail_name: str):
-    """ Convert mail in form first_name last_name <mail@adres.com> to a more friendly name. """
-
-    matches = re.match(r"(.*?)\s*<(.*)>", mail_name)
-
-    if matches:
-        if len(matches.group(1)) > 0:
-            return matches.group(1)
-        if len(matches.group(2)):
-            return matches.group(2).split('@')[0]
-    else:
-        if '@' in mail_name:
-            return mail_name.split('@')[0]
-    return mail_name
-
-
-def mail_to_print_job_name(msg: [email.message.Message, str]) -> str:
-    """ Extract senders from mail and convert to a print job name. """
-
-    if isinstance(msg, email.message.Message):
-        from_field = msg.get('From')
-        # Decode the "From" field
-        decoded_sender, charset = decode_header(from_field)[0]
-
-        # If the sender's name is bytes, decode it using the charset
-        if isinstance(decoded_sender, bytes):
-            decoded_sender = decoded_sender.decode(charset)
-
-    elif isinstance(msg, email.mime.multipart.MIMEMultipart):
-        decoded_sender = msg.get('From')
-    elif isinstance(msg, str):
-        decoded_sender = msg
-    else:
-        raise ValueError(f'could not convert {msg} to a job name')
-
-    job_name = re.sub(r'[^\w\s]', '', mail_to_name(decoded_sender)).replace(' ', '_')
-
-    # check if print job name is unique
-    return make_print_job_name_unique(job_name)
-
-
-def is_mail_a_valid_print_job_request(msg) -> Tuple[bool, str]:
-    """ Check if the requirements are met for a valid print job. """
-
-    # Initialize a counter for attachments with .stl extension
-    print_file_count = 0
-
-    attachments = msg.Attachments
     
-    for attachment in attachments:
-        if attachment.FileName.lower().endswith(ACCEPTED_PRINT_EXTENSIONS):
-            print_file_count += 1
 
-    if print_file_count == 0:
-        return False, 'no .stl attachment found'
 
-    elif print_file_count > 5 and print_file_count <= 10:
-        print(f'warning! there are: {print_file_count} .stl files in the mail')
+    def mail_to_print_job_name(msg: [email.message.Message, str]) -> str:
+        """ Extract senders from mail and convert to a print job name. """
 
-    elif print_file_count > 10:
-        if yes_or_no(f'{print_file_count} .stl files found do '
-                     f'you want to create an print job (Y/n)?'):
-            return True, f'you decided that: {print_file_count} .stl is oke'
+        if isinstance(msg, email.message.Message):
+            from_field = msg.get('From')
+            # Decode the "From" field
+            decoded_sender, charset = decode_header(from_field)[0]
+
+            # If the sender's name is bytes, decode it using the charset
+            if isinstance(decoded_sender, bytes):
+                decoded_sender = decoded_sender.decode(charset)
+
+        elif isinstance(msg, email.mime.multipart.MIMEMultipart):
+            decoded_sender = msg.get('From')
+        elif isinstance(msg, str):
+            decoded_sender = msg
         else:
-            return False, f'you decided that: {print_file_count} .stl files are to much'
+            raise ValueError(f'could not convert {msg} to a job name')
 
-    return True, ' '
+        job_name = re.sub(r'[^\w\s]', '', mail_to_name(decoded_sender)).replace(' ', '_')
 
-def sent_download_confirmation_mail(msg, wait_list_length: int):
-    """ Send confirmation email as as response. """
-
-    # TODO: implement this function
-
-    return " " 
+        # check if print job name is unique
+        return make_print_job_name_unique(job_name)
 
 
-def mail_to_print_job(msg):
-    """ Create a 'print job' or folder in WACHTRIJ and
-    put all corresponding files in the print job. """
+    def is_mail_a_valid_print_job_request(msg) -> Tuple[bool, str]:
+        """ Check if the requirements are met for a valid print job. """
 
-    job_name = mail_to_print_job_name(msg)
+        # Initialize a counter for attachments with .stl extension
+        print_file_count = 0
 
-    today = datetime.date.today()
-    job_folder_name = str(today.strftime('%d')) + '-' + str(today.strftime('%m')) + '_' + job_name
+        attachments = msg.Attachments
+        
+        for attachment in attachments:
+            if attachment.FileName.lower().endswith(ACCEPTED_PRINT_EXTENSIONS):
+                print_file_count += 1
 
-    print_job_global_path = os.path.join(os.path.join(PRINT_DIR_HOME, 'WACHTRIJ', job_folder_name))
-    os.mkdir(print_job_global_path)
+        if print_file_count == 0:
+            return False, 'no .stl attachment found'
 
-    # Save the email as a .eml file
-    msg.SaveAs(os.path.join(print_job_global_path, 'mail.msg'))
+        elif print_file_count > 5 and print_file_count <= 10:
+            print(f'warning! there are: {print_file_count} .stl files in the mail')
 
-    # Save the .stl files
-    for attachment in msg.Attachments:
-        if attachment.FileName.lower().endswith(ACCEPTED_PRINT_EXTENSIONS):
-            attachment.SaveAsFile(os.path.join(print_job_global_path, attachment.FileName))
+        elif print_file_count > 10:
+            if yes_or_no(f'{print_file_count} .stl files found do '
+                        f'you want to create an print job (Y/n)?'):
+                return True, f'you decided that: {print_file_count} .stl is oke'
+            else:
+                return False, f'you decided that: {print_file_count} .stl files are to much'
 
-    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), job_name)
-    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), job_name)
+        return True, ' '
+
+    def sent_download_confirmation_mail(msg, wait_list_length: int):
+        """ Send confirmation email as as response. """
+
+        # TODO: implement this function
+
+        return " " 
+
+
+    def mail_to_print_job(msg):
+        """ Create a 'print job' or folder in WACHTRIJ and
+        put all corresponding files in the print job. """
+
+        job_name = mail_to_print_job_name(msg)
+
+        today = datetime.date.today()
+        job_folder_name = str(today.strftime('%d')) + '-' + str(today.strftime('%m')) + '_' + job_name
+
+        print_job_global_path = os.path.join(os.path.join(PRINT_DIR_HOME, 'WACHTRIJ', job_folder_name))
+        os.mkdir(print_job_global_path)
+
+        # Save the email as a .eml file
+        msg.SaveAs(os.path.join(print_job_global_path, 'mail.msg'))
+
+        # Save the .stl files
+        for attachment in msg.Attachments:
+            if attachment.FileName.lower().endswith(ACCEPTED_PRINT_EXTENSIONS):
+                attachment.SaveAsFile(os.path.join(print_job_global_path, attachment.FileName))
+
+        python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), job_name)
+        python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), job_name)
