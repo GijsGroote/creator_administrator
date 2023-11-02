@@ -3,21 +3,14 @@ Handle mail functionality.
 """
 
 import os
-import datetime
-import re
 import win32com.client
-import email
-from email.header import decode_header
 from typing import Tuple
 
 from global_variables import (
     EMAIL_TEMPLATES_DIR_HOME,
-    PRINT_DIR_HOME,
     ACCEPTED_PRINT_EXTENSIONS,
-    IWS_3D_PRINT_COMPUTER,
-    FUNCTIONS_DIR_HOME)
-from create_batch_file import python_to_batch
-from directory_functions import make_print_job_name_unique
+    IWS_3D_PRINT_COMPUTER)
+
 from talk_to_sa import yes_or_no
 from convert_functions import mail_to_name
 
@@ -44,6 +37,7 @@ class EmailManager:
             elif message.UnRead:
                 emails.append(message)
             
+            # TODO: save them after the print job is created
             message.UnRead = False
             message.Save()
 
@@ -60,26 +54,17 @@ class EmailManager:
 
         print(msg.Body)
 
-    def msg_to_email(self, msg: [email.message.Message, str]) -> str:
-        """ Extract email adress from email.msg or string. """
+    def get_email_address(self, msg):
+        """ return the email adress. """
 
-        if isinstance(msg, email.message.Message):
-            from_field = msg.get('From')
-            # Decode the "From" field
-            decoded_sender, charset = decode_header(from_field)[0]
-
-            # If the sender's name is bytes, decode it using the charset
-            if isinstance(decoded_sender, bytes):
-                decoded_sender = decoded_sender.decode(charset)
-
-        elif isinstance(msg, email.mime.multipart.MIMEMultipart):
-            decoded_sender = msg.get('From')
-        elif isinstance(msg, str):
-            decoded_sender = msg
-        else:
-            raise ValueError(f'could not convert {msg} to a job name')
-        
-        return decoded_sender
+        if msg.Class==43:
+            if msg.SenderEmailType=='EX':
+                if msg.Sender.GetExchangeUser() != None:
+                    return msg.Sender.GetExchangeUser().PrimarySmtpAddress
+                else:
+                    return msg.Sender.GetExchangeDistributionList().PrimarySmtpAddress
+            else:
+                return msg.SenderEmailAddress
 
     def reply_to_email_from_file_using_template(self, file_path: str,
                                                 template_file_name: str,
@@ -94,12 +79,23 @@ class EmailManager:
         
         # load content in template
         template_content["{recipient_name}"] = msg.SenderName
+
         for key, value in template_content.items():
-            html_content = html_content.replace(key, value)
+            html_content = html_content.replace(key, str(value))
 
         reply = msg.Reply()
-        reply.HTMLBody = html_content + "\n" + reply.HTMLBody
-        reply.Display(popup_reply)
+        # reply.HTMLBody = html_content + "\n" + reply.HTMLBody
+        reply.HTMLBody = html_content
+
+      
+        if popup_reply:
+            print('Send the Outlook popup reply, it can be behind other windows')
+            reply.Display(True)
+        else:
+            reply.Send()
+        
+        # input('press enter to continue. . .')
+
 
 
     def is_mail_a_valid_print_job_request(self, msg) -> Tuple[bool, str]:
@@ -128,5 +124,3 @@ class EmailManager:
                 return False, f'you decided that: {print_file_count} .stl files are to much'
 
         return True, ' '
-
-

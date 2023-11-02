@@ -66,6 +66,7 @@ if __name__ == '__main__':
     msgs = email_manager.get_new_emails()
     created_print_jobs = False
 
+
     # print how many mails are processed
     if len(msgs) == 0:
         print('no unread mails found')
@@ -81,22 +82,21 @@ if __name__ == '__main__':
         if is_valid:
             created_print_jobs = True
 
-            email_adress = email_manager.msg_to_email(msg)
-            name = mail_to_name(email_adress)
-            job_name = make_print_job_name_unique(name)
+            sender_name = mail_to_name(str(msg.Sender))
+            job_name = make_print_job_name_unique(sender_name)
 
-            print(f'mail from: {msg.Sender} is valid request,'
+            print(f'mail from: {email_manager.get_email_address(msg)} is valid request,'
                   f' create print job: {job_name}')
 
             print_job_global_path = create_print_job(job_name, msg)
     
 
             # send a confirmation mail with, "we've downloaded your mail."            
-            msg_file_path = os.path.join(print_job_global_path, "email.msg")
-            email_manager.reply_to_email_from_file_using_template(msg_file_path,
-                                                    "bijlage_gedownload.html",
-                                                    {"{print_jobs_in_queue}": get_print_jobs_in_queue()},
-                                                    popup_reply=True):
+            msg_file_path = os.path.join(print_job_global_path, "mail.msg")
+            email_manager.reply_to_email_from_file_using_template(msg_file_path, 
+                                                                  "bijlage_gedownload.html", 
+                                                                  {"{print_jobs_in_queue}": get_print_jobs_in_queue()}, 
+                                                                  popup_reply=False)
             email_manager.move_email_to_verwerkt_folder(msg)
 
             print(f'print job: {job_name} created\n')

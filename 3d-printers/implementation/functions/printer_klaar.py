@@ -5,7 +5,8 @@ Move a print job to the folder VERWERKT.
 import glob
 import sys
 
-from mail_functions import reply_to_email_from_file_using_template
+from mail_functions import EmailManager
+
 from directory_functions import (
     job_name_to_global_path,
     copy_print_job,
@@ -42,8 +43,11 @@ if __name__ == '__main__':
         input('press enter to send response mail...')
 
     if len(msg_file_paths) > 0:
-        reply_to_email_from_file_using_template(msg_file_paths[0], "print_klaar.html", {'{recipient_name}': "todo"})
-        input('press enter to continue. . .')
+        email_manager = EmailManager()
+        email_manager.reply_to_email_from_file_using_template(msg_file_paths[0],
+                                                              "print_klaar.html",
+                                                               {},
+                                                              popup_reply=False)
     else:
         print(f'folder: {job_global_path} does not contain any .msg files,'\
                 f'no response mail can be send')

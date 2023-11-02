@@ -6,7 +6,7 @@ import sys
 import glob
 
 
-from mail_functions import reply_to_email_from_file_using_template, print_mail_content
+from mail_functions import EmailManager
 from directory_functions import (
     job_name_to_global_path,
     copy_print_job)
@@ -23,19 +23,23 @@ if __name__ == '__main__':
 
     if len(msg_file_paths) > 0:
 
+        email_manager = EmailManager()
+
         print(f'latest mail message:')
-        print_mail_content(msg_file_paths[0])
-        afgekeurd_reason = input("Why is the print job rejected?")
+        email_manager.print_mail_content(msg_file_paths[0])
+        declined_reason = input("Why is the print job rejected?")
         if len(msg_file_paths) > 1:
             print(f'Warning! more than one: {len(msg_file_paths)} .eml files detected')
             input('press enter to send response mail. . .')
 
-        reply_to_email_from_file_using_template(msg_file_paths[0], "afgekeurd.html", {'{response_text}': afgekeurd_reason})
+        email_manager.reply_to_email_from_file_using_template(msg_file_paths[0],
+                                                                "afgekeurd.html",
+                                                                {'{declined_reason}': declined_reason},
+                                                                popup_reply=True)
         
         # save reason for rejection to file so others can read it later
         with open("afgekeurd_reden.txt", 'w') as file:
-            file.write(afgekeurd_reason)
-        input('press enter to continue. . .')
+            file.write(declined_reason)
 
     else:
         print(f'folder: {job_global_path} does not contain any '\
