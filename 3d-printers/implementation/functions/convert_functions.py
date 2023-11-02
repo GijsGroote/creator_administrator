@@ -103,3 +103,4 @@ def mail_to_name(mail_name: str):
             if '@' in mail_name:
                 return mail_name.split('@')[0]
         return mail_name
+

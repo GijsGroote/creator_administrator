@@ -14,6 +14,7 @@ from global_variables import (
     EMAIL_TEMPLATES_DIR_HOME,
     PRINT_DIR_HOME,
     ACCEPTED_PRINT_EXTENSIONS,
+    IWS_3D_PRINT_COMPUTER,
     FUNCTIONS_DIR_HOME)
 from create_batch_file import python_to_batch
 from directory_functions import make_print_job_name_unique
@@ -23,11 +24,6 @@ from convert_functions import mail_to_name
 class EmailManager:
     """
     Class for managing emails using win32com.client
-    can be used to:
-    - get unread emails
-    - save emails to file
-    - reply to emails
-    - reply to emails from file
     """
     def __init__(self):
         self.outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
@@ -37,85 +33,35 @@ class EmailManager:
         except:
             self.verwerkt_folder = self.inbox.Parent.Folders.Add("Verwerkt")
             
-    def get_emails(self, unread_only=False):
-        """
-        get all unread emails from inbox
-        - To get all emails (not just unread) use: unread_only=False
-        """
+    def get_new_emails(self):
+        """ return emails from inbox. """
         emails = []
         for message in self.inbox.Items:
-            if unread_only:
-                if message.UnRead:
-                    emails.append(message)
-            else:
+            # the IWS computer appends every mail in the inbox
+            if IWS_3D_PRINT_COMPUTER:
+                emails.append(message)
+            # other than the IWS computer only appends unread mails
+            elif message.UnRead:
                 emails.append(message)
             
             message.UnRead = False
             message.Save()
+
         return emails
 
-    def move_email_to_verwerkt(self, email):
-        """move email to verwerkt folder"""
-        email.Move(self.verwerkt_folder)
+    def move_email_to_verwerkt_folder(self, msg):
+        """ move email to verwerkt folder. """
+        msg.Move(self.verwerkt_folder)
 
-    def save_emails(self, emails, folder):
-        """save list of emails to file"""
-        for email in emails:
-            self.save_email(email, folder, filename=f"{email.Sender}.msg")
-
-
-    def save_email(self, email, folder, filename="email.msg"):
-        """save email to file"""
-        email.SaveAs(os.path.join(folder, filename))
-
-    def reply_to_email(self, email, reply_body=""):
-        """reply to email that is in mailitem format"""
-        reply = email.Reply()
-        reply.HTMLBody = reply_body + "\n" + reply.HTMLBody
-        reply.Display(True)
-
-    def reply_to_email_from_file(self, file_path, reply_body=""):
-        """reply to email that is saved to .msg file"""
-        msg = self.outlook.OpenSharedItem(file_path)
-        self.reply_to_email(msg, reply_body=reply_body)
-        
-    def reply_to_email_from_file_using_template(self, file_path, template_file_name, template_content):
-        """reply to email that is saved to .msg file"""
-        template_path = os.path.join(EMAIL_TEMPLATES_DIR_HOME, template_file_name)
-        msg = self.outlook.OpenSharedItem(file_path)
-        sender_name = msg.SenderName
-        
-        with open(template_path, "r") as file:
-            html_content = file.read()
-        
-        html_content = html_content.replace("{recipient_name}", sender_name)
-        
-        for key, value in template_content.items():
-            html_content = html_content.replace(key, value)
-        
-        self.reply_to_email(msg, reply_body=html_content)
-
-
-    def send_response_mail(incoming_mail_path: str, template: str, template_content: dict):
-        """ Send a response to incoming mail. """
-        email_manager = EmailManager()
-        email_manager.reply_to_email_from_file_using_template(
-            incoming_mail_path,
-            template,
-            template_content)
-
-    def print_mail_content(mail_path: str):
-        """" Print the content of an .msg file. """
+    def print_mail_content(self, mail_path: str):
+        """ Print the content of an .msg file. """
         outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
         msg = outlook.OpenSharedItem(mail_path)
 
         print(msg.Body)
 
-    
-
-
-    def mail_to_print_job_name(msg: [email.message.Message, str]) -> str:
-        """ Extract senders from mail and convert to a print job name. """
+    def msg_to_email(self, msg: [email.message.Message, str]) -> str:
+        """ Extract email adress from email.msg or string. """
 
         if isinstance(msg, email.message.Message):
             from_field = msg.get('From')
@@ -132,14 +78,31 @@ class EmailManager:
             decoded_sender = msg
         else:
             raise ValueError(f'could not convert {msg} to a job name')
+        
+        return decoded_sender
 
-        job_name = re.sub(r'[^\w\s]', '', mail_to_name(decoded_sender)).replace(' ', '_')
+    def reply_to_email_from_file_using_template(self, file_path: str,
+                                                template_file_name: str,
+                                                template_content: dict,
+                                                popup_reply=True):
+        """ Reply to .msg file using template. """
+        msg = self.outlook.OpenSharedItem(file_path)
+        template_path = os.path.join(EMAIL_TEMPLATES_DIR_HOME, template_file_name)
+        
+        with open(template_path, "r") as file:
+            html_content = file.read()
+        
+        # load content in template
+        template_content["{recipient_name}"] = msg.SenderName
+        for key, value in template_content.items():
+            html_content = html_content.replace(key, value)
 
-        # check if print job name is unique
-        return make_print_job_name_unique(job_name)
+        reply = msg.Reply()
+        reply.HTMLBody = html_content + "\n" + reply.HTMLBody
+        reply.Display(popup_reply)
 
 
-    def is_mail_a_valid_print_job_request(msg) -> Tuple[bool, str]:
+    def is_mail_a_valid_print_job_request(self, msg) -> Tuple[bool, str]:
         """ Check if the requirements are met for a valid print job. """
 
         # Initialize a counter for attachments with .stl extension
@@ -166,33 +129,4 @@ class EmailManager:
 
         return True, ' '
 
-    def sent_download_confirmation_mail(msg, wait_list_length: int):
-        """ Send confirmation email as as response. """
 
-        # TODO: implement this function
-
-        return " " 
-
-
-    def mail_to_print_job(msg):
-        """ Create a 'print job' or folder in WACHTRIJ and
-        put all corresponding files in the print job. """
-
-        job_name = mail_to_print_job_name(msg)
-
-        today = datetime.date.today()
-        job_folder_name = str(today.strftime('%d')) + '-' + str(today.strftime('%m')) + '_' + job_name
-
-        print_job_global_path = os.path.join(os.path.join(PRINT_DIR_HOME, 'WACHTRIJ', job_folder_name))
-        os.mkdir(print_job_global_path)
-
-        # Save the email as a .eml file
-        msg.SaveAs(os.path.join(print_job_global_path, 'mail.msg'))
-
-        # Save the .stl files
-        for attachment in msg.Attachments:
-            if attachment.FileName.lower().endswith(ACCEPTED_PRINT_EXTENSIONS):
-                attachment.SaveAsFile(os.path.join(print_job_global_path, attachment.FileName))
-
-        python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), job_name)
-        python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), job_name)

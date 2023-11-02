@@ -14,59 +14,16 @@ from global_variables import (
 from create_batch_file import python_to_batch
 from talk_to_sa import yes_or_no
 from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
-from mail_functions import (
-    is_mail_a_valid_print_job_request,
-    mail_to_print_job_name)
 from directory_functions import make_print_job_name_unique, get_print_jobs_in_queue
-from mail_functions import EmailManager, sent_download_confirmation_mail
+from mail_functions import EmailManager 
 from csv_job_tracker import JobTrackerCSV, check_health_folders
 from convert_functions import mail_to_name
 
 
-# def mail_to_print_job_name(msg) -> str:
-#     """ Extract senders from mail and convert to a print job name. """
-
-#     sender = str(msg.Sender)
-
-#     job_name = re.sub(r'[^\w\s]', '', mail_to_name(sender)).replace(' ', '_')
-
-#     return make_print_job_name_unique(job_name)
-
-
-# def is_valid_print_job_request(msg) -> Tuple[bool, str]:
-#     """ Check if the requirements are met for a valid print job. """
-
-#     # Initialize a counter for attachments with .stl extension
-#     print_file_count = 0
-
-#     attachments = msg.Attachments
-    
-#     for attachment in attachments:
-#         print(f'attachment.FileName i {attachment.FileName.lower()}')
-#         if attachment.FileName.lower().endswith(ACCEPTED_PRINT_EXTENSIONS):
-#             print_file_count += 1
-    
-#     if print_file_count == 0:
-#         return False, 'no .stl attachment found'
-
-#     elif print_file_count > 5 and print_file_count <= 10:
-#         print(f'warning! there are: {print_file_count} .stl files in the mail')
-
-#     elif print_file_count > 10:
-#         if yes_or_no(f'{print_file_count} .stl files found do '
-#                      f'you want to create an print job (Y/n)?'):
-#             return True, f'you decided that: {print_file_count} .stl is oke'
-#         else:
-#             return False, f'you decided that: {print_file_count} .stl files are to much'
-
-#     return True, ' '
-
-
-def mail_to_print_job(msg):
+def create_print_job(job_name, msg) -> str:
     """ Create a 'print job' or folder in WACHTRIJ and
     put all corresponding files in the print job. """
 
-    job_name = mail_to_print_job_name(msg)
 
     today = datetime.date.today()
     job_folder_name = str(today.strftime('%d')) + '-' + str(today.strftime('%m')) + '_' + job_name
@@ -86,6 +43,8 @@ def mail_to_print_job(msg):
     python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), job_name)
     python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), job_name)
 
+    return print_job_global_path
+
 if __name__ == '__main__':
 
     # open outlook
@@ -104,7 +63,7 @@ if __name__ == '__main__':
     email_manager = EmailManager()
     
     # read unread mails and convert to the email format and mark them as read
-    msgs = email_manager.get_emails(unread_only=True)
+    msgs = email_manager.get_new_emails()
     created_print_jobs = False
 
     # print how many mails are processed
@@ -117,21 +76,30 @@ if __name__ == '__main__':
     for msg in msgs:
         print(f'processing incoming mail from: {msg.Sender}')
 
-        (is_valid, invalid_reason) = is_mail_a_valid_print_job_request(msg)
+        (is_valid, invalid_reason) = email_manager.is_mail_a_valid_print_job_request(msg)
 
         if is_valid:
             created_print_jobs = True
-            print_job_name = mail_to_print_job_name(msg)
-            print(f'mail from: {msg.Sender} is valid request,'
-                  f' create print job: {print_job_name}')
 
-            mail_to_print_job(msg)
+            email_adress = email_manager.msg_to_email(msg)
+            name = mail_to_name(email_adress)
+            job_name = make_print_job_name_unique(name)
+
+            print(f'mail from: {msg.Sender} is valid request,'
+                  f' create print job: {job_name}')
+
+            print_job_global_path = create_print_job(job_name, msg)
+    
 
             # send a confirmation mail with, "we've downloaded your mail."            
-            email_manager.sent_download_confirmation_mail(msg, get_print_jobs_in_queue())
-            email_manager.move_email_to_verwerkt(msg)
+            msg_file_path = os.path.join(print_job_global_path, "email.msg")
+            email_manager.reply_to_email_from_file_using_template(msg_file_path,
+                                                    "bijlage_gedownload.html",
+                                                    {"{print_jobs_in_queue}": get_print_jobs_in_queue()},
+                                                    popup_reply=True):
+            email_manager.move_email_to_verwerkt_folder(msg)
 
-            print(f'print job: {print_job_name} created\n')
+            print(f'print job: {job_name} created\n')
 
             # job_tracker.add_job(print_job_name=print_job_name,
             #                     sender=msg.Sender,

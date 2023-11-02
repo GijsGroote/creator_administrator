@@ -5,7 +5,10 @@ Global variables specific for the local machine.
 import json
 import os
 
+# Detect the computer.
+IWS_3D_PRINT_COMPUTER = False
 if os.path.exists(r'C:\Users\IWS\.ssh\3D_print_global_variables.json'):
+    IWS_3D_PRINT_COMPUTER = True
     global_path = os.path.abspath(r'C:\Users\IWS\.ssh\3D_print_global_variables.json')
 
 elif os.path.exists(r'C:\Users\levij\.ssh\3D_print_global_variables.json'):

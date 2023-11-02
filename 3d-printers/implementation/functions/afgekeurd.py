@@ -6,7 +6,7 @@ import sys
 import glob
 
 
-from mail_functions import send_response_mail, print_mail_content
+from mail_functions import reply_to_email_from_file_using_template, print_mail_content
 from directory_functions import (
     job_name_to_global_path,
     copy_print_job)
@@ -30,7 +30,7 @@ if __name__ == '__main__':
             print(f'Warning! more than one: {len(msg_file_paths)} .eml files detected')
             input('press enter to send response mail. . .')
 
-        send_response_mail(msg_file_paths[0], "afgekeurd.html", {'{response_text}': afgekeurd_reason})
+        reply_to_email_from_file_using_template(msg_file_paths[0], "afgekeurd.html", {'{response_text}': afgekeurd_reason})
         
         # save reason for rejection to file so others can read it later
         with open("afgekeurd_reden.txt", 'w') as file:
