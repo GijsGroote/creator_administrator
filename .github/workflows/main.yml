@@ -21,64 +21,29 @@ jobs:
     name: Run linters
     runs-on: ubuntu-latest
 
-  steps:    
-    - uses: actions/checkout@v1  
+    steps:    
+      - uses: actions/checkout@v1  
 
-    - name: Set up Python
-    # This is the version of the action for setting up Python, not the Python version.
-      uses: actions/setup-python@v1
-      with:
-      # Semantic version range syntax or exact version of a Python version
-        python-version: '3.12'
-        # Optional - x64 or x86 architecture, defaults to x64
-        architecture: 'x64'
-        # You can test your matrix by printing the current Python version
-    - name: Display Python version
-      run: python -c "import sys; print(sys.version)"
-
-
-    - name: Python Linter
-    uses: sunnysid3up/python-linter@master
-      with:
-        source: "3d-printers/implementation/functions/"
-        mypy-options: "--ignore-missing-imports --show-error-codes"
-        pylint-options: "--rcfile=setup.cfg"
-        isort-options: "-w 100"
-        django: false
+      - name: Set up Python
+      # This is the version of the action for setting up Python, not the Python version.
+        uses: actions/setup-python@v1
+        with:
+        # Semantic version range syntax or exact version of a Python version
+          python-version: '3.12'
+          # Optional - x64 or x86 architecture, defaults to x64
+          architecture: 'x64'
+          # You can test your matrix by printing the current Python version
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
 
 
-# name: Python Linter
-
-# on: push
-
-# jobs:
-#   run-linters:
-#     name: Run linters
-#     runs-on: ubuntu-latest
-
-#   steps:    
-#     - uses: actions/checkout@v1  
-
-#     - name: Set up Python
-#     # This is the version of the action for setting up Python, not the Python version.
-#       uses: actions/setup-python@v1
-#       with:
-#       # Semantic version range syntax or exact version of a Python version
-#         python-version: '3.12'
-#         # Optional - x64 or x86 architecture, defaults to x64
-#         architecture: 'x64'
-#         # You can test your matrix by printing the current Python version
-#     - name: Display Python version
-#       run: python -c "import sys; print(sys.version)"
-
-
-#     - name: Python Linter
-#     uses: sunnysid3up/python-linter@master
-#       with:
-#         source: "3d-printers/implementation/functions/"
-#         mypy-options: "--ignore-missing-imports --show-error-codes"
-#         pylint-options: "--rcfile=setup.cfg"
-#         isort-options: "-w 100"
-#         django: false
+      # - name: Python Linter
+      # uses: sunnysid3up/python-linter@master
+      #   with:
+      #     source: "3d-printers/implementation/functions/"
+      #     mypy-options: "--ignore-missing-imports --show-error-codes"
+      #     pylint-options: "--rcfile=setup.cfg"
+      #     isort-options: "-w 100"
+      #     django: false
 
 
