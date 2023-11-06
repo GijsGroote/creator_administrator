@@ -37,7 +37,7 @@ jobs:
         run: python -c "import sys; print(sys.version)"
 
       - name: Python Linter
-      uses: sunnysid3up/python-linter@master
+        uses: sunnysid3up/python-linter@master
         with:
           source: "3d-printers/implementation/functions/"
           mypy-options: "--ignore-missing-imports --show-error-codes"
