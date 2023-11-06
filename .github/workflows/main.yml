@@ -1,35 +1,53 @@
-name: Python Linter
-
-on: push
-
+name: GitHub Actions Demo
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: [push]
 jobs:
-  run-linters:
-    name: Run linters
+  Explore-GitHub-Actions:
     runs-on: ubuntu-latest
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+# name: Python Linter
 
-  steps:    
-    - uses: actions/checkout@v1  
+# on: push
 
-    - name: Set up Python
-    # This is the version of the action for setting up Python, not the Python version.
-      uses: actions/setup-python@v1
-      with:
-      # Semantic version range syntax or exact version of a Python version
-        python-version: '3.12'
-        # Optional - x64 or x86 architecture, defaults to x64
-        architecture: 'x64'
-        # You can test your matrix by printing the current Python version
-    - name: Display Python version
-      run: python -c "import sys; print(sys.version)"
+# jobs:
+#   run-linters:
+#     name: Run linters
+#     runs-on: ubuntu-latest
+
+#   steps:    
+#     - uses: actions/checkout@v1  
+
+#     - name: Set up Python
+#     # This is the version of the action for setting up Python, not the Python version.
+#       uses: actions/setup-python@v1
+#       with:
+#       # Semantic version range syntax or exact version of a Python version
+#         python-version: '3.12'
+#         # Optional - x64 or x86 architecture, defaults to x64
+#         architecture: 'x64'
+#         # You can test your matrix by printing the current Python version
+#     - name: Display Python version
+#       run: python -c "import sys; print(sys.version)"
 
 
-    - name: Python Linter
-    uses: sunnysid3up/python-linter@master
-      with:
-        source: "3d-printers/implementation/functions/"
-        mypy-options: "--ignore-missing-imports --show-error-codes"
-        pylint-options: "--rcfile=setup.cfg"
-        isort-options: "-w 100"
-        django: false
+#     - name: Python Linter
+#     uses: sunnysid3up/python-linter@master
+#       with:
+#         source: "3d-printers/implementation/functions/"
+#         mypy-options: "--ignore-missing-imports --show-error-codes"
+#         pylint-options: "--rcfile=setup.cfg"
+#         isort-options: "-w 100"
+#         django: false
 
 
