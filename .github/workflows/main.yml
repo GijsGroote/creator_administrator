@@ -1,0 +1,27 @@
+name: Python Linter
+
+on: push
+
+jobs:
+  run-linters:
+    name: Run linters
+    runs-on: ubuntu-latest
+
+steps:    
+ - uses: actions/checkout@v2  
+ 
+ - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.12 
+ 
+ - name: Python Linter
+   uses: sunnysid3up/python-linter@master
+   with:
+     source: "3d-printers/implementation/functions/"
+     mypy-options: "--ignore-missing-imports --show-error-codes"
+     pylint-options: "--rcfile=setup.cfg"
+     isort-options: "-w 100"
+     django: false
+
+    
