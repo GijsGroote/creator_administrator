@@ -10,13 +10,12 @@ from global_variables import (
     EMAIL_TEMPLATES_DIR_HOME,
     ACCEPTED_PRINT_EXTENSIONS,
     IWS_3D_PRINT_COMPUTER)
-
 from talk_to_sa import yes_or_no
 from convert_functions import mail_to_name
 
 class EmailManager:
     """
-    Class for managing emails using win32com.client
+    Class for managing emails using win32com.client.
     """
     def __init__(self):
         self.outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
@@ -26,8 +25,8 @@ class EmailManager:
         except:
             self.verwerkt_folder = self.inbox.Parent.Folders.Add("Verwerkt")
             
-    def get_new_emails(self):
-        """ return emails from inbox. """
+    def get_new_emails(self) -> list:
+        """ Return emails from Outlook inbox. """
         emails = []
         for message in self.inbox.Items:
             # the IWS computer appends every mail in the inbox
@@ -37,26 +36,24 @@ class EmailManager:
             elif message.UnRead:
                 emails.append(message)
             
-            # TODO: save them after the print job is created
             message.UnRead = False
             message.Save()
 
         return emails
 
     def move_email_to_verwerkt_folder(self, msg):
-        """ move email to verwerkt folder. """
+        """ Move email to verwerkt folder. """
         msg.Move(self.verwerkt_folder)
 
-    def print_mail_content(self, mail_path: str):
+    def print_mail_content(self, msg_file_path: str):
         """ Print the content of an .msg file. """
         outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
-        msg = outlook.OpenSharedItem(mail_path)
+        msg = outlook.OpenSharedItem(msg_file_path)
 
         print(msg.Body)
 
-    def get_email_address(self, msg):
-        """ return the email adress. """
-
+    def get_email_address(self, msg) -> str:
+        """ Return the email adress. """
         if msg.Class==43:
             if msg.SenderEmailType=='EX':
                 if msg.Sender.GetExchangeUser() != None:
@@ -66,42 +63,36 @@ class EmailManager:
             else:
                 return msg.SenderEmailAddress
 
-    def reply_to_email_from_file_using_template(self, file_path: str,
+    def reply_to_email_from_file_using_template(self, msg_file_path: str,
                                                 template_file_name: str,
                                                 template_content: dict,
                                                 popup_reply=True):
-        """ Reply to .msg file using template. """
-        msg = self.outlook.OpenSharedItem(file_path)
-        template_path = os.path.join(EMAIL_TEMPLATES_DIR_HOME, template_file_name)
+        """ Reply to .msg file using a template. """
+        msg = self.outlook.OpenSharedItem(msg_file_path)
+        html_template_path = os.path.join(EMAIL_TEMPLATES_DIR_HOME, template_file_name)
         
-        with open(template_path, "r") as file:
+        with open(html_template_path, "r") as file:
             html_content = file.read()
         
-        # load content in template
-        template_content["{recipient_name}"] = msg.SenderName
+        # load recipient_name in template
+        template_content["{recipient_name}"] = mail_to_name(str(msg.Sender))
 
         for key, value in template_content.items():
             html_content = html_content.replace(key, str(value))
 
         reply = msg.Reply()
-        # reply.HTMLBody = html_content + "\n" + reply.HTMLBody
         reply.HTMLBody = html_content
 
-      
         if popup_reply:
             print('Send the Outlook popup reply, it can be behind other windows')
             reply.Display(True)
         else:
             reply.Send()
         
-        # input('press enter to continue. . .')
-
-
-
     def is_mail_a_valid_print_job_request(self, msg) -> Tuple[bool, str]:
         """ Check if the requirements are met for a valid print job. """
 
-        # Initialize a counter for attachments with .stl extension
+        # Initialize a counter for 3D print attachments
         print_file_count = 0
 
         attachments = msg.Attachments

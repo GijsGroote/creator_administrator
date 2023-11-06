@@ -15,15 +15,13 @@ from create_batch_file import python_to_batch
 from talk_to_sa import yes_or_no
 from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from directory_functions import make_print_job_name_unique, get_print_jobs_in_queue
-from mail_functions import EmailManager 
+from mail_functions import EmailManager
 from csv_job_tracker import JobTrackerCSV, check_health_folders
 from convert_functions import mail_to_name
-
 
 def create_print_job(job_name, msg) -> str:
     """ Create a 'print job' or folder in WACHTRIJ and
     put all corresponding files in the print job. """
-
 
     today = datetime.date.today()
     job_folder_name = str(today.strftime('%d')) + '-' + str(today.strftime('%m')) + '_' + job_name
@@ -31,7 +29,7 @@ def create_print_job(job_name, msg) -> str:
     print_job_global_path = os.path.join(os.path.join(PRINT_DIR_HOME, 'WACHTRIJ', job_folder_name))
     os.mkdir(print_job_global_path)
 
-    # Save the email as a .eml file
+    # Save the email
     msg.SaveAs(os.path.join(print_job_global_path, 'mail.msg'))
 
     # Save the .stl files
@@ -49,7 +47,7 @@ if __name__ == '__main__':
 
     # open outlook
     email_manager = EmailManager()
-    
+
     # open/create csv log
     # job_tracker = JobTrackerCSV()
 
@@ -61,11 +59,10 @@ if __name__ == '__main__':
 
     # open outlook
     email_manager = EmailManager()
-    
+
     # read unread mails and convert to the email format and mark them as read
     msgs = email_manager.get_new_emails()
     created_print_jobs = False
-
 
     # print how many mails are processed
     if len(msgs) == 0:
@@ -89,14 +86,14 @@ if __name__ == '__main__':
                   f' create print job: {job_name}')
 
             print_job_global_path = create_print_job(job_name, msg)
-    
 
-            # send a confirmation mail with, "we've downloaded your mail."            
+            # send a confirmation mail
             msg_file_path = os.path.join(print_job_global_path, "mail.msg")
-            email_manager.reply_to_email_from_file_using_template(msg_file_path, 
-                                                                  "bijlage_gedownload.html", 
-                                                                  {"{print_jobs_in_queue}": get_print_jobs_in_queue()}, 
-                                                                  popup_reply=False)
+            email_manager.reply_to_email_from_file_using_template(msg_file_path,
+                                      "bijlage_gedownload.html",
+                                      {"{print_jobs_in_queue}": get_print_jobs_in_queue()},
+                                      popup_reply=False)
+
             email_manager.move_email_to_verwerkt_folder(msg)
 
             print(f'print job: {job_name} created\n')
@@ -106,6 +103,7 @@ if __name__ == '__main__':
             #                     subject=msg.Subject,
             #                     date_sent=msg.SentOn.strftime("%Y-%m-%d"),
             #                     current_state="WACHTRIJ")
+
         else:
             print(f'mail from {msg.Sender} is not a valid request '
                   f'because:\n {invalid_reason}, abort!\n')
