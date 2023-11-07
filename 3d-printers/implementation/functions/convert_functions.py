@@ -34,7 +34,7 @@ def gcode_files_to_max_print_time(gcode_files: List[str]) -> str:
             temp_hours = 0
             temp_minutes = int(match_minute.group(1))
         else:
-            continue    
+            continue
 
         if (temp_hours > max_print_hours or
                 temp_hours == max_print_hours and
@@ -90,18 +90,16 @@ def convert_win32_msg_to_email_msg(win32_msg) -> email.mime.multipart.MIMEMultip
     return email_msg
 
 def mail_to_name(mail_name: str):
-        """ Convert mail in form first_name last_name <mail@adres.com> to a more friendly name. """
+    """ Convert mail in form first_name last_name <mail@adres.com> to a more friendly name. """
 
-        matches = re.match(r"(.*?)\s*<(.*)>", mail_name)
+    matches = re.match(r"(.*?)\s*<(.*)>", mail_name)
 
-        if matches:
-            if len(matches.group(1)) > 0:
-                return matches.group(1)
-            if len(matches.group(2)):
-                return matches.group(2).split('@')[0]
-        else:
-            if '@' in mail_name:
-                return mail_name.split('@')[0]
-            
-        return mail_name
-
+    if matches:
+        if len(matches.group(1)) > 0:
+            return matches.group(1)
+        if len(matches.group(2)):
+            return matches.group(2).split('@')[0]
+    else:
+        if '@' in mail_name:
+            return mail_name.split('@')[0]
+    return mail_name

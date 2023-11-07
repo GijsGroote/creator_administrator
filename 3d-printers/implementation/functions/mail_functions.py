@@ -3,8 +3,8 @@ Handle mail functionality.
 """
 
 import os
-import win32com.client
 from typing import Tuple
+import win32com.client
 
 from global_variables import (
     EMAIL_TEMPLATES_DIR_HOME,
@@ -24,7 +24,7 @@ class EmailManager:
             self.verwerkt_folder = self.inbox.Parent.Folders.Item("Verwerkt")
         except:
             self.verwerkt_folder = self.inbox.Parent.Folders.Add("Verwerkt")
-            
+
     def get_new_emails(self) -> list:
         """ Return emails from Outlook inbox. """
         emails = []
@@ -35,7 +35,7 @@ class EmailManager:
             # other than the IWS computer only appends unread mails
             elif message.UnRead:
                 emails.append(message)
-            
+
             message.UnRead = False
             message.Save()
 
@@ -56,12 +56,12 @@ class EmailManager:
         """ Return the email adress. """
         if msg.Class==43:
             if msg.SenderEmailType=='EX':
-                if msg.Sender.GetExchangeUser() != None:
+                if msg.Sender.GetExchangeUser() is not None:
                     return msg.Sender.GetExchangeUser().PrimarySmtpAddress
-                else:
-                    return msg.Sender.GetExchangeDistributionList().PrimarySmtpAddress
-            else:
-                return msg.SenderEmailAddress
+                return msg.Sender.GetExchangeDistributionList().PrimarySmtpAddress
+            return msg.SenderEmailAddress
+
+        raise ValueError("Could not get email adress")
 
     def reply_to_email_from_file_using_template(self, msg_file_path: str,
                                                 template_file_name: str,
@@ -70,10 +70,10 @@ class EmailManager:
         """ Reply to .msg file using a template. """
         msg = self.outlook.OpenSharedItem(msg_file_path)
         html_template_path = os.path.join(EMAIL_TEMPLATES_DIR_HOME, template_file_name)
-        
+
         with open(html_template_path, "r") as file:
             html_content = file.read()
-        
+
         # load recipient_name in template
         template_content["{recipient_name}"] = mail_to_name(str(msg.Sender))
 
@@ -88,7 +88,7 @@ class EmailManager:
             reply.Display(True)
         else:
             reply.Send()
-        
+
     def is_mail_a_valid_print_job_request(self, msg) -> Tuple[bool, str]:
         """ Check if the requirements are met for a valid print job. """
 
@@ -96,7 +96,7 @@ class EmailManager:
         print_file_count = 0
 
         attachments = msg.Attachments
-        
+
         for attachment in attachments:
             if attachment.FileName.lower().endswith(ACCEPTED_PRINT_EXTENSIONS):
                 print_file_count += 1
@@ -104,14 +104,13 @@ class EmailManager:
         if print_file_count == 0:
             return False, 'no .stl attachment found'
 
-        elif print_file_count > 5 and print_file_count <= 10:
+        if 5 < print_file_count <= 10:
             print(f'warning! there are: {print_file_count} .stl files in the mail')
 
         elif print_file_count > 10:
             if yes_or_no(f'{print_file_count} .stl files found do '
                         f'you want to create an print job (Y/n)?'):
                 return True, f'you decided that: {print_file_count} .stl is oke'
-            else:
-                return False, f'you decided that: {print_file_count} .stl files are to much'
+            return False, f'you decided that: {print_file_count} .stl files are to much'
 
         return True, ' '

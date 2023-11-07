@@ -10,14 +10,13 @@ from global_variables import (
     PRINT_DIR_HOME,
     ACCEPTED_PRINT_EXTENSIONS)
 from create_batch_file import python_to_batch
-from talk_to_sa import yes_or_no
 from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from directory_functions import make_print_job_name_unique, get_print_jobs_in_queue
 from mail_functions import EmailManager
 from csv_job_tracker import JobTrackerCSV
 from convert_functions import mail_to_name
 
-def create_print_job(job_name, msg) -> str:
+def create_print_job(job_name: str, msg) -> str:
     """ Create a 'print job' or folder in WACHTRIJ and
     put all corresponding files in the print job. """
 

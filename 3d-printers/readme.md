@@ -1,1 +1,1 @@
-# TODO: Make a nice readme for the 3D printer files
+# This folder and subfolders contain documentation and implementation to make 3D printing with multiple SA's easier.

@@ -43,10 +43,8 @@ def make_print_job_name_unique(job_name: str) -> str:
     if max_job_number == 0:
         if does_print_job_name_exist(job_name):
             return job_name + '_(1)'
-        else:
-            return job_name
-    else:
-        return job_name + '_(' + str(max_job_number + 1) + ')'
+        return job_name
+    return job_name + '_(' + str(max_job_number + 1) + ')'
 
 def get_print_job_global_paths(search_in_main_folder=None) -> List[str]:
     """ Return global paths for all print jobs. """
@@ -60,7 +58,7 @@ def get_print_job_global_paths(search_in_main_folder=None) -> List[str]:
 
     for main_folder in main_folders:
         temp_print_job_global_paths = [os.path.join(PRINT_DIR_HOME, main_folder, job_folder_name)
-                                       for job_folder_name in os.listdir(os.path.join(PRINT_DIR_HOME, main_folder))]
+                   for job_folder_name in os.listdir(os.path.join(PRINT_DIR_HOME, main_folder))]
 
         if len(temp_print_job_global_paths) > 0:
             print_job_global_paths.extend(temp_print_job_global_paths)
@@ -79,8 +77,7 @@ def get_print_job_folder_names(search_in_main_folder=None) -> List[str]:
         main_folders = [search_in_main_folder]
 
     for main_folder in main_folders:
-        temp_print_job_names = [print_job_name for print_job_name in
-                                os.listdir(os.path.join(PRINT_DIR_HOME, main_folder))]
+        temp_print_job_names = list(os.listdir(os.path.join(PRINT_DIR_HOME, main_folder)))
 
         if len(temp_print_job_names) > 0:
             print_job_names.extend(temp_print_job_names)
@@ -125,7 +122,7 @@ def get_new_job_folder_name(job_name: str, source_dir_global_path: str,
     if target_main_folder in ['AFGEKEURD', 'WACHTRIJ', 'VERWERKT']:
         return job_folder_name
 
-    elif target_main_folder == 'GESLICED':
+    if target_main_folder == 'GESLICED':
 
         date = job_folder_name_to_date(job_folder_name)
 
@@ -138,11 +135,10 @@ def get_new_job_folder_name(job_name: str, source_dir_global_path: str,
 
         return date + max_print_time + job_name
 
-    elif target_main_folder == 'AAN_HET_PRINTEN':
+    if target_main_folder == 'AAN_HET_PRINTEN':
         return job_folder_name
 
-    else:
-        raise ValueError(f'{target_main_folder} is not a main folder')
+    raise ValueError(f'{target_main_folder} is not a main folder')
 
 
 def move(source_dir_global: str, target_dir_global: str):
@@ -255,9 +251,8 @@ def copy_print_job(job_name: str, target_main_folder: str, source_main_folder=No
         else:
             if file_should_be_skipped(source_item, target_item):
                 continue
-            else:
-                target_item = rename_target_item(job_name, target_item)
-                copy(source_item, target_item)
+            target_item = rename_target_item(job_name, target_item)
+            copy(source_item, target_item)
 
 
 def move_print_job_partly(job_name: str, exclude_files: List):
@@ -292,26 +287,26 @@ def move_print_job_partly(job_name: str, exclude_files: List):
         if item.lower().endswith('.gcode'):
             if item in exclude_files:
                 continue
-            else:
-                move(source_item, target_item)
-                continue
+            move(source_item, target_item)
+            continue
 
-        elif os.path.isdir(source_item):
+        if os.path.isdir(source_item):
             copy(source_item, target_dir_global_path)
-        else:
-            if file_should_be_skipped(source_item, target_item):
-                continue
-            else:
-                copy(source_item, target_item)
+        if file_should_be_skipped(source_item, target_item):
+            continue
+        copy(source_item, target_item)
 
 def get_print_jobs_in_queue() -> int:
     """ return the print jobs in the main folders WACHTRIJ and GESLICED. """
 
-    n_dirs_in_wachtrij = len([job_folder_name for job_folder_name in os.listdir(os.path.join(PRINT_DIR_HOME, 'WACHTRIJ'))
-                              if os.path.isdir(os.path.join(PRINT_DIR_HOME, 'WACHTRIJ', job_folder_name))])
-    
-    n_dirs_in_gesliced = len([job_folder_name for job_folder_name in os.listdir(os.path.join(PRINT_DIR_HOME, 'GESLICED'))
-                              if os.path.isdir(os.path.join(PRINT_DIR_HOME, 'GESLICED', job_folder_name))])
-    
+    n_dirs_in_wachtrij = len([job_folder_name for job_folder_name in
+                              os.listdir(os.path.join(PRINT_DIR_HOME, 'WACHTRIJ'))
+                              if os.path.isdir(os.path.join(
+                                  PRINT_DIR_HOME, 'WACHTRIJ', job_folder_name))])
+
+    n_dirs_in_gesliced = len([job_folder_name for job_folder_name in
+                              os.listdir(os.path.join(PRINT_DIR_HOME, 'GESLICED'))
+                              if os.path.isdir(os.path.join(
+                                  PRINT_DIR_HOME, 'GESLICED', job_folder_name))])
+
     return n_dirs_in_wachtrij + n_dirs_in_gesliced
-    

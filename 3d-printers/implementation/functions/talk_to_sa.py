@@ -1,6 +1,7 @@
 """
 Communicate with Student Assistant (SA).
 """
+
 import sys
 
 def choose_option(question: str, options: list) -> list:
@@ -48,8 +49,8 @@ def password_please():
         if password_given == '3D PRINTER':
             print('password correct')
             return
-        else:
-            print(f'password: {password_given} is incorrect')
-            attempt += 1
+        print(f'password: {password_given} is incorrect')
+        attempt += 1
+
     print('3 incorrect attempts, abort. . .')
     sys.exit(0)

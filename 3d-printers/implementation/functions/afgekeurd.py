@@ -5,7 +5,6 @@ Move a print job to the folder AFGEKEURD.
 import sys
 import glob
 
-
 from mail_functions import EmailManager
 from directory_functions import (
     job_name_to_global_path,
@@ -25,7 +24,7 @@ if __name__ == '__main__':
 
         email_manager = EmailManager()
 
-        print(f'latest mail message:')
+        print('latest mail message:')
         email_manager.print_mail_content(msg_file_paths[0])
         declined_reason = input("Why is the print job rejected?")
         if len(msg_file_paths) > 1:
@@ -36,7 +35,7 @@ if __name__ == '__main__':
                                                                 "afgekeurd.html",
                                                                 {'{declined_reason}': declined_reason},
                                                                 popup_reply=True)
-        
+
         # save reason for rejection to file so others can read it later
         with open("afgekeurd_reden.txt", 'w') as file:
             file.write(declined_reason)

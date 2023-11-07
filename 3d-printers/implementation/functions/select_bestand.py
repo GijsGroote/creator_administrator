@@ -1,6 +1,7 @@
 """
 Convert subfolders in a selected folder to print jobs.
 """
+
 import os
 import sys
 import datetime
@@ -25,7 +26,7 @@ def is_folder_a_valid_print_job(global_path: str) -> Tuple[bool, str]:
 
     print_file_count = 0
 
-    for root, _, files in os.walk(global_path):
+    for _, _, files in os.walk(global_path):
         for file in files:
             if file.lower().endswith(ACCEPTED_PRINT_EXTENSIONS):
                 print_file_count += 1
@@ -86,12 +87,12 @@ if __name__ == '__main__':
         print(f'There are no subfolders in {folder_global_path}, aborting. . .')
         sys.exit(0)
 
-    project_name = input(f'Where are the 3D prints for? Enter a name for the project:')
+    project_name = input('Where are the 3D prints for? Enter a name for the project:')
     n_valid_print_jobs = 0
     n_potential_jobs = len(potential_jobs_local_paths)
 
     for job_number, potential_job_local_path in enumerate(potential_jobs_local_paths):
-        
+
         # check if the job is valid
         potential_job_global_path = os.path.join(folder_global_path, potential_job_local_path)
         is_valid_job, invalid_reason = is_folder_a_valid_print_job(potential_job_global_path)

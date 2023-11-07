@@ -1,10 +1,14 @@
+"""
+Track jobs to repair system if there is a system shutdown at any moment.
+"""
+
+from collections import defaultdict
+import shutil
+from datetime import datetime
 import csv
 import os
 from global_variables import CSV_FILE_PATH
 from directory_functions import get_print_job_global_paths
-from collections import defaultdict
-import shutil
-from datetime import datetime
 
 class JobTrackerCSV:
     """
@@ -31,7 +35,7 @@ class JobTrackerCSV:
             with open(self.csv_filename, 'w', newline='') as csv_file:
                 writer = csv.DictWriter(csv_file, fieldnames=self.fieldnames)
                 writer.writeheader()
-        
+
         self.check_header()
 
     def check_header(self):
@@ -48,7 +52,7 @@ class JobTrackerCSV:
                 with open(self.csv_filename, 'w', newline='') as new_csv_file:
                     writer = csv.DictWriter(new_csv_file, fieldnames=self.fieldnames)
                     writer.writeheader()
-    
+
     def add_job(self, print_job_name: str, sender: str, subject: str, date_sent: str, current_state: str, split_job="False"):
         """Adds a job to the CSV file"""
         with open(self.csv_filename, 'a', newline='') as csv_file:
@@ -78,7 +82,7 @@ class JobTrackerCSV:
             for row in reader:
                 if row['print_job_name'] == print_job_name:
                     return row
-    
+
     def get_job_from_folder_name(self, folder_name):
         """get a job from the folder name"""
         with open(self.csv_filename, 'r', newline='') as csv_file:
@@ -102,14 +106,14 @@ class JobTrackerCSV:
             writer = csv.DictWriter(csv_file, fieldnames=self.fieldnames)
             writer.writeheader()
             writer.writerows(rows)
-    
+
     def get_job_status(self, print_job_name):
         with open(self.csv_filename, 'r', newline='') as csv_file:
             reader = csv.DictReader(csv_file)
             for row in reader:
                 if row['print_job_name'] == print_job_name:
                     return row['current_state']
-    
+
     def split_job(self, print_job_name):
         """set split_job to True"""
         with open(self.csv_filename, 'r', newline='') as csv_file:
@@ -123,7 +127,7 @@ class JobTrackerCSV:
             writer = csv.DictWriter(csv_file, fieldnames=self.fieldnames)
             writer.writeheader()
             writer.writerows(rows)
-    
+
     def merge_job(self, print_job_name):
         """set split_job to False"""
         with open(self.csv_filename, 'r', newline='') as csv_file:
@@ -137,7 +141,7 @@ class JobTrackerCSV:
             writer = csv.DictWriter(csv_file, fieldnames=self.fieldnames)
             writer.writeheader()
             writer.writerows(rows)
-    
+
     def job_is_to_old(self, print_job_name, number_of_days):
         """check if the job is older then a certain date"""
         job = self.get_job_by_print_job_name(print_job_name)
@@ -146,18 +150,18 @@ class JobTrackerCSV:
         current_date = datetime.now()
         date_difference = current_date - date_object
         return date_difference.days > number_of_days
-        
-    
+
+
     def _fill_csv(self):
         """developer function so the csv file is filled with data that matches current workflow"""
-        pass    
-    
+        pass
+
     #TODO: Maybe some useful functions to add:
-    
+
     def check_if_jobs_same_sender_in_wachtrij(self, sender):
         """checks if the sender has any jobs in the wachtrij so they can be merged"""
         pass
-    
+
     def clean_csv_by_date(self, date):
         """removes all jobs before a certain date"""
         pass
@@ -166,7 +170,7 @@ def check_health_folders():
     """Check if folders are in the right place and if duplicates exist, if so, delete them"""
     # Get all the folders in the print directory
     all_job_folders = get_print_job_global_paths()
-    
+
     #create dictionary with folder name as key and list of folders as value
     folder_dict = defaultdict(list)
 
@@ -174,29 +178,29 @@ def check_health_folders():
     for job_folder in all_job_folders:
         folder_name = os.path.basename(job_folder)
         folder_dict[folder_name].append(job_folder)
-    
+
     # open csv log
     csv_log = JobTrackerCSV()
-    
+
     # loop over all folder names and check if the corresponding job_name is in the csv log
     for folder_name in folder_dict.keys():
         job = csv_log.get_job_from_folder_name(folder_name) # returns None if job is not in csv log, otherwise return job as dictionary
-        
+
         if job is None:     # job does not exist in csv log and is deleted
             print(f"Folder {folder_name} is not in the csv log, delete it")
             for folder in folder_dict[folder_name]:
                 shutil.rmtree(folder)
                 print(f"deleted folder: {folder}")
-        
+
         elif job['split_job'] == "True":  # job is split and is deleted
             print(f"Folder {folder_name} is split up, skipping the job")
             continue
-        
+
         elif len(folder_dict[folder_name]) > 1: # if multiple folders exist with the same name, remove the ones with the wrong job status
             print(f"Folder {folder_name} has {len(folder_dict[folder_name])} duplicates, delete the wrong ones")
             job_status = csv_log.get_job_status(job['print_job_name'])
             print(f"Job status is {job_status}, removing all other folders")
-            
+
             job_status_match = False
             for folder in folder_dict[folder_name]:
                 if job_status in folder:
@@ -204,20 +208,21 @@ def check_health_folders():
                 else:
                     shutil.rmtree(folder)
                     print(f"deleted folder: {folder}")
-            
-            if not job_status_match: # if no folder with the right job status is found, remove all folders and make a warning
+            # if no folder with the right job status is found, remove all folders and make a warning
+            if not job_status_match: 
                 print(f"Warning! No folder with job status {job_status} found, removed all folders")
-                
+
         else:
-            if job["current_state"] in ["AFGEKEURD", "VERWERKT"]: # if the job is in the right folder, but the job is to old, remove it
+            # if the job is in the right folder, but the job is to old, remove it
+            if job["current_state"] in ["AFGEKEURD", "VERWERKT"]:
                 if csv_log.job_is_to_old(job['print_job_name'], 14):
                     print(f"Folder {folder_name} is to old, delete it")
                     shutil.rmtree(folder_dict[folder_name][0])
                     print(f"deleted folder: {folder_dict[folder_name][0]}")
             else:
                 print(f"Folder {folder_name} is in the csv log, keep it")
-            
-    
+
+
 if __name__ == '__main__':
     # check_health_folders()
     print("cvs job tracker turned off")

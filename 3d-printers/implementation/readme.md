@@ -1,11 +1,10 @@
-
 This repository is intended for Windows OS.
 
 Before you begin, make sure you have the following dependencies installed:
 
 - Python 3.10 or higher
-- [IO Bit Unlocker](https://www.iobit.com/nl/iobit-unlocker.php#) 
-- [Outlook](https://microsoft-outlook.en.softonic.com/)
+- [IO Bit Unlocker](https://www.iobit.com/nl/iobit-unlocker.php#)
+- [Outlook 2019](https://microsoft-outlook.en.softonic.com/)
 
 ## Installation Steps
 
@@ -17,8 +16,8 @@ Before you begin, make sure you have the following dependencies installed:
    git clone git@github.com:GijsGroote/laserhok-workflow.git
    ```
 
-2. **Login on outlook on your local machine**  
-   
+2. **Login on outlook on your local machine**
+
 3. **Create the folder <PRINT_DIR_HOME> on a desired location (~/Desktop is recommended), that folder should contain the following 5 subfolders**
 
     ```text
@@ -29,10 +28,10 @@ Before you begin, make sure you have the following dependencies installed:
       ├───VERWERKT
       └───WACHTRIJ
     ```
-   
+
    you can give <PRINT_DIR_HOME> any name which pleases you.
-   
-4. **Create the file 3D_print_global_variables.json (~/.ssh/3D_print_global_variables.json is recommended)**  
+
+4. **Create the file 3D_print_global_variables.json (~/.ssh/3D_print_global_variables.json is recommended)**
    update the following template and insert in 3D_print_global_variables.json:
    ```json
    {
@@ -53,17 +52,13 @@ Before you begin, make sure you have the following dependencies installed:
    ```bash
    python3 <REPO_DIR_HOME>/3d-printers/implementation/functions/create_batch_file.py
    ```
-7. **Create two desktop shortcuts:**  
-   link the shortcut to:  
- `../laserhok-workflow/3d-printers/implementation/batch_files/inbox.bat`  
- `../laserhok-workflow/3d-printers/implementation/batch_files/select_bestand.bat`  
+7. **Create two desktop shortcuts:**
+   link the shortcut to:
+ `../laserhok-workflow/3d-printers/implementation/batch_files/inbox.bat`
+ `../laserhok-workflow/3d-printers/implementation/batch_files/select_bestand.bat`
 
-   Optionally you can give the shortcuts an custom icon located in  
+   Optionally you can give the shortcuts an custom icon located in
 `../laserhok-workflow/3d-printers/implementation/figures/`
 
-8. **Dubbel click on inbox.bat (or the shortcut toward inbox.bat) to start.**  
+8. **Dubble click on inbox.bat (or the shortcut toward inbox.bat) to start.**
    tip: file 3d-printers/documentation/handleiding/handleiding.pdf might help
-
-
-    
-

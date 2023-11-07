@@ -23,7 +23,7 @@ if __name__ == '__main__':
                    if gcode_file.lower().endswith('.gcode')]
 
     if len(gcode_files) == 0:
-        print(f'warning! no .gcode files detected, slice .stl files first')
+        print('warning! no .gcode files detected, slice .stl files first')
         sys.exit(0)
 
     # create the printer_aangezet.bat
@@ -34,6 +34,3 @@ if __name__ == '__main__':
 
     # JobTrackerCSV().update_job_status(job_name, "GESLICED")
     remove_directory_and_close_cmd_farewell()
-
-
-

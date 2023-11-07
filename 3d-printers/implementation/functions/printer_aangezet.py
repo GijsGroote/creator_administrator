@@ -20,7 +20,7 @@ from csv_job_tracker import JobTrackerCSV
 
 
 if __name__ == '__main__':
-    
+
     job_name = sys.argv[1]
     job_global_path = job_name_to_global_path(job_name, search_in_main_folder="GESLICED")
 
