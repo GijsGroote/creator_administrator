@@ -16,7 +16,7 @@ from talk_to_sa import (
         yes_or_no)
 from create_batch_file import python_to_batch
 from global_variables import FUNCTIONS_DIR_HOME
-from csv_job_tracker import JobTrackerCSV
+from job_tracker import JobTracker
 
 
 if __name__ == '__main__':
@@ -34,9 +34,9 @@ if __name__ == '__main__':
         sys.exit(0)
 
     elif len(gcode_files) == 1:
+        JobTracker().update_job_main_folder(job_name, "AAN_HET_PRINTEN")
         copy_print_job(job_name, 'AAN_HET_PRINTEN', source_main_folder='GESLICED')
         python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name=job_name)
-        JobTrackerCSV().update_job_status(job_name, "AAN_HET_PRINTEN")
         remove_directory_and_close_cmd_farewell()
 
     elif len(gcode_files) > 1:
@@ -44,16 +44,20 @@ if __name__ == '__main__':
         print(f'warning! {len(gcode_files)} .gcode files detected')
         if yes_or_no('is the entire print job now printing/printed (Y/n)?'):
 
+            JobTracker().update_job_main_folder(job_name, "AAN_HET_PRINTEN")
+
             copy_print_job(job_name, 'AAN_HET_PRINTEN', source_main_folder='GESLICED')
             python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name)
-            JobTrackerCSV().update_job_status(job_name, "AAN_HET_PRINTEN")
             remove_directory_and_close_cmd_farewell()
         else:
             gcode_files_to_print_later = choose_option(
                 'please select which .gcode files should be printed later', gcode_files)
 
             # move everything except gcode_files_to_print_later
+            job_tracker = JobTracker()
+            job_tracker.update_job_main_folder(job_name, "AAN_HET_PRINTEN")
+            job_tracker.set_split_job_to(job_name, True)
+
             move_print_job_partly(job_name, gcode_files_to_print_later)
             python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'),
                             job_name=job_name, search_in_main_folder='AAN_HET_PRINTEN')
-            JobTrackerCSV().split_job(job_name)

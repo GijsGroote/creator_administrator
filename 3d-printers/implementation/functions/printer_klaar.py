@@ -16,7 +16,7 @@ from talk_to_sa import yes_or_no
 from cmd_farewell_handler import (
     open_gesliced_folder_cmd_farewell,
     remove_directory_and_close_cmd_farewell)
-from csv_job_tracker import JobTrackerCSV
+from job_tracker import JobTracker
 
 if __name__ == '__main__':
 
@@ -52,7 +52,9 @@ if __name__ == '__main__':
         print(f'folder: {job_global_path} does not contain any .msg files,'\
                 f'no response mail can be send')
 
+    job_tracker = JobTracker()
+    job_tracker.set_split_job_to(job_name, False)
+    job_tracker.update_job_main_folder(job_name, "VERWERKT")
+
     copy_print_job(job_name, "VERWERKT", source_main_folder='AAN_HET_PRINTEN')
-    # JobTrackerCSV().merge_job(job_name)
-    # JobTrackerCSV().update_job_status(job_name, "VERWERKT")
     remove_directory_and_close_cmd_farewell()

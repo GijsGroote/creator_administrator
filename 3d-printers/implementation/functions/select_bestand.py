@@ -18,7 +18,7 @@ from global_variables import (
     ACCEPTED_PRINT_EXTENSIONS)
 from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from talk_to_sa import password_please
-from csv_job_tracker import JobTrackerCSV
+from job_tracker import JobTracker
 
 
 def is_folder_a_valid_print_job(global_path: str) -> Tuple[bool, str]:
@@ -57,10 +57,11 @@ def local_path_to_job_name(job_content_local_path: str) -> str:
 
 if __name__ == '__main__':
 
-    # check_health_folders()
+    # check health
+    job_tracker = JobTracker()
+    job_tracker.check_health()
 
-    print('You are using select_bestand.bat, the default method '
-          ' is to click on the input.bat file')
+    print('You are using select_bestand.bat, the default method is the input.bat file')
     password_please()
 
     print('''select <FOLDER> with the following structure:
@@ -77,10 +78,6 @@ if __name__ == '__main__':
 
     potential_jobs_local_paths = [folder for folder in os.listdir(folder_global_path)
                                   if os.path.isdir(os.path.join(folder_global_path, folder))]
-
-    # open/create csv log
-    # job_tracker = JobTrackerCSV()
-
 
 
     if len(potential_jobs_local_paths) == 0:
@@ -105,12 +102,7 @@ if __name__ == '__main__':
             n_valid_print_jobs += 1
             print(f'({job_number}/{n_potential_jobs}) created print job: {job_name}')
 
-            # TODO: modify job tracker to properly add selected file names
-            # job_tracker.add_job(print_job_name=job_name,
-            #                     sender=None,
-            #                     subject=None,
-            #                     date_sent=None,
-            #                     current_state="WACHTRIJ")
+            job_tracker.add_job(job_name, "WACHTRIJ")
 
         else:
             print(f'({job_number}/{n_potential_jobs}) from folder {potential_job_local_path} not'

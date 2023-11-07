@@ -13,7 +13,7 @@ from create_batch_file import python_to_batch
 from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from directory_functions import make_print_job_name_unique, get_print_jobs_in_queue
 from mail_functions import EmailManager
-from csv_job_tracker import JobTrackerCSV
+from job_tracker import JobTracker
 from convert_functions import mail_to_name
 
 def create_print_job(job_name: str, msg) -> str:
@@ -37,24 +37,18 @@ def create_print_job(job_name: str, msg) -> str:
 
     python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), job_name)
     python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), job_name)
+    
+    JobTracker().add_job(job_name, "WACHTRIJ")
 
     return print_job_global_path
 
 if __name__ == '__main__':
 
-    # open outlook
-    email_manager = EmailManager()
-
     # open/create csv log
-    # job_tracker = JobTrackerCSV()
-
-    # check if all folders exist
-    # print("checking and repairing printer workflow")
-    # check_health_folders()
+    job_tracker = JobTracker()
+    job_tracker.check_health()
 
     print('searching for new mail...')
-
-    # open outlook
     email_manager = EmailManager()
 
     # read unread mails and convert to the email format and mark them as read
@@ -94,12 +88,6 @@ if __name__ == '__main__':
             email_manager.move_email_to_verwerkt_folder(msg)
 
             print(f'print job: {job_name} created\n')
-
-            # job_tracker.add_job(print_job_name=print_job_name,
-            #                     sender=msg.Sender,
-            #                     subject=msg.Subject,
-            #                     date_sent=msg.SentOn.strftime("%Y-%m-%d"),
-            #                     current_state="WACHTRIJ")
 
         else:
             print(f'mail from {msg.Sender} is not a valid request '

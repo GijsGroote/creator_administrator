@@ -7,7 +7,7 @@ import re
 import shutil
 from typing import List
 
-from global_variables import PRINT_DIR_HOME
+from global_variables import PRINT_DIR_HOME, ACCEPTED_PRINT_EXTENSIONS
 from convert_functions import (
     job_folder_name_to_date,
     gcode_files_to_max_print_time)
@@ -310,3 +310,11 @@ def get_print_jobs_in_queue() -> int:
                                   PRINT_DIR_HOME, 'GESLICED', job_folder_name))])
 
     return n_dirs_in_wachtrij + n_dirs_in_gesliced
+
+def folder_contains_3d_print_file(global_path: str) -> bool:
+    """ Check if a folder contains at least one 3D print file. """
+
+    # Iterate through the files and check if any of them have a valid 3D print extension
+    if any(file.endswith(ACCEPTED_PRINT_EXTENSIONS) for file in os.listdir(global_path)):
+        return True
+    return False

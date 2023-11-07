@@ -37,7 +37,7 @@ Before you begin, make sure you have the following dependencies installed:
    {
        "REPO_DIR_HOME":  "C:\\Users\\user\\Documents\\laserhok-workflow",
        "PRINT_DIR_HOME":  "C:\\Users\\user\\Desktop\\3D PRINT HOME",
-       "CSV_FILE_PATH":  "C:\\Users\\user\\.ssh\\3D_print_job_log.csv",
+       "TRACKER_FILE_PATH":  "C:\\Users\\user\\.ssh\\3D_print_job_log.json",
        "PYTHON_PATH": "C:Program Files\\Python311\\python.exe",
        "IOBIT_UNLOCKER_PATH": "C:\\Program Files (x86)\\IObit\\IObit Unlocker\\IObitUnlocker.exe",
        "OUTLOOK_PATH":  "C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE"
