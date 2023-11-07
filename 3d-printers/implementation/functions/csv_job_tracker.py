@@ -1,7 +1,7 @@
 import csv
 import os
 from global_variables import CSV_FILE_PATH
-from directory_functions import get_print_job_global_paths, get_print_job_folder_names
+from directory_functions import get_print_job_global_paths
 from collections import defaultdict
 import shutil
 from datetime import datetime

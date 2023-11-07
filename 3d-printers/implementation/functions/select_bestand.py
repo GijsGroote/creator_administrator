@@ -17,7 +17,7 @@ from global_variables import (
     ACCEPTED_PRINT_EXTENSIONS)
 from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from talk_to_sa import password_please
-from csv_job_tracker import JobTrackerCSV, check_health_folders
+from csv_job_tracker import JobTrackerCSV
 
 
 def is_folder_a_valid_print_job(global_path: str) -> Tuple[bool, str]:

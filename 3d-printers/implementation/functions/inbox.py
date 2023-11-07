@@ -4,8 +4,6 @@ Loop over unread mail, download all valid 3D print jobs to a unique folder in WA
 
 import datetime
 import os
-import re
-from typing import Tuple
 
 from global_variables import (
     FUNCTIONS_DIR_HOME,
@@ -16,7 +14,7 @@ from talk_to_sa import yes_or_no
 from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from directory_functions import make_print_job_name_unique, get_print_jobs_in_queue
 from mail_functions import EmailManager
-from csv_job_tracker import JobTrackerCSV, check_health_folders
+from csv_job_tracker import JobTrackerCSV
 from convert_functions import mail_to_name
 
 def create_print_job(job_name, msg) -> str:
