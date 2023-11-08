@@ -144,7 +144,7 @@ class JobTracker:
                     print(f"created missing file afgekeurd.bat in {actual_job_global_path}")
 
                 if not os.path.exists(os.path.join(actual_job_global_path, "printer_klaar.bat")):
-                    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'print_klaar.py'), tracker_job_name)
+                    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), tracker_job_name)
                     print(f"created missing file afgekeurd.bat in {actual_job_global_path}")
                             
             elif tracker_job_dict["main_folder"] in ["VERWERKT", "AFGEKEURD"]:
