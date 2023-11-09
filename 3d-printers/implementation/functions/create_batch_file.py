@@ -45,3 +45,6 @@ if __name__ == "__main__":
 
     # create select_bestand.bat
     python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'select_bestand.py'))
+
+    # create checkhealth.bat
+    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'check_health.py'))
