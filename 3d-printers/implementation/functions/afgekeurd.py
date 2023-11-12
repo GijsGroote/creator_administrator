@@ -32,7 +32,7 @@ if __name__ == '__main__':
             input('press enter to send response mail. . .')
 
         email_manager.reply_to_email_from_file_using_template(msg_file_paths[0],
-                                                                "afgekeurd.html",
+                                                                "declined.html",
                                                                 {'{declined_reason}': declined_reason},
                                                                 popup_reply=True)
 

@@ -81,7 +81,7 @@ if __name__ == '__main__':
             # send a confirmation mail
             msg_file_path = os.path.join(print_job_global_path, "mail.msg")
             email_manager.reply_to_email_from_file_using_template(msg_file_path,
-                                      "bijlage_gedownload.html",
+                                      "received.html",
                                       {"{print_jobs_in_queue}": get_print_jobs_in_queue()},
                                       popup_reply=False)
 

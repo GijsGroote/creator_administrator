@@ -45,7 +45,7 @@ if __name__ == '__main__':
     if len(msg_file_paths) > 0:
         email_manager = EmailManager()
         email_manager.reply_to_email_from_file_using_template(msg_file_paths[0],
-                                                              "print_klaar.html",
+                                                              "finished.html",
                                                                {},
                                                               popup_reply=False)
     else:

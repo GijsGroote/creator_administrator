@@ -9,7 +9,12 @@ import win32com.client
 from global_variables import (
     EMAIL_TEMPLATES_DIR_HOME,
     ACCEPTED_PRINT_EXTENSIONS,
-    IWS_3D_PRINT_COMPUTER)
+    IWS_3D_PRINT_COMPUTER,
+    RECEIVED_MAIL_TEMPLATE,
+    DECLINED_MAIL_TEMPLATE,
+    FINISHED_MAIL_TEMPLATE
+    )
+
 from talk_to_sa import yes_or_no
 from convert_functions import mail_to_name
 
@@ -69,7 +74,19 @@ class EmailManager:
                                                 popup_reply=True):
         """ Reply to .msg file using a template. """
         msg = self.outlook.OpenSharedItem(msg_file_path)
-        html_template_path = os.path.join(EMAIL_TEMPLATES_DIR_HOME, template_file_name)
+
+        custom_template_paths = [RECEIVED_MAIL_TEMPLATE, DECLINED_MAIL_TEMPLATE, FINISHED_MAIL_TEMPLATE]
+        template_names = ["received.html", "declined.html", "finished.html"]
+
+        if template_file_name in template_names:
+            for custom_temp, temp_name in zip(template_names, templates):
+                if template_file_name == temp_name:
+                    if custom_temp is not None:
+                        template_file_name = custom_temp
+                    else:
+                        html_template_path = os.path.join(EMAIL_TEMPLATES_DIR_HOME, template_file_name)
+        else:
+            raise ValueError(f"unknown template: {template_file_name}")
 
         with open(html_template_path, "r") as file:
             html_content = file.read()
