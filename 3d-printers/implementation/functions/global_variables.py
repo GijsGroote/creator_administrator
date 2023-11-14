@@ -40,7 +40,7 @@ with open(global_variables_path, 'r') as global_variables_file:
         if os.path.exists(gv_data["received_mail_template"]):
             RECEIVED_MAIL_TEMPLATE = gv_data["received_mail_template"]
         else:
-            raise FileNotFoundError(f'could not find file: {gv_data["recipient_mail_template"]}')
+            raise FileNotFoundError(f'could not find file: {gv_data["received_mail_template"]}')
 
     if "declined_mail_template" in gv_data:
         if os.path.exists(gv_data["declined_mail_template"]):

@@ -79,10 +79,10 @@ class EmailManager:
         template_names = ["received.html", "declined.html", "finished.html"]
 
         if template_file_name in template_names:
-            for custom_temp, temp_name in zip(template_names, templates):
+            for custom_temp, temp_name in zip(custom_template_paths, template_names):
                 if template_file_name == temp_name:
                     if custom_temp is not None:
-                        template_file_name = custom_temp
+                        html_template_path = custom_temp
                     else:
                         html_template_path = os.path.join(EMAIL_TEMPLATES_DIR_HOME, template_file_name)
         else:
