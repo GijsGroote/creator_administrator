@@ -1,5 +1,5 @@
 """
-Move a print job to the folder VERWERKT.
+Move a laser job to the folder VERWERKT.
 """
 
 import glob
@@ -9,7 +9,7 @@ from mail_functions import EmailManager
 
 from directory_functions import (
     job_name_to_global_path,
-    copy_print_job,
+    copy_laser_job,
     does_job_exist_in_main_folder,
     job_name_to_job_folder_name)
 from talk_to_sa import yes_or_no
@@ -27,12 +27,12 @@ if __name__ == '__main__':
     if does_job_exist_in_main_folder(job_name, "GESLICED"):
         job_name_folder = {job_name_to_job_folder_name(
             job_name, search_in_main_folder="GESLICED")}
-        print(f'Warning! found GESLICED/{job_name_folder}, the print job is not yet ready')
+        print(f'Warning! found GESLICED/{job_name_folder}, the laser job is not yet ready')
         if yes_or_no('do you want to open GESLICED/ (Y/n)?'):
             open_gesliced_folder_cmd_farewell()
 
-        elif not yes_or_no('you are really sure this print job is done (Y/n)?'):
-            print('aborting...')
+        elif not yes_or_no('you are really sure this laser job is done (Y/n)?'):
+            laser('aborting...')
             sys.exit(0)
 
     # send response mail
@@ -56,5 +56,5 @@ if __name__ == '__main__':
     job_tracker.set_split_job_to(job_name, False)
     job_tracker.update_job_main_folder(job_name, "VERWERKT")
 
-    copy_print_job(job_name, "VERWERKT", source_main_folder='AAN_HET_PRINTEN')
+    copy_laser_job(job_name, "VERWERKT", source_main_folder='AAN_HET_PRINTEN')
     remove_directory_and_close_cmd_farewell()

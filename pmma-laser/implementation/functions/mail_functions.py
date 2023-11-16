@@ -8,7 +8,7 @@ import win32com.client
 
 from global_variables import (
     EMAIL_TEMPLATES_DIR_HOME,
-    ACCEPTED_PRINT_EXTENSIONS,
+    ACCEPETED_LASER_EXTENSIONS,
     IWS_3D_PRINT_COMPUTER,
     RECEIVED_MAIL_TEMPLATE,
     DECLINED_MAIL_TEMPLATE,
@@ -50,12 +50,12 @@ class EmailManager:
         """ Move email to verwerkt folder. """
         msg.Move(self.verwerkt_folder)
 
-    def print_mail_content(self, msg_file_path: str):
+    def laser_mail_content(self, msg_file_path: str):
         """ Print the content of an .msg file. """
         outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
         msg = outlook.OpenSharedItem(msg_file_path)
 
-        print(msg.Body)
+        laser(msg.Body)
 
     def get_email_address(self, msg) -> str:
         """ Return the email adress. """
@@ -106,28 +106,28 @@ class EmailManager:
         else:
             reply.Send()
 
-    def is_mail_a_valid_print_job_request(self, msg) -> Tuple[bool, str]:
-        """ Check if the requirements are met for a valid print job. """
+    def is_mail_a_valid_laser_job_request(self, msg) -> Tuple[bool, str]:
+        """ Check if the requirements are met for a valid laser job. """
 
-        # Initialize a counter for 3D print attachments
-        print_file_count = 0
+        # Initialize a counter for 3D laser attachments
+        laser_file_count = 0
 
         attachments = msg.Attachments
 
         for attachment in attachments:
-            if attachment.FileName.lower().endswith(ACCEPTED_PRINT_EXTENSIONS):
-                print_file_count += 1
+            if attachment.FileName.lower().endswith(ACCEPETED_LASER_EXTENSIONS):
+                laser_file_count += 1
 
-        if print_file_count == 0:
+        if laser_file_count == 0:
             return False, 'no .stl attachment found'
 
-        if 5 < print_file_count <= 10:
-            print(f'warning! there are: {print_file_count} .stl files in the mail')
+        if 5 < laser_file_count <= 10:
+            print(f'warning! there are: {laser_file_count} .stl files in the mail')
 
-        elif print_file_count > 10:
-            if yes_or_no(f'{print_file_count} .stl files found do '
-                        f'you want to create an print job (Y/n)?'):
-                return True, f'you decided that: {print_file_count} .stl is oke'
-            return False, f'you decided that: {print_file_count} .stl files are to much'
+        elif laser_file_count > 10:
+            if yes_or_no(f'{laser_file_count} .stl files found do '
+                        f'you want to create an laser job (Y/n)?'):
+                return True, f'you decided that: {laser_file_count} .stl is oke'
+            return False, f'you decided that: {laser_file_count} .stl files are to much'
 
         return True, ' '

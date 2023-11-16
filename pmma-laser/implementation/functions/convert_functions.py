@@ -6,17 +6,17 @@ from typing import List
 import re
 
 
-def print_job_folder_name_to_print_job_name(print_job_folder_name: str) -> str:
-    """ get the print job name from a print job folder name. """
+def laser_job_folder_name_to_laser_job_name(laser_job_folder_name: str) -> str:
+    """ get the laser job name from a laser job folder name. """
 
-    folder_name_without_date = re.sub(r'^\d+-\d+_', '', print_job_folder_name)
+    folder_name_without_date = re.sub(r'^\d+-\d+_', '', laser_job_folder_name)
     return re.sub(r'^\d+h\d+m\.', '', folder_name_without_date)
 
-def gcode_files_to_max_print_time(gcode_files: List[str]) -> str:
-    """ Get the maximum print time from list of gcode files. """
-    max_print_time = ""
-    max_print_hours = 0
-    max_print_minutes = 0
+def gcode_files_to_max_laser_time(gcode_files: List[str]) -> str:
+    """ Get the maximum laser time from list of gcode files. """
+    max_laser_time = ""
+    max_laser_hours = 0
+    max_laser_minutes = 0
 
     for gcode_file in gcode_files:
 
@@ -37,15 +37,15 @@ def gcode_files_to_max_print_time(gcode_files: List[str]) -> str:
         else:
             continue
 
-        if (temp_hours > max_print_hours or
-                temp_hours == max_print_hours and
-                temp_minutes > max_print_minutes):
-            max_print_time = str(temp_hours).zfill(2) + 'h' + \
+        if (temp_hours > max_laser_hours or
+                temp_hours == max_laser_hours and
+                temp_minutes > max_laser_minutes):
+            max_laser_time = str(temp_hours).zfill(2) + 'h' + \
                              str(temp_minutes).zfill(2) + 'm_'
-            max_print_hours = temp_hours
-            max_print_minutes = temp_minutes
+            max_laser_hours = temp_hours
+            max_laser_minutes = temp_minutes
 
-    return max_print_time
+    return max_laser_time
 
 
 def job_folder_name_to_date(job_folder_name: str) -> str:

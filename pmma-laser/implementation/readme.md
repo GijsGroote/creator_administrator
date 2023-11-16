@@ -18,10 +18,10 @@ Before you begin, make sure you have the following dependencies installed:
 
 2. **Login on outlook on your local machine**
 
-3. **Create the folder <PRINT_DIR_HOME> on a desired location (~/Desktop is recommended), that folder should contain the following 5 subfolders**
+3. **Create the folder <LASER_DIR_HOME> on a desired location (~/Desktop is recommended), that folder should contain the following 5 subfolders**
 
     ```text
-   └───<PRINT_DIR_HOME>
+   └───<LASER_DIR_HOME>
       ├───AAN_HET_PRINTEN
       ├───AFGEKEURD
       ├───GESLICED
