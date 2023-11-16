@@ -37,10 +37,10 @@ def create_laser_job(job_name: str, msg) -> str:
 
     python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), job_name)
     python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), job_name)
-    
+
     JobTracker().add_job(job_name, "WACHTRIJ")
 
-    return print_job_global_path
+    return laser_job_global_path
 
 if __name__ == '__main__':
 

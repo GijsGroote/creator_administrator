@@ -7,12 +7,11 @@ import re
 import shutil
 from typing import List
 
-from global_variables import 
+from global_variables import (
     LASER_DIR_HOME,
-    ACCEPETED_LASER_EXTENSIONS
+    ACCEPTED_LASER_EXTENSIONS)
 from convert_functions import (
-    job_folder_name_to_date,
-    gcode_files_to_max_laser_time)
+    job_folder_name_to_date)
 
 
 def does_laser_job_name_exist(job_name: str) -> bool:

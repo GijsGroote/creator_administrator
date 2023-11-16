@@ -72,16 +72,9 @@ def open_wachtrij_folder_cmd_farewell():
     """ Exit python with a 911 exit status which open the WACHTRIJ folder. """
     sys.exit(911)
 
-
 def open_gesliced_folder_cmd_farewell():
     """ Exit python with a 912 exit status which open the GESLICED folder. """
     sys.exit(912)
-
-def open_gesliced_folder_cmd_farewell():
-    """ Exit python with a 912 exit status which open the GESLICED folder. """
-    os.startfile(os.path.join(PRINT_DIR_HOME, 'GESLICED'))
-    sys.exit(0)
-
 
 if __name__ == '__main__':
 
