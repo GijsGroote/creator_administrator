@@ -22,43 +22,45 @@ Before you begin, make sure you have the following dependencies installed:
 
     ```text
    └───<LASER_DIR_HOME>
-      ├───AAN_HET_PRINTEN
-      ├───AFGEKEURD
-      ├───GESLICED
+      ├───WACHTRIJ
       ├───VERWERKT
-      └───WACHTRIJ
+      └───AFGEKEURD
     ```
 
-   you can give <PRINT_DIR_HOME> any name which pleases you.
+   you can give <LASER_DIR_HOME> any name which pleases you.
 
-4. **Create the file 3D_print_global_variables.json (~/.ssh/3D_print_global_variables.json is recommended)**
-   update the following template and insert in 3D_print_global_variables.json:
+4. **Create the file pmma_laser_global_variables.json (~/.ssh/pmma_laser_global_variables.json is recommended)**
+   update the following template and insert in pmma_laser_global_variables.json:
+
    ```json
    {
-       "REPO_DIR_HOME":  "C:\\Users\\user\\Documents\\laserhok-workflow",
-       "PRINT_DIR_HOME":  "C:\\Users\\user\\Desktop\\3D PRINT HOME",
-       "TRACKER_FILE_PATH":  "C:\\Users\\user\\.ssh\\3D_print_job_log.json",
-       "PYTHON_PATH": "C:Program Files\\Python311\\python.exe",
-       "IOBIT_UNLOCKER_PATH": "C:\\Program Files (x86)\\IObit\\IObit Unlocker\\IObitUnlocker.exe",
-       "OUTLOOK_PATH":  "C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE"
+    "REPO_DIR_HOME":  "C:\\Users\\user\\Documents\\laserhok-workflow",
+    "PMMA_LASER_DIR_HOME":  "C:\\Users\\user\\Desktop\\PMMA LASER HOME",
+    "TRACKER_FILE_PATH":  "C:\\Users\\user\\.ssh\\pmma_laser_job_log.json",
+    "PYTHON_PATH": "C:Program Files\\Python311\\python.exe",
+    "IOBIT_UNLOCKER_PATH": "C:\\Program Files (x86)\\IObit\\IObit Unlocker\\IObitUnlocker.exe",
+    "OUTLOOK_PATH":  "C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE"
    }
    ```
 
 5. **Update the path toward 3D_print_global_variables.json:**
-    Find the file in `../laserhok-workflow\3d-printers\implementation\functions\global_variables.py`
+    Find the file `../laserhok-workflow\pmma-laser\implementation\functions\global_variables.py`  
+    In that file update the variable `global_variables_path` with your path toward pmma_laser_global_variables.json.  
 
 6. **make inbox.bat and select_bestand.bat:**
 
    ```bash
-   python3 <REPO_DIR_HOME>/3d-printers/implementation/functions/create_batch_file.py
+   python3 <REPO_DIR_HOME>/pmma-laser/implementation/functions/create_batch_files.py
    ```
+
 7. **Create two desktop shortcuts:**
    link the shortcut to:
- `../laserhok-workflow/3d-printers/implementation/batch_files/inbox.bat`
- `../laserhok-workflow/3d-printers/implementation/batch_files/select_bestand.bat`
+  `../laserhok-workflow/pmma-laser/implementation/batch_files/inbox.bat`
+ `../laserhok-workflow/pmma-laser/implementation/batch_files/select_file.bat`
+ `../laserhok-workflow/pmma-laser/implementation/batch_files/check_health.bat`
 
    Optionally you can give the shortcuts an custom icon located in
-`../laserhok-workflow/3d-printers/implementation/figures/`
+`../laserhok-workflow/pmma-laser/implementation/figures/`
 
 8. **Dubble click on inbox.bat (or the shortcut toward inbox.bat) to start.**
-   tip: file 3d-printers/documentation/handleiding/handleiding.pdf might help
+   tip: file `pmma-laser/documentation/handleiding/handleiding.pdf` might help

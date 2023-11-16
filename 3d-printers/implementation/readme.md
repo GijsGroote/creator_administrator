@@ -18,10 +18,10 @@ Before you begin, make sure you have the following dependencies installed:
 
 2. **Login on outlook on your local machine**
 
-3. **Create the folder <PRINT_DIR_HOME> on a desired location (~/Desktop is recommended), that folder should contain the following 5 subfolders**
+3. **Create the folder <LASER_DIR_HOME> on a desired location (~/Desktop is recommended), that folder should contain the following 5 subfolders**
 
     ```text
-   └───<PRINT_DIR_HOME>
+   └───<LASER_DIR_HOME>
       ├───AAN_HET_PRINTEN
       ├───AFGEKEURD
       ├───GESLICED
@@ -33,6 +33,7 @@ Before you begin, make sure you have the following dependencies installed:
 
 4. **Create the file 3D_print_global_variables.json (~/.ssh/3D_print_global_variables.json is recommended)**
    update the following template and insert in 3D_print_global_variables.json:
+
    ```json
    {
        "REPO_DIR_HOME":  "C:\\Users\\user\\Documents\\laserhok-workflow",
@@ -46,16 +47,18 @@ Before you begin, make sure you have the following dependencies installed:
 
 5. **Update the path toward 3D_print_global_variables.json:**
     Find the file in `../laserhok-workflow\3d-printers\implementation\functions\global_variables.py`
+    In that file update the variable `global_variables_path` with your path toward 3D_print_global_variables.json.  
 
-6. **make inbox.bat and select_bestand.bat:**
-
+6. **make inbox.bat, select_bestand.bat and checkhealth.bat:**
    ```bash
-   python3 <REPO_DIR_HOME>/3d-printers/implementation/functions/create_batch_file.py
+   python3 <REPO_DIR_HOME>/3d-printers/implementation/functions/create_batch_files.py
    ```
-7. **Create two desktop shortcuts:**
+   
+7. **Create three desktop shortcuts:**
    link the shortcut to:
  `../laserhok-workflow/3d-printers/implementation/batch_files/inbox.bat`
  `../laserhok-workflow/3d-printers/implementation/batch_files/select_bestand.bat`
+ `../laserhok-workflow/3d-printers/implementation/batch_files/check_health.bat`
 
    Optionally you can give the shortcuts an custom icon located in
 `../laserhok-workflow/3d-printers/implementation/figures/`
