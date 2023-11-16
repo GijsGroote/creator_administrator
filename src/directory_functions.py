@@ -80,10 +80,10 @@ def get_job_folder_names(gv: dict, search_in_main_folder=None) -> List[str]:
 
     return job_names
 
-def job_name_to_global_path(job_name: str, search_in_main_folder=None) -> str:
+def job_name_to_global_path(gv: dict, job_name: str, search_in_main_folder=None) -> str:
     """ Return global path of job. """
 
-    for job_global_path in get_job_global_paths(search_in_main_folder):
+    for job_global_path in get_job_global_paths(gv, search_in_main_folder):
         if job_global_path.endswith(job_name):
             return job_global_path
 

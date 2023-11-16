@@ -69,10 +69,10 @@ EMAIL_TEMPLATES_DIR_HOME = os.path.join(gv['REPO_DIR_HOME'],
     r'pmma-laser\implementation\email_templates')
 
 
-FUNCTIONS_DIR_HOME = os.path.join(gv['REPO_DIR_HOME'],
+gv['FUNCTIONS_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'],
     r'pmma-laser\implementation\functions')
 
-FIGURES_DIR_HOME = os.path.join(gv['REPO_DIR_HOME'], r'figures')
+gv['FIGURES_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'], r'figures')
 
 gv['ACCEPTED_EXTENSIONS'] = ('.dxf')
 

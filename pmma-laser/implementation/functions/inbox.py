@@ -10,7 +10,7 @@ from job_tracker import JobTracker
 
 from src.batch import python_to_batch
 from src.cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
-from src.directory_functions import make_laser_job_name_unique, get_laser_jobs_in_queue
+from src.directory_functions import make_job_name_unique, get_jobs_in_queue
 from src.mail_functions import EmailManager
 from src.convert_functions import mail_to_name
 
@@ -69,7 +69,7 @@ if __name__ == '__main__':
             created_laser_jobs = True
 
             sender_name = mail_to_name(str(msg.Sender))
-            job_name = make_laser_job_name_unique(sender_name)
+            job_name = make_job_name_unique(sender_name)
 
             print(f'mail from: {email_manager.get_email_address(msg)} is valid request,'
                   f' create laser job: {job_name}')
@@ -80,7 +80,7 @@ if __name__ == '__main__':
             msg_file_path = os.path.join(laser_job_global_path, "mail.msg")
             email_manager.reply_to_email_from_file_using_template(msg_file_path,
                                       "received.html",
-                                      {"{laser_jobs_in_queue}": get_laser_jobs_in_queue()},
+                                      {"{jobs_in_queue}": get_jobs_in_queue()},
                                       popup_reply=False)
 
             # email_manager.move_email_to_verwerkt_folder(msg)

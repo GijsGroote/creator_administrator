@@ -12,8 +12,8 @@ from datetime import datetime
 from global_variables import gv
 
 from src.batch import python_to_batch
-from src.directory_functions import get_laser_job_global_paths
-from src.convert_functions import laser_job_folder_name_to_laser_job_name
+from src.directory_functions import get_job_global_paths
+from src.convert_functions import job_folder_name_to_job_name
 from src.talk_to_sa import yes_or_no
 
 
@@ -81,7 +81,7 @@ class JobTracker:
             tracker_dict = json.load(tracker_file)
 
         # get laser job info from file system
-        actual_job_global_paths = get_laser_job_global_paths()
+        actual_job_global_paths = get_job_global_paths(gv)
 
         # keep track of the laser jobs checked
         laser_jobs_checked = {actual_laser_job_name: False for actual_laser_job_name in tracker_dict.keys()}
@@ -138,29 +138,29 @@ class JobTracker:
 
             if tracker_job_dict["main_folder"] == "WACHTRIJ":
                 if not os.path.exists(os.path.join(actual_job_global_path, "afgekeurd.bat")):
-                    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), tracker_job_name)
+                    python_to_batch(gv, os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), tracker_job_name)
                     print(f"created missing file afgekeurd.bat in {actual_job_global_path}")
 
                 if not os.path.exists(os.path.join(actual_job_global_path, "gesliced.bat")):
-                    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), tracker_job_name)
+                    python_to_batch(gv, os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), tracker_job_name)
                     print(f"created missing file gesliced.bat in {actual_job_global_path}")
 
             elif tracker_job_dict["main_folder"] == "GESLICED":
                 if not os.path.exists(os.path.join(actual_job_global_path, "afgekeurd.bat")):
-                    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), tracker_job_name)
+                    python_to_batch(gv, os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), tracker_job_name)
                     print(f"created missing file afgekeurd.bat in {actual_job_global_path}")
 
                 if not os.path.exists(os.path.join(actual_job_global_path, "laserer_aangezet.bat")):
-                    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'laserer_aangezet.py'), tracker_job_name)
+                    python_to_batch(gv, os.path.join(FUNCTIONS_DIR_HOME, 'laserer_aangezet.py'), tracker_job_name)
                     print(f"created missing file laserer_aangezet.bat in {actual_job_global_path}")
 
             elif tracker_job_dict["main_folder"] == "AAN_HET_PRINTEN":
                 if not os.path.exists(os.path.join(actual_job_global_path, "afgekeurd.bat")):
-                    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), tracker_job_name)
+                    python_to_batch(gv, os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), tracker_job_name)
                     print(f"created missing file afgekeurd.bat in {actual_job_global_path}")
 
                 if not os.path.exists(os.path.join(actual_job_global_path, "laserer_klaar.bat")):
-                    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'laserer_klaar.py'), tracker_job_name)
+                    python_to_batch(gv, os.path.join(FUNCTIONS_DIR_HOME, 'laserer_klaar.py'), tracker_job_name)
                     print(f"created missing file afgekeurd.bat in {actual_job_global_path}")
 
             elif tracker_job_dict["main_folder"] in ["VERWERKT", "AFGEKEURD"]:

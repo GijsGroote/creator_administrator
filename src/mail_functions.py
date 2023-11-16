@@ -75,7 +75,7 @@ class EmailManager:
                     if custom_temp is not None:
                         html_template_path = custom_temp
                     else:
-                        html_template_path = os.path.join(gv'[EMAIL_TEMPLATES_DIR_HOME'], template_file_name)
+                        html_template_path = os.path.join(gv['EMAIL_TEMPLATES_DIR_HOME'], template_file_name)
         else:
             raise ValueError(f"unknown template: {template_file_name}")
 
@@ -106,7 +106,7 @@ class EmailManager:
         attachments = msg.Attachments
 
         for attachment in attachments:
-            if attachment.FileName.lower().endswith(gv'[ACCEPTED_EXTENSIONS']):
+            if attachment.FileName.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
                 laser_file_count += 1
 
         if laser_file_count == 0:
