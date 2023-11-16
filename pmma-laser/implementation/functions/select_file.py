@@ -8,6 +8,8 @@ import datetime
 from typing import Tuple
 from tkinter import filedialog
 
+from global_variables import *
+
 from create_batch_file import python_to_batch
 from directory_functions import (
     copy,

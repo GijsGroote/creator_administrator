@@ -7,6 +7,7 @@ import os
 import sys
 
 # Detect the computer.
+global IWS_PMMA_LASER_COMPUTER
 IWS_PMMA_LASER_COMPUTER = False
 if os.path.exists(r'C:\Users\IWS\.ssh\pmma_laser_global_variables.json'):
     IWS_PMMA_LASER_COMPUTER = True
@@ -20,6 +21,9 @@ elif os.path.exists(r'C:\Users\gijsg\.ssh\pmma_laser_global_variables.json'):
 else:
     raise ValueError('could find pmma_laser_global_variables')
 
+global JOBS_DIR_HOME, REPO_DIR_HOME, TRACKER_FILE_PATH, PYTHON_PATH, OUTLOOK_PATH, IOBIT_UNLOCKER_PATH
+global RECEIVED_MAIL_TEMPLATE, DECLINED_MAIL_TEMPLATE, FINISHED_MAIL_TEMPLATE, EMAIL_TEMPLATES_DIR_HOME
+global FUNCTIONS_DIR_HOME, ACCEPTED_LASER_EXTENSIONS, DAYS_TO_KEEP_JOBS
 
 # custom mail templates
 RECEIVED_MAIL_TEMPLATE = None
@@ -28,7 +32,7 @@ FINISHED_MAIL_TEMPLATE = None
 
 with open(global_variables_path, 'r') as global_variables_file:
     gv_data = json.load(global_variables_file)
-    LASER_DIR_HOME = gv_data['PMMA_LASER_DIR_HOME']
+    JOBS_DIR_HOME = gv_data['JOBS_DIR_HOME']
     REPO_DIR_HOME = gv_data['REPO_DIR_HOME']
     TRACKER_FILE_PATH = gv_data['TRACKER_FILE_PATH']
     PYTHON_PATH = gv_data['PYTHON_PATH']
@@ -52,21 +56,19 @@ with open(global_variables_path, 'r') as global_variables_file:
             RECEIVED_MAIL_TEMPLATE = gv_data["finished_mail_template"]
         else:
             raise FileNotFoundError(f'could not find file: {gv_data["finished_mail_template"]}')
+        
+EMAIL_TEMPLATES_DIR_HOME = os.path.join(
+    REPO_DIR_HOME,
+    r'pmma-laser\implementation\email_templates')
 
 # import functions from src
-sys.path.append(os.path.join(REPO_DIR_HOME, 'src'))
+sys.path.append(REPO_DIR_HOME)
 
 FUNCTIONS_DIR_HOME = os.path.join(
     REPO_DIR_HOME,
     r'pmma-laser\implementation\functions')
 
-EMAIL_TEMPLATES_DIR_HOME = os.path.join(
-    REPO_DIR_HOME,
-    r'pmma-laser\implementation\email_templates')
-
-FIGURES_DIR_HOME = os.path.join(
-    REPO_DIR_HOME,
-    r'figures')
+FIGURES_DIR_HOME = os.path.join(REPO_DIR_HOME, r'figures')
 
 ACCEPTED_LASER_EXTENSIONS = ('.dxf')
 

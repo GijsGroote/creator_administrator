@@ -8,17 +8,13 @@ import os
 import sys
 from typing import Tuple
 from datetime import datetime
-from global_variables import (
-    TRACKER_FILE_PATH,
-    DAYS_TO_KEEP_JOBS,
-    LASER_DIR_HOME,
-    ACCEPTED_LASER_EXTENSIONS,
-    FUNCTIONS_DIR_HOME)
 
-from create_batch_files import python_to_batch
-from directory_functions import get_laser_job_global_paths
-from convert_functions import laser_job_folder_name_to_laser_job_name
-from talk_to_sa import yes_or_no
+from global_variables import *
+
+from src.batch import python_to_batch
+from src.directory_functions import get_laser_job_global_paths
+from src.convert_functions import laser_job_folder_name_to_laser_job_name
+from src.talk_to_sa import yes_or_no
 
 
 class JobTracker:
@@ -34,10 +30,10 @@ class JobTracker:
     """
 
     def __init__(self):
-
+        	
         self.job_keys = ['laser_job_name', 'main_folder', 'created_on_date', 'split_job']
-        self.tracker_file_path = TRACKER_FILE_PATH
-        self.tracker_backup_file_path = TRACKER_FILE_PATH.replace("pmma_laser_job_log.json",
+        self.tracker_file_path = globals('TRACKER_FILE_PATH')
+        self.tracker_backup_file_path = globals('TRACKER_FILE_PATH').replace("pmma_laser_job_log.json",
                                                                   "pmma_laser_job_log_backup.json")
 
         self.check_tracker_file_health()
@@ -135,6 +131,7 @@ class JobTracker:
                     else:
                         print("aborting..")
                         sys.exit(0)
+            FUNCTIONS_DIR_HOME = globals('FUNCTIONS_DIR_HOME')
 
             if tracker_job_dict["main_folder"] == "WACHTRIJ":
                 if not os.path.exists(os.path.join(actual_job_global_path, "afgekeurd.bat")):
@@ -168,7 +165,7 @@ class JobTracker:
                     shutil.rmtree(actual_job_global_path)
                     tracker_dict.pop(tracker_job_name)
 
-                    print(f'{tracker_job_name} removed because it is older than {DAYS_TO_KEEP_JOBS} days')
+                    print(f'{tracker_job_name} removed because it is older than {globals('DAYS_TO_KEEP_JOBS')} days')
 
             else:
                 raise ValueError(
@@ -201,7 +198,7 @@ class JobTracker:
         created_on_date_object = datetime.strptime(created_on_date, "%d-%m-%Y")
         current_date_object = datetime.now()
         date_difference = current_date_object - created_on_date_object
-        return date_difference.days > DAYS_TO_KEEP_JOBS
+        return date_difference.days > globals('DAYS_TO_KEEP_JOBS')
 
     def make_backup(self):
         """ Make a backup of the tracker file. """

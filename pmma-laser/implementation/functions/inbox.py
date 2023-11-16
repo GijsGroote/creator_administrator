@@ -5,19 +5,16 @@ Loop over unread mail, download all valid laser jobs to a unique folder in WACHT
 import datetime
 import os
 
-from global_variables import (
-    FUNCTIONS_DIR_HOME,
-    LASER_DIR_HOME,
-    ACCEPTED_LASER_EXTENSIONS)
+from global_variables import *
 from job_tracker import JobTracker
 
-from batch import python_to_batch
-from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
-from directory_functions import make_laser_job_name_unique, get_laser_jobs_in_queue
-from mail_functions import EmailManager
-from convert_functions import mail_to_name
+from src.batch import python_to_batch
+from src.cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
+from src.directory_functions import make_laser_job_name_unique, get_laser_jobs_in_queue
+from src.mail_functions import EmailManager
+from src.convert_functions import mail_to_name
 
-    
+
 def create_laser_job(job_name: str, msg) -> str:
     """ Create a 'laser job' or folder in WACHTRIJ and
     put all corresponding files in the laser job. """
@@ -25,7 +22,7 @@ def create_laser_job(job_name: str, msg) -> str:
     today = datetime.date.today()
     job_folder_name = str(today.strftime('%d')) + '-' + str(today.strftime('%m')) + '_' + job_name
 
-    laser_job_global_path = os.path.join(os.path.join(LASER_DIR_HOME, 'WACHTRIJ', job_folder_name))
+    laser_job_global_path = os.path.join(os.path.join(PMMA_LASER_DIR_HOME, 'WACHTRIJ', job_folder_name))
     os.mkdir(laser_job_global_path)
 
     # Save the email

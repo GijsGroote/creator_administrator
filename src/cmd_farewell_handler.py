@@ -8,7 +8,7 @@ import sys
 import os
 
 from global_variables import (
-    LASER_DIR_HOME,
+    PMMA_LASER_DIR_HOME,
     PYTHON_PATH,
     FUNCTIONS_DIR_HOME,
     IOBIT_UNLOCKER_PATH)
@@ -47,10 +47,10 @@ def exit_cmd_farewell():
 def remove_directory_cmd_farewell():
     """ Exit python and remove the directory that contains the .bat script. """
 
-    if os.getcwd().startswith(LASER_DIR_HOME):
+    if os.getcwd().startswith(PMMA_LASER_DIR_HOME):
         sys.exit(901)
     else:
-        raise ValueError(f'the working directory must be a subdirectory of {LASER_DIR_HOME} '
+        raise ValueError(f'the working directory must be a subdirectory of {PMMA_LASER_DIR_HOME} '
                          f'and the working directory is {os.getcwd()}')
 
 
@@ -78,6 +78,6 @@ if __name__ == '__main__':
     error_level = int(sys.argv[1])
 
     if error_level == 911:
-        os.startfile(os.path.join(LASER_DIR_HOME, 'WACHTRIJ'))
+        os.startfile(os.path.join(PMMA_LASER_DIR_HOME, 'WACHTRIJ'))
     else:
         input(f'No behavior defined for exit status {error_level}')

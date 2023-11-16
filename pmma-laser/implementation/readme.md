@@ -18,16 +18,16 @@ Before you begin, make sure you have the following dependencies installed:
 
 2. **Login on outlook on your local machine**
 
-3. **Create the folder <LASER_DIR_HOME> on a desired location (~/Desktop is recommended), that folder should contain the following 5 subfolders**
+3. **Create the folder <JOBS_DIR_HOME> on a desired location (~/Desktop is recommended), that folder should contain the following 5 subfolders**
 
     ```text
-   └───<LASER_DIR_HOME>
+   └───<JOBS_DIR_HOME>
       ├───WACHTRIJ
       ├───VERWERKT
       └───AFGEKEURD
     ```
 
-   you can give <LASER_DIR_HOME> any name which pleases you.
+   you can give <JOBS_DIR_HOME> any name which pleases you.
 
 4. **Create the file pmma_laser_global_variables.json (~/.ssh/pmma_laser_global_variables.json is recommended)**
    update the following template and insert in pmma_laser_global_variables.json:
@@ -35,7 +35,7 @@ Before you begin, make sure you have the following dependencies installed:
    ```json
    {
     "REPO_DIR_HOME":  "C:\\Users\\user\\Documents\\laserhok-workflow",
-    "PMMA_LASER_DIR_HOME":  "C:\\Users\\user\\Desktop\\PMMA LASER HOME",
+    "JOBS_DIR_HOME":  "C:\\Users\\user\\Desktop\\PMMA LASER HOME",
     "TRACKER_FILE_PATH":  "C:\\Users\\user\\.ssh\\pmma_laser_job_log.json",
     "PYTHON_PATH": "C:Program Files\\Python311\\python.exe",
     "IOBIT_UNLOCKER_PATH": "C:\\Program Files (x86)\\IObit\\IObit Unlocker\\IObitUnlocker.exe",

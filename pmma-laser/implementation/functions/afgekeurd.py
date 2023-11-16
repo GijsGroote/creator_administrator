@@ -4,6 +4,7 @@ Move a laser job to the folder AFGEKEURD.
 
 import sys
 import glob
+from global_variables import *
 
 from mail_functions import EmailManager
 from directory_functions import (

@@ -7,9 +7,6 @@ import re
 import shutil
 from typing import List
 
-from global_variables import (
-    LASER_DIR_HOME,
-    ACCEPTED_LASER_EXTENSIONS)
 from convert_functions import (
     job_folder_name_to_date)
 
@@ -53,7 +50,7 @@ def get_laser_job_global_paths(search_in_main_folder=None) -> List[str]:
     laser_job_global_paths = []
 
     if search_in_main_folder is None:
-        main_folders = os.listdir(LASER_DIR_HOME)
+        main_folders = os.listdir(JOBS_DIR_HOME)
     else:
         main_folders = [search_in_main_folder]
 
