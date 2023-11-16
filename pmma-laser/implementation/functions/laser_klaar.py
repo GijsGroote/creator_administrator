@@ -7,18 +7,18 @@ import sys
 
 from global_variables import *
 
-from mail_functions import EmailManager
+from src.mail_functions import EmailManager
 
-from directory_functions import (
+from src.directory_functions import (
     job_name_to_global_path,
     copy_laser_job,
     does_job_exist_in_main_folder,
     job_name_to_job_folder_name)
-from talk_to_sa import yes_or_no
-from cmd_farewell_handler import (
+from src.talk_to_sa import yes_or_no
+from src.cmd_farewell_handler import (
     open_gesliced_folder_cmd_farewell,
     remove_directory_and_close_cmd_farewell)
-from job_tracker import JobTracker
+from src.job_tracker import JobTracker
 
 if __name__ == '__main__':
 
@@ -34,7 +34,7 @@ if __name__ == '__main__':
             open_gesliced_folder_cmd_farewell()
 
         elif not yes_or_no('you are really sure this laser job is done (Y/n)?'):
-            laser('aborting...')
+            print('aborting...')
             sys.exit(0)
 
     # send response mail
