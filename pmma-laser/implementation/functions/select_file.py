@@ -8,19 +8,14 @@ import datetime
 from typing import Tuple
 from tkinter import filedialog
 
-from global_variables import *
-
-from create_batch_file import python_to_batch
-from directory_functions import (
+from global_variables import gv
+from job_tracker import JobTracker
+from src.create_batch_file import python_to_batch
+from src.directory_functions import (
     copy,
     make_laser_job_name_unique)
-from global_variables import (
-    FUNCTIONS_DIR_HOME,
-    LASER_DIR_HOME,
-    ACCEPETED_LASER_EXTENSIONS)
-from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
-from talk_to_sa import password_please
-from job_tracker import JobTracker
+from src.cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
+from src.talk_to_sa import password_please
 
 
 def is_folder_a_valid_laser_job(global_path: str) -> Tuple[bool, str]:
@@ -30,7 +25,7 @@ def is_folder_a_valid_laser_job(global_path: str) -> Tuple[bool, str]:
 
     for _, _, files in os.walk(global_path):
         for file in files:
-            if file.lower().endswith(ACCEPETED_LASER_EXTENSIONS):
+            if file.lower().endswith(gv['ACCEPETED_EXTENSIONS']):
                 laser_file_count += 1
 
     if laser_file_count == 0:
@@ -44,12 +39,12 @@ def create_laser_job(job_name: str, job_content_global_path: str):
     today = datetime.date.today()
     job_folder_name = str(today.strftime('%d')) + '-' + str(today.strftime('%m')) + '_' + job_name
 
-    job_global_path = os.path.join(os.path.join(LASER_DIR_HOME, 'WACHTRIJ', job_folder_name))
+    job_global_path = os.path.join(os.path.join(gv['JOBS_DIR_HOME'], 'WACHTRIJ', job_folder_name))
 
     os.mkdir(job_global_path)
     copy(job_content_global_path, job_global_path)
-    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), job_name=job_name)
-    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), job_name=job_name)
+    python_to_batch(os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), job_name=job_name)
+    python_to_batch(os.path.join(gv['FUNCTIONS_DIR_HOME'], 'gesliced.py'), job_name=job_name)
 
 
 def local_path_to_job_name(job_content_local_path: str) -> str:
@@ -63,10 +58,10 @@ if __name__ == '__main__':
     job_tracker = JobTracker()
     job_tracker.check_health()
 
-    laser('You are using select_bestand.bat, the default method is the input.bat file')
+    print('You are using select_bestand.bat, the default method is the input.bat file')
     password_please()
 
-    laser('''select <FOLDER> with the following structure:
+    print('''select <FOLDER> with the following structure:
 └───<FOLDER>
   ├───<SUBFOLDER_1>
   │  ├───3d_file.stl
@@ -76,14 +71,14 @@ if __name__ == '__main__':
     └───another_3d_file.stl
     ''')
 
-    folder_global_path = filedialog.askdirectory(initialdir=os.path.join(LASER_DIR_HOME, '../'))
+    folder_global_path = filedialog.askdirectory(initialdir=os.path.join(gv['LASER_DIR_HOME'], '../'))
 
     potential_jobs_local_paths = [folder for folder in os.listdir(folder_global_path)
                                   if os.path.isdir(os.path.join(folder_global_path, folder))]
 
 
     if len(potential_jobs_local_paths) == 0:
-        laser(f'There are no subfolders in {folder_global_path}, aborting. . .')
+        print(f'There are no subfolders in {folder_global_path}, aborting. . .')
         sys.exit(0)
 
     project_name = input('Where are the 3D lasers for? Enter a name for the project:')
@@ -102,15 +97,15 @@ if __name__ == '__main__':
 
             create_laser_job(job_folder_name, potential_job_global_path)
             n_valid_laser_jobs += 1
-            laser(f'({job_number}/{n_potential_jobs}) created laser job: {job_name}')
+            print(f'({job_number}/{n_potential_jobs}) created laser job: {job_name}')
 
             job_tracker.add_job(job_name, "WACHTRIJ")
 
         else:
-            laser(f'({job_number}/{n_potential_jobs}) from folder {potential_job_local_path} not'
+            print(f'({job_number}/{n_potential_jobs}) from folder {potential_job_local_path} not'
                   f' converted to laser job because:\n {invalid_reason} abort!\n')
 
-    laser(f'created {n_valid_laser_jobs} laser jobs out of {n_potential_jobs} potential jobs')
+    print(f'created {n_valid_laser_jobs} laser jobs out of {n_potential_jobs} potential jobs')
 
     if n_valid_laser_jobs > 0:
         open_wachtrij_folder_cmd_farewell()

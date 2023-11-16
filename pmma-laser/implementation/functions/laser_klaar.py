@@ -5,7 +5,7 @@ Move a laser job to the folder VERWERKT.
 import glob
 import sys
 
-from global_variables import *
+from global_variables import gv
 
 from src.mail_functions import EmailManager
 

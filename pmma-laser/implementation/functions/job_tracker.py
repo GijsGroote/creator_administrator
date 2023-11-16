@@ -9,7 +9,7 @@ import sys
 from typing import Tuple
 from datetime import datetime
 
-from global_variables import *
+from global_variables import gv
 
 from src.batch import python_to_batch
 from src.directory_functions import get_laser_job_global_paths
@@ -32,8 +32,8 @@ class JobTracker:
     def __init__(self):
         	
         self.job_keys = ['laser_job_name', 'main_folder', 'created_on_date', 'split_job']
-        self.tracker_file_path = globals('TRACKER_FILE_PATH')
-        self.tracker_backup_file_path = globals('TRACKER_FILE_PATH').replace("pmma_laser_job_log.json",
+        self.tracker_file_path = gv['TRACKER_FILE_PATH']
+        self.tracker_backup_file_path = gv['TRACKER_FILE_PATH'].replace("pmma_laser_job_log.json",
                                                                   "pmma_laser_job_log_backup.json")
 
         self.check_tracker_file_health()
@@ -58,7 +58,8 @@ class JobTracker:
     def create_tracker_file(self):
         """ Create the csv file that tracks jobs. """
         if os.path.exists(self.tracker_backup_file_path):
-            if yes_or_no(f"Backup file detected at: {self.tracker_backup_file_path}, do you want to restore it (Y/n)?"):
+            if yes_or_no(f"Backup file detected at:"
+            f"{self.tracker_backup_file_path}, do you want to restore it (Y/n)?"):
                 os.rename(self.tracker_backup_file_path, self.tracker_file_path)
                 print("Backup restored!")
                 return
@@ -88,16 +89,18 @@ class JobTracker:
         for actual_job_global_path in actual_job_global_paths:
             actual_job_main_folder = os.path.basename(os.path.dirname(actual_job_global_path))
 
-            tracker_job_name, tracker_job_dict = self.job_global_path_to_tracker_job_dict(tracker_dict,
-                                                                                          actual_job_global_path)
+            tracker_job_name, tracker_job_dict = self.job_global_path_to_tracker_job_dict(
+                    tracker_dict, actual_job_global_path)
 
             if tracker_job_name is None:
                 print("SYNCHRONIZE ISSUES! Print Job Tracker and laser jobs on File System are out of sync!\n")
                 print(f"laser job in: {actual_job_global_path} is not in the job tracker")
 
                 if yes_or_no(
-                        f"\n{actual_job_global_path} will be removed\nor do you want to add it to the laser job tracker (Y/n)?"):
-                    tracker_job_name = laser_job_folder_name_to_laser_job_name(os.path.basename(actual_job_global_path))
+                        f"\n{actual_job_global_path} will be removed\n"
+                        "or do you want to add it to the laser job tracker (Y/n)?"):
+                    tracker_job_name = laser_job_folder_name_to_laser_job_name(
+                            os.path.basename(actual_job_global_path))
 
                     # remove all batch files (they will be recreated later)
                     for file in os.listdir(actual_job_global_path):
@@ -131,7 +134,7 @@ class JobTracker:
                     else:
                         print("aborting..")
                         sys.exit(0)
-            FUNCTIONS_DIR_HOME = globals('FUNCTIONS_DIR_HOME')
+            FUNCTIONS_DIR_HOME = gv['FUNCTIONS_DIR_HOME']
 
             if tracker_job_dict["main_folder"] == "WACHTRIJ":
                 if not os.path.exists(os.path.join(actual_job_global_path, "afgekeurd.bat")):
@@ -165,11 +168,13 @@ class JobTracker:
                     shutil.rmtree(actual_job_global_path)
                     tracker_dict.pop(tracker_job_name)
 
-                    print(f'{tracker_job_name} removed because it is older than {globals('DAYS_TO_KEEP_JOBS')} days')
+                    print("{tracker_job_name} removed because it is older than "
+                          f"{globals('DAYS_TO_KEEP_JOBS')} days")
 
             else:
                 raise ValueError(
-                    "The job should be in a main folder: WACHTRIJ, GESLICED, AAN_HET_PRINTEN, VERWERKT or AFGEKEURD")
+                        "The job should be in a main folder: WACHTRIJ, "
+                        "GESLICED, AAN_HET_PRINTEN, VERWERKT or AFGEKEURD")
 
             laser_jobs_checked[tracker_job_name] = True
 
@@ -185,7 +190,8 @@ class JobTracker:
         self.make_backup()
         print("system healthy :)\n")
 
-    def job_global_path_to_tracker_job_dict(self, tracker_dict: dict, laser_job_folder_name: str) -> Tuple[str, dict]:
+    def job_global_path_to_tracker_job_dict(
+            self, tracker_dict: dict, laser_job_folder_name: str) -> Tuple[str, dict]:
         """ If exists, return job name and data from tracker dictionary
         corresponding to the laser job with name laser_job_folder_name. """
         for tracker_job_name, tracker_job_dict in tracker_dict.items():

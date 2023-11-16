@@ -5,7 +5,7 @@ Loop over unread mail, download all valid laser jobs to a unique folder in WACHT
 import datetime
 import os
 
-from global_variables import *
+from global_variables import gv
 from job_tracker import JobTracker
 
 from src.batch import python_to_batch
@@ -22,7 +22,7 @@ def create_laser_job(job_name: str, msg) -> str:
     today = datetime.date.today()
     job_folder_name = str(today.strftime('%d')) + '-' + str(today.strftime('%m')) + '_' + job_name
 
-    laser_job_global_path = os.path.join(os.path.join(JOBS_DIR_HOME, 'WACHTRIJ', job_folder_name))
+    laser_job_global_path = os.path.join(os.path.join(gv['JOBS_DIR_HOME'], 'WACHTRIJ', job_folder_name))
     os.mkdir(laser_job_global_path)
 
     # Save the email
@@ -31,11 +31,11 @@ def create_laser_job(job_name: str, msg) -> str:
     # Save the files
     for attachment in msg.Attachments:
         print(f'Downloaded file: {attachment.FileName.lower()}')
-        if attachment.FileName.lower().endswith(ACCEPTED_EXTENSIONS):
+        if attachment.FileName.lower().endswith(fv['ACCEPTED_EXTENSIONS']):
             attachment.SaveAsFile(os.path.join(laser_job_global_path, attachment.FileName))
 
-    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), job_name)
-    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'laser_klaar.py'), job_name)
+    python_to_batch(os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), job_name)
+    python_to_batch(os.path.join(gv['FUNCTIONS_DIR_HOME'], 'laser_klaar.py'), job_name)
 
     JobTracker().add_job(job_name, "WACHTRIJ")
 
