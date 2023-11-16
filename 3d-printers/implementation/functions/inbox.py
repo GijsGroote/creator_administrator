@@ -9,7 +9,7 @@ from global_variables import (
     FUNCTIONS_DIR_HOME,
     PRINT_DIR_HOME,
     ACCEPTED_PRINT_EXTENSIONS)
-from create_batch_file import python_to_batch
+from create_batch_files import python_to_batch
 from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from directory_functions import make_print_job_name_unique, get_print_jobs_in_queue
 from mail_functions import EmailManager
@@ -31,7 +31,7 @@ def create_print_job(job_name: str, msg) -> str:
 
     # Save the .stl files
     for attachment in msg.Attachments:
-        print(f'attachment.FileName i {attachment.FileName.lower()}')
+        print(f'Downloaded file: {attachment.FileName.lower()}')
         if attachment.FileName.lower().endswith(ACCEPTED_PRINT_EXTENSIONS):
             attachment.SaveAsFile(os.path.join(print_job_global_path, attachment.FileName))
 

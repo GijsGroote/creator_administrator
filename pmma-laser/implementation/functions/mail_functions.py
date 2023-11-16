@@ -8,8 +8,8 @@ import win32com.client
 
 from global_variables import (
     EMAIL_TEMPLATES_DIR_HOME,
-    ACCEPETED_LASER_EXTENSIONS,
-    IWS_3D_PRINT_COMPUTER,
+    ACCEPTED_LASER_EXTENSIONS,
+    IWS_PMMA_LASER_COMPUTER,
     RECEIVED_MAIL_TEMPLATE,
     DECLINED_MAIL_TEMPLATE,
     FINISHED_MAIL_TEMPLATE
@@ -35,14 +35,14 @@ class EmailManager:
         emails = []
         for message in self.inbox.Items:
             # the IWS computer appends every mail in the inbox
-            if IWS_3D_PRINT_COMPUTER:
+            if IWS_PMMA_LASER_COMPUTER:
                 emails.append(message)
             # other than the IWS computer only appends unread mails
             elif message.UnRead:
                 emails.append(message)
 
-            message.UnRead = False
-            message.Save()
+            # message.UnRead = False
+            # message.Save()
 
         return emails
 
@@ -55,7 +55,7 @@ class EmailManager:
         outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
         msg = outlook.OpenSharedItem(msg_file_path)
 
-        laser(msg.Body)
+        print(msg.Body)
 
     def get_email_address(self, msg) -> str:
         """ Return the email adress. """
@@ -115,19 +115,19 @@ class EmailManager:
         attachments = msg.Attachments
 
         for attachment in attachments:
-            if attachment.FileName.lower().endswith(ACCEPETED_LASER_EXTENSIONS):
+            if attachment.FileName.lower().endswith(ACCEPTED_LASER_EXTENSIONS):
                 laser_file_count += 1
 
         if laser_file_count == 0:
-            return False, 'no .stl attachment found'
+            return False, 'no .dxf attachment found'
 
         if 5 < laser_file_count <= 10:
-            print(f'warning! there are: {laser_file_count} .stl files in the mail')
+            print(f'warning! there are: {laser_file_count} .dxf files in the mail')
 
         elif laser_file_count > 10:
-            if yes_or_no(f'{laser_file_count} .stl files found do '
+            if yes_or_no(f'{laser_file_count} .dxf files found do '
                         f'you want to create an laser job (Y/n)?'):
-                return True, f'you decided that: {laser_file_count} .stl is oke'
-            return False, f'you decided that: {laser_file_count} .stl files are to much'
+                return True, f'you decided that: {laser_file_count} .dxf is oke'
+            return False, f'you decided that: {laser_file_count} .dxf files are to much'
 
         return True, ' '

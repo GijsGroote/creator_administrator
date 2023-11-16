@@ -72,9 +72,6 @@ def open_wachtrij_folder_cmd_farewell():
     """ Exit python with a 911 exit status which open the WACHTRIJ folder. """
     sys.exit(911)
 
-def open_gesliced_folder_cmd_farewell():
-    """ Exit python with a 912 exit status which open the GESLICED folder. """
-    sys.exit(912)
 
 if __name__ == '__main__':
 
@@ -82,7 +79,5 @@ if __name__ == '__main__':
 
     if error_level == 911:
         os.startfile(os.path.join(LASER_DIR_HOME, 'WACHTRIJ'))
-    elif error_level == 912:
-        os.startfile(os.path.join(LASER_DIR_HOME, 'GESLICED'))
     else:
         input(f'No behavior defined for exit status {error_level}')

@@ -8,10 +8,10 @@ import os
 import sys
 from typing import Tuple
 from datetime import datetime
-from global_variables import TRACKER_FILE_PATH, DAYS_TO_KEEP_PRINT_JOBS, PRINT_DIR_HOME, ACCEPTED_PRINT_EXTENSIONS, \
+from global_variables import TRACKER_FILE_PATH, DAYS_TO_KEEP_JOBS, PRINT_DIR_HOME, ACCEPTED_PRINT_EXTENSIONS, \
     FUNCTIONS_DIR_HOME
-from create_batch_file import python_to_batch
-from directory_functions import get_print_job_global_paths, folder_contains_3d_print_file
+from create_batch_files import python_to_batch
+from directory_functions import get_print_job_global_paths
 from convert_functions import print_job_folder_name_to_print_job_name
 from talk_to_sa import yes_or_no
 
@@ -163,7 +163,7 @@ class JobTracker:
                     shutil.rmtree(actual_job_global_path)
                     tracker_dict.pop(tracker_job_name)
 
-                    print(f'{tracker_job_name} removed because it is older than {DAYS_TO_KEEP_PRINT_JOBS} days')
+                    print(f'{tracker_job_name} removed because it is older than {DAYS_TO_KEEP_JOBS} days')
 
             else:
                 raise ValueError(
@@ -196,7 +196,7 @@ class JobTracker:
         created_on_date_object = datetime.strptime(created_on_date, "%d-%m-%Y")
         current_date_object = datetime.now()
         date_difference = current_date_object - created_on_date_object
-        return date_difference.days > DAYS_TO_KEEP_PRINT_JOBS
+        return date_difference.days > DAYS_TO_KEEP_JOBS
 
     def make_backup(self):
         """ Make a backup of the tracker file. """

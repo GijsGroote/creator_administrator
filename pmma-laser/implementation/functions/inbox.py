@@ -9,7 +9,7 @@ from global_variables import (
     FUNCTIONS_DIR_HOME,
     LASER_DIR_HOME,
     ACCEPTED_LASER_EXTENSIONS)
-from create_batch_file import python_to_batch
+from create_batch_files import python_to_batch
 from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from directory_functions import make_laser_job_name_unique, get_laser_jobs_in_queue
 from mail_functions import EmailManager
@@ -29,14 +29,14 @@ def create_laser_job(job_name: str, msg) -> str:
     # Save the email
     msg.SaveAs(os.path.join(laser_job_global_path, 'mail.msg'))
 
-    # Save the .stl files
+    # Save the files
     for attachment in msg.Attachments:
-        print(f'attachment.FileName i {attachment.FileName.lower()}')
-        if attachment.FileName.lower().endswith(ACCEPETED_LASER_EXTENSIONS):
+        print(f'Downloaded file: {attachment.FileName.lower()}')
+        if attachment.FileName.lower().endswith(ACCEPTED_LASER_EXTENSIONS):
             attachment.SaveAsFile(os.path.join(laser_job_global_path, attachment.FileName))
 
     python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), job_name)
-    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), job_name)
+    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'laser_klaar.py'), job_name)
 
     JobTracker().add_job(job_name, "WACHTRIJ")
 
@@ -44,9 +44,8 @@ def create_laser_job(job_name: str, msg) -> str:
 
 if __name__ == '__main__':
 
-    # open/create csv log
-    # job_tracker = JobTracker()
-    # job_tracker.check_health()
+    job_tracker = JobTracker()
+    job_tracker.check_health()
 
     print('searching for new mail...')
     email_manager = EmailManager()
@@ -85,7 +84,7 @@ if __name__ == '__main__':
                                       {"{laser_jobs_in_queue}": get_laser_jobs_in_queue()},
                                       popup_reply=False)
 
-            email_manager.move_email_to_verwerkt_folder(msg)
+            # email_manager.move_email_to_verwerkt_folder(msg)
 
             print(f'laser job: {job_name} created\n')
 

@@ -6,9 +6,9 @@ import json
 import os
 
 # Detect the computer.
-IWS_3D_PRINT_COMPUTER = False
+IWS_PMMA_LASER_COMPUTER = False
 if os.path.exists(r'C:\Users\IWS\.ssh\pmma_laser_global_variables.json'):
-    IWS_3D_PRINT_COMPUTER = True
+    IWS_PMMA_LASER_COMPUTER = True
     global_variables_path = os.path.abspath(
             r'C:\Users\IWS\.ssh\pmma_laser_global_variables.json')
 
@@ -28,7 +28,7 @@ FINISHED_MAIL_TEMPLATE = None
 
 with open(global_variables_path, 'r') as global_variables_file:
     gv_data = json.load(global_variables_file)
-    LASER_DIR_HOME = gv_data['LASER_DIR_HOME']
+    LASER_DIR_HOME = gv_data['PMMA_LASER_DIR_HOME']
     REPO_DIR_HOME = gv_data['REPO_DIR_HOME']
     TRACKER_FILE_PATH = gv_data['TRACKER_FILE_PATH']
     PYTHON_PATH = gv_data['PYTHON_PATH']
@@ -68,4 +68,4 @@ FIGURES_DIR_HOME = os.path.join(
 
 ACCEPTED_LASER_EXTENSIONS = ('.dxf')
 
-DAYS_TO_KEEP_LASER_JOBS = 5
+DAYS_TO_KEEP_JOBS = 5

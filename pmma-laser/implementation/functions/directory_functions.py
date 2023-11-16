@@ -298,24 +298,19 @@ def move_laser_job_partly(job_name: str, exclude_files: List):
         copy(source_item, target_item)
 
 def get_laser_jobs_in_queue() -> int:
-    """ return the laser jobs in the main folders WACHTRIJ and GESLICED. """
+    """ return the laser jobs in the main folder WACHTRIJ. """
 
     n_dirs_in_wachtrij = len([job_folder_name for job_folder_name in
                               os.listdir(os.path.join(LASER_DIR_HOME, 'WACHTRIJ'))
                               if os.path.isdir(os.path.join(
                                   LASER_DIR_HOME, 'WACHTRIJ', job_folder_name))])
 
-    n_dirs_in_gesliced = len([job_folder_name for job_folder_name in
-                              os.listdir(os.path.join(LASER_DIR_HOME, 'GESLICED'))
-                              if os.path.isdir(os.path.join(
-                                  LASER_DIR_HOME, 'GESLICED', job_folder_name))])
-
-    return n_dirs_in_wachtrij + n_dirs_in_gesliced
+    return n_dirs_in_wachtrij
 
 def folder_contains_3d_laser_file(global_path: str) -> bool:
     """ Check if a folder contains at least one 3D laser file. """
 
     # Iterate through the files and check if any of them have a valid 3D laser extension
-    if any(file.endswith(ACCEPETED_LASER_EXTENSIONS) for file in os.listdir(global_path)):
+    if any(file.endswith(ACCEPTED_LASER_EXTENSIONS) for file in os.listdir(global_path)):
         return True
     return False

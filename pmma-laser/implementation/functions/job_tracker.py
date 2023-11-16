@@ -10,13 +10,13 @@ from typing import Tuple
 from datetime import datetime
 from global_variables import (
     TRACKER_FILE_PATH,
-    DAYS_TO_KEEP_PRINT_JOBS,
+    DAYS_TO_KEEP_JOBS,
     LASER_DIR_HOME,
     ACCEPTED_LASER_EXTENSIONS,
     FUNCTIONS_DIR_HOME)
 
-from create_batch_file import python_to_batch
-from directory_functions import get_laser_job_global_paths, folder_contains_3d_laser_file
+from create_batch_files import python_to_batch
+from directory_functions import get_laser_job_global_paths
 from convert_functions import laser_job_folder_name_to_laser_job_name
 from talk_to_sa import yes_or_no
 
@@ -37,20 +37,20 @@ class JobTracker:
 
         self.job_keys = ['laser_job_name', 'main_folder', 'created_on_date', 'split_job']
         self.tracker_file_path = TRACKER_FILE_PATH
-        self.tracker_backup_file_path = TRACKER_FILE_PATH.replace("3D_laser_job_log.json",
-                                                                  "3D_laser_job_log_backup.json")
+        self.tracker_backup_file_path = TRACKER_FILE_PATH.replace("pmma_laser_job_log.json",
+                                                                  "pmma_laser_job_log_backup.json")
 
         self.check_tracker_file_health()
 
     def check_tracker_file_health(self):
         # Create the tracker file if it doesn't exist
         if not os.path.exists(self.tracker_file_path):
-            laser(f"tracker file was not detected at: {self.tracker_file_path}")
+            print(f"tracker file was not detected at: {self.tracker_file_path}")
             self.create_tracker_file()
 
         try:
             with open(self.tracker_file_path, 'r') as tracker_file:
-                tracker_dict = json.load(tracker_file)
+                json.load(tracker_file)
         except Exception as e:
             print(f"Cannot read tracker file at: {self.tracker_file_path}")
             print(f"MANUALLY REPAIR TRACKER FILE!")
@@ -168,7 +168,7 @@ class JobTracker:
                     shutil.rmtree(actual_job_global_path)
                     tracker_dict.pop(tracker_job_name)
 
-                    print(f'{tracker_job_name} removed because it is older than {DAYS_TO_KEEP_PRINT_JOBS} days')
+                    print(f'{tracker_job_name} removed because it is older than {DAYS_TO_KEEP_JOBS} days')
 
             else:
                 raise ValueError(
@@ -201,7 +201,7 @@ class JobTracker:
         created_on_date_object = datetime.strptime(created_on_date, "%d-%m-%Y")
         current_date_object = datetime.now()
         date_difference = current_date_object - created_on_date_object
-        return date_difference.days > DAYS_TO_KEEP_PRINT_JOBS
+        return date_difference.days > DAYS_TO_KEEP_JOBS
 
     def make_backup(self):
         """ Make a backup of the tracker file. """
