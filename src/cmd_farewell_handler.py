@@ -8,6 +8,9 @@ import sys
 import os
 
 
+print('look mommy')
+print(globals())
+
 assert 'IOBIT_UNLOCKER_PATH' in globals()
 IOBIT_UNLOCKER_PATH = globals('IOBIT_UNLOCKER_PATH')
 assert 'JOBS_DIR_HOME' in globals()

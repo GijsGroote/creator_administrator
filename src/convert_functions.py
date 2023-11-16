@@ -7,7 +7,7 @@ import re
 def job_folder_name_to_job_name(job_folder_name: str) -> str:
     """ get the job name from a job folder name. """
 
-    folder_name_without_date = re.sub(r'^\d+-\d+_', '', laser_job_folder_name)
+    folder_name_without_date = re.sub(r'^\d+-\d+_', '', job_folder_name)
     return re.sub(r'^\d+h\d+m\.', '', folder_name_without_date)
 
 def job_folder_name_to_date(job_folder_name: str) -> str:

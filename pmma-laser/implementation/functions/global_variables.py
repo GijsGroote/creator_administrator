@@ -6,6 +6,9 @@ import json
 import os
 import sys
 
+# Global Variables
+gv = {}
+
 # Detect the computer.
 global IWS_COMPUTER
 IWS_COMPUTER = False
