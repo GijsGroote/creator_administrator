@@ -6,12 +6,12 @@ import sys
 import glob
 from global_variables import *
 
-from mail_functions import EmailManager
-from directory_functions import (
+from src.mail_functions import EmailManager
+from src.directory_functions import (
     job_name_to_global_path,
     copy_laser_job)
-from cmd_farewell_handler import remove_directory_and_close_cmd_farewell
-from job_tracker import JobTracker
+from src.cmd_farewell_handler import remove_directory_and_close_cmd_farewell
+from src.job_tracker import JobTracker
 
 if __name__ == '__main__':
 

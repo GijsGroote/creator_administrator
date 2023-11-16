@@ -5,7 +5,7 @@ Convert python code to clickable batch functions.
 import os
 
 from global_variables import *
-from batch import python_to_batch
+from src.batch import python_to_batch
 
 
 if __name__ == "__main__":
