@@ -9,9 +9,9 @@ import sys
 # Detect the computer.
 global IWS_COMPUTER
 IWS_COMPUTER = False
-if any(os.path.exists(r'C:\Users\IWS\.ssh\3D_print_global_variables.json')
-       or os.path.exists(r'C:\Users\IWS\.ssh\pmma_laser_global_variables.json')
-       or os.path.exists(r'C:\Users\IWS\.ssh\metal_laser_global_variables.json')):
+if any([os.path.exists(r'C:\Users\IWS\.ssh\3D_print_global_variables.json'),
+        os.path.exists(r'C:\Users\IWS\.ssh\pmma_laser_global_variables.json'),
+        os.path.exists(r'C:\Users\IWS\.ssh\metal_laser_global_variables.json')]):
     IWS_COMPUTER = True
     global_variables_path = os.path.abspath(
             r'C:\Users\IWS\.ssh\pmma_laser_global_variables.json')
