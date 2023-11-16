@@ -3,7 +3,7 @@ Convert python code to clickable batch functions.
 """
 
 import os
-from src.cmd_farewell_handler import cmd_farewells
+from src.cmd_farewell_handler import get_cmd_farewells
 from src.directory_functions import job_name_to_global_path
 
 def python_to_batch(gv: dict, python_path: str, job_name=None, search_in_main_folder=None):

@@ -183,7 +183,7 @@ def file_should_be_skipped(source_file_global_path: str,
 
     elif source_file_global_path.startswith(os.path.join(JOBS_DIR_HOME, 'AAN_HET_PRINTEN')) and \
             target_file_global_path.startswith(os.path.join(JOBS_DIR_HOME, 'VERWERKT')) and \
-            ((source_file_global_path.endswith('laserer_klaar.bat') :
+            (source_file_global_path.endswith('laserer_klaar.bat')):
         return True
 
     elif source_file_global_path.startswith(os.path.join(JOBS_DIR_HOME, 'WACHTRIJ')) and \
