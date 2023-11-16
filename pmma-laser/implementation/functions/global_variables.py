@@ -4,6 +4,7 @@ Global variables specific for the local machine.
 
 import json
 import os
+import sys
 
 # Detect the computer.
 IWS_PMMA_LASER_COMPUTER = False
@@ -18,7 +19,6 @@ elif os.path.exists(r'C:\Users\gijsg\.ssh\pmma_laser_global_variables.json'):
 
 else:
     raise ValueError('could find pmma_laser_global_variables')
-
 
 
 # custom mail templates
@@ -53,6 +53,8 @@ with open(global_variables_path, 'r') as global_variables_file:
         else:
             raise FileNotFoundError(f'could not find file: {gv_data["finished_mail_template"]}')
 
+# import functions from src
+sys.path.append(os.path.join(REPO_DIR_HOME, 'src'))
 
 FUNCTIONS_DIR_HOME = os.path.join(
     REPO_DIR_HOME,

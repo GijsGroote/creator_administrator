@@ -9,12 +9,14 @@ from global_variables import (
     FUNCTIONS_DIR_HOME,
     LASER_DIR_HOME,
     ACCEPTED_LASER_EXTENSIONS)
-from create_batch_files import python_to_batch
+from job_tracker import JobTracker
+
+from batch import python_to_batch
 from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from directory_functions import make_laser_job_name_unique, get_laser_jobs_in_queue
 from mail_functions import EmailManager
-from job_tracker import JobTracker
 from convert_functions import mail_to_name
+
 
 def create_laser_job(job_name: str, msg) -> str:
     """ Create a 'laser job' or folder in WACHTRIJ and
