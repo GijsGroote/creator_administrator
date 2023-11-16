@@ -77,3 +77,5 @@ FIGURES_DIR_HOME = os.path.join(gv['REPO_DIR_HOME'], r'figures')
 gv['ACCEPTED_EXTENSIONS'] = ('.dxf')
 
 gv['DAYS_TO_KEEP_JOBS'] = 5
+
+gv['ALLOW_BATCH_FILE_IN_MAIN_FOLDER'] = [['WACHTRIJ', ('afgekeurd.bat', 'laser_klaar.bat')]]

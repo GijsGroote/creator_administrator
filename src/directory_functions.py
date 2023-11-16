@@ -157,59 +157,15 @@ def copy(source_dir_global: str, target_dir_global: str):
         except Exception as e:
             print(f"An error occurred: {e}")
 
-# TODO: this should be an abstracted function from the files and functions
-def file_should_be_skipped(source_file_global_path: str,
-                           target_file_global_path: str) -> bool:
+def prevent_batch_file(gv: dict, target_file_global_path: str) -> bool:
     """ Return boolean indicating if the file should be skipped when moving to the target folder."""
 
-    if target_file_global_path.startswith(os.path.join(JOBS_DIR_HOME, 'AFGEKEURD')) and \
-            (source_file_global_path.endswith('afgekeurd.bat') and
-             target_file_global_path.endswith('afgekeurd.bat')) or \
-            (source_file_global_path.endswith('gesliced.bat') and
-             target_file_global_path.endswith('gesliced.bat')):
-        return True
-
-    elif source_file_global_path.startswith(os.path.join(JOBS_DIR_HOME, 'WACHTRIJ')) and \
-            target_file_global_path.startswith(os.path.join(JOBS_DIR_HOME, 'GESLICED')) and \
-            source_file_global_path.endswith('gesliced.bat') and \
-            target_file_global_path.endswith('gesliced.bat'):
-        return True
-
-    elif source_file_global_path.startswith(os.path.join(JOBS_DIR_HOME, 'GESLICED')) and \
-            target_file_global_path.startswith(os.path.join(JOBS_DIR_HOME, 'AAN_HET_PRINTEN')) and \
-            source_file_global_path.endswith('laserer_aangezet.bat') and \
-            target_file_global_path.endswith('laserer_aangezet.bat'):
-        return True
-
-    elif source_file_global_path.startswith(os.path.join(JOBS_DIR_HOME, 'AAN_HET_PRINTEN')) and \
-            target_file_global_path.startswith(os.path.join(JOBS_DIR_HOME, 'VERWERKT')) and \
-            (source_file_global_path.endswith('laserer_klaar.bat')):
-        return True
-
-    elif source_file_global_path.startswith(os.path.join(JOBS_DIR_HOME, 'WACHTRIJ')) and \
-            target_file_global_path.startswith(os.path.join(JOBS_DIR_HOME, 'GESLICED')) and \
-            source_file_global_path.endswith('gesliced.bat') and \
-            target_file_global_path.endswith('gesliced.bat'):
-        return True
-
-    elif source_file_global_path.startswith(os.path.join(JOBS_DIR_HOME, 'GESLICED')) and \
-            target_file_global_path.startswith(os.path.join(JOBS_DIR_HOME, 'AAN_HET_PRINTEN')) and \
-            source_file_global_path.endswith('laserer_aangezet.bat') and \
-            target_file_global_path.endswith('laserer_aangezet.bat'):
-        return True
-
-    elif source_file_global_path.startswith(os.path.join(JOBS_DIR_HOME, 'AAN_HET_PRINTEN')) and \
-            target_file_global_path.startswith(os.path.join(JOBS_DIR_HOME, 'VERWERKT')) and \
-            ((source_file_global_path.endswith('laserer_klaar.bat') and
-              target_file_global_path.endswith('laserer_klaar.bat')) or
-             (source_file_global_path.endswith('afgekeurd.bat') and
-and
-              target_file_global_path.endswith('laserer_klaar.bat')) or
-             (source_file_global_path.endswith('afgekeurd.bat') and
-              target_file_global_path.endswith('afgekeurd.bat'))):
-        return True
-    else:
-        return False
+    for [main_folder, allowed_batch_files] in gv['ALLOW_BATCH_FILE_IN_MAIN_FOLDER']:
+        if main_folder in target_file_global_path:
+            for allowed_batch_file in allowed_batch_files:
+                if target_file_global_path.endswith(allowed_batch_file):
+                    return False
+    return True
 
 def rename_target_item(job_name: str, target_item: str) -> str:
     """ Rename the target item. """
@@ -260,7 +216,7 @@ def copy_job(job_name: str, target_main_folder: str, source_main_folder=None):
         if os.path.isdir(source_item):
             copy(source_item, target_dir_global_path)
         else:
-            if file_should_be_skipped(source_item, target_item):
+            if prevent_batch_file(gv, target_item):
                 continue
             target_item = rename_target_item(job_name, target_item)
             copy(source_item, target_item)
@@ -301,8 +257,9 @@ def move_job_partly(gv: dict, job_name: str, exclude_files: List):
 
         if os.path.isdir(source_item):
             copy(source_item, target_dir_global_path)
-        if file_should_be_skipped(source_item, target_item):
-            continue
+        if target_dir_global_path.endswith('.bat'):
+            if prevent_batch_file(gv, target_item):
+                continue
         copy(source_item, target_item)
 
 def get_jobs_in_queue(gv: dict) -> int:
