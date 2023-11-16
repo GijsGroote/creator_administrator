@@ -9,24 +9,6 @@ import win32com.client
 from src.talk_to_sa import yes_or_no
 from src.convert_functions import mail_to_name
 
-
-# TODO: this looks like it could be done more strucured...
-assert 'ACCEPTED_EXTENSIONS' in globals()
-ACCEPTED_EXTENSIONS = globals('ACCEPTED_EXTENSIONS')
-assert 'EMAIL_TEMPLATES_DIR_HOME' in globals()
-EMAIL_TEMPLATES_DIR_HOME = globals('EMAIL_TEMPLATES_DIR_HOME')
-assert 'IWS_COMPUTER' in globals()
-IWS_COMPUTER = globals('IWS_COMPUTER')
-
-assert 'RECEIVED_MAIL_TEMPLATE' in globals()
-RECEIVED_MAIL_TEMPLATE = globals('RECEIVED_MAIL_TEMPLATE')
-
-assert 'DECLINED_MAIL_TEMPLATE' in globals()
-DECLINED_MAIL_TEMPLATE = globals('DECLINED_MAIL_TEMPLATE')
-assert 'FINISHED_MAIL_TEMPLATE' in globals()
-FINISHED_MAIL_TEMPLATE = globals('FINISHED_MAIL_TEMPLATE')
-
-
 class EmailManager:
     """
     Class for managing emails using win32com.client.
@@ -77,14 +59,14 @@ class EmailManager:
 
         raise ValueError("Could not get email adress")
 
-    def reply_to_email_from_file_using_template(self, msg_file_path: str,
+    def reply_to_email_from_file_using_template(self, gv: dict, msg_file_path: str,
                                                 template_file_name: str,
                                                 template_content: dict,
                                                 popup_reply=True):
         """ Reply to .msg file using a template. """
         msg = self.outlook.OpenSharedItem(msg_file_path)
 
-        custom_template_paths = [RECEIVED_MAIL_TEMPLATE, DECLINED_MAIL_TEMPLATE, FINISHED_MAIL_TEMPLATE]
+        custom_template_paths = [gv['RECEIVED_MAIL_TEMPLATE'], gv['DECLINED_MAIL_TEMPLATE'], gv['FINISHED_MAIL_TEMPLATE']]
         template_names = ["received.html", "declined.html", "finished.html"]
 
         if template_file_name in template_names:
@@ -93,7 +75,7 @@ class EmailManager:
                     if custom_temp is not None:
                         html_template_path = custom_temp
                     else:
-                        html_template_path = os.path.join(EMAIL_TEMPLATES_DIR_HOME, template_file_name)
+                        html_template_path = os.path.join(gv'[EMAIL_TEMPLATES_DIR_HOME'], template_file_name)
         else:
             raise ValueError(f"unknown template: {template_file_name}")
 
@@ -115,7 +97,7 @@ class EmailManager:
         else:
             reply.Send()
 
-    def is_mail_a_valid_laser_job_request(self, msg) -> Tuple[bool, str]:
+    def is_mail_a_valid_laser_job_request(self, gv: dict, msg) -> Tuple[bool, str]:
         """ Check if the requirements are met for a valid laser job. """
 
         # Initialize a counter for 3D laser attachments
@@ -124,7 +106,7 @@ class EmailManager:
         attachments = msg.Attachments
 
         for attachment in attachments:
-            if attachment.FileName.lower().endswith(ACCEPTED_EXTENSIONS):
+            if attachment.FileName.lower().endswith(gv'[ACCEPTED_EXTENSIONS']):
                 laser_file_count += 1
 
         if laser_file_count == 0:

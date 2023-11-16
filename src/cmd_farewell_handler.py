@@ -7,61 +7,49 @@ Communication from the python process to the cmd is through a exist status.
 import sys
 import os
 
+def get_cmd_farewells(gv: dict) -> str:
+    return  rf"""rem custom exit code summary:
+    rem 0 (default) - display "press any key to continue. . ." message
+    rem 900 - close cmd that runs .bat file
+    rem 901 - remove folder that runs .bat file
+    rem 902 - remove folder and close cmd that runs .bat file\
+    rem [903, 910] - reserved error status numbers
+    rem [911 - 920] call python script and pass exit status
 
-print('look mommy')
-print(globals())
-
-assert 'IOBIT_UNLOCKER_PATH' in globals()
-IOBIT_UNLOCKER_PATH = globals('IOBIT_UNLOCKER_PATH')
-assert 'JOBS_DIR_HOME' in globals()
-JOBS_DIR_HOME = globals('JOBS_DIR_HOME')
-
-assert 'FUNCTIONS_DIR_HOME' in globals()
-FUNCTIONS_DIR_HOME = globals('FUNCTIONS_DIR_HOME')
-
-cmd_farewells = rf"""rem custom exit code summary:
-rem 0 (default) - display "press any key to continue. . ." message
-rem 900 - close cmd that runs .bat file
-rem 901 - remove folder that runs .bat file
-rem 902 - remove folder and close cmd that runs .bat file\
-rem [903, 910] - reserved error status numbers
-rem [911 - 920] call python script and pass exit status
-
-if %errorlevel% equ 900 (
-    exit
-) else if %errorlevel% equ 901 (
-    "{IOBIT_UNLOCKER_PATH}" "/Delete" "%~dp0"
-    pause
-) else if %errorlevel% equ 902 (
-    "{IOBIT_UNLOCKER_PATH}" "/Delete" "%~dp0"
-    exit
-) else if %errorlevel% geq 911 (
-    if %errorlevel% leq 920 (
+    if %errorlevel% equ 900 (
+        exit
+    ) else if %errorlevel% equ 901 (
+        "{gv['IOBIT_UNLOCKER_PATH']}" "/Delete" "%~dp0"
         pause
-        "{PYTHON_PATH}" "{os.path.join(FUNCTIONS_DIR_HOME, 'cmd_farewell_handler.py')}" "%errorlevel%
-    )
-) else (
-pause
-)"""
+    ) else if %errorlevel% equ 902 (
+        "{gv['IOBIT_UNLOCKER_PATH']}" "/Delete" "%~dp0"
+        exit
+    ) else if %errorlevel% geq 911 (
+        if %errorlevel% leq 920 (
+            pause
+            "{gv['PYTHON_PATH']}" "{os.path.join(gv['FUNCTIONS_DIR_HOME'], 'cmd_farewell_handler.py')}" "%errorlevel%
+        )
+    ) else (
+    pause
+    )"""
 
 def exit_cmd_farewell():
     """ Exit python with a 900 exit status which closes the cmd that runs the batch process. """
     sys.exit(900)
 
-
-def remove_directory_cmd_farewell():
+def remove_directory_cmd_farewell(gv: dict):
     """ Exit python and remove the directory that contains the .bat script. """
 
-    if os.getcwd().startswith(JOBS_DIR_HOME):
+    if os.getcwd().startswith(gv['JOBS_DIR_HOME']):
         sys.exit(901)
     else:
-        raise ValueError(f'the working directory must be a subdirectory of {JOBS_DIR_HOME} '
+        raise ValueError(f'the working directory must be a subdirectory of {gv['JOBS_DIR_HOME']} '
                          f'and the working directory is {os.getcwd()}')
 
-def remove_directory_and_close_cmd_farewell():
+def remove_directory_and_close_cmd_farewell(gv: dict):
     """ Exit python, remove the directory and close cmd that contains the .bat script. """
 
-    if os.getcwd().lower().startswith(JOBS_DIR_HOME.lower()):
+    if os.getcwd().lower().startswith(gv['JOBS_DIR_HOME'].lower()):
         sys.exit(902)
     else:
         raise ValueError(f'the working directory must be a subdirectory of {LASER_DIR_HOME} '

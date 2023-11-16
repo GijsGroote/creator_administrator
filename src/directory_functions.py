@@ -7,11 +7,6 @@ import re
 import shutil
 from typing import List
 
-assert 'ACCEPTED_EXTENSIONS' in globals()
-ACCEPTED_EXTENSIONS = globals('ACCEPTED_EXTENSIONS')
-assert 'JOBS_DIR_HOME' in globals()
-JOBS_DIR_HOME = globals('JOBS_DIR_HOME')
-
 from src.convert_functions import (
     job_folder_name_to_date)
 
@@ -48,37 +43,37 @@ def make_job_name_unique(job_name: str) -> str:
         return job_name
     return job_name + '_(' + str(max_job_number + 1) + ')'
 
-def get_job_global_paths(search_in_main_folder=None) -> List[str]:
+def get_job_global_paths(gv: dict, search_in_main_folder=None) -> List[str]:
     """ Return global paths for all jobs. """
 
     job_global_paths = []
 
     if search_in_main_folder is None:
-        main_folders = os.listdir(JOBS_DIR_HOME)
+        main_folders = os.listdir(gv['JOBS_DIR_HOME'])
     else:
         main_folders = [search_in_main_folder]
 
     for main_folder in main_folders:
-        temp_job_global_paths = [os.path.join(JOBS_DIR_HOME, main_folder, job_folder_name)
-                   for job_folder_name in os.listdir(os.path.join(JOBS_DIR_HOME, main_folder))]
+        temp_job_global_paths = [os.path.join(gv['JOBS_DIR_HOME'], main_folder, job_folder_name)
+                   for job_folder_name in os.listdir(os.path.join(gv['JOBS_DIR_HOME'], main_folder))]
 
         if len(temp_job_global_paths) > 0:
             job_global_paths.extend(temp_job_global_paths)
 
     return job_global_paths
 
-def get_job_folder_names(search_in_main_folder=None) -> List[str]:
+def get_job_folder_names(gv: dict, search_in_main_folder=None) -> List[str]:
     """ Return all folder names corresponding to a job name.  """
 
     job_names = []
 
     if search_in_main_folder is None:
-        main_folders = os.listdir(JOBS_DIR_HOME)
+        main_folders = os.listdir(gv['JOBS_DIR_HOME'])
     else:
         main_folders = [search_in_main_folder]
 
     for main_folder in main_folders:
-        temp_job_names = list(os.listdir(os.path.join(JOBS_DIR_HOME, main_folder)))
+        temp_job_names = list(os.listdir(os.path.join(gv['JOBS_DIR_HOME'], main_folder)))
 
         if len(temp_job_names) > 0:
             job_names.extend(temp_job_names)
@@ -271,7 +266,7 @@ def copy_job(job_name: str, target_main_folder: str, source_main_folder=None):
             copy(source_item, target_item)
 
 
-def move_job_partly(job_name: str, exclude_files: List):
+def move_job_partly(gv: dict, job_name: str, exclude_files: List):
     """ Partly move, partly copy job from GESLICED to AAN_HET_PRINTEN folder. """
 
     # find source directory
@@ -287,7 +282,7 @@ def move_job_partly(job_name: str, exclude_files: List):
         new_job_folder_name = date + job_name
 
         target_dir_global_path = os.path.join(
-            JOBS_DIR_HOME,
+            gv['JOBS_DIR_HOME'],
             'AAN_HET_PRINTEN',
             new_job_folder_name)
         os.mkdir(target_dir_global_path)
@@ -310,20 +305,20 @@ def move_job_partly(job_name: str, exclude_files: List):
             continue
         copy(source_item, target_item)
 
-def get_jobs_in_queue() -> int:
+def get_jobs_in_queue(gv: dict) -> int:
     """ return the laser jobs in the main folder WACHTRIJ. """
 
     n_dirs_in_wachtrij = len([job_folder_name for job_folder_name in
-                              os.listdir(os.path.join(JOBS_DIR_HOME, 'WACHTRIJ'))
+                              os.listdir(os.path.join(gv['JOBS_DIR_HOME'], 'WACHTRIJ'))
                               if os.path.isdir(os.path.join(
-                                  JOBS_DIR_HOME, 'WACHTRIJ', job_folder_name))])
+                                  gv['JOBS_DIR_HOME'], 'WACHTRIJ', job_folder_name))])
 
     return n_dirs_in_wachtrij
 
-def folder_contains_3d_file(global_path: str) -> bool:
+def folder_contains_3d_file(gv: dict, global_path: str) -> bool:
     """ Check if a folder contains at least one 3D laser file. """
 
     # Iterate through the files and check if any of them have a valid 3D laser extension
-    if any(file.endswith(ACCEPTED_EXTENSIONS) for file in os.listdir(global_path)):
+    if any(file.endswith(gv['ACCEPTED_EXTENSIONS']) for file in os.listdir(global_path)):
         return True
     return False
