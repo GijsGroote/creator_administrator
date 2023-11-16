@@ -6,9 +6,9 @@ import json
 import os
 
 # Detect the computer.
-IWS_PMMA_LASER_COMPUTER = False
+IWS_COMPUTER = False
 if os.path.exists(r'C:\Users\IWS\.ssh\3D_print_global_variables.json'):
-    IWS_PMMA_LASER_COMPUTER = True
+    IWS_COMPUTER = True
     global_variables_path = os.path.abspath(r'C:\Users\IWS\.ssh\3D_print_global_variables.json')
 
 elif os.path.exists(r'C:\Users\gijsg\.ssh\3D_print_global_variables.json'):

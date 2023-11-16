@@ -3,15 +3,16 @@ Convert python code to clickable batch functions.
 """
 
 import os
-# from global_variables import PYTHON_PATH, FUNCTIONS_DIR_HOME
-from cmd_farewell_handler import cmd_farewells
-from directory_functions import job_name_to_global_path
+from src.cmd_farewell_handler import cmd_farewells
+from src.directory_functions import job_name_to_global_path
 
 def python_to_batch(python_path: str, job_name=None, search_in_main_folder=None):
     """ Convert a python file to an batch file. """
 
     assert 'PYTHON_PATH' in globals()
+    PYTHON_PATH = globals('PYTHON_PATH')
     assert 'FUNCTIONS_DIR_HOME' in globals()
+    FUNCTIONS_DIR_HOME = globals('FUNCTIONS_DIR_HOME')
     assert os.path.isfile(python_path), f"file {python_path} does not exist."
 
     if job_name is not None:
@@ -34,6 +35,3 @@ def python_to_batch(python_path: str, job_name=None, search_in_main_folder=None)
 {python_command}
 
 {cmd_farewells}""")
-
-        bat_file.close()
-

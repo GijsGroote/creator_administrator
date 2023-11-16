@@ -6,17 +6,26 @@ import os
 from typing import Tuple
 import win32com.client
 
-from global_variables import (
-    EMAIL_TEMPLATES_DIR_HOME,
-    ACCEPTED_LASER_EXTENSIONS,
-    IWS_PMMA_LASER_COMPUTER,
-    RECEIVED_MAIL_TEMPLATE,
-    DECLINED_MAIL_TEMPLATE,
-    FINISHED_MAIL_TEMPLATE
-    )
+from src.talk_to_sa import yes_or_no
+from src.convert_functions import mail_to_name
 
-from talk_to_sa import yes_or_no
-from convert_functions import mail_to_name
+
+# TODO: this looks like it could be done more strucured...
+assert 'ACCEPTED_EXTENSIONS' in globals()
+ACCEPTED_EXTENSIONS = globals('ACCEPTED_EXTENSIONS')
+assert 'EMAIL_TEMPLATES_DIR_HOME' in globals()
+EMAIL_TEMPLATES_DIR_HOME = globals('EMAIL_TEMPLATES_DIR_HOME')
+assert 'IWS_COMPUTER' in globals()
+IWS_COMPUTER = globals('IWS_COMPUTER')
+
+assert 'RECEIVED_MAIL_TEMPLATE' in globals()
+RECEIVED_MAIL_TEMPLATE = globals('RECEIVED_MAIL_TEMPLATE')
+
+assert 'DECLINED_MAIL_TEMPLATE' in globals()
+DECLINED_MAIL_TEMPLATE = globals('DECLINED_MAIL_TEMPLATE')
+assert 'FINISHED_MAIL_TEMPLATE' in globals()
+FINISHED_MAIL_TEMPLATE = globals('FINISHED_MAIL_TEMPLATE')
+
 
 class EmailManager:
     """
@@ -35,7 +44,7 @@ class EmailManager:
         emails = []
         for message in self.inbox.Items:
             # the IWS computer appends every mail in the inbox
-            if IWS_PMMA_LASER_COMPUTER:
+            if IWS_COMPUTER:
                 emails.append(message)
             # other than the IWS computer only appends unread mails
             elif message.UnRead:
@@ -115,7 +124,7 @@ class EmailManager:
         attachments = msg.Attachments
 
         for attachment in attachments:
-            if attachment.FileName.lower().endswith(ACCEPTED_LASER_EXTENSIONS):
+            if attachment.FileName.lower().endswith(ACCEPTED_EXTENSIONS):
                 laser_file_count += 1
 
         if laser_file_count == 0:

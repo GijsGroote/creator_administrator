@@ -9,7 +9,7 @@ import win32com.client
 from global_variables import (
     EMAIL_TEMPLATES_DIR_HOME,
     ACCEPTED_PRINT_EXTENSIONS,
-    IWS_3D_PRINT_COMPUTER,
+    IWS_COMPUTER,
     RECEIVED_MAIL_TEMPLATE,
     DECLINED_MAIL_TEMPLATE,
     FINISHED_MAIL_TEMPLATE
@@ -35,7 +35,7 @@ class EmailManager:
         emails = []
         for message in self.inbox.Items:
             # the IWS computer appends every mail in the inbox
-            if IWS_3D_PRINT_COMPUTER:
+            if IWS_COMPUTER:
                 emails.append(message)
             # other than the IWS computer only appends unread mails
             elif message.UnRead:

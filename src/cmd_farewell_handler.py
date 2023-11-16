@@ -7,12 +7,14 @@ Communication from the python process to the cmd is through a exist status.
 import sys
 import os
 
-from global_variables import (
-    PMMA_LASER_DIR_HOME,
-    PYTHON_PATH,
-    FUNCTIONS_DIR_HOME,
-    IOBIT_UNLOCKER_PATH)
 
+assert 'IOBIT_UNLOCKER_PATH' in globals()
+IOBIT_UNLOCKER_PATH = globals('IOBIT_UNLOCKER_PATH')
+assert 'JOBS_DIR_HOME' in globals()
+JOBS_DIR_HOME = globals('JOBS_DIR_HOME')
+
+assert 'FUNCTIONS_DIR_HOME' in globals()
+FUNCTIONS_DIR_HOME = globals('FUNCTIONS_DIR_HOME')
 
 cmd_farewells = rf"""rem custom exit code summary:
 rem 0 (default) - display "press any key to continue. . ." message
@@ -47,18 +49,16 @@ def exit_cmd_farewell():
 def remove_directory_cmd_farewell():
     """ Exit python and remove the directory that contains the .bat script. """
 
-    if os.getcwd().startswith(PMMA_LASER_DIR_HOME):
+    if os.getcwd().startswith(JOBS_DIR_HOME):
         sys.exit(901)
     else:
-        raise ValueError(f'the working directory must be a subdirectory of {PMMA_LASER_DIR_HOME} '
+        raise ValueError(f'the working directory must be a subdirectory of {JOBS_DIR_HOME} '
                          f'and the working directory is {os.getcwd()}')
-
-
 
 def remove_directory_and_close_cmd_farewell():
     """ Exit python, remove the directory and close cmd that contains the .bat script. """
 
-    if os.getcwd().lower().startswith(LASER_DIR_HOME.lower()):
+    if os.getcwd().lower().startswith(JOBS_DIR_HOME.lower()):
         sys.exit(902)
     else:
         raise ValueError(f'the working directory must be a subdirectory of {LASER_DIR_HOME} '
@@ -78,6 +78,6 @@ if __name__ == '__main__':
     error_level = int(sys.argv[1])
 
     if error_level == 911:
-        os.startfile(os.path.join(PMMA_LASER_DIR_HOME, 'WACHTRIJ'))
+        os.startfile(os.path.join(JOBS_DIR_HOME, 'WACHTRIJ'))
     else:
         input(f'No behavior defined for exit status {error_level}')

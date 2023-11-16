@@ -7,10 +7,12 @@ import os
 import sys
 
 # Detect the computer.
-global IWS_PMMA_LASER_COMPUTER
-IWS_PMMA_LASER_COMPUTER = False
-if os.path.exists(r'C:\Users\IWS\.ssh\pmma_laser_global_variables.json'):
-    IWS_PMMA_LASER_COMPUTER = True
+global IWS_COMPUTER
+IWS_COMPUTER = False
+if any(os.path.exists(r'C:\Users\IWS\.ssh\3D_print_global_variables.json')
+       or os.path.exists(r'C:\Users\IWS\.ssh\pmma_laser_global_variables.json')
+       or os.path.exists(r'C:\Users\IWS\.ssh\metal_laser_global_variables.json')):
+    IWS_COMPUTER = True
     global_variables_path = os.path.abspath(
             r'C:\Users\IWS\.ssh\pmma_laser_global_variables.json')
 
@@ -56,7 +58,7 @@ with open(global_variables_path, 'r') as global_variables_file:
             RECEIVED_MAIL_TEMPLATE = gv_data["finished_mail_template"]
         else:
             raise FileNotFoundError(f'could not find file: {gv_data["finished_mail_template"]}')
-        
+
 EMAIL_TEMPLATES_DIR_HOME = os.path.join(
     REPO_DIR_HOME,
     r'pmma-laser\implementation\email_templates')
