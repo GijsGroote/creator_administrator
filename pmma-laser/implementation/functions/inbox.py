@@ -17,7 +17,7 @@ from directory_functions import make_laser_job_name_unique, get_laser_jobs_in_qu
 from mail_functions import EmailManager
 from convert_functions import mail_to_name
 
-
+    
 def create_laser_job(job_name: str, msg) -> str:
     """ Create a 'laser job' or folder in WACHTRIJ and
     put all corresponding files in the laser job. """
