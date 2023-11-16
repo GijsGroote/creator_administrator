@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
     # read unread mails and convert to the email format and mark them as read
     msgs = email_manager.get_new_emails()
-    created_print_jobs = False
+    created_laser_jobs = False
 
     # laser how many mails are processed
     if len(msgs) == 0:
