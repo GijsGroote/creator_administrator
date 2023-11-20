@@ -47,4 +47,4 @@ if __name__ == '__main__':
 
     JobTracker().update_job_main_folder(job_name, "AFGEKEURD")
     copy_job(job_name, "AFGEKEURD")
-    remove_directory_and_close_cmd_farewell()
+    remove_directory_and_close_cmd_farewell(gv)

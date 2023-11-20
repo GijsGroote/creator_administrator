@@ -11,7 +11,7 @@ from src.mail_functions import EmailManager
 
 from src.directory_functions import (
     job_name_to_global_path,
-    copy_laser_job,
+    copy_job,
     does_job_exist_in_main_folder,
     job_name_to_job_folder_name)
 from src.talk_to_sa import yes_or_no
@@ -58,5 +58,5 @@ if __name__ == '__main__':
     job_tracker.set_split_job_to(job_name, False)
     job_tracker.update_job_main_folder(job_name, "VERWERKT")
 
-    copy_laser_job(job_name, "VERWERKT", source_main_folder='AAN_HET_PRINTEN')
-    remove_directory_and_close_cmd_farewell()
+    copy_job(job_name, "VERWERKT", source_main_folder='AAN_HET_PRINTEN')
+    remove_directory_and_close_cmd_farewell(gv)
