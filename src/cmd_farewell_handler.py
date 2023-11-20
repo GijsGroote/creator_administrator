@@ -52,7 +52,7 @@ def remove_directory_and_close_cmd_farewell(gv: dict):
     if os.getcwd().lower().startswith(gv['JOBS_DIR_HOME'].lower()):
         sys.exit(902)
     else:
-        raise ValueError(f'the working directory must be a subdirectory of {LASER_DIR_HOME} '
+        raise ValueError(f'the working directory must be a subdirectory of {gv['JOBS_DIR_HOME']} '
                          f'and the working directory is {os.getcwd()}')
 
 def goto_wachtrij_and_close_cmd_farewell():
@@ -62,13 +62,3 @@ def goto_wachtrij_and_close_cmd_farewell():
 def open_wachtrij_folder_cmd_farewell():
     """ Exit python with a 911 exit status which open the WACHTRIJ folder. """
     sys.exit(911)
-
-
-if __name__ == '__main__':
-
-    error_level = int(sys.argv[1])
-
-    if error_level == 911:
-        os.startfile(os.path.join(JOBS_DIR_HOME, 'WACHTRIJ'))
-    else:
-        input(f'No behavior defined for exit status {error_level}')

@@ -2,7 +2,6 @@
 Handle mail functionality.
 """
 
-import os
 from typing import Tuple
 import win32com.client
 
@@ -21,12 +20,12 @@ class EmailManager:
         except:
             self.verwerkt_folder = self.inbox.Parent.Folders.Add("Verwerkt")
 
-    def get_new_emails(self) -> list:
+    def get_new_emails(self, gv: dict) -> list:
         """ Return emails from Outlook inbox. """
         emails = []
         for message in self.inbox.Items:
             # the IWS computer appends every mail in the inbox
-            if IWS_COMPUTER:
+            if gv['IWS_COMPUTER']:
                 emails.append(message)
             # other than the IWS computer only appends unread mails
             elif message.UnRead:
@@ -59,27 +58,15 @@ class EmailManager:
 
         raise ValueError("Could not get email adress")
 
-    def reply_to_email_from_file_using_template(self, gv: dict, msg_file_path: str,
+    def reply_to_email_from_file_using_template(self, gv: dict, 
+                                                msg_file_path: str,
                                                 template_file_name: str,
                                                 template_content: dict,
                                                 popup_reply=True):
         """ Reply to .msg file using a template. """
         msg = self.outlook.OpenSharedItem(msg_file_path)
 
-        custom_template_paths = [gv['RECEIVED_MAIL_TEMPLATE'], gv['DECLINED_MAIL_TEMPLATE'], gv['FINISHED_MAIL_TEMPLATE']]
-        template_names = ["received.html", "declined.html", "finished.html"]
-
-        if template_file_name in template_names:
-            for custom_temp, temp_name in zip(custom_template_paths, template_names):
-                if template_file_name == temp_name:
-                    if custom_temp is not None:
-                        html_template_path = custom_temp
-                    else:
-                        html_template_path = os.path.join(gv['EMAIL_TEMPLATES_DIR_HOME'], template_file_name)
-        else:
-            raise ValueError(f"unknown template: {template_file_name}")
-
-        with open(html_template_path, "r") as file:
+        with open(gv[template_file_name], "r") as file:
             html_content = file.read()
 
         # load recipient_name in template

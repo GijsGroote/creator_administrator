@@ -3,6 +3,10 @@ Extract information from input.
 """
 
 import re
+from src.directory_functions import (
+    get_job_folder_names,
+    does_job_name_exist
+)
 
 def job_folder_name_to_job_name(job_folder_name: str) -> str:
     """ get the job name from a job folder name. """
@@ -32,3 +36,27 @@ def mail_to_name(mail_name: str):
         if '@' in mail_name:
             return mail_name.split('@')[0]
     return mail_name
+
+def make_job_name_unique(gv: dict, job_name: str) -> str:
+    """ Make the job name unique.
+
+    if the job name already exists append _(NUMBER) to job name to make it unique
+    if the job_name is unique but job_name_(NUMBER) exist then return job_name_(NUMBER+1).
+    """
+
+    max_job_number = 0
+    for folder_name in get_job_folder_names(gv):
+
+        match_job_number= re.search(rf'.*{job_name}_\((\d+)\)$', folder_name)
+
+        if match_job_number:
+
+            job_number = int(match_job_number.group(1))
+            if job_number > max_job_number:
+                max_job_number = job_number
+
+    if max_job_number == 0:
+        if does_job_name_exist(gv, job_name):
+            return job_name + '_(1)'
+        return job_name
+    return job_name + '_(' + str(max_job_number + 1) + ')'

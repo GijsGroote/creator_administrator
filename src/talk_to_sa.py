@@ -41,12 +41,12 @@ def yes_or_no(question: str) -> bool:
         return False
     return True
 
-def password_please():
+def password_please(gv: dict):
     """ input password to continue python process """
     attempt = 1
     while attempt <= 3:
         password_given = input('Enter password:')
-        if password_given == '3D PRINTER':
+        if password_given == gv['PASSWORD']:
             print('password correct')
             return
         print(f'password: {password_given} is incorrect')

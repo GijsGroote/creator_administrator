@@ -6,15 +6,16 @@ import datetime
 import os
 
 from global_variables import gv
-from job_tracker import JobTracker
+# from job_tracker import JobTracker
 
 from src.batch import python_to_batch
 from src.cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
-from src.directory_functions import make_job_name_unique, get_jobs_in_queue
+from src.directory_functions import get_jobs_in_queue
 from src.mail_functions import EmailManager
-from src.convert_functions import mail_to_name
+from src.convert_functions import mail_to_name, make_job_name_unique
 
 
+# TODO: this could simply be create print job with some parameters from 
 def create_laser_job(job_name: str, msg) -> str:
     """ Create a 'laser job' or folder in WACHTRIJ and
     put all corresponding files in the laser job. """
@@ -37,20 +38,20 @@ def create_laser_job(job_name: str, msg) -> str:
     python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), job_name)
     python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'laser_klaar.py'), job_name)
 
-    JobTracker().add_job(job_name, "WACHTRIJ")
+    # JobTracker().add_job(job_name, "WACHTRIJ")
 
     return laser_job_global_path
 
 if __name__ == '__main__':
 
-    job_tracker = JobTracker()
-    job_tracker.check_health()
+    # job_tracker = JobTracker()
+    # job_tracker.check_health()
 
     print('searching for new mail...')
     email_manager = EmailManager()
 
     # read unread mails and convert to the email format and mark them as read
-    msgs = email_manager.get_new_emails()
+    msgs = email_manager.get_new_emails(gv)
     created_laser_jobs = False
 
     # laser how many mails are processed
@@ -63,13 +64,13 @@ if __name__ == '__main__':
     for msg in msgs:
         print(f'processing incoming mail from: {msg.Sender}')
 
-        (is_valid, invalid_reason) = email_manager.is_mail_a_valid_laser_job_request(msg)
+        (is_valid, invalid_reason) = email_manager.is_mail_a_valid_laser_job_request(gv, msg)
 
         if is_valid:
             created_laser_jobs = True
 
             sender_name = mail_to_name(str(msg.Sender))
-            job_name = make_job_name_unique(sender_name)
+            job_name = make_job_name_unique(gv, sender_name)
 
             print(f'mail from: {email_manager.get_email_address(msg)} is valid request,'
                   f' create laser job: {job_name}')
@@ -78,10 +79,11 @@ if __name__ == '__main__':
 
             # send a confirmation mail
             msg_file_path = os.path.join(laser_job_global_path, "mail.msg")
-            email_manager.reply_to_email_from_file_using_template(msg_file_path,
-                                      "received.html",
-                                      {"{jobs_in_queue}": get_jobs_in_queue()},
-                                      popup_reply=False)
+            email_manager.reply_to_email_from_file_using_template(gv,
+                                    msg_file_path,
+                                    "RECEIVED_MAIL_TEMPLATE",
+                                    {"{jobs_in_queue}": get_jobs_in_queue(gv)},
+                                    popup_reply=False)
 
             # email_manager.move_email_to_verwerkt_folder(msg)
 

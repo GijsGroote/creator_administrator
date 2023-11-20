@@ -6,36 +6,25 @@ import glob
 import sys
 
 from global_variables import gv
+from local_directory_functions import move_job_to_main_folder
 
 from src.mail_functions import EmailManager
 
 from src.directory_functions import (
     job_name_to_global_path,
-    copy_job,
     does_job_exist_in_main_folder,
     job_name_to_job_folder_name)
+
 from src.talk_to_sa import yes_or_no
 from src.cmd_farewell_handler import (
-    open_gesliced_folder_cmd_farewell,
     remove_directory_and_close_cmd_farewell)
-from src.job_tracker import JobTracker
+# from src.job_tracker import JobTracker
 
 if __name__ == '__main__':
 
     job_name = sys.argv[1]
-    job_global_path = job_name_to_global_path(
-        job_name, search_in_main_folder='AAN_HET_PRINTEN')
-
-    if does_job_exist_in_main_folder(job_name, "GESLICED"):
-        job_name_folder = {job_name_to_job_folder_name(
-            job_name, search_in_main_folder="GESLICED")}
-        print(f'Warning! found GESLICED/{job_name_folder}, the laser job is not yet ready')
-        if yes_or_no('do you want to open GESLICED/ (Y/n)?'):
-            open_gesliced_folder_cmd_farewell()
-
-        elif not yes_or_no('you are really sure this laser job is done (Y/n)?'):
-            print('aborting...')
-            sys.exit(0)
+    job_global_path = job_name_to_global_path(gv,
+        job_name, search_in_main_folder='WACHTRIJ')
 
     # send response mail
     msg_file_paths = list(glob.glob(job_global_path + "/*.msg"))
@@ -46,17 +35,13 @@ if __name__ == '__main__':
 
     if len(msg_file_paths) > 0:
         email_manager = EmailManager()
-        email_manager.reply_to_email_from_file_using_template(msg_file_paths[0],
-                                                              "finished.html",
-                                                               {},
-                                                              popup_reply=False)
+        email_manager.reply_to_email_from_file_using_template(gv,
+                                                msg_file_paths[0],
+                                                "FINISHED_MAIL_TEMPLATE",
+                                                {},
+                                                popup_reply=False)
     else:
         print(f'folder: {job_global_path} does not contain any .msg files,'\
                 f'no response mail can be send')
 
-    job_tracker = JobTracker()
-    job_tracker.set_split_job_to(job_name, False)
-    job_tracker.update_job_main_folder(job_name, "VERWERKT")
-
-    copy_job(job_name, "VERWERKT", source_main_folder='AAN_HET_PRINTEN')
-    remove_directory_and_close_cmd_farewell(gv)
+    move_job_to_main_folder(job_name, 'VERWERKT')
