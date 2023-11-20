@@ -1,14 +1,7 @@
-
-
 """
 Functionality for moving/copying or searching in directories
 specifically for the pmma-laser.
 """
-
-import os
-import re
-import shutil
-from typing import List
 
 from global_variables import gv
 
@@ -17,9 +10,7 @@ from src.directory_functions import (
     create_new_job_folder,
     job_name_to_job_folder_name,
     copy_job_files)
-
 from src.batch import create_batch_files_for_job_folder
-
 from src.cmd_farewell_handler import remove_directory_and_close_cmd_farewell
 
 def move_job_to_main_folder(job_name: str, target_main_folder: str):
@@ -30,7 +21,7 @@ def move_job_to_main_folder(job_name: str, target_main_folder: str):
          - removes the source_job_folder
          - stops the python thread.
     """
-    # update the job tracker 
+    # update the job tracker
     # TODO: update job tracker
 
     # find source directory
@@ -38,9 +29,10 @@ def move_job_to_main_folder(job_name: str, target_main_folder: str):
 
     # create the target folder
     new_job_folder_name = job_name_to_job_folder_name(gv, job_name, "WACHTRIJ")
-    target_job_folder_global_path = create_new_job_folder(gv, job_name, new_job_folder_name, target_main_folder, "WACHTRIJ")
-    
-    
+    target_job_folder_global_path = create_new_job_folder(
+            gv, job_name, new_job_folder_name, target_main_folder, "WACHTRIJ")
+
+
     # create new batch files
     create_batch_files_for_job_folder(gv, target_job_folder_global_path, target_main_folder)
 

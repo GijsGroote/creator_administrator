@@ -54,17 +54,11 @@ if __name__ == '__main__':
     msgs = email_manager.get_new_emails(gv)
     created_laser_jobs = False
 
-    # laser how many mails are processed
-    if len(msgs) == 0:
-        print('no unread mails found')
-    else:
-        print(f'processing {len(msgs)} new mails')
-
     # loop over all mails, check if they are valid and create laser jobs
     for msg in msgs:
         print(f'processing incoming mail from: {msg.Sender}')
 
-        (is_valid, invalid_reason) = email_manager.is_mail_a_valid_laser_job_request(gv, msg)
+        (is_valid, invalid_reason) = email_manager.is_mail_a_valid_job_request(gv, msg)
 
         if is_valid:
             created_laser_jobs = True

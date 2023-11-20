@@ -5,16 +5,14 @@ Loop over unread mail, download all valid 3D print jobs to a unique folder in WA
 import datetime
 import os
 
-from global_variables import (
-    FUNCTIONS_DIR_HOME,
-    PRINT_DIR_HOME,
-    ACCEPTED_PRINT_EXTENSIONS)
-from create_batch_files import python_to_batch
-from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
-from directory_functions import make_print_job_name_unique, get_print_jobs_in_queue
-from mail_functions import EmailManager
+from global_variables import gv
 from job_tracker import JobTracker
-from convert_functions import mail_to_name
+
+from src.create_batch_files import python_to_batch
+from src.cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
+from src.directory_functions import get_jobs_in_queue
+from src.mail_functions import EmailManager
+from src.convert_functions import mail_to_name, make_print_job_name_unique
 
 def create_print_job(job_name: str, msg) -> str:
     """ Create a 'print job' or folder in WACHTRIJ and
@@ -23,7 +21,7 @@ def create_print_job(job_name: str, msg) -> str:
     today = datetime.date.today()
     job_folder_name = str(today.strftime('%d')) + '-' + str(today.strftime('%m')) + '_' + job_name
 
-    print_job_global_path = os.path.join(os.path.join(PRINT_DIR_HOME, 'WACHTRIJ', job_folder_name))
+    print_job_global_path = os.path.join(os.path.join(gv['JOBS_DIR_HOME'], 'WACHTRIJ', job_folder_name))
     os.mkdir(print_job_global_path)
 
     # Save the email
@@ -32,40 +30,31 @@ def create_print_job(job_name: str, msg) -> str:
     # Save the .stl files
     for attachment in msg.Attachments:
         print(f'Downloaded file: {attachment.FileName.lower()}')
-        if attachment.FileName.lower().endswith(ACCEPTED_PRINT_EXTENSIONS):
+        if attachment.FileName.lower().endswith(gv['ACCEPTED_PRINT_EXTENSIONS']):
             attachment.SaveAsFile(os.path.join(print_job_global_path, attachment.FileName))
 
-    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), job_name)
-    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), job_name)
-    
+    python_to_batch(os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), job_name)
+    python_to_batch(os.path.join(gv['FUNCTIONS_DIR_HOME'], 'gesliced.py'), job_name)
+
     JobTracker().add_job(job_name, "WACHTRIJ")
 
     return print_job_global_path
 
 if __name__ == '__main__':
 
-    # open/create csv log
     job_tracker = JobTracker()
     job_tracker.check_health()
 
     print('searching for new mail...')
     email_manager = EmailManager()
-
-    # read unread mails and convert to the email format and mark them as read
     msgs = email_manager.get_new_emails()
     created_print_jobs = False
-
-    # print how many mails are processed
-    if len(msgs) == 0:
-        print('no unread mails found')
-    else:
-        print(f'processing {len(msgs)} new mails')
 
     # loop over all mails, check if they are valid and create print jobs
     for msg in msgs:
         print(f'processing incoming mail from: {msg.Sender}')
 
-        (is_valid, invalid_reason) = email_manager.is_mail_a_valid_print_job_request(msg)
+        (is_valid, invalid_reason) = email_manager.is_mail_a_valid_job_request(gv, msg)
 
         if is_valid:
             created_print_jobs = True
@@ -81,8 +70,8 @@ if __name__ == '__main__':
             # send a confirmation mail
             msg_file_path = os.path.join(print_job_global_path, "mail.msg")
             email_manager.reply_to_email_from_file_using_template(msg_file_path,
-                                      "received.html",
-                                      {"{print_jobs_in_queue}": get_print_jobs_in_queue()},
+                                      "RECEIVED_MAIL_TEMPLATE.html",
+                                      {"{jobs_in_queue}": get_jobs_in_queue()},
                                       popup_reply=False)
 
             email_manager.move_email_to_verwerkt_folder(msg)

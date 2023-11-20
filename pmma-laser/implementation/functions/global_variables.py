@@ -1,5 +1,5 @@
 """
-Global variables specific for the local machine.
+Global variables specific for the local machine managing the PMMA laser.
 """
 
 import json
@@ -32,7 +32,9 @@ with open(global_variables_path, 'r') as global_variables_file:
     gv['IOBIT_UNLOCKER_PATH'] = gv_data['IOBIT_UNLOCKER_PATH']
     gv['PASSWORD'] = gv_data['PASSWORD']
 
-    for mail_template in ['RECEIVED_MAIL_TEMPLATE', 'DECLINED_MAIL_TEMPLATE', 'FINISHED_MAIL_TEMPLATE']:
+    for mail_template in ['RECEIVED_MAIL_TEMPLATE',
+                          'DECLINED_MAIL_TEMPLATE',
+                          'FINISHED_MAIL_TEMPLATE']:
 
         if mail_template in gv_data:
             if os.path.exists(gv_data[mail_template]):
@@ -40,16 +42,12 @@ with open(global_variables_path, 'r') as global_variables_file:
             else:
                 raise FileNotFoundError(f'could not find file: {gv_data[mail_template]}')
         else:
-            gv[mail_template] = os.path.join(gv['REPO_DIR_HOME'], 'pmma-laser\\implementation\\email_templates', mail_template+'.html')
-
-
+            gv[mail_template] = os.path.join(
+                    gv['REPO_DIR_HOME'],
+                    'pmma-laser/implementation/email_templates', mail_template+'.html')
 
 # import functions from src
 sys.path.append(gv['REPO_DIR_HOME'])
-
-
-gv['EMAIL_TEMPLATES_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'],
-    r'pmma-laser\implementation\email_templates')
 
 gv['FUNCTIONS_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'],
     r'pmma-laser\implementation\functions')
@@ -60,10 +58,6 @@ gv['ACCEPTED_EXTENSIONS'] = ('.dxf')
 
 gv['DAYS_TO_KEEP_JOBS'] = 5
 
-gv['MAIN_FOLDERS'] = {'WACHTRIJ': 
-                      {'allowed_batch_files': ['afgekeurd.bat', 'laser_klaar.bat']},
-                      'VERWERKT': 
-                      {'allowed_batch_files': []},
-                      'AFGEKEURD': 
-                      {'allowed_batch_files': []}}
-
+gv['MAIN_FOLDERS'] = {'WACHTRIJ': {'allowed_batch_files': ['laser_klaar.bat', 'afgekeurd.bat']},
+                      'VERWERKT': {'allowed_batch_files': []},
+                      'AFGEKEURD': {'allowed_batch_files': []}}

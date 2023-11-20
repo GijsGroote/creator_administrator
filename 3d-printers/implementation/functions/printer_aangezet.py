@@ -5,18 +5,15 @@ Move a print job to the folder AFGEKEURD.
 import os
 import sys
 
-from directory_functions import (
-    job_name_to_global_path,
-    copy_print_job,
-    move_print_job_partly)
+from global_variables import gv
+from local_directory_functions import move_job_to_main_folder, move_print_job_partly
 
-from cmd_farewell_handler import remove_directory_and_close_cmd_farewell
+from src.directory_functions import job_name_to_global_path
+
+from src.cmd_farewell_handler import remove_directory_and_close_cmd_farewell
 from src.talk_to_sa import (
         choose_option,
         yes_or_no)
-from create_batch_files import python_to_batch
-from global_variables import FUNCTIONS_DIR_HOME
-from job_tracker import JobTracker
 
 
 if __name__ == '__main__':
@@ -34,30 +31,22 @@ if __name__ == '__main__':
         sys.exit(0)
 
     elif len(gcode_files) == 1:
-        JobTracker().update_job_main_folder(job_name, "AAN_HET_PRINTEN")
-        copy_print_job(job_name, 'AAN_HET_PRINTEN', source_main_folder='GESLICED')
-        python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name=job_name)
-        remove_directory_and_close_cmd_farewell()
+        move_job_to_main_folder(job_name, 'AAN_HET_PRINTEN')
+        remove_directory_and_close_cmd_farewell(gv)
 
     elif len(gcode_files) > 1:
 
         print(f'warning! {len(gcode_files)} .gcode files detected')
         if yes_or_no('is the entire print job now printing/printed (Y/n)?'):
 
-            JobTracker().update_job_main_folder(job_name, "AAN_HET_PRINTEN")
-
-            copy_print_job(job_name, 'AAN_HET_PRINTEN', source_main_folder='GESLICED')
-            python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), job_name)
-            remove_directory_and_close_cmd_farewell()
+            move_job_to_main_folder(job_name, 'AAN_HET_PRINTEN')
+            remove_directory_and_close_cmd_farewell(gv)
         else:
             gcode_files_to_print_later = choose_option(
                 'please select which .gcode files should be printed later', gcode_files)
 
-            # move everything except gcode_files_to_print_later
-            job_tracker = JobTracker()
-            job_tracker.update_job_main_folder(job_name, "AAN_HET_PRINTEN")
-            job_tracker.set_split_job_to(job_name, True)
-
             move_print_job_partly(job_name, gcode_files_to_print_later)
-            python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'),
+
+    # delete old job_folder and stop python thread
+    remove_directory_and_close_cmd_farewell(gv)
                             job_name=job_name, search_in_main_folder='AAN_HET_PRINTEN')

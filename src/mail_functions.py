@@ -22,19 +22,25 @@ class EmailManager:
 
     def get_new_emails(self, gv: dict) -> list:
         """ Return emails from Outlook inbox. """
-        emails = []
+        msgs = []
         for message in self.inbox.Items:
             # the IWS computer appends every mail in the inbox
             if gv['IWS_COMPUTER']:
-                emails.append(message)
+                msgs.append(message)
             # other than the IWS computer only appends unread mails
             elif message.UnRead:
-                emails.append(message)
+                msgs.append(message)
 
-            # message.UnRead = False
-            # message.Save()
+            message.UnRead = False
+            message.Save()
 
-        return emails
+        # print how many mails are processed
+        if len(msgs) == 0:
+            print('no unread mails found')
+        else:
+            print(f'processing {len(msgs)} new mails')
+
+        return msgs
 
     def move_email_to_verwerkt_folder(self, msg):
         """ Move email to verwerkt folder. """
@@ -84,28 +90,30 @@ class EmailManager:
         else:
             reply.Send()
 
-    def is_mail_a_valid_laser_job_request(self, gv: dict, msg) -> Tuple[bool, str]:
-        """ Check if the requirements are met for a valid laser job. """
+    def is_mail_a_valid_job_request(self, gv: dict, msg) -> Tuple[bool, str]:
+        """ Check if the requirements are met for a valid job request. """
 
-        # Initialize a counter for 3D laser attachments
-        laser_file_count = 0
+        job_file_count = 0
 
         attachments = msg.Attachments
 
         for attachment in attachments:
             if attachment.FileName.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
-                laser_file_count += 1
+                job_file_count += 1
 
-        if laser_file_count == 0:
-            return False, 'no .dxf attachment found'
+        if job_file_count == 0:
+            return False, 'no {gv["ACCEPTED_EXTENSIONS"]} attachment found'
 
-        if 5 < laser_file_count <= 10:
-            print(f'warning! there are: {laser_file_count} .dxf files in the mail')
+        if 5 < job_file_count <= 10:
+            print(f'warning! there are: {job_file_count} '
+                  f'{gv["ACCEPTED_EXTENSIONS"]} files in the mail')
 
-        elif laser_file_count > 10:
-            if yes_or_no(f'{laser_file_count} .dxf files found do '
-                        f'you want to create an laser job (Y/n)?'):
-                return True, f'you decided that: {laser_file_count} .dxf is oke'
-            return False, f'you decided that: {laser_file_count} .dxf files are to much'
+        elif job_file_count > 10:
+            if yes_or_no(f'{job_file_count} {gv["ACCEPTED_EXTENSIONS"]} files '
+                        f'found do you want to create an job (Y/n)?'):
+                return True,\
+            f'you decided that: {job_file_count} {gv["ACCEPTED_EXTENSIONS"]} is oke'
+            return False,\
+                    f'you decided that: {job_file_count} {gv["ACCEPTED_EXTENSIONS"]} files are to much'
 
         return True, ' '
