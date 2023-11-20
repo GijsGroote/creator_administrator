@@ -45,7 +45,7 @@ def make_job_name_unique(job_name: str) -> str:
 
 def get_job_global_paths(gv: dict, search_in_main_folder=None) -> List[str]:
     """ Return global paths for all jobs. """
-
+    
     job_global_paths = []
 
     if search_in_main_folder is None:

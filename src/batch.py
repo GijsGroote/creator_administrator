@@ -10,7 +10,7 @@ def python_to_batch(gv: dict, python_path: str, job_name=None, search_in_main_fo
     """ Convert a python file to an batch file. """
 
     if job_name is not None:
-        batch_file_global_path = job_name_to_global_path(job_name, search_in_main_folder)
+        batch_file_global_path = job_name_to_global_path(gv, job_name, search_in_main_folder)
         assert os.path.exists(batch_file_global_path),\
         f"path {batch_file_global_path} does not exist."
         python_command = f'"{gv["PYTHON_PATH"]}" "{python_path}" "{job_name}"'
