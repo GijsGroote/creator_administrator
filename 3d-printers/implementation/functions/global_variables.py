@@ -59,7 +59,7 @@ gv['ACCEPTED_EXTENSIONS'] = ('.stl', '.obj', '.3mf', '.amf', '.zip.amf', '.xml',
 gv['DAYS_TO_KEEP_JOBS'] = 5
 
 gv['MAIN_FOLDERS'] = {'WACHTRIJ': {'allowed_batch_files': ['gesliced.bat', 'afgekeurd.bat']},
-      'GESLICED': {'allowed_batch_files': ['printer_aangezet', 'afgekeurd.bat']},
+      'GESLICED': {'allowed_batch_files': ['printer_aangezet.bat', 'afgekeurd.bat']},
       'AAN_HET_PRINTEN': {'allowed_batch_files': ['printer_klaar.bat', 'afgekeurd.bat']},
       'VERWERKT': {'allowed_batch_files': []},
       'AFGEKEURD': {'allowed_batch_files': []}}

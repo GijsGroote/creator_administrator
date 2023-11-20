@@ -8,12 +8,13 @@ import os
 import sys
 from typing import Tuple
 from datetime import datetime
-from global_variables import TRACKER_FILE_PATH, DAYS_TO_KEEP_JOBS, PRINT_DIR_HOME, ACCEPTED_PRINT_EXTENSIONS, \
-    FUNCTIONS_DIR_HOME
-from create_batch_files import python_to_batch
-from directory_functions import get_print_job_global_paths
-from convert_functions import print_job_folder_name_to_print_job_name
-from talk_to_sa import yes_or_no
+
+from global_variables import gv
+
+from src.batch import python_to_batch
+from src.directory_functions import get_job_global_paths
+from src.convert_functions import job_folder_name_to_job_name
+from src.talk_to_sa import yes_or_no
 
 
 class JobTracker:
@@ -31,8 +32,8 @@ class JobTracker:
     def __init__(self):
 
         self.job_keys = ['print_job_name', 'main_folder', 'created_on_date', 'split_job']
-        self.tracker_file_path = TRACKER_FILE_PATH
-        self.tracker_backup_file_path = TRACKER_FILE_PATH.replace("3D_print_job_log.json",
+        self.tracker_file_path = gv['TRACKER_FILE_PATH']
+        self.tracker_backup_file_path = gv['TRACKER_FILE_PATH'].replace("3D_print_job_log.json",
                                                                   "3D_print_job_log_backup.json")
 
         self.check_tracker_file_health()
@@ -79,7 +80,7 @@ class JobTracker:
             tracker_dict = json.load(tracker_file)
 
         # get print job info from file system
-        actual_job_global_paths = get_print_job_global_paths()
+        actual_job_global_paths = get_job_global_paths(gv)
 
         # keep track of the print jobs checked
         print_jobs_checked = {actual_print_job_name: False for actual_print_job_name in tracker_dict.keys()}
@@ -96,7 +97,7 @@ class JobTracker:
 
                 if yes_or_no(
                         f"\n{actual_job_global_path} will be removed\nor do you want to add it to the print job tracker (Y/n)?"):
-                    tracker_job_name = print_job_folder_name_to_print_job_name(os.path.basename(actual_job_global_path))
+                    tracker_job_name = job_folder_name_to_job_name(os.path.basename(actual_job_global_path))
 
                     # remove all batch files (they will be recreated later)
                     for file in os.listdir(actual_job_global_path):
@@ -133,29 +134,29 @@ class JobTracker:
 
             if tracker_job_dict["main_folder"] == "WACHTRIJ":
                 if not os.path.exists(os.path.join(actual_job_global_path, "afgekeurd.bat")):
-                    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), tracker_job_name)
+                    python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), tracker_job_name)
                     print(f"created missing file afgekeurd.bat in {actual_job_global_path}")
 
                 if not os.path.exists(os.path.join(actual_job_global_path, "gesliced.bat")):
-                    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'gesliced.py'), tracker_job_name)
+                    python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'gesliced.py'), tracker_job_name)
                     print(f"created missing file gesliced.bat in {actual_job_global_path}")
 
             elif tracker_job_dict["main_folder"] == "GESLICED":
                 if not os.path.exists(os.path.join(actual_job_global_path, "afgekeurd.bat")):
-                    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), tracker_job_name)
+                    python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), tracker_job_name)
                     print(f"created missing file afgekeurd.bat in {actual_job_global_path}")
 
                 if not os.path.exists(os.path.join(actual_job_global_path, "printer_aangezet.bat")):
-                    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_aangezet.py'), tracker_job_name)
+                    python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'printer_aangezet.py'), tracker_job_name)
                     print(f"created missing file printer_aangezet.bat in {actual_job_global_path}")
 
             elif tracker_job_dict["main_folder"] == "AAN_HET_PRINTEN":
                 if not os.path.exists(os.path.join(actual_job_global_path, "afgekeurd.bat")):
-                    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'afgekeurd.py'), tracker_job_name)
+                    python_to_batch(os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), tracker_job_name)
                     print(f"created missing file afgekeurd.bat in {actual_job_global_path}")
 
                 if not os.path.exists(os.path.join(actual_job_global_path, "printer_klaar.bat")):
-                    python_to_batch(os.path.join(FUNCTIONS_DIR_HOME, 'printer_klaar.py'), tracker_job_name)
+                    python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'printer_klaar.py'), tracker_job_name)
                     print(f"created missing file afgekeurd.bat in {actual_job_global_path}")
 
             elif tracker_job_dict["main_folder"] in ["VERWERKT", "AFGEKEURD"]:
@@ -163,7 +164,7 @@ class JobTracker:
                     shutil.rmtree(actual_job_global_path)
                     tracker_dict.pop(tracker_job_name)
 
-                    print(f'{tracker_job_name} removed because it is older than {DAYS_TO_KEEP_JOBS} days')
+                    print(f'{tracker_job_name} removed because it is older than {gv['DAYS_TO_KEEP_JOBS']} days')
 
             else:
                 raise ValueError(
@@ -196,7 +197,7 @@ class JobTracker:
         created_on_date_object = datetime.strptime(created_on_date, "%d-%m-%Y")
         current_date_object = datetime.now()
         date_difference = current_date_object - created_on_date_object
-        return date_difference.days > DAYS_TO_KEEP_JOBS
+        return date_difference.days > gv['DAYS_TO_KEEP_JOBS']
 
     def make_backup(self):
         """ Make a backup of the tracker file. """

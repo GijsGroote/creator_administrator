@@ -31,8 +31,8 @@ class EmailManager:
             elif message.UnRead:
                 msgs.append(message)
 
-            message.UnRead = False
-            message.Save()
+            # message.UnRead = False
+            # message.Save()
 
         # print how many mails are processed
         if len(msgs) == 0:
@@ -46,7 +46,7 @@ class EmailManager:
         """ Move email to verwerkt folder. """
         msg.Move(self.verwerkt_folder)
 
-    def laser_mail_content(self, msg_file_path: str):
+    def print_mail_content(self, msg_file_path: str):
         """ Print the content of an .msg file. """
         outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
         msg = outlook.OpenSharedItem(msg_file_path)
@@ -102,7 +102,7 @@ class EmailManager:
                 job_file_count += 1
 
         if job_file_count == 0:
-            return False, 'no {gv["ACCEPTED_EXTENSIONS"]} attachment found'
+            return False, f'no {gv["ACCEPTED_EXTENSIONS"]} attachment found'
 
         if 5 < job_file_count <= 10:
             print(f'warning! there are: {job_file_count} '

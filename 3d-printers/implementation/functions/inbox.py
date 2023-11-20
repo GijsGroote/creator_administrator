@@ -8,11 +8,11 @@ import os
 from global_variables import gv
 from job_tracker import JobTracker
 
-from src.create_batch_files import python_to_batch
+from src.batch import python_to_batch
 from src.cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from src.directory_functions import get_jobs_in_queue
 from src.mail_functions import EmailManager
-from src.convert_functions import mail_to_name, make_print_job_name_unique
+from src.convert_functions import mail_to_name, make_job_name_unique
 
 def create_print_job(job_name: str, msg) -> str:
     """ Create a 'print job' or folder in WACHTRIJ and
@@ -30,11 +30,11 @@ def create_print_job(job_name: str, msg) -> str:
     # Save the .stl files
     for attachment in msg.Attachments:
         print(f'Downloaded file: {attachment.FileName.lower()}')
-        if attachment.FileName.lower().endswith(gv['ACCEPTED_PRINT_EXTENSIONS']):
+        if attachment.FileName.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
             attachment.SaveAsFile(os.path.join(print_job_global_path, attachment.FileName))
 
-    python_to_batch(os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), job_name)
-    python_to_batch(os.path.join(gv['FUNCTIONS_DIR_HOME'], 'gesliced.py'), job_name)
+    python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), job_name)
+    python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'gesliced.py'), job_name)
 
     JobTracker().add_job(job_name, "WACHTRIJ")
 
@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     print('searching for new mail...')
     email_manager = EmailManager()
-    msgs = email_manager.get_new_emails()
+    msgs = email_manager.get_new_emails(gv)
     created_print_jobs = False
 
     # loop over all mails, check if they are valid and create print jobs
@@ -60,7 +60,7 @@ if __name__ == '__main__':
             created_print_jobs = True
 
             sender_name = mail_to_name(str(msg.Sender))
-            job_name = make_print_job_name_unique(sender_name)
+            job_name = make_job_name_unique(gv, sender_name)
 
             print(f'mail from: {email_manager.get_email_address(msg)} is valid request,'
                   f' create print job: {job_name}')
@@ -69,9 +69,10 @@ if __name__ == '__main__':
 
             # send a confirmation mail
             msg_file_path = os.path.join(print_job_global_path, "mail.msg")
-            email_manager.reply_to_email_from_file_using_template(msg_file_path,
-                                      "RECEIVED_MAIL_TEMPLATE.html",
-                                      {"{jobs_in_queue}": get_jobs_in_queue()},
+            email_manager.reply_to_email_from_file_using_template(gv,
+                                      msg_file_path,
+                                      "RECEIVED_MAIL_TEMPLATE",
+                                      {"{jobs_in_queue}": get_jobs_in_queue(gv)},
                                       popup_reply=False)
 
             email_manager.move_email_to_verwerkt_folder(msg)

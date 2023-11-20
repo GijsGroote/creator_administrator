@@ -9,8 +9,14 @@ import os
 
 from global_variables import gv
 
+def open_gesliced_folder_cmd_farewell():
+    """ Exit python with a 912 exit status which open the GESLICED folder. """
+    sys.exit(912)
+
 if __name__ == '__main__':
 
+    print('nou ja zeg')
+    input('zeg eensa')
     error_level = int(sys.argv[1])
 
     if error_level == 911:

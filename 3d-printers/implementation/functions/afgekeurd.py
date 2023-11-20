@@ -5,6 +5,7 @@ Move a print job to the folder AFGEKEURD.
 import sys
 import glob
 
+from global_variables import gv
 from local_directory_functions import move_job_to_main_folder
 # from job_tracker import JobTracker
 
@@ -17,7 +18,7 @@ from src.cmd_farewell_handler import remove_directory_and_close_cmd_farewell
 if __name__ == '__main__':
 
     job_name = sys.argv[1]
-    job_global_path = job_name_to_global_path(job_name)
+    job_global_path = job_name_to_global_path(gv, job_name)
 
     # send response mail
     msg_file_paths = list(glob.glob(job_global_path + "/*.msg"))
@@ -33,8 +34,9 @@ if __name__ == '__main__':
             print(f'Warning! more than one: {len(msg_file_paths)} .eml files detected')
             input('press enter to send response mail. . .')
 
-        email_manager.reply_to_email_from_file_using_template(msg_file_paths[0],
-                                                                "declined.html",
+        email_manager.reply_to_email_from_file_using_template(gv,
+                                                                msg_file_paths[0],
+                                                                'DECLINED_MAIL_TEMPLATE',
                                                                 {'{declined_reason}': declined_reason},
                                                                 popup_reply=True)
 
@@ -44,8 +46,7 @@ if __name__ == '__main__':
 
     else:
         print(f'folder: {job_global_path} does not contain any '\
-              '.eml files, no response mail can be send')
+              '.msg files, no response mail can be send')
 
-    JobTracker().update_job_main_folder(job_name, "AFGEKEURD")
-    copy_print_job(job_name, "AFGEKEURD")
+    move_job_to_main_folder(job_name, "AFGEKEURD")
     remove_directory_and_close_cmd_farewell()

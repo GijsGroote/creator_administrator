@@ -19,7 +19,7 @@ from src.talk_to_sa import (
 if __name__ == '__main__':
 
     job_name = sys.argv[1]
-    job_global_path = job_name_to_global_path(job_name, search_in_main_folder="GESLICED")
+    job_global_path = job_name_to_global_path(gv, job_name, search_in_main_folder="GESLICED")
 
     # check if there are multiple .gcode files
     gcode_files = [gcode_file for
@@ -31,7 +31,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     elif len(gcode_files) == 1:
-        move_job_to_main_folder(job_name, 'AAN_HET_PRINTEN')
+        move_job_to_main_folder(job_name, 'AAN_HET_PRINTEN', 'GESLICED')
         remove_directory_and_close_cmd_farewell(gv)
 
     elif len(gcode_files) > 1:
@@ -39,7 +39,7 @@ if __name__ == '__main__':
         print(f'warning! {len(gcode_files)} .gcode files detected')
         if yes_or_no('is the entire print job now printing/printed (Y/n)?'):
 
-            move_job_to_main_folder(job_name, 'AAN_HET_PRINTEN')
+            move_job_to_main_folder(job_name, 'AAN_HET_PRINTEN', 'GESLICED')
             remove_directory_and_close_cmd_farewell(gv)
         else:
             gcode_files_to_print_later = choose_option(
@@ -48,5 +48,5 @@ if __name__ == '__main__':
             move_print_job_partly(job_name, gcode_files_to_print_later)
 
     # delete old job_folder and stop python thread
-    remove_directory_and_close_cmd_farewell(gv)
+    remove_directory_and_close_cmd_farewell(gv,
                             job_name=job_name, search_in_main_folder='AAN_HET_PRINTEN')
