@@ -41,7 +41,8 @@ Before you begin, make sure you have the following dependencies installed:
        "TRACKER_FILE_PATH":  "C:\\Users\\user\\.ssh\\3D_print_job_log.json",
        "PYTHON_PATH": "C:Program Files\\Python311\\python.exe",
        "IOBIT_UNLOCKER_PATH": "C:\\Program Files (x86)\\IObit\\IObit Unlocker\\IObitUnlocker.exe",
-       "OUTLOOK_PATH":  "C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE"
+       "OUTLOOK_PATH":  "C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE",
+       "PASSWORD":  "simple password"
    }
    ```
 

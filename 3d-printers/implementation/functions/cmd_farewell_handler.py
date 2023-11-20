@@ -43,7 +43,6 @@ def exit_cmd_farewell():
     """ Exit python with a 900 exit status which closes the cmd that runs the batch process. """
     sys.exit(900)
 
-
 def remove_directory_cmd_farewell():
     """ Exit python and remove the directory that contains the .bat script. """
 

@@ -17,7 +17,7 @@ from global_variables import (
     PRINT_DIR_HOME,
     ACCEPTED_PRINT_EXTENSIONS)
 from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
-from talk_to_sa import password_please
+from src.talk_to_sa import password_please
 from job_tracker import JobTracker
 
 

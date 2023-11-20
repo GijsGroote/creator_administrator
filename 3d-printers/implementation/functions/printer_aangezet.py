@@ -11,7 +11,7 @@ from directory_functions import (
     move_print_job_partly)
 
 from cmd_farewell_handler import remove_directory_and_close_cmd_farewell
-from talk_to_sa import (
+from src.talk_to_sa import (
         choose_option,
         yes_or_no)
 from create_batch_files import python_to_batch
