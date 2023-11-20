@@ -3,6 +3,7 @@ Convert python code to clickable batch functions.
 """
 
 import os
+from global_variables import gv
 from src.cmd_farewell_handler import get_cmd_farewells
 from src.directory_functions import job_name_to_global_path
 
@@ -28,4 +29,4 @@ def python_to_batch(gv: dict, python_path: str, job_name=None, search_in_main_fo
 
 {python_command}
 
-{cmd_farewells}""")
+{get_cmd_farewells('gv')}""")

@@ -10,16 +10,16 @@ from typing import List
 from src.convert_functions import (
     job_folder_name_to_date)
 
-def does_job_name_exist(job_name: str) -> bool:
+def does_job_name_exist(gv: dict, job_name: str) -> bool:
     """ Check if the job name exist, return boolean. """
 
-    for folder_name in get_job_folder_names():
+    for folder_name in get_job_folder_names(gv):
         if folder_name.endswith(job_name):
             return True
 
     return False
 
-def make_job_name_unique(job_name: str) -> str:
+def make_job_name_unique(gv: dict, job_name: str) -> str:
     """ Make the job name unique.
 
     if the job name already exists append _(NUMBER) to job name to make it unique
@@ -27,7 +27,7 @@ def make_job_name_unique(job_name: str) -> str:
     """
 
     max_job_number = 0
-    for folder_name in get_job_folder_names():
+    for folder_name in get_job_folder_names(gv):
 
         match_job_number= re.search(rf'.*{job_name}_\((\d+)\)$', folder_name)
 
@@ -89,34 +89,34 @@ def job_name_to_global_path(gv: dict, job_name: str, search_in_main_folder=None)
 
     raise ValueError(f"no job path found for job with name {job_name}")
 
-def job_name_to_job_folder_name(job_name: str, search_in_main_folder=None) -> str:
+def job_name_to_job_folder_name(gv: dict, job_name: str, search_in_main_folder=None) -> str:
     """ Get the job folder name from a job name. """
 
-    for job_folder_name in get_job_folder_names(search_in_main_folder):
+    for job_folder_name in get_job_folder_names(gv, search_in_main_folder):
         if job_name in job_folder_name:
             return job_folder_name
 
     raise ValueError(f'could not find job folder name for job name: {job_name}')
 
-def does_job_exist_in_main_folder(job_name: str, main_folder: str) -> bool:
+def does_job_exist_in_main_folder(gv: dict, job_name: str, main_folder: str) -> bool:
     """ Check if a job exists in a main folder. """
-    for job_folder_name in get_job_folder_names(main_folder):
+    for job_folder_name in get_job_folder_names(gv, main_folder):
         if job_name in job_folder_name:
             return True
     return False
 
-def get_new_job_folder_name(job_name: str, source_dir_global_path: str,
+def get_new_job_folder_name(gv: dict, job_name: str, source_dir_global_path: str,
                             target_main_folder: str) -> str:
     """ Get a job folder name for a job moved to a main folder. """
 
-    job_folder_name = job_name_to_job_folder_name(job_name)
+    job_folder_name = job_name_to_job_folder_name(gv, job_name)
 
     if target_main_folder in ['AFGEKEURD', 'WACHTRIJ', 'VERWERKT']:
         return job_folder_name
 
     if target_main_folder == 'GESLICED':
 
-        date = job_folder_name_to_date(job_folder_name)
+        date = job_folder_name_to_date(gv, job_folder_name)
 
         gcode_files = [file for file in os.listdir(source_dir_global_path) if file.lower().endswith(".gcode")]
 
@@ -167,17 +167,18 @@ def prevent_batch_file(gv: dict, target_file_global_path: str) -> bool:
                     return False
     return True
 
-def rename_target_item(job_name: str, target_item: str) -> str:
-    """ Rename the target item. """
+# TODO: this function should only exist in the 3D printers piece
+# def rename_target_item(job_name: str, target_item: str) -> str:
+#     """ Rename the target item. """
 
-    if target_item.lower().endswith('.gcode') and \
-            'GESLICED' in target_item:
+#     if target_item.lower().endswith('.gcode') and \
+#             'GESLICED' in target_item:
 
-        dir_path, filename = os.path.split(target_item)
+#         dir_path, filename = os.path.split(target_item)
 
-        return os.path.join(dir_path, job_name + '_' + filename)
-    else:
-        return target_item
+#         return os.path.join(dir_path, job_name + '_' + filename)
+#     else:
+#         return target_item
 
 def copy_job(job_name: str, target_main_folder: str, source_main_folder=None):
     """ Move laser job to target_main_folder. """
@@ -222,48 +223,50 @@ def copy_job(job_name: str, target_main_folder: str, source_main_folder=None):
             copy(source_item, target_item)
 
 
-def move_job_partly(gv: dict, job_name: str, exclude_files: List):
-    """ Partly move, partly copy job from GESLICED to AAN_HET_PRINTEN folder. """
+# TOOD: this function should only exist in the 3D part
+# def move_job_partly(gv: dict, job_name: str, exclude_files: List):
+#     """ Partly move, partly copy job from GESLICED to AAN_HET_PRINTEN folder. """
 
-    # find source directory
-    source_dir_global_path = job_name_to_global_path(job_name, 'GESLICED')
+#     # find source directory
+#     source_dir_global_path = job_name_to_global_path(gv, job_name, 'GESLICED')
 
-    if does_job_exist_in_main_folder(job_name, 'AAN_HET_PRINTEN'):
-        target_dir_global_path = job_name_to_global_path(
-            job_name, search_in_main_folder='AAN_HET_PRINTEN')
-    else:
-        date = job_folder_name_to_date(
-            job_name_to_job_folder_name(job_name))
+#     if does_job_exist_in_main_folder(gv, job_name, 'AAN_HET_PRINTEN'):
+#         target_dir_global_path = job_name_to_global_path(gv,
+#             job_name, search_in_main_folder='AAN_HET_PRINTEN')
+#     else:
+#         date = job_folder_name_to_date(gv,
+#             job_name_to_job_folder_name(job_name))
 
-        new_job_folder_name = date + job_name
+#         new_job_folder_name = date + job_name
 
-        target_dir_global_path = os.path.join(
-            gv['JOBS_DIR_HOME'],
-            'AAN_HET_PRINTEN',
-            new_job_folder_name)
-        os.mkdir(target_dir_global_path)
+#         target_dir_global_path = os.path.join(
+#             gv['JOBS_DIR_HOME'],
+#             'AAN_HET_PRINTEN',
+#             new_job_folder_name)
+#         os.mkdir(target_dir_global_path)
 
-    # partly move some files to target
-    # move items from source to target directory
-    for item in os.listdir(source_dir_global_path):
-        source_item = os.path.join(source_dir_global_path, item)
-        target_item = os.path.join(target_dir_global_path, item)
+#     # partly move some files to target
+#     # move items from source to target directory
+#     for item in os.listdir(source_dir_global_path):
+#         source_item = os.path.join(source_dir_global_path, item)
+#         target_item = os.path.join(target_dir_global_path, item)
 
-        if item.lower().endswith('.gcode'):
-            if item in exclude_files:
-                continue
-            move(source_item, target_item)
-            continue
+#         if item.lower().endswith('.gcode'):
+#             if item in exclude_files:
+#                 continue
+#             move(source_item, target_item)
+#             continue
 
-        if os.path.isdir(source_item):
-            copy(source_item, target_dir_global_path)
-        if target_dir_global_path.endswith('.bat'):
-            if prevent_batch_file(gv, target_item):
-                continue
-        copy(source_item, target_item)
+#         if os.path.isdir(source_item):
+#             copy(source_item, target_dir_global_path)
+#         if target_dir_global_path.endswith('.bat'):
+#             if prevent_batch_file(gv, target_item):
+#                 continue
+#         copy(source_item, target_item)
 
 def get_jobs_in_queue(gv: dict) -> int:
     """ return the laser jobs in the main folder WACHTRIJ. """
+    # TODO: if GESLICED EXISY also count that please
 
     n_dirs_in_wachtrij = len([job_folder_name for job_folder_name in
                               os.listdir(os.path.join(gv['JOBS_DIR_HOME'], 'WACHTRIJ'))
@@ -272,8 +275,8 @@ def get_jobs_in_queue(gv: dict) -> int:
 
     return n_dirs_in_wachtrij
 
-def folder_contains_3d_file(gv: dict, global_path: str) -> bool:
-    """ Check if a folder contains at least one 3D laser file. """
+def folder_contains_accepted_extension_file(gv: dict, global_path: str) -> bool:
+    """ Check if a folder contains at least one file with accepted extension. """
 
     # Iterate through the files and check if any of them have a valid 3D laser extension
     if any(file.endswith(gv['ACCEPTED_EXTENSIONS']) for file in os.listdir(global_path)):

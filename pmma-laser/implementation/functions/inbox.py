@@ -31,11 +31,11 @@ def create_laser_job(job_name: str, msg) -> str:
     # Save the files
     for attachment in msg.Attachments:
         print(f'Downloaded file: {attachment.FileName.lower()}')
-        if attachment.FileName.lower().endswith(fv['ACCEPTED_EXTENSIONS']):
+        if attachment.FileName.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
             attachment.SaveAsFile(os.path.join(laser_job_global_path, attachment.FileName))
 
-    python_to_batch(os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), job_name)
-    python_to_batch(os.path.join(gv['FUNCTIONS_DIR_HOME'], 'laser_klaar.py'), job_name)
+    python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), job_name)
+    python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'laser_klaar.py'), job_name)
 
     JobTracker().add_job(job_name, "WACHTRIJ")
 
