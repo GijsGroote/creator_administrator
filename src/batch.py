@@ -3,7 +3,6 @@ Convert python code to clickable batch functions.
 """
 
 import os
-from src.cmd_farewell_handler import get_cmd_farewells
 from src.directory_functions import job_name_to_global_path
 
 def python_to_batch(gv: dict, python_path: str, job_name=None, search_in_main_folder=None):
@@ -24,7 +23,7 @@ def python_to_batch(gv: dict, python_path: str, job_name=None, search_in_main_fo
 
 {python_command}
 
-{get_cmd_farewells(gv)}""")
+{gv["CMD_FAREWELLS"]}""")
         
 def create_batch_files_for_job_folder(gv: dict, job_name: str, main_folder: str):
     """ Create batch files for a job_folder in main_folder. """

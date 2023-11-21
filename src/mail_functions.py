@@ -44,7 +44,8 @@ class EmailManager:
 
     def move_email_to_verwerkt_folder(self, msg):
         """ Move email to verwerkt folder. """
-        msg.Move(self.verwerkt_folder)
+        pass
+        # msg.Move(self.verwerkt_folder)
 
     def print_mail_content(self, msg_file_path: str):
         """ Print the content of an .msg file. """

@@ -50,7 +50,7 @@ with open(global_variables_path, 'r') as global_variables_file:
 sys.path.append(gv['REPO_DIR_HOME'])
 
 gv['FUNCTIONS_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'],
-    r'3D-printers\implementation\functions')
+    r'3d-printers\implementation\functions')
 
 gv['FIGURES_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'], r'figures')
 
@@ -58,8 +58,34 @@ gv['ACCEPTED_EXTENSIONS'] = ('.stl', '.obj', '.3mf', '.amf', '.zip.amf', '.xml',
 
 gv['DAYS_TO_KEEP_JOBS'] = 5
 
+
 gv['MAIN_FOLDERS'] = {'WACHTRIJ': {'allowed_batch_files': ['gesliced.bat', 'afgekeurd.bat']},
       'GESLICED': {'allowed_batch_files': ['printer_aangezet.bat', 'afgekeurd.bat']},
       'AAN_HET_PRINTEN': {'allowed_batch_files': ['printer_klaar.bat', 'afgekeurd.bat']},
       'VERWERKT': {'allowed_batch_files': []},
       'AFGEKEURD': {'allowed_batch_files': []}}
+
+gv['CMD_FAREWELLS'] = rf"""rem custom exit code summary:
+    rem 0 (default) - display "press any key to continue. . ." message
+    rem 900 - close cmd that runs .bat file
+    rem 901 - remove folder that runs .bat file
+    rem 902 - remove folder and close cmd that runs .bat file\
+    rem [903, 910] - reserved error status numbers
+    rem [911 - 920] call python script and pass exit status
+
+    if %errorlevel% equ 900 (
+        exit
+    ) else if %errorlevel% equ 901 (
+        "{gv['IOBIT_UNLOCKER_PATH']}" "/Delete" "%~dp0"
+        pause
+    ) else if %errorlevel% equ 902 (
+        "{gv['IOBIT_UNLOCKER_PATH']}" "/Delete" "%~dp0"
+        exit
+    ) else if %errorlevel% geq 911 (
+        if %errorlevel% leq 920 (
+            pause            
+            "{gv['PYTHON_PATH']}" "{os.path.join(gv['FUNCTIONS_DIR_HOME'], 'local_cmd_farewell_handler.py')}" "%errorlevel%
+        )
+    ) else (
+    pause
+    )"""

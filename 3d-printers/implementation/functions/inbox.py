@@ -7,9 +7,10 @@ import os
 
 from global_variables import gv
 from job_tracker import JobTracker
+from local_cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
+
 
 from src.batch import python_to_batch
-from src.cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from src.directory_functions import get_jobs_in_queue
 from src.mail_functions import EmailManager
 from src.convert_functions import mail_to_name, make_job_name_unique
