@@ -112,6 +112,9 @@ def get_job_folder_names(gv: dict, search_in_main_folder=None) -> List[str]:
 
 def job_name_to_global_path(gv: dict, job_name: str, search_in_main_folder=None) -> str:
     """ Return global path of job. """
+    print(f'dit zijn de global paths: {get_job_global_paths(gv, search_in_main_folder)}')
+    print(" ")
+    print(job_name)
 
     for job_global_path in get_job_global_paths(gv, search_in_main_folder):
         if job_global_path.endswith(job_name):

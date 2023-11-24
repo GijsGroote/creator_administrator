@@ -3,6 +3,8 @@ Extract information from input.
 """
 
 import re
+from unidecode import unidecode
+
 from src.directory_functions import (
     get_job_folder_names,
     does_job_name_exist
@@ -43,6 +45,7 @@ def make_job_name_unique(gv: dict, job_name: str) -> str:
     if the job name already exists append _(NUMBER) to job name to make it unique
     if the job_name is unique but job_name_(NUMBER) exist then return job_name_(NUMBER+1).
     """
+    job_name = unidecode(job_name)
 
     max_job_number = 0
     for folder_name in get_job_folder_names(gv):
