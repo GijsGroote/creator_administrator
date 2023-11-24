@@ -53,7 +53,7 @@ def remove_directory_and_close_cmd_farewell(gv: dict):
     if os.getcwd().lower().startswith(gv['JOBS_DIR_HOME'].lower()):
         sys.exit(902)
     else:
-        raise ValueError(f'the working directory must be a subdirectory of {gv['JOBS_DIR_HOME']} '
+        raise ValueError(f'the working directory must be a subdirectory of {gv["JOBS_DIR_HOME"]} '
                          f'and the working directory is {os.getcwd()}')
 
 def goto_wachtrij_and_close_cmd_farewell():
