@@ -16,8 +16,8 @@ from src.directory_functions import (
     job_name_to_job_folder_name,
     copy_job_files,
     does_job_exist_in_main_folder,
-    copy,
-    move)
+    copy)
+
 from src.convert_functions import job_folder_name_to_date
 from src.batch import create_batch_files_for_job_folder
 
@@ -30,8 +30,7 @@ def move_job_to_main_folder(job_name: str, target_main_folder: str, source_main_
          - stops the python thread.
     """
     # update the job tracker
-    # JobTracker().update_job_main_folder(job_name, target_main_folder)
-
+    JobTracker().update_job_main_folder(job_name, target_main_folder)
     
     # find source directory
     source_job_folder_global_path = job_name_to_global_path(gv, job_name, source_main_folder)
@@ -91,7 +90,7 @@ def move_print_job_partly(job_name: str, exclude_files: list):
             shutil.move(source_item, target_item)
             continue
 
-        shutil.copy(source_item, target_item)
+        copy(source_item, target_item)
 
     # create new batch files
     create_batch_files_for_job_folder(gv, target_job_folder_global_path, 'AAN_HET_PRINTEN')

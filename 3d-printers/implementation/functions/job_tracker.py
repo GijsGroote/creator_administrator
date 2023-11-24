@@ -11,7 +11,7 @@ from datetime import datetime
 
 from global_variables import gv
 
-from src.batch import python_to_batch
+from src.batch import python_to_batch, create_batch_files_for_job_folder
 from src.directory_functions import get_job_global_paths
 from src.convert_functions import job_folder_name_to_job_name
 from src.talk_to_sa import yes_or_no
@@ -132,51 +132,23 @@ class JobTracker:
                         print("aborting..")
                         sys.exit(0)
 
-            if tracker_job_dict["main_folder"] == "WACHTRIJ":
-                if not os.path.exists(os.path.join(actual_job_global_path, "afgekeurd.bat")):
-                    python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), tracker_job_name)
-                    print(f"created missing file afgekeurd.bat in {actual_job_global_path}")
+            if not all([os.path.exists(os.path.join(actual_job_global_path, batch_file)) for batch_file in 
+                                       gv['MAIN_FOLDERS'][tracker_job_dict['main_folder']]['allowed_batch_files']]):
+                create_batch_files_for_job_folder(gv, tracker_job_dict['print_job_name'], tracker_job_dict['main_folder'])
 
-                if not os.path.exists(os.path.join(actual_job_global_path, "gesliced.bat")):
-                    python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'gesliced.py'), tracker_job_name)
-                    print(f"created missing file gesliced.bat in {actual_job_global_path}")
-
-            elif tracker_job_dict["main_folder"] == "GESLICED":
-                if not os.path.exists(os.path.join(actual_job_global_path, "afgekeurd.bat")):
-                    python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), tracker_job_name)
-                    print(f"created missing file afgekeurd.bat in {actual_job_global_path}")
-
-                if not os.path.exists(os.path.join(actual_job_global_path, "printer_aangezet.bat")):
-                    python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'printer_aangezet.py'), tracker_job_name)
-                    print(f"created missing file printer_aangezet.bat in {actual_job_global_path}")
-
-            elif tracker_job_dict["main_folder"] == "AAN_HET_PRINTEN":
-                if not os.path.exists(os.path.join(actual_job_global_path, "afgekeurd.bat")):
-                    python_to_batch(os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), tracker_job_name)
-                    print(f"created missing file afgekeurd.bat in {actual_job_global_path}")
-
-                if not os.path.exists(os.path.join(actual_job_global_path, "printer_klaar.bat")):
-                    python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'printer_klaar.py'), tracker_job_name)
-                    print(f"created missing file afgekeurd.bat in {actual_job_global_path}")
-
-            elif tracker_job_dict["main_folder"] in ["VERWERKT", "AFGEKEURD"]:
-                if self.is_job_old(tracker_job_dict["created_on_date"]):
-                    shutil.rmtree(actual_job_global_path)
-                    tracker_dict.pop(tracker_job_name)
-
-                    print(f'{tracker_job_name} removed because it is older than {gv['DAYS_TO_KEEP_JOBS']} days')
-
-            else:
-                raise ValueError(
-                    "The job should be in a main folder: WACHTRIJ, GESLICED, AAN_HET_PRINTEN, VERWERKT or AFGEKEURD")
-
+            if tracker_job_dict['split_job']:
+                if not (os.path.exists(os.path.join(actual_job_global_path.replace('AAN_HET_PRINTEN', 'GESLICED'), 'afgekeurd.bat'))
+                    or os.path.exists(os.path.join(actual_job_global_path.replace('AAN_HET_PRINTEN', 'GESLICED'), 'printer_aangezet.bat'))):
+                    create_batch_files_for_job_folder(gv, tracker_job_dict['print_job_name'], 'GESLICED')
+                    
+                            
             print_jobs_checked[tracker_job_name] = True
 
         for tracker_job_name, pj_checked in print_jobs_checked.items():
             if not pj_checked:
-                print(f"print job: {tracker_job_name} found in print job tracker but not on file system")
+                print(f"print job: {tracker_job_name} not found on file system and removed from print job tracker")
+
                 tracker_dict.pop(tracker_job_name)
-                print(f"print job: {tracker_job_name} removed from print job tracker")
 
         with open(self.tracker_file_path, 'w') as tracker_file:
             json.dump(tracker_dict, tracker_file, indent=4)

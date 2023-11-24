@@ -36,20 +36,19 @@ def copy_job_files(target_dir_global_path: str, source_dir_global_path: str, exc
         target_item = os.path.join(target_dir_global_path, item)
 
         if source_item.endswith(tuple(exclude_extensions)):
-            print(f'exclude {item}')
             continue
-        elif os.path.isdir(source_item):
-            print(f'copy the directory and substuff {item}')
-            shutil.copytree(source_item, target_item) 
         else:
-            print(f'copy item {item}')
-            shutil.copy(source_item, target_item)
+            copy(source_item, target_item)
+
 
 def copy(source_dir_global: str, target_dir_global: str):
     """ Copy directory and subdirectories recursively. """
+    if os.path.exists(target_dir_global):
+        return
     
-    if os.path.isdir(source_dir_global):
+    elif os.path.isdir(source_dir_global):
         shutil.copytree(source_dir_global, target_dir_global)   
+    
     else:
         shutil.copy(source_dir_global, target_dir_global)
         
