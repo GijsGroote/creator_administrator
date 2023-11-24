@@ -11,12 +11,11 @@ from tkinter import filedialog
 from global_variables import gv
 from job_tracker import JobTracker
 
-from src.directory_functions import (
-    copy,
-    make_print_job_name_unique)
+from src.directory_functions import copy
 from src.batch import python_to_batch
 from src.cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from src.talk_to_sa import password_please
+from src.convert_functions import make_job_name_unique
 
 
 def is_folder_a_valid_print_job(global_path: str) -> Tuple[bool, str]:
@@ -26,11 +25,11 @@ def is_folder_a_valid_print_job(global_path: str) -> Tuple[bool, str]:
 
     for _, _, files in os.walk(global_path):
         for file in files:
-            if file.lower().endswith(gv['ACCEPTED_PRINT_EXTENSIONS']):
+            if file.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
                 print_file_count += 1
 
     if print_file_count == 0:
-        return False, f'no {gv["ACCEPTED_PRINT_EXTENSIONS"]} attachment found'
+        return False, f'no {gv["ACCEPTED_EXTENSIONS"]} attachment found'
 
     return True, ' '
 
@@ -50,11 +49,6 @@ def create_print_job(job_name: str, job_content_global_path: str):
     python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'gesliced.py'), job_name=job_name)
 
 
-def local_path_to_job_name(job_content_local_path: str) -> str:
-    """ return a unique print job name. """
-    return make_print_job_name_unique(job_content_local_path.replace(' ', '_'))
-
-
 if __name__ == '__main__':
 
     # check health
@@ -62,7 +56,7 @@ if __name__ == '__main__':
     job_tracker.check_health()
 
     print('You are using select_bestand.bat, the default method is the input.bat file')
-    password_please()
+    password_please(gv)
 
     print('''select <FOLDER> with the following structure:
 └───<FOLDER>
@@ -95,7 +89,7 @@ if __name__ == '__main__':
         is_valid_job, invalid_reason = is_folder_a_valid_print_job(potential_job_global_path)
 
         if is_valid_job:
-            job_name = local_path_to_job_name(potential_job_local_path)
+            job_name =  make_job_name_unique(potential_job_local_path)
             job_folder_name = project_name + '_' + job_name
 
             create_print_job(job_folder_name, potential_job_global_path)

@@ -10,7 +10,7 @@ from tkinter import filedialog
 
 from global_variables import gv
 from job_tracker import JobTracker
-from src.create_batch_file import python_to_batch
+from src.batch import python_to_batch
 from src.directory_functions import (
     copy,
     make_laser_job_name_unique)

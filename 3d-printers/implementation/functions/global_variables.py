@@ -6,6 +6,7 @@ import json
 import os
 import sys
 
+
 # Detect the computer.
 IWS_COMPUTER = False
 if os.path.exists(r'C:\Users\IWS\.ssh\3D_print_global_variables.json'):
@@ -58,34 +59,12 @@ gv['ACCEPTED_EXTENSIONS'] = ('.stl', '.obj', '.3mf', '.amf', '.zip.amf', '.xml',
 
 gv['DAYS_TO_KEEP_JOBS'] = 5
 
-
 gv['MAIN_FOLDERS'] = {'WACHTRIJ': {'allowed_batch_files': ['gesliced.bat', 'afgekeurd.bat']},
       'GESLICED': {'allowed_batch_files': ['printer_aangezet.bat', 'afgekeurd.bat']},
       'AAN_HET_PRINTEN': {'allowed_batch_files': ['printer_klaar.bat', 'afgekeurd.bat']},
       'VERWERKT': {'allowed_batch_files': []},
       'AFGEKEURD': {'allowed_batch_files': []}}
 
-gv['CMD_FAREWELLS'] = rf"""rem custom exit code summary:
-    rem 0 (default) - display "press any key to continue. . ." message
-    rem 900 - close cmd that runs .bat file
-    rem 901 - remove folder that runs .bat file
-    rem 902 - remove folder and close cmd that runs .bat file\
-    rem [903, 910] - reserved error status numbers
-    rem [911 - 920] call python script and pass exit status
+from src.cmd_farewell_handler import get_cmd_farewells
 
-    if %errorlevel% equ 900 (
-        exit
-    ) else if %errorlevel% equ 901 (
-        "{gv['IOBIT_UNLOCKER_PATH']}" "/Delete" "%~dp0"
-        pause
-    ) else if %errorlevel% equ 902 (
-        "{gv['IOBIT_UNLOCKER_PATH']}" "/Delete" "%~dp0"
-        exit
-    ) else if %errorlevel% geq 911 (
-        if %errorlevel% leq 920 (
-            pause            
-            "{gv['PYTHON_PATH']}" "{os.path.join(gv['FUNCTIONS_DIR_HOME'], 'local_cmd_farewell_handler.py')}" "%errorlevel%
-        )
-    ) else (
-    pause
-    )"""
+gv['CMD_FAREWELLS'] = get_cmd_farewells(gv)

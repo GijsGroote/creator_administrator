@@ -10,7 +10,7 @@ from local_directory_functions import move_job_to_main_folder, move_print_job_pa
 
 from src.directory_functions import job_name_to_global_path
 
-from src.cmd_farewell_handler import remove_directory_and_close_cmd_farewell
+from src.cmd_farewell_handler import remove_directory_and_close_cmd_farewell, exit_cmd_farewell
 from src.talk_to_sa import (
         choose_option,
         yes_or_no)
@@ -46,7 +46,8 @@ if __name__ == '__main__':
                 'please select which .gcode files should be printed later', gcode_files)
 
             move_print_job_partly(job_name, gcode_files_to_print_later)
+            exit_cmd_farewell()
+
 
     # delete old job_folder and stop python thread
-    remove_directory_and_close_cmd_farewell(gv,
-                            job_name=job_name, search_in_main_folder='AAN_HET_PRINTEN')
+    remove_directory_and_close_cmd_farewell(gv)
