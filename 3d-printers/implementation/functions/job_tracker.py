@@ -11,7 +11,7 @@ from datetime import datetime
 
 from global_variables import gv
 
-from src.batch import python_to_batch, create_batch_files_for_job_folder
+from src.batch import create_batch_files_for_job_folder
 from src.directory_functions import get_job_global_paths
 from src.convert_functions import job_folder_name_to_job_name
 from src.talk_to_sa import yes_or_no
@@ -56,7 +56,7 @@ class JobTracker:
             sys.exit(0)
 
     def create_tracker_file(self):
-        """ Create the csv file that tracks jobs. """
+        """ Create the file that tracks jobs. """
         if os.path.exists(self.tracker_backup_file_path):
             if yes_or_no(f"Backup file detected at: {self.tracker_backup_file_path}, do you want to restore it (Y/n)?"):
                 os.rename(self.tracker_backup_file_path, self.tracker_file_path)
