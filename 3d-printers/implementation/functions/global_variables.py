@@ -55,7 +55,7 @@ gv['FUNCTIONS_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'],
 
 gv['FIGURES_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'], r'figures')
 
-gv['ACCEPTED_EXTENSIONS'] = ('.stl', '.obj', '.3mf', '.amf', '.zip.amf', '.xml', '.step', '.stp')
+gv['ACCEPTED_EXTENSIONS'] = ('.stl', '.obj', '.3mf', '.amf', '.zip.amf', '.xml', '.step', '.stp', '.zip')
 
 gv['DAYS_TO_KEEP_JOBS'] = 5
 
