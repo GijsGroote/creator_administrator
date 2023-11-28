@@ -15,7 +15,6 @@ if __name__ == '__main__':
 
     job_name = sys.argv[1]
 
-    print(f'hey the job name must be {job_name}')
     job_global_path = job_name_to_global_path(gv, job_name, search_in_main_folder='WACHTRIJ')
 
     gcode_files = [gcode_file for
