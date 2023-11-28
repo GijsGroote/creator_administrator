@@ -31,8 +31,8 @@ class EmailManager:
             elif message.UnRead:
                 msgs.append(message)
 
-            # message.UnRead = False
-            # message.Save()
+            message.UnRead = False
+            message.Save()
 
         # print how many mails are processed
         if len(msgs) == 0:
@@ -44,8 +44,7 @@ class EmailManager:
 
     def move_email_to_verwerkt_folder(self, msg):
         """ Move email to verwerkt folder. """
-        pass
-        # msg.Move(self.verwerkt_folder)
+        msg.Move(self.verwerkt_folder)
 
     def print_mail_content(self, msg_file_path: str):
         """ Print the content of an .msg file. """
