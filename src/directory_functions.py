@@ -22,8 +22,6 @@ def create_new_job_folder(gv: dict, job_name, new_job_folder_name: str, target_m
         target_main_folder,
         new_job_folder_name)
     
-    print(f'what wut wah {target_job_folder_global_path} and {source_job_folder_global_path}')
-
     assert target_job_folder_global_path != source_job_folder_global_path, \
             'the source directory is equal to the target directory'
     os.mkdir(target_job_folder_global_path)
