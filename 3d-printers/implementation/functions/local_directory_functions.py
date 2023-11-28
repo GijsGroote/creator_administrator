@@ -16,6 +16,7 @@ from src.directory_functions import (
     job_name_to_job_folder_name,
     copy_job_files,
     does_job_exist_in_main_folder,
+    global_path_to_main_folder,
     copy)
 
 from src.convert_functions import job_folder_name_to_date
@@ -35,6 +36,9 @@ def move_job_to_main_folder(job_name: str, target_main_folder: str, source_main_
     # find source directory
     source_job_folder_global_path = job_name_to_global_path(gv, job_name, source_main_folder)
 
+    if source_main_folder is None:
+        source_main_folder = global_path_to_main_folder(gv, source_job_folder_global_path)
+        
     # create the target folder
     if (target_main_folder == 'AAN_HET_PRINTEN' and
             does_job_exist_in_main_folder(gv, job_name, 'AAN_HET_PRINTEN')):

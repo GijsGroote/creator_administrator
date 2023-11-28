@@ -49,4 +49,4 @@ if __name__ == '__main__':
               '.msg files, no response mail can be send')
 
     move_job_to_main_folder(job_name, "AFGEKEURD")
-    remove_directory_and_close_cmd_farewell()
+    remove_directory_and_close_cmd_farewell(gv)
