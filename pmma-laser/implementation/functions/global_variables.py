@@ -8,14 +8,15 @@ import sys
 
 # Detect the computer.
 IWS_COMPUTER = False
-if os.path.exists(r'C:\Users\IWS\.ssh\pmma_laser_global_variables.json'):
+pmma_laser_gv_path = r'C:\Users\PMMA laser\.ssh\pmma_laser_global_variables.json'
+gijs_pmma_laser_gv_path = r'C:\Users\gijsg\.ssh\pmma_laser_global_variables.json'
+if os.path.exists(pmma_laser_gv_path):
     IWS_COMPUTER = True
-    global_variables_path = os.path.abspath(
-            r'C:\Users\IWS\.ssh\pmma_laser_global_variables.json')
-
-elif os.path.exists(r'C:\Users\gijsg\.ssh\pmma_laser_global_variables.json'):
-    global_variables_path = os.path.abspath(
-            r'C:\Users\gijsg\.ssh\pmma_laser_global_variables.json')
+    global_variables_path = os.path.abspath(pmma_laser_gv_path)
+    
+elif os.path.exists(gijs_pmma_laser_gv_path):
+    global_variables_path = os.path.abspath(gijs_pmma_laser_gv_path)
+    
 else:
     raise ValueError('could not find pmma_laser_global_variables.json file')
 
