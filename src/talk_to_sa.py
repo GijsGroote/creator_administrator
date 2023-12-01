@@ -4,6 +4,24 @@ Communicate with Student Assistant (SA).
 
 import sys
 
+# todo: make function choose ONE option, improve this hereerkljfsdkljfklad
+def choose_one_option(question: str, options: list, default_option: str) -> list:
+    """ Ask SA to select/deselect one option. """
+
+    options = {option_number+1: [False, option] for (option_number, option) in enumerate(options)}
+
+    print(question)
+    for key, value in options.items():
+        print(f"{key}. {value[1]}")
+
+    # todo: dubble check that this actually is an int
+    choice = int(input(f'Select a number (default={default_option}):'))
+
+    if not choice in range(len(options)):
+        choice = default_option
+     
+    return choice
+
 def choose_option(question: str, options: list) -> list:
     """ Ask SA to select/deselect a number of options. """
 

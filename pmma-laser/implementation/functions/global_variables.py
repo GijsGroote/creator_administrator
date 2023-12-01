@@ -38,9 +38,7 @@ with open(global_variables_path, 'r') as global_variables_file:
                           'FINISHED_MAIL_TEMPLATE']:
 
         if mail_template in gv_data:
-            print('does it exist?/??')
             if os.path.exists(gv_data[mail_template]):
-                print(f'hey the mail template {mail_template} exists')
                 gv[mail_template] = gv_data[mail_template]
             else:
                 raise FileNotFoundError(f'could not find file: {gv_data[mail_template]}')
