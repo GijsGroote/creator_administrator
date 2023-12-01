@@ -9,11 +9,10 @@ from typing import Tuple
 from tkinter import filedialog
 
 from global_variables import gv
-from job_tracker import JobTracker
+# from job_tracker import JobTracker
 from src.batch import python_to_batch
-from src.directory_functions import (
-    copy,
-    make_laser_job_name_unique)
+from src.directory_functions import copy
+from src.convert_functions import make_job_name_unique
 from src.cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from src.talk_to_sa import password_please
 
@@ -49,17 +48,17 @@ def create_laser_job(job_name: str, job_content_global_path: str):
 
 def local_path_to_job_name(job_content_local_path: str) -> str:
     """ return a unique laser job name. """
-    return make_laser_job_name_unique(job_content_local_path.replace(' ', '_'))
+    return make_job_name_unique(job_content_local_path.replace(' ', '_'))
 
 
 if __name__ == '__main__':
 
     # check health
-    job_tracker = JobTracker()
-    job_tracker.check_health()
+    # job_tracker = JobTracker()
+    # job_tracker.check_health()
 
     print('You are using select_bestand.bat, the default method is the input.bat file')
-    password_please()
+    password_please(gv)
 
     print('''select <FOLDER> with the following structure:
 └───<FOLDER>
@@ -71,7 +70,7 @@ if __name__ == '__main__':
     └───another_3d_file.stl
     ''')
 
-    folder_global_path = filedialog.askdirectory(initialdir=os.path.join(gv['LASER_DIR_HOME'], '../'))
+    folder_global_path = filedialog.askdirectory(initialdir=os.path.join(gv['JOBS_DIR_HOME'], '../'))
 
     potential_jobs_local_paths = [folder for folder in os.listdir(folder_global_path)
                                   if os.path.isdir(os.path.join(folder_global_path, folder))]
@@ -99,7 +98,7 @@ if __name__ == '__main__':
             n_valid_laser_jobs += 1
             print(f'({job_number}/{n_potential_jobs}) created laser job: {job_name}')
 
-            job_tracker.add_job(job_name, "WACHTRIJ")
+            # job_tracker.add_job(job_name, "WACHTRIJ")
 
         else:
             print(f'({job_number}/{n_potential_jobs}) from folder {potential_job_local_path} not'

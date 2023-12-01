@@ -17,7 +17,7 @@ elif os.path.exists(r'C:\Users\gijsg\.ssh\pmma_laser_global_variables.json'):
     global_variables_path = os.path.abspath(
             r'C:\Users\gijsg\.ssh\pmma_laser_global_variables.json')
 else:
-    raise ValueError('could find pmma_laser_global_variables')
+    raise ValueError('could not find pmma_laser_global_variables.json file')
 
 # Global Variables (gv)
 gv = {'IWS_COMPUTER': IWS_COMPUTER}
@@ -37,7 +37,9 @@ with open(global_variables_path, 'r') as global_variables_file:
                           'FINISHED_MAIL_TEMPLATE']:
 
         if mail_template in gv_data:
+            print('does it exist?/??')
             if os.path.exists(gv_data[mail_template]):
+                print(f'hey the mail template {mail_template} exists')
                 gv[mail_template] = gv_data[mail_template]
             else:
                 raise FileNotFoundError(f'could not find file: {gv_data[mail_template]}')
@@ -61,3 +63,8 @@ gv['DAYS_TO_KEEP_JOBS'] = 5
 gv['MAIN_FOLDERS'] = {'WACHTRIJ': {'allowed_batch_files': ['laser_klaar.bat', 'afgekeurd.bat']},
                       'VERWERKT': {'allowed_batch_files': []},
                       'AFGEKEURD': {'allowed_batch_files': []}}
+
+
+from src.cmd_farewell_handler import get_cmd_farewells
+
+gv['CMD_FAREWELLS'] = get_cmd_farewells(gv)

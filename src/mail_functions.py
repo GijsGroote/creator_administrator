@@ -31,8 +31,9 @@ class EmailManager:
             elif message.UnRead:
                 msgs.append(message)
 
-            message.UnRead = False
-            message.Save()
+            if gv["IWS_COMPUTER"]:
+                message.UnRead = False
+                message.Save()
 
         # print how many mails are processed
         if len(msgs) == 0:

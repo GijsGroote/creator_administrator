@@ -21,6 +21,8 @@ from src.convert_functions import job_folder_name_to_job_name
 from src.talk_to_sa import yes_or_no
 
 
+#TODO: split the job tracker in stuff that can be used everywhere and local sutff
+
 # class JobTracker:
 #     """
 #     Before a laser job is modified, the modification is written to the 
