@@ -48,6 +48,7 @@ with open(global_variables_path, 'r') as global_variables_file:
                     '3D-printers/implementation/email_templates', mail_template+'.html')
 
 # import functions from src
+print(gv['REPO_DIR_HOME'])
 sys.path.append(gv['REPO_DIR_HOME'])
 
 gv['FUNCTIONS_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'],

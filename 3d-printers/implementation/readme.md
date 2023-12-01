@@ -5,6 +5,8 @@ Before you begin, make sure you have the following dependencies installed:
 - Python 3.10 or higher
 - [IO Bit Unlocker](https://www.iobit.com/nl/iobit-unlocker.php#)
 - [Outlook 2019](https://microsoft-outlook.en.softonic.com/)
+- [win32com](todo)
+- TODO all other pakages
 
 ## Installation Steps
 
@@ -36,7 +38,7 @@ Before you begin, make sure you have the following dependencies installed:
 
    ```json
    {
-       "REPO_DIR_HOME":  "C:\\Users\\user\\Documents\\laserhok-workflow",
+       "REPO_DIR_HOME":  "C:\\Users\\user\\laserhok-workflow",
        "JOBS_DIR_HOME":  "C:\\Users\\user\\Desktop\\3D PRINT HOME",
        "TRACKER_FILE_PATH":  "C:\\Users\\user\\.ssh\\3D_print_job_log.json",
        "PYTHON_PATH": "C:Program Files\\Python311\\python.exe",
