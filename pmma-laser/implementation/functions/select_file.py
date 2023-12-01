@@ -10,7 +10,7 @@ from tkinter import filedialog
 
 from global_variables import gv
 # from job_tracker import JobTracker
-from src.batch import python_to_batch
+from src.create_batch_file import python_to_batch
 from src.directory_functions import copy
 from src.convert_functions import make_job_name_unique
 from src.cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
@@ -54,7 +54,7 @@ def local_path_to_job_name(job_content_local_path: str) -> str:
 if __name__ == '__main__':
 
     # check health
-    # job_tracker = JobTracker()
+    # job_tracker = JobTracker(gv)
     # job_tracker.check_health()
 
     print('You are using select_bestand.bat, the default method is the input.bat file')

@@ -8,8 +8,8 @@ import shutil
 
 from global_variables import gv
 from local_convert_functions import gcode_files_to_max_print_time
-from job_tracker import JobTracker
 
+from src.job_tracker import JobTracker
 from src.directory_functions import (
     job_name_to_global_path,
     create_new_job_folder,
@@ -31,7 +31,7 @@ def move_job_to_main_folder(job_name: str, target_main_folder: str, source_main_
          - stops the python thread.
     """
     # update the job tracker
-    JobTracker().update_job_main_folder(job_name, target_main_folder)
+    JobTracker(gv).update_job_main_folder(job_name, target_main_folder)
     
     # find source directory
     source_job_folder_global_path = job_name_to_global_path(gv, job_name, source_main_folder)

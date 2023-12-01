@@ -46,6 +46,5 @@ if __name__ == '__main__':
         print(f'folder: {job_global_path} does not contain any '\
               '.eml files, no response mail can be send')
 
-    # JobTracker().update_job_main_folder(job_name, "AFGEKEURD")
     move_job_to_main_folder(job_name, "AFGEKEURD")
     

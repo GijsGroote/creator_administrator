@@ -7,13 +7,14 @@ import os
 
 
 from global_variables import gv
-from job_tracker import JobTracker
 from local_cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 
-from src.batch import python_to_batch
+from src.create_batch_file import python_to_batch
 from src.directory_functions import get_jobs_in_queue
 from src.mail_functions import EmailManager
 from src.convert_functions import mail_to_name, make_job_name_unique
+from src.job_tracker import JobTracker
+
 
 def create_print_job(job_name: str, msg) -> str:
     """ Create a 'print job' or folder in WACHTRIJ and
@@ -37,14 +38,14 @@ def create_print_job(job_name: str, msg) -> str:
     python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), job_name)
     python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'gesliced.py'), job_name)
 
-    JobTracker().add_job(job_name, "WACHTRIJ")
+    JobTracker(gv).add_job(job_name, "WACHTRIJ")
 
     return print_job_global_path
 
 if __name__ == '__main__':
 
-    job_tracker = JobTracker()
-    job_tracker.check_health()
+    job_tracker = JobTracker(gv)
+    job_tracker.check_health(gv)
 
     print('searching for new mail...')
     email_manager = EmailManager()

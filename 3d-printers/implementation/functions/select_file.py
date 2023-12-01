@@ -12,7 +12,7 @@ from global_variables import gv
 from job_tracker import JobTracker
 
 from src.directory_functions import copy
-from src.batch import python_to_batch
+from src.create_batch_file import python_to_batch
 from src.cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from src.talk_to_sa import password_please
 from src.convert_functions import make_job_name_unique
@@ -52,7 +52,7 @@ def create_print_job(job_name: str, job_content_global_path: str):
 if __name__ == '__main__':
 
     # check health
-    job_tracker = JobTracker()
+    job_tracker = JobTracker(gv)
     job_tracker.check_health()
 
     print('You are using select_bestand.bat, the default method is the input.bat file')

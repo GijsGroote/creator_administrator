@@ -7,7 +7,6 @@ import glob
 
 from global_variables import gv
 from local_directory_functions import move_job_to_main_folder
-# from job_tracker import JobTracker
 
 from src.mail_functions import EmailManager
 from src.directory_functions import (

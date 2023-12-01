@@ -15,7 +15,7 @@ from datetime import datetime
 
 from global_variables import gv
 
-from src.batch import python_to_batch
+from src.create_batch_file import python_to_batch
 from src.directory_functions import get_job_global_paths
 from src.convert_functions import job_folder_name_to_job_name
 from src.talk_to_sa import yes_or_no

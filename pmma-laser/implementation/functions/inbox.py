@@ -6,7 +6,6 @@ import datetime
 import os
 
 from global_variables import gv
-# from job_tracker import JobTracker
 
 from src.batch import python_to_batch
 from src.cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
@@ -38,13 +37,13 @@ def create_laser_job(job_name: str, msg) -> str:
     python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), job_name)
     python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'laser_klaar.py'), job_name)
 
-    # JobTracker().add_job(job_name, "WACHTRIJ")
+    # JobTracker(gv).add_job(job_name, "WACHTRIJ")
 
     return laser_job_global_path
 
 if __name__ == '__main__':
 
-    # job_tracker = JobTracker()
+    # job_tracker = JobTracker(gv)
     # job_tracker.check_health()
 
     print('searching for new mail...')

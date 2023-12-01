@@ -9,8 +9,7 @@ from global_variables import gv
 from local_directory_functions import move_job_to_main_folder
 from local_cmd_farewell_handler import open_gesliced_folder_cmd_farewell
 
-from job_tracker import JobTracker
-
+from src.job_tracker import JobTracker
 from src.mail_functions import EmailManager
 from src.directory_functions import (
     job_name_to_global_path,
@@ -53,7 +52,7 @@ if __name__ == '__main__':
         print(f'folder: {job_global_path} does not contain any .msg files,'\
                 f'no response mail can be send')
 
-    JobTracker().set_split_job_to(job_name, False)
+    JobTracker(gv).set_split_job_to(job_name, False)
 
     move_job_to_main_folder(job_name, "VERWERKT", 'AAN_HET_PRINTEN')
     remove_directory_and_close_cmd_farewell(gv)
