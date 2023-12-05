@@ -20,7 +20,7 @@ from src.directory_functions import (
     copy)
 
 from src.convert_functions import job_folder_name_to_date
-from src.batch import create_batch_files_for_job_folder
+from src.create_batch_file import create_batch_files_for_job_folder
 
 def move_job_to_main_folder(job_name: str, target_main_folder: str, source_main_folder=None):
     """ Moves a job to another main folder.

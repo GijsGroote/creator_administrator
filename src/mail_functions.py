@@ -40,14 +40,18 @@ class EmailManager:
             print('no unread mails found')
         else:
             print(f'processing {len(msgs)} new mails')
-
         return msgs
 
-    def move_email_to_verwerkt_folder(self, msg):
+    def move_email_to_verwerkt_folder(self, gv: dict, msg):
         """ Move email to verwerkt folder. """
-        msg.Move(self.verwerkt_folder)
+        if gv["IWS_COMPUTER"]:
+            msg.Move(self.verwerkt_folder)
 
-    def print_mail_content(self, msg_file_path: str):
+    def print_mail_body(self, msg):
+        """ Print mail body. """
+        print(msg.Body)
+
+    def print_mail_body_from_path(self, msg_file_path: str):
         """ Print the content of an .msg file. """
         outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
         msg = outlook.OpenSharedItem(msg_file_path)

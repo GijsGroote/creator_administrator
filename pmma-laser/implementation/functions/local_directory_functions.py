@@ -10,7 +10,7 @@ from src.directory_functions import (
     create_new_job_folder,
     job_name_to_job_folder_name,
     copy_job_files)
-from src.batch import create_batch_files_for_job_folder
+from src.create_batch_file import create_batch_files_for_job_folder
 from src.cmd_farewell_handler import remove_directory_and_close_cmd_farewell
 
 def move_job_to_main_folder(job_name: str, target_main_folder: str):

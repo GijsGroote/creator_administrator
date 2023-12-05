@@ -159,3 +159,11 @@ def global_path_to_main_folder(gv: dict, global_path: str) -> str:
         if main_folder in global_path:
             return main_folder
     raise ValueError(f'could not find a main folder in {global_path}')
+
+def get_prefix_of_subfolders(global_path: str) -> list:
+    """ Return prefixes seperated by a '_' of subfolder names. """
+    prefixes = set()
+    for prefix_global_path in os.listdir(global_path):
+        prefixes.add(os.path.basename(prefix_global_path).split('_')[0])
+
+    return list(prefixes)

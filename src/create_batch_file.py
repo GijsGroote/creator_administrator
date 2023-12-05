@@ -5,15 +5,9 @@ Convert python code to clickable batch functions.
 import os
 from src.directory_functions import job_name_to_global_path
 
-def python_to_batch(gv: dict, python_path: str, job_name=None, search_in_main_folder=None):
+def python_to_batch(gv: dict, python_path: str, job_name: str, search_in_main_folder=None):
     """ Convert a python file to an batch file. """
-
-    if job_name is not None:
-        batch_file_target_folder = job_name_to_global_path(gv, job_name, search_in_main_folder)
-        python_command = f'"{gv["PYTHON_PATH"]}" "{python_path}" "{job_name}"'
-    else:
-        batch_file_target_folder = os.path.join(gv['FUNCTIONS_DIR_HOME'], '../batch_files')  
-        python_command = f'"{gv["PYTHON_PATH"]}" "{python_path}"'
+    batch_file_target_folder = job_name_to_global_path(gv, job_name, search_in_main_folder)  
     
     assert os.path.exists(batch_file_target_folder),\
         f"path {batch_file_target_folder} does not exist."  
@@ -21,7 +15,26 @@ def python_to_batch(gv: dict, python_path: str, job_name=None, search_in_main_fo
     with open(os.path.join(batch_file_target_folder, os.path.basename(python_path).replace('.py', '.bat')), 'w+') as bat_file:
         bat_file.write(rf"""@echo off
 
-{python_command}
+"{gv["PYTHON_PATH"]}" "{python_path}" "{job_name}"
+
+{gv["CMD_FAREWELLS"]}""")
+        
+def python_to_batch_in_folder(gv: dict, python_path: str, batch_file_target_folder: str, pass_parameter=None):
+    """ Convert a python file to an batch file and place in target directory. """
+     
+    assert os.path.exists(batch_file_target_folder),\
+        f"path {batch_file_target_folder} does not exist."
+    
+    if pass_parameter is None:
+        python_command = f'"{gv["PYTHON_PATH"]}" "{python_path}"'
+    else:
+        python_command = f'"{gv["PYTHON_PATH"]}" "{python_path}" "{pass_parameter}"'
+    
+
+    with open(os.path.join(batch_file_target_folder, os.path.basename(python_path).replace('.py', '.bat')), 'w+') as bat_file:
+        bat_file.write(rf"""@echo off
+
+"{python_command}"
 
 {gv["CMD_FAREWELLS"]}""")
         

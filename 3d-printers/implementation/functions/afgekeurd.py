@@ -27,7 +27,7 @@ if __name__ == '__main__':
         email_manager = EmailManager()
 
         print('latest mail message:')
-        email_manager.print_mail_content(msg_file_paths[0])
+        email_manager.print_mail_body_from_path(msg_file_paths[0])
         declined_reason = input("Why is the print job rejected?")
         if len(msg_file_paths) > 1:
             print(f'Warning! more than one: {len(msg_file_paths)} .eml files detected')

@@ -42,8 +42,9 @@ def create_laser_job(job_name: str, job_content_global_path: str):
 
     os.mkdir(job_global_path)
     copy(job_content_global_path, job_global_path)
-    python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), job_name=job_name)
-    python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'gesliced.py'), job_name=job_name)
+
+    python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), job_name, 'WACHTRIJ')
+    python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'gesliced.py'), job_name, 'WACHTRIJ')
 
 
 def local_path_to_job_name(job_content_local_path: str) -> str:

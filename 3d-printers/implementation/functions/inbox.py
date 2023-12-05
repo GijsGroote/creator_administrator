@@ -77,7 +77,7 @@ if __name__ == '__main__':
                                       {"{jobs_in_queue}": get_jobs_in_queue(gv)},
                                       popup_reply=False)
 
-            email_manager.move_email_to_verwerkt_folder(msg)
+            email_manager.move_email_to_verwerkt_folder(gv, msg)
 
             print(f'print job: {job_name} created\n')
 

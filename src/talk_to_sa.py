@@ -4,23 +4,40 @@ Communicate with Student Assistant (SA).
 
 import sys
 
-# todo: make function choose ONE option, improve this hereerkljfsdkljfklad
-def choose_one_option(question: str, options: list, default_option: str) -> list:
-    """ Ask SA to select/deselect one option. """
+def choose_one_option(question: str, options: list, options_type=" ") -> str:
+    """ Ask SA choose one option. """
 
-    options = {option_number+1: [False, option] for (option_number, option) in enumerate(options)}
+    options = {option_number+1: option for (option_number, option) in enumerate(options)}
 
-    print(question)
-    for key, value in options.items():
-        print(f"{key}. {value[1]}")
+    while True:
+        print(question)
+        for key, value in options.items():
+            if key == 1:
+                print(f'{key}. {value} (default)')
+            else:
+                print(f'{key}. {value}')
 
-    # todo: dubble check that this actually is an int
-    choice = int(input(f'Select a number (default={default_option}):'))
+        if len(options) == 0:
+            choice = input(f'Enter {options_type}: ')
+        else:
+            choice = input(f'Input a number or new {options_type}:')
 
-    if not choice in range(len(options)):
-        choice = default_option
-     
-    return choice
+        if len(options) == 0:
+            return str(choice).lower()
+        
+        if str(choice) == '' and len(options) > 0:
+            return str(options[1])
+        
+        try:
+            choice_int = int(choice)
+
+            if choice_int in range(1, len(options)+1, 1):
+                return str(options[choice_int])
+            else:
+                print(f'{choice_int} is not in {range(1, len(options)+1, 1)}, try again')
+                continue
+        except Exception:
+            return str(choice).lower()
 
 def choose_option(question: str, options: list) -> list:
     """ Ask SA to select/deselect a number of options. """
