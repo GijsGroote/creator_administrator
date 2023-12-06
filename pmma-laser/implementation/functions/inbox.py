@@ -91,7 +91,7 @@ def create_laser_job(job_name: str, msg) -> str:
         if material is None and thickness is None and amount is None:
             pass  # TODO: send supply information mail and move this mail
 
-        laser_cut_files_dict[attachment.FileName] = {'material': material,
+        laser_cut_files_dict[job_name + '_' + attachment.FileName] = {'material': material,
                             'thickness': thickness,
                             'amount': amount,
                             'done': False,
@@ -106,16 +106,17 @@ def create_laser_job(job_name: str, msg) -> str:
     # Save all attachments
     for attachment in msg.Attachments:
         if attachment.FileName.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
-            attachment_name = laser_cut_files_dict[attachment.FileName]['material']+'_'+\
-                                    laser_cut_files_dict[attachment.FileName]['thickness']+'_'+\
-                                    laser_cut_files_dict[attachment.FileName]['amount']+'x_'+\
+            att_key = job_name+'_'+attachment.FileName
+            attachment_name = laser_cut_files_dict[att_key]['material']+'_'+\
+                                    laser_cut_files_dict[att_key]['thickness']+'_'+\
+                                    laser_cut_files_dict[att_key]['amount']+'x_'+\
                                     attachment.FileName
             
             attachment.SaveAsFile(os.path.join(laser_job_global_path, attachment_name))
 
             wachtrij_materiaal_global_path = os.path.join(gv['JOBS_DIR_HOME'], 'WACHTRIJ_MATERIAAL',
-                                    laser_cut_files_dict[attachment.FileName]['material']+'_'+\
-                                    laser_cut_files_dict[attachment.FileName]['thickness'])
+                                    laser_cut_files_dict[att_key]['material']+'_'+\
+                                    laser_cut_files_dict[att_key]['thickness'])
             
             laser_file_material_folder_global_path = os.path.join(
                 wachtrij_materiaal_global_path,
@@ -132,19 +133,19 @@ def create_laser_job(job_name: str, msg) -> str:
             with open(material_log_global_path, 'r') as material_log_file:
                 material_log_dict = json.load(material_log_file)
 
-            material_log_dict[job_name + "_" + attachment.FileName] = {
+            material_log_dict[att_key] = {
                     'file_name': attachment.FileName,
                     'job_name': job_name,
-                    'material': laser_cut_files_dict[attachment.FileName]['material'],
-                    'thickness': laser_cut_files_dict[attachment.FileName]['thickness'],
-                    'amount': laser_cut_files_dict[attachment.FileName]['amount'],
+                    'material': laser_cut_files_dict[att_key]['material'],
+                    'thickness': laser_cut_files_dict[att_key]['thickness'],
+                    'amount': laser_cut_files_dict[att_key]['amount'],
                     'path_to_file_in_material_folder': laser_file_material_folder_global_path
                 }
             with open(material_log_global_path, 'w') as material_log_file:
                 json.dump(material_log_dict, material_log_file, indent=4)
 
-    with open(os.path.join(laser_job_global_path, 'laser_cut_files_log.json'), 'w') as laser_cut_files_log:
-        json.dump(laser_cut_files_dict, laser_cut_files_log, indent=4)
+    with open(os.path.join(laser_job_global_path, 'laser_job_log.json'), 'w') as laser_job_log:
+        json.dump(laser_cut_files_dict, laser_job_log, indent=4)
             
     python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), job_name, 'WACHTRIJ')
     python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'laser_klaar.py'), job_name, 'WACHTRIJ')

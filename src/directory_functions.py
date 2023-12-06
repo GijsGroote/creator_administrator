@@ -4,6 +4,8 @@ Functionality for moving/copying or searching in directories.
 
 import os
 import shutil
+import json
+import uuid
 from typing import List
 
 def create_new_job_folder(gv: dict, job_name, new_job_folder_name: str, target_main_folder: str, source_main_folder: str) -> str:
@@ -167,3 +169,18 @@ def get_prefix_of_subfolders(global_path: str) -> list:
         prefixes.add(os.path.basename(prefix_global_path).split('_')[0])
 
     return list(prefixes)
+
+def read_json_file(json_file_global_path: str) -> dict:
+    """ return the JSON file as dictionary. """
+
+    with open(json_file_global_path, 'r') as file:
+        json_dict = json.load(file)
+    return json_dict
+
+def write_json_file(dictionary: dict, json_file_global_path: str):
+    """ Write dictionary to JSON file. """
+
+    with open(json_file_global_path, 'w') as file:
+        json.dump(dictionary, file, indent=4)
+
+ 
