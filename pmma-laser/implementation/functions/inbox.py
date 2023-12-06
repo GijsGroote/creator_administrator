@@ -10,7 +10,6 @@ from typing import Tuple
 
 from global_variables import gv
 
-
 from src.create_batch_file import python_to_batch, python_to_batch_in_folder
 # from src.job_tracker import JobTracker
 from src.cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
@@ -67,29 +66,21 @@ def enter_laser_file_details(msg, attachment) -> Tuple[str, str, str]:
             else:
                 if yes_or_no(f'Enter laser request details again for {attachment.FileName} (Y/n)?'):
                     continue
-                elif yes_or_no(f'Enter laser request details again for {attachment.FileName} (Y/n)?'):
+                elif yes_or_no(f'Do you want to decline this laser request and send a decline mail?'):
                     return None, None, None                   
-                    
 
-def create_laser_job(job_name: str, msg) -> str:
-    """ Create a 'laser job' or folder in WACHTRIJ and
-    put all corresponding files in the laser job. """
-
-    today = datetime.date.today()
-    job_folder_name = str(today.strftime('%d')) + '-' + str(today.strftime('%m')) + '_' + job_name
-
-    laser_job_global_path = os.path.join(os.path.join(gv['JOBS_DIR_HOME'], 'WACHTRIJ', job_folder_name))
-    
-    email_manager = EmailManager()
+def save_attachments(attachments, laser_job_global_path: str):
+    """ Save all attachments on file system and logs. """
     laser_cut_files_dict = {}
 
     # Find materials, thickness and amount should cut
-    for attachment in msg.Attachments:
+    for attachment in attachments:
 
         material, thickness, amount = enter_laser_file_details(msg, attachment)
 
         if material is None and thickness is None and amount is None:
             pass  # TODO: send supply information mail and move this mail
+            # send decline mail here please
 
         laser_cut_files_dict[job_name + '_' + attachment.FileName] = {'material': material,
                             'thickness': thickness,
@@ -97,12 +88,9 @@ def create_laser_job(job_name: str, msg) -> str:
                             'done': False,
                             'path_to_file_in_material_folder': os.path.join(
                                 gv['JOBS_DIR_HOME'], 'WACHTRIJ_MATERIAAL',
-                                material+'_'+'thickness',
+                                material+'_'+thickness,
                                 job_name + '_' + attachment.FileName)}
-    # Save the email      
-    os.mkdir(laser_job_global_path)   
-    msg.SaveAs(os.path.join(laser_job_global_path, 'mail.msg')) 
-
+    
     # Save all attachments
     for attachment in msg.Attachments:
         if attachment.FileName.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
@@ -146,6 +134,21 @@ def create_laser_job(job_name: str, msg) -> str:
 
     with open(os.path.join(laser_job_global_path, 'laser_job_log.json'), 'w') as laser_job_log:
         json.dump(laser_cut_files_dict, laser_job_log, indent=4)
+
+def create_laser_job(job_name: str, msg) -> str:
+    """ Create a 'laser job' or folder in WACHTRIJ and
+    put all corresponding files in the laser job. """
+
+    today = datetime.date.today()
+    job_folder_name = str(today.strftime('%d')) + '-' + str(today.strftime('%m')) + '_' + job_name
+
+    laser_job_global_path = os.path.join(os.path.join(gv['JOBS_DIR_HOME'], 'WACHTRIJ', job_folder_name))
+   
+    # Save the email      
+    os.mkdir(laser_job_global_path)   
+    msg.SaveAs(os.path.join(laser_job_global_path, 'mail.msg')) 
+
+    save_attachments(msg.Attachments, laser_job_global_path)
             
     python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), job_name, 'WACHTRIJ')
     python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'laser_klaar.py'), job_name, 'WACHTRIJ')
