@@ -29,8 +29,7 @@ def python_to_batch_in_folder(gv: dict, python_path: str, batch_file_target_fold
         python_command = f'"{gv["PYTHON_PATH"]}" "{python_path}"'
     else:
         python_command = f'"{gv["PYTHON_PATH"]}" "{python_path}" "{pass_parameter}"'
-    
-
+        
     with open(os.path.join(batch_file_target_folder, os.path.basename(python_path).replace('.py', '.bat')), 'w+') as bat_file:
         bat_file.write(rf"""@echo off
 

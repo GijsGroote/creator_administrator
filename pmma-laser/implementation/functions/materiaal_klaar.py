@@ -50,7 +50,7 @@ if __name__ == '__main__':
             subprocess.run([f'{os.path.join(job_global_path, "laser_klaar.bat")}'])
 
         # remove that file from the material folder
-        os.remove(material_log_dict[file_done_key]['path_to_file_in_material_folder'])
+        # os.remove(material_log_dict[file_done_key]['path_to_file_in_material_folder'])
 
 
     if len(files_done_keys) == len(material_log_dict):

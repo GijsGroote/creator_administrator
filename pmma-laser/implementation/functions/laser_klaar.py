@@ -11,9 +11,7 @@ from local_directory_functions import move_job_to_main_folder
 from src.mail_functions import EmailManager
 
 from src.directory_functions import (
-    job_name_to_global_path,
-    does_job_exist_in_main_folder,
-    job_name_to_job_folder_name)
+    job_name_to_global_path)
 
 from src.talk_to_sa import yes_or_no
 from src.cmd_farewell_handler import (

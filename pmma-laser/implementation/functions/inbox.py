@@ -89,6 +89,7 @@ def save_attachments(attachments, laser_job_global_path: str):
                             'path_to_file_in_material_folder': os.path.join(
                                 gv['JOBS_DIR_HOME'], 'WACHTRIJ_MATERIAAL',
                                 material+'_'+thickness,
+                                amount + 'x_' +\
                                 job_name + '_' + attachment.FileName)}
     
     # Save all attachments
@@ -108,7 +109,7 @@ def save_attachments(attachments, laser_job_global_path: str):
             
             laser_file_material_folder_global_path = os.path.join(
                 wachtrij_materiaal_global_path,
-                job_name + '_' + attachment.FileName)
+                laser_cut_files_dict[att_key]['amount'] + 'x_' + job_name + '_' + attachment.FileName)
             
             attachment.SaveAsFile(laser_file_material_folder_global_path)
             material_log_global_path = os.path.join(wachtrij_materiaal_global_path, 'materiaal_log.json')
