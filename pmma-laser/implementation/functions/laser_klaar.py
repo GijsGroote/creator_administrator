@@ -16,7 +16,7 @@ from src.directory_functions import (
 from src.talk_to_sa import yes_or_no
 from src.cmd_farewell_handler import (
     remove_directory_and_close_cmd_farewell)
-# from src.job_tracker import JobTracker
+from job_tracker import JobTracker
 
 if __name__ == '__main__':
 
@@ -41,5 +41,9 @@ if __name__ == '__main__':
     else:
         print(f'folder: {job_global_path} does not contain any .msg files,'\
                 f'no response mail can be send')
+    
+    job_tracker = JobTracker(gv)
+    job_tracker.remove_job_from_wachtrij_material(job_name)
+    job_tracker.update_job_main_folder(job_name, 'VERWERKT')
 
     move_job_to_main_folder(job_name, 'VERWERKT')

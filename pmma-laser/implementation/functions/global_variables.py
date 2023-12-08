@@ -60,9 +60,10 @@ gv['ACCEPTED_EXTENSIONS'] = ('.dxf')
 gv['DAYS_TO_KEEP_JOBS'] = 5
 
 gv['MAIN_FOLDERS'] = {'WACHTRIJ': {'allowed_batch_files': ['laser_klaar.bat', 'afgekeurd.bat']},
-                      'WACHTRIJ_MATERIAAL': {'allowed_batch_files': ['materiaal_klaar.bat']},
                       'VERWERKT': {'allowed_batch_files': []},
                       'AFGEKEURD': {'allowed_batch_files': []}}
+
+gv['MINOR_FOLDERS'] = {'WACHTRIJ_MATERIAAL': {'allowed_batch_files': ['materiaal_klaar.bat']}}
 
 
 from src.cmd_farewell_handler import get_cmd_farewells

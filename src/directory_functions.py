@@ -5,7 +5,7 @@ Functionality for moving/copying or searching in directories.
 import os
 import shutil
 import json
-import uuid
+import subprocess
 from typing import List
 
 def create_new_job_folder(gv: dict, job_name, new_job_folder_name: str, target_main_folder: str, source_main_folder: str) -> str:
@@ -66,6 +66,18 @@ def move(source_dir_global: str, target_dir_global: str):
         except Exception as e:
             print(f"An error occurred: {e}")
 
+def delete(gv, item_global_path: str):
+    """ Delete the file from the file system. """
+
+    if os.path.exists(item_global_path):
+        try:
+            if os.path.isdir(item_global_path):
+                shutil.rmtree(item_global_path)
+            else:
+                os.remove(item_global_path)
+        except Exception as e:
+            subprocess.run(gv['IOBIT_UNLOCKER_PATH'], '/Delete', item_global_path)
+
 def does_job_name_exist(gv: dict, job_name: str) -> bool:
     """ Check if the job name exist, return boolean. """
 
@@ -81,7 +93,10 @@ def get_job_global_paths(gv: dict, search_in_main_folder=None) -> List[str]:
     job_global_paths = []
 
     if search_in_main_folder is None:
-        main_folders = os.listdir(gv['JOBS_DIR_HOME'])
+
+        main_folders = [folder for folder in os.listdir(gv['JOBS_DIR_HOME']) if folder.endswith(tuple(gv['MAIN_FOLDERS'].keys()))]
+        print(f'the main folders')
+        print(main_folders)
     else:
         main_folders = [search_in_main_folder]
 
