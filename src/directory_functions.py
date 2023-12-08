@@ -68,6 +68,7 @@ def move(source_dir_global: str, target_dir_global: str):
 
 def delete(gv, item_global_path: str):
     """ Delete the file from the file system. """
+    print(f'fuck lets remove {item_global_path}')
     if os.path.exists(item_global_path):
         try:
             if os.path.isdir(item_global_path):

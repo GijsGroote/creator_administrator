@@ -8,19 +8,31 @@ import os
 import sys
 import subprocess
 
+
+import glob
+import sys
+
 from typing import Tuple
 from datetime import datetime
 
 from global_variables import gv
-from local_directory_functions import create_files_dict
+from local_directory_functions import create_files_dict, move_job_to_main_folder
 
 from src.create_batch_file import create_batch_files_for_job_folder, python_to_batch_in_folder
 from src.create_batch_file import python_to_batch_in_folder
+from src.mail_functions import EmailManager
 from src.directory_functions import (
-    copy, delete, get_job_global_paths, global_path_to_main_folder,
-job_name_to_global_path)
+    copy, 
+    delete,
+    get_job_global_paths, 
+    global_path_to_main_folder,
+    job_name_to_global_path,
+    create_new_job_folder,
+    job_name_to_job_folder_name,
+    copy_job_files)
 from src.convert_functions import job_folder_name_to_job_name
 from src.talk_to_sa import yes_or_no
+
 
 
 # TODO: make this an abstract tracker in src.tracker, and extend that tracker to reuse functions
@@ -70,11 +82,10 @@ class JobTracker:
             if not os.path.exists(material_folder_global_path):
                 os.mkdir(material_folder_global_path)
             if not os.path.exists(os.path.join(material_folder_global_path, 'materiaal_klaar.bat')):
-                pass
-                # python_to_batch_in_folder(gv, 
-                #             os.path.join(gv['FUNCTIONS_DIR_HOME'], 'materiaal_klaar.py'),
-                #             material_folder_global_path,
-                #             pass_parameter=material_folder_global_path)
+                python_to_batch_in_folder(gv, 
+                            os.path.join(gv['FUNCTIONS_DIR_HOME'], 'materiaal_klaar.py'),
+                            material_folder_global_path,
+                            pass_parameter=material_folder_global_path)
                 
             file_global_path = os.path.join(material_folder_global_path,
                                             file_dict['amount']+'x_'+file_key)
@@ -83,9 +94,9 @@ class JobTracker:
                 copy(file_dict['file_global_path'], file_global_path)
             else: 
                 print(f'Warning, could not find {file_dict['file_global_path']}')
+                raise ValueError('here ai m')
 
-
-    def remove_job_from_wachtrij_material(self, job_name: str):
+    def remove_job_from_wachtrij_material(self, job_name: str, remove_material_folder='true'):
         """ Remove a job from the WACHTRIJ_MATERIAAL folder. """
 
         job_dict = self.job_name_to_job_dict(job_name)
@@ -102,17 +113,19 @@ class JobTracker:
 
                 if number_of_laser_files_in_wachtrij_material <= 1:
                     delete(gv, material_dir_global_path)
-                else:      
+                else: 
                     delete(gv, os.path.join(material_dir_global_path,
                             file_dict['amount']+'x_'+file_key))
                 
-    def remove_files_from_wachtrij_material(self, files_keys: list):
+    def remove_files_from_wachtrij_material(self, files_keys: list, call_fake_laser_klaar=False):
         """ Remove multiple files from the WACHTRIJ_MATERIAAL folder. """
 
         print('in remove files from wachtrij')
         # read job log
         with open(self.tracker_file_path, 'r') as tracker_file:
                 job_log_dict = json.load(tracker_file)
+
+        print(f'the file keys {files_keys}')
         
         for file_key in files_keys:
             print(f'now at file key: {file_key}')
@@ -128,12 +141,15 @@ class JobTracker:
                         for file_name in job_dict['laser_files'].keys():
                             print(f'    {file_name}')
                         
-                        
-                        laser_klaar_bat = os.path.join(job_name_to_global_path(gv, job_dict["job_name"], "WACHTRIJ", "laser_klaar.bat"))
+                        if call_fake_laser_klaar:
+                            self.fake_laser_klaar(job_dict['job_name'])
 
                         
+                        # subprocess.run([os.path.join(job_name_to_global_path(gv, job_dict['job_name']),
+                        #                 'laser_klaar.bat'), job_dict['job_name']])
 
-                        subprocess.run([f'{laser_klaar_bat} {job_dict['job_name']}'])
+                        print('yes I see')
+                        
                     else:
                         material_dir_global_path = os.path.join(gv['JOBS_DIR_HOME'], 'WACHTRIJ_MATERIAAL',
                                     file_dict['material']+'_'+file_dict['thickness'])
@@ -303,18 +319,18 @@ class JobTracker:
                     
             # repair the WACHTRIJ_MATERIAAL folder
             for job_dict in tracker_dict.values():
-                for key, file_dict in job_dict['laser_files'].items():
-                                    
-                    material_folder_global_path = os.path.join(gv['JOBS_DIR_HOME'],
-                                                'WACHTRIJ_MATERIAAL', file_dict['material']+'_'+file_dict['thickness'])
+                if job_dict['main_folder'] == 'WACHTRIJ':
+                    for key, file_dict in job_dict['laser_files'].items():
+                                        
+                        material_folder_global_path = os.path.join(gv['JOBS_DIR_HOME'],
+                                                    'WACHTRIJ_MATERIAAL', file_dict['material']+'_'+file_dict['thickness'])
 
-                    # repair WACHTRIJ_MATERIAAL folder
-                    if not (os.path.exists(material_folder_global_path) and
-                            os.path.exists(os.path.join(material_folder_global_path,
-                            file_dict['amount']+'x_'+key))):
-                            # and
-                            # os.path.exists(os.path.join(material_folder_global_path, 'materiaal_klaar.bat'))):
-                        self.add_file_to_wachtrij_material(job_dict)
+                        # repair WACHTRIJ_MATERIAAL folder
+                        if not (os.path.exists(material_folder_global_path) and
+                                os.path.exists(os.path.join(material_folder_global_path,
+                                file_dict['amount']+'x_'+key)) and
+                                os.path.exists(os.path.join(material_folder_global_path, 'materiaal_klaar.bat'))):
+                            self.add_file_to_wachtrij_material(job_dict)
 
             jobs_checked[tracker_job_name] = True
 
@@ -329,3 +345,43 @@ class JobTracker:
 
         self.make_backup()
         print("system healthy :)\n")
+
+    def fake_laser_klaar(self, job_name):
+        """ Laser is klaar function, to be called from material klaar. """
+        job_global_path = job_name_to_global_path(gv,
+        job_name, search_in_main_folder='WACHTRIJ')
+
+        # send response mail
+        msg_file_paths = list(glob.glob(job_global_path + "/*.msg"))
+
+        if len(msg_file_paths) > 1:
+            print(f'Warning! more than one: {len(msg_file_paths)} .msg files detected')
+            input('press enter to send response mail...')
+
+        if len(msg_file_paths) > 0:
+            email_manager = EmailManager()
+            email_manager.reply_to_email_from_file_using_template(gv,
+                                                    msg_file_paths[0],
+                                                    "FINISHED_MAIL_TEMPLATE",
+                                                    {},
+                                                    popup_reply=False)
+        else:
+            print(f'folder: {job_global_path} does not contain any .msg files,'\
+                    f'no response mail can be send')
+        
+        
+        # find source directory
+        source_job_folder_global_path = job_name_to_global_path(gv, job_name, "WACHTRIJ")
+
+        # create the target folder
+        new_job_folder_name = job_name_to_job_folder_name(gv, job_name, "WACHTRIJ")
+        target_job_folder_global_path = create_new_job_folder(
+                gv, job_name, new_job_folder_name, 'VERWERKT', "WACHTRIJ")
+
+        # create new batch files
+        create_batch_files_for_job_folder(gv, target_job_folder_global_path, 'VERWERKT')
+
+        # copy files
+        copy_job_files(target_job_folder_global_path, source_job_folder_global_path, ['.bat'])
+
+        delete(gv, source_job_folder_global_path)

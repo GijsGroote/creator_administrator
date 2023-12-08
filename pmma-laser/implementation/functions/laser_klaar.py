@@ -43,6 +43,7 @@ if __name__ == '__main__':
                 f'no response mail can be send')
     
     job_tracker = JobTracker()
+    
     job_tracker.remove_job_from_wachtrij_material(job_name)
     job_tracker.update_job_main_folder(job_name, 'VERWERKT')
 

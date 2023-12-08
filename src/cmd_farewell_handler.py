@@ -28,7 +28,7 @@ def get_cmd_farewells(gv: dict) -> str:
     ) else if %errorlevel% geq 911 (
         if %errorlevel% leq 920 (
             pause            
-            "{gv['PYTHON_PATH']}" "{os.path.join(gv['FUNCTIONS_DIR_HOME'], 'local_cmd_farewell_handler.py')}" "%errorlevel%
+            "{gv['PYTHON_PATH']}" "{os.path.join(gv['FUNCTIONS_DIR_HOME'], 'local_cmd_farewell_handler.py')}" %errorlevel%
         )
     ) else (
     pause
