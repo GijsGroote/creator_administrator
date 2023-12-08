@@ -68,7 +68,6 @@ def move(source_dir_global: str, target_dir_global: str):
 
 def delete(gv, item_global_path: str):
     """ Delete the file from the file system. """
-
     if os.path.exists(item_global_path):
         try:
             if os.path.isdir(item_global_path):
@@ -76,7 +75,7 @@ def delete(gv, item_global_path: str):
             else:
                 os.remove(item_global_path)
         except Exception as e:
-            subprocess.run(gv['IOBIT_UNLOCKER_PATH'], '/Delete', item_global_path)
+            subprocess.run(rf'{gv["IOBIT_UNLOCKER_PATH"]} /Delete {item_global_path}')
 
 def does_job_name_exist(gv: dict, job_name: str) -> bool:
     """ Check if the job name exist, return boolean. """
@@ -93,10 +92,8 @@ def get_job_global_paths(gv: dict, search_in_main_folder=None) -> List[str]:
     job_global_paths = []
 
     if search_in_main_folder is None:
-
         main_folders = [folder for folder in os.listdir(gv['JOBS_DIR_HOME']) if folder.endswith(tuple(gv['MAIN_FOLDERS'].keys()))]
-        print(f'the main folders')
-        print(main_folders)
+    
     else:
         main_folders = [search_in_main_folder]
 
