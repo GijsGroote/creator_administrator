@@ -1,8 +1,8 @@
 import sys
 
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QPalette, QColor
-from PyQt6.QtWidgets import (
+from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtGui import QPalette, QColor, QKeyEvent
+from PyQt5.QtWidgets import (
     QApplication,
     QHBoxLayout,
     QLabel,
@@ -15,8 +15,10 @@ from PyQt6.QtWidgets import (
 
 class Color(QWidget):
 
+
     def __init__(self, color):
         super(Color, self).__init__()
+
         self.setAutoFillBackground(True)
 
         palette = self.palette()
@@ -29,6 +31,8 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("My App")
+
+        self.resize(QSize(600, 500))
 
         pagelayout = QVBoxLayout()
         button_layout = QHBoxLayout()
@@ -56,6 +60,7 @@ class MainWindow(QMainWindow):
         widget.setLayout(pagelayout)
         self.setCentralWidget(widget)
 
+
     def activate_tab_1(self):
         self.stacklayout.setCurrentIndex(0)
 
@@ -65,6 +70,12 @@ class MainWindow(QMainWindow):
     def activate_tab_3(self):
         self.stacklayout.setCurrentIndex(2)
 
+    def keyPressEvent(self, event):
+        """ Handle all the shortcuts. """
+
+        if isinstance(event, QKeyEvent):
+            if event.key() == Qt.Key_Q:
+                self.close()
 
 app = QApplication(sys.argv)
 
