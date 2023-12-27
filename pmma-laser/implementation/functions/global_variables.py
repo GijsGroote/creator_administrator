@@ -8,15 +8,21 @@ import sys
 
 # Detect the computer.
 IWS_COMPUTER = False
+
 pmma_laser_gv_path = r'C:\Users\PMMA laser\.ssh\pmma_laser_global_variables.json'
-gijs_pmma_laser_gv_path = r'C:\Users\gijsg\.ssh\pmma_laser_global_variables.json'
+gijs_windows_pmma_laser_gv_path = r'C:\Users\gijsg\.ssh\pmma_laser_global_variables.json'
+gijs_linux_pmma_laser_gv_path = r'/home/gijs/.ssh/pmma_laser_global_variables.json'
+
 if os.path.exists(pmma_laser_gv_path):
     IWS_COMPUTER = True
     global_variables_path = os.path.abspath(pmma_laser_gv_path)
     
-elif os.path.exists(gijs_pmma_laser_gv_path):
-    global_variables_path = os.path.abspath(gijs_pmma_laser_gv_path)
-    
+elif os.path.exists(gijs_windows_pmma_laser_gv_path):
+    global_variables_path = os.path.abspath(gijs_windows_pmma_laser_gv_path)
+
+elif os.path.exists(gijs_linux_pmma_laser_gv_path):
+    global_variables_path = os.path.abspath(gijs_linux_pmma_laser_gv_path)
+
 else:
     raise ValueError('could not find pmma_laser_global_variables.json file')
 
@@ -30,7 +36,7 @@ with open(global_variables_path, 'r') as global_variables_file:
     gv['TRACKER_FILE_PATH'] = gv_data['TRACKER_FILE_PATH']
     gv['PYTHON_PATH'] = gv_data['PYTHON_PATH']
     gv['OUTLOOK_PATH'] = gv_data['OUTLOOK_PATH']
-    gv['IOBIT_UNLOCKER_PATH'] = gv_data['IOBIT_UNLOCKER_PATH']
+    gv['IOBIT_UNLOCKER_PATH'] = "there is no IOBIt UNLOCKER Any MOre" 
     gv['PASSWORD'] = gv_data['PASSWORD']
 
     for mail_template in ['RECEIVED_MAIL_TEMPLATE',

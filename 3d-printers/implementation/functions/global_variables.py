@@ -9,14 +9,21 @@ import sys
 
 # Detect the computer.
 IWS_COMPUTER = False
-if os.path.exists(r'C:\Users\IWS\.ssh\3D_print_global_variables.json'):
-    IWS_COMPUTER = True
-    global_variables_path = os.path.abspath(
-            r'C:\Users\IWS\.ssh\3D_print_global_variables.json')
 
-elif os.path.exists(r'C:\Users\gijsg\.ssh\3D_print_global_variables.json'):
-    global_variables_path = os.path.abspath(
-            r'C:\Users\gijsg\.ssh\3D_print_global_variables.json')
+iws_3d_print_gv_path = r'C:\Users\IWS\.ssh\3D_print_global_variables.json'
+gijs_windows_3d_print_gv_path = r'C:\Users\gijsg\.ssh\3D_print_global_variables.json'
+gijs_linux_3d_print_gv_path = r'/home/gijs/.ssh/3D_print_global_variables.json'
+
+if os.path.exists(iws_3d_print_gv_path):
+    IWS_COMPUTER = True
+    global_variables_path = os.path.abspath(iws_3d_print_gv_path)
+
+elif os.path.exists(gijs_windows_3d_print_gv_path):
+    global_variables_path = os.path.abspath(gijs_windows_3d_print_gv_path)
+
+elif os.path.exists(gijs_linux_3d_print_gv_path):
+    global_variables_path = os.path.abspath(gijs_linux_3d_print_gv_path)
+
 else:
     raise ValueError('could find 3D_print_global_variables')
 
@@ -30,7 +37,7 @@ with open(global_variables_path, 'r') as global_variables_file:
     gv['TRACKER_FILE_PATH'] = gv_data['TRACKER_FILE_PATH']
     gv['PYTHON_PATH'] = gv_data['PYTHON_PATH']
     gv['OUTLOOK_PATH'] = gv_data['OUTLOOK_PATH']
-    gv['IOBIT_UNLOCKER_PATH'] = gv_data['IOBIT_UNLOCKER_PATH']
+    gv['IOBIT_UNLOCKER_PATH'] = 'IOBIT UNLODCKER DOES NOT EXIST'
     gv['PASSWORD'] = gv_data['PASSWORD']
 
     for mail_template in ['RECEIVED_MAIL_TEMPLATE',
