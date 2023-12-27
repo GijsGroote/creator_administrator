@@ -57,7 +57,7 @@ with open(global_variables_path, 'r') as global_variables_file:
 sys.path.append(gv['REPO_DIR_HOME'])
 
 gv['FUNCTIONS_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'],
-    r'pmma-laser\implementation\functions')
+    r'pmma-laser\implementation\src')
 
 gv['FIGURES_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'], r'figures')
 

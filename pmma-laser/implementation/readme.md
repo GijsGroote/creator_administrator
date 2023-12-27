@@ -45,13 +45,13 @@ Before you begin, make sure you have the following dependencies installed:
    ```
 
 5. **Update the path toward 3D_print_global_variables.json:**
-    Find the file `../laserhok-workflow\pmma-laser\implementation\functions\global_variables.py`  
+    Find the file `../laserhok-workflow\pmma-laser\implementation\src\global_variables.py`  
     In that file update the variable `global_variables_path` with your path toward pmma_laser_global_variables.json.  
 
 6. **make inbox.bat and select_bestand.bat:**
 
    ```bash
-   python3 <REPO_DIR_HOME>/pmma-laser/implementation/functions/create_batch_files.py
+   python3 <REPO_DIR_HOME>/pmma-laser/implementation/src/create_batch_files.py
    ```
 
 7. **Create two desktop shortcuts:**

@@ -59,7 +59,7 @@ print(gv['REPO_DIR_HOME'])
 sys.path.append(gv['REPO_DIR_HOME'])
 
 gv['FUNCTIONS_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'],
-    r'3d-printers\implementation\functions')
+    r'3d-printers\implementation\src')
 
 gv['FIGURES_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'], r'figures')
 

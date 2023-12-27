@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>795</width>
+    <width>743</width>
     <height>600</height>
    </rect>
   </property>
@@ -27,7 +27,7 @@
      <string>BUTTOn</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -48,7 +48,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>795</width>
+     <width>743</width>
      <height>24</height>
     </rect>
    </property>
@@ -107,7 +107,7 @@
   <customwidget>
    <class>JumpButton</class>
    <extends>QPushButton</extends>
-   <header>myWidgets.h</header>
+   <header>src.myWidgets.h</header>
   </customwidget>
   <customwidget>
    <class>JobsQTabsWidget</class>

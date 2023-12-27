@@ -8,7 +8,8 @@ from PyQt5.QtGui import QKeyEvent
 from PyQt5 import uic
 from global_variables import gv
 
-from myWidgets import JumpButton
+from src.myWidgets import JumpButton
+from jobsQTabsWidget import JobsQTabsWidget
 
 from src.app import MainWindow
 
