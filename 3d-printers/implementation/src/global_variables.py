@@ -73,6 +73,6 @@ gv['MAIN_FOLDERS'] = {'WACHTRIJ': {'allowed_batch_files': ['gesliced.bat', 'afge
       'VERWERKT': {'allowed_batch_files': []},
       'AFGEKEURD': {'allowed_batch_files': []}}
 
-from src.cmd_farewell_handler import get_cmd_farewells
+from cmd_farewell_handler import get_cmd_farewells
 
 gv['CMD_FAREWELLS'] = get_cmd_farewells(gv)

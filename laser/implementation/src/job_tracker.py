@@ -18,10 +18,10 @@ from datetime import datetime
 from global_variables import gv
 from local_directory_functions import create_files_dict, move_job_to_main_folder
 
-from src.create_batch_file import create_batch_files_for_job_folder, python_to_batch_in_folder
-from src.create_batch_file import python_to_batch_in_folder
-from src.mail_functions import EmailManager
-from src.directory_functions import (
+from create_batch_file import create_batch_files_for_job_folder, python_to_batch_in_folder
+from create_batch_file import python_to_batch_in_folder
+from mail_functions import EmailManager
+from directory_functions import (
     copy, 
     delete,
     get_job_global_paths, 
@@ -30,12 +30,12 @@ from src.directory_functions import (
     create_new_job_folder,
     job_name_to_job_folder_name,
     copy_job_files)
-from src.convert_functions import job_folder_name_to_job_name
-from src.talk_to_sa import yes_or_no
+from convert_functions import job_folder_name_to_job_name
+from talk_to_sa import yes_or_no
 
 
 
-# TODO: make this an abstract tracker in src.tracker, and extend that tracker to reuse functions
+# TODO: make this an abstract tracker in tracker, and extend that tracker to reuse functions
 
 class JobTracker:
     """

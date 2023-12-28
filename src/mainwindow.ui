@@ -14,19 +14,6 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="JumpButton" name="pushButton">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>510</y>
-      <width>789</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>BUTTOn</string>
-    </property>
-   </widget>
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
@@ -52,12 +39,12 @@
      <height>24</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menumenubar">
+   <widget class="QMenu" name="createJobsMenubar">
     <property name="title">
      <string>Create Jobs</string>
     </property>
-    <addaction name="actionLoad_Jobs_from_Outlook"/>
-    <addaction name="actionSelect_FIle"/>
+    <addaction name="ActionImportFromMail"/>
+    <addaction name="ActionSelectFile"/>
    </widget>
    <widget class="QMenu" name="menuDocumentation">
     <property name="title">
@@ -72,17 +59,19 @@
      <string>Settings</string>
     </property>
    </widget>
-   <addaction name="menumenubar"/>
+   <addaction name="createJobsMenubar"/>
    <addaction name="menuDocumentation"/>
    <addaction name="menuSettings"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionLoad_Jobs_from_Outlook">
+  <action name="ActionImportFromMail">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Import from Mail</string>
    </property>
   </action>
-  <action name="actionSelect_FIle">
+  <action name="ActionSelectFile">
    <property name="text">
     <string>Select FIle</string>
    </property>
@@ -104,11 +93,6 @@
   </action>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>JumpButton</class>
-   <extends>QPushButton</extends>
-   <header>src.myWidgets.h</header>
-  </customwidget>
   <customwidget>
    <class>JobsQTabsWidget</class>
    <extends>QWidget</extends>

@@ -9,14 +9,14 @@ import shutil
 from global_variables import gv
 from pmma_talk_to_ta import enter_material_thickness_amount
 
-from src.directory_functions import (
+from directory_functions import (
     job_name_to_global_path,
     create_new_job_folder,
     job_name_to_job_folder_name,
     copy_job_files)
-from src.talk_to_sa import yes_or_no
-from src.create_batch_file import create_batch_files_for_job_folder
-from src.cmd_farewell_handler import remove_directory_and_close_cmd_farewell
+from talk_to_sa import yes_or_no
+from create_batch_file import create_batch_files_for_job_folder
+from cmd_farewell_handler import remove_directory_and_close_cmd_farewell
 
 
 def move_job_to_main_folder(job_name: str, target_main_folder: str):

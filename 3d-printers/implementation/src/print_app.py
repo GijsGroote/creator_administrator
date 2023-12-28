@@ -10,7 +10,7 @@ from global_variables import gv
 
 from myWidgets import JumpButton
 
-from src.app import MainWindow
+from app import MainWindow
 
 class PrintMainWindow(MainWindow):
 

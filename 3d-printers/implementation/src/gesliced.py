@@ -8,8 +8,8 @@ import sys
 from global_variables import gv
 from local_directory_functions import move_job_to_main_folder
 
-from src.cmd_farewell_handler import remove_directory_and_close_cmd_farewell
-from src.directory_functions import job_name_to_global_path
+from cmd_farewell_handler import remove_directory_and_close_cmd_farewell
+from directory_functions import job_name_to_global_path
 
 if __name__ == '__main__':
 

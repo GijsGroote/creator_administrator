@@ -9,14 +9,14 @@ from global_variables import gv
 from local_directory_functions import move_job_to_main_folder
 from local_cmd_farewell_handler import open_gesliced_folder_cmd_farewell
 
-from src.job_tracker import JobTracker
-from src.mail_functions import EmailManager
-from src.directory_functions import (
+from job_tracker import JobTracker
+from mail_functions import EmailManager
+from directory_functions import (
     job_name_to_global_path,
     does_job_exist_in_main_folder,
     job_name_to_job_folder_name)
-from src.talk_to_sa import yes_or_no
-from src.cmd_farewell_handler import (remove_directory_and_close_cmd_farewell)
+from talk_to_sa import yes_or_no
+from cmd_farewell_handler import (remove_directory_and_close_cmd_farewell)
 
 if __name__ == '__main__':
 

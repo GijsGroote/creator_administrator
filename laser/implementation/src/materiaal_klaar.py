@@ -12,14 +12,14 @@ from job_tracker import JobTracker
 
 
 
-from src.cmd_farewell_handler import remove_directory_and_close_cmd_farewell
-from src.talk_to_sa import choose_option
-from src.cmd_farewell_handler import remove_directory_cmd_farewell
-from src.directory_functions import (
+from cmd_farewell_handler import remove_directory_and_close_cmd_farewell
+from talk_to_sa import choose_option
+from cmd_farewell_handler import remove_directory_cmd_farewell
+from directory_functions import (
     delete,
     job_name_to_global_path,
     read_json_file, write_json_file)
-from src.talk_to_sa import yes_or_no
+from talk_to_sa import yes_or_no
 
 
 if __name__ == '__main__':

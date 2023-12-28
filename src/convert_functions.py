@@ -5,10 +5,12 @@ Extract information from input.
 import re
 from unidecode import unidecode
 
-from src.directory_functions import (
+from directory_functions import (
     get_job_folder_names,
     does_job_name_exist
 )
+
+
 
 def job_folder_name_to_job_name(job_folder_name: str) -> str:
     """ get the job name from a job folder name. """

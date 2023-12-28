@@ -8,6 +8,7 @@ import json
 import subprocess
 from typing import List
 
+
 def create_new_job_folder(gv: dict, job_name, new_job_folder_name: str, target_main_folder: str, source_main_folder: str) -> str:
     """ Create a new job folder. """
 
@@ -194,6 +195,4 @@ def write_json_file(dictionary: dict, json_file_global_path: str):
     """ Write dictionary to JSON file. """
 
     with open(json_file_global_path, 'w') as file:
-        json.dump(dictionary, file, indent=4)
-
- 
+        json.dump(dictionary, file, indent=4) 

@@ -5,8 +5,8 @@ Handle mail functionality.
 from typing import Tuple
 import win32com.client
 
-from src.talk_to_sa import yes_or_no
-from src.convert_functions import mail_to_name
+from talk_to_sa import yes_or_no
+from convert_functions import mail_to_name
 
 class EmailManager:
     """

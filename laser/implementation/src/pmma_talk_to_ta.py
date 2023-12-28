@@ -7,8 +7,8 @@ import re
 from typing import Tuple
 from global_variables import gv
 
-from src.talk_to_sa import choose_one_option
-from src.directory_functions import get_prefix_of_subfolders
+from talk_to_sa import choose_one_option
+from directory_functions import get_prefix_of_subfolders
 
 def enter_material_thickness_amount(file_name) -> Tuple[str, str, str]:
     """ Return strings for material, thickness and amount. """

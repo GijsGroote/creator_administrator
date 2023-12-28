@@ -9,8 +9,8 @@ import shutil
 from global_variables import gv
 from local_convert_functions import gcode_files_to_max_print_time
 
-from src.job_tracker import JobTracker
-from src.directory_functions import (
+from job_tracker import JobTracker
+from directory_functions import (
     job_name_to_global_path,
     create_new_job_folder,
     job_name_to_job_folder_name,
@@ -19,8 +19,8 @@ from src.directory_functions import (
     global_path_to_main_folder,
     copy)
 
-from src.convert_functions import job_folder_name_to_date
-from src.create_batch_file import create_batch_files_for_job_folder
+from convert_functions import job_folder_name_to_date
+from create_batch_file import create_batch_files_for_job_folder
 
 def move_job_to_main_folder(job_name: str, target_main_folder: str, source_main_folder=None):
     """ Moves a job to another main folder.

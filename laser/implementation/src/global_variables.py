@@ -53,11 +53,18 @@ with open(global_variables_path, 'r') as global_variables_file:
                     gv['REPO_DIR_HOME'],
                     'pmma-laser/implementation/email_templates', mail_template+'.html')
 
-# import functions from src
-sys.path.append(gv['REPO_DIR_HOME'])
 
-gv['FUNCTIONS_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'],
-    r'pmma-laser\implementation\src')
+gv['GLOBAL_SRC_DIR'] = os.path.join(gv['REPO_DIR_HOME'], r'src')
+gv['LOCAL_SRC_DIR'] = os.path.join(gv['REPO_DIR_HOME'],
+    r'laser\implementation\src')
+gv['UI_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'],
+    r'laser\implementation\ui')
+
+# import functions from src
+sys.path.append(gv['GLOBAL_SRC_DIR'])
+sys.path.append(gv['LOCAL_SRC_DIR'])
+sys.path.append(gv['UI_DIR_HOME'])
+
 
 gv['FIGURES_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'], r'figures')
 
@@ -72,6 +79,6 @@ gv['MAIN_FOLDERS'] = {'WACHTRIJ': {'allowed_batch_files': ['laser_klaar.bat', 'a
 gv['MINOR_FOLDERS'] = {'WACHTRIJ_MATERIAAL': {'allowed_batch_files': ['materiaal_klaar.bat']}}
 
 
-from src.cmd_farewell_handler import get_cmd_farewells
+from cmd_farewell_handler import get_cmd_farewells
 
 gv['CMD_FAREWELLS'] = get_cmd_farewells(gv)

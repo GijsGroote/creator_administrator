@@ -10,12 +10,12 @@ from global_variables import gv
 from job_tracker import JobTracker
 from pmma_talk_to_ta import enter_material_thickness_amount
 
-from src.create_batch_file import python_to_batch, python_to_batch_in_folder
-from src.cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
-from src.directory_functions import get_jobs_in_queue, get_prefix_of_subfolders
-from src.mail_functions import EmailManager
-from src.convert_functions import mail_to_name, make_job_name_unique
-from src.talk_to_sa import choose_one_option, yes_or_no
+from create_batch_file import python_to_batch, python_to_batch_in_folder
+from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
+from directory_functions import get_jobs_in_queue, get_prefix_of_subfolders
+from mail_functions import EmailManager
+from convert_functions import mail_to_name, make_job_name_unique
+from talk_to_sa import choose_one_option, yes_or_no
 
 
 def enter_laser_file_details(msg, attachment) -> Tuple[str, str, str]:

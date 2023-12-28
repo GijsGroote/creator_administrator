@@ -7,7 +7,7 @@ from PyQt5.QtGui import QKeyEvent
 from PyQt5 import uic
 
 # from global_variables import gv
-# from src.mywidgets import JumpButton 
+# from mywidgets import JumpButton 
 
 
 class MainWindow(QMainWindow):

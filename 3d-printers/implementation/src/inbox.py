@@ -9,11 +9,11 @@ import os
 from global_variables import gv
 from local_cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 
-from src.create_batch_file import python_to_batch
-from src.directory_functions import get_jobs_in_queue
-from src.mail_functions import EmailManager
-from src.convert_functions import mail_to_name, make_job_name_unique
-from src.job_tracker import JobTracker
+from create_batch_file import python_to_batch
+from directory_functions import get_jobs_in_queue
+from mail_functions import EmailManager
+from convert_functions import mail_to_name, make_job_name_unique
+from job_tracker import JobTracker
 
 
 def create_print_job(job_name: str, msg) -> str:

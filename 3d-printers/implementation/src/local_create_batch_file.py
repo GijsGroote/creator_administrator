@@ -4,7 +4,7 @@ Create the batch files.
 
 import os
 from global_variables import gv
-from src.create_batch_file import python_to_batch_in_folder
+from create_batch_file import python_to_batch_in_folder
 
 
 if __name__ == '__main__':

@@ -10,10 +10,10 @@ from typing import Tuple
 from datetime import datetime
 
 
-from src.create_batch_file import create_batch_files_for_job_folder
-from src.directory_functions import get_job_global_paths
-from src.convert_functions import job_folder_name_to_job_name
-from src.talk_to_sa import yes_or_no
+from create_batch_file import create_batch_files_for_job_folder
+from directory_functions import get_job_global_paths
+from convert_functions import job_folder_name_to_job_name
+from talk_to_sa import yes_or_no
 
 
 class JobTracker:

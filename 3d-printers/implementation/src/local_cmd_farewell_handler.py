@@ -7,7 +7,7 @@ Communication from the python process to the cmd is through a exist status.
 import sys
 import os
 from global_variables import gv
-from src.cmd_farewell_handler import *
+from cmd_farewell_handler import *
 
 
 def open_gesliced_folder_cmd_farewell():

@@ -3,11 +3,11 @@ Convert python code to clickable batch functions.
 """
 
 import os
-from src.directory_functions import job_name_to_global_path
+# from directory_functions import job_name_to_global_path
 
 def python_to_batch(gv: dict, python_path: str, job_name: str, search_in_main_folder=None):
     """ Convert a python file to an batch file. """
-    batch_file_target_folder = job_name_to_global_path(gv, job_name, search_in_main_folder)  
+    # batch_file_target_folder = job_name_to_global_path(gv, job_name, search_in_main_folder)  
     
     assert os.path.exists(batch_file_target_folder),\
         f"path {batch_file_target_folder} does not exist."  
