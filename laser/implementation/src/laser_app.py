@@ -13,9 +13,10 @@ from myWidgets import JumpButton
 from jobsQTabsWidget import JobsQTabsWidget
 
 from app import MainWindow
-from select_file import SelectFile
 
-from select_file import SelectFileQDialog
+from select_file import create_laser_jobs
+
+from my_qdialogs import SelectFileQDialog
 
 class LaserMainWindow(MainWindow):
 
@@ -30,11 +31,21 @@ class LaserMainWindow(MainWindow):
         print('please import mail now')
 
     def onActionSelectFileclicked(self):
-        dlg = SelectFileQDialog(self)
-        dlg.exec()
+        dialog = SelectFileQDialog(self)
+
+        if dialog.exec_() == QDialog.Accepted:
+            folder_global_path = dialog.selectFolderButton.folder_global_path
+            project_name = dialog.ProjectNameQLineEdit.text()
+            print(f'the folder is {folder_global_path} and pj {project_name}')
+            create_laser_jobs(folder_global_path, project_name)
+
+            print('laser jobs created')
+
+
 
         print('please select a file now')
 
+    
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

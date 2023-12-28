@@ -7,18 +7,21 @@ class SelectFolderButton(QPushButton):
 
     def __init__(self, parent=None):
         QPushButton.__init__(self, parent)
+        self.folder_global_path = None
         self.clicked.connect(self.on_click)
 
     def on_click(self):
-
-        folder_name = QFileDialog.getExistingDirectory(self,
+        self.folder_global_path = QFileDialog.getExistingDirectory(self,
             'Select Folder',
             expanduser('~'),
             QFileDialog.ShowDirsOnly)
 
-        max_char_length = 20
+        folder_name_short = self.folder_global_path
 
-        if 3 >= len(folder_name) < max_char_length:
-            folder_name = '../'+folder_name[-max_char_length+3:]
-        self.setText(folder_name)
+        max_char_length = 50
+
+        if len(folder_name_short) > max_char_length:
+            folder_name_short = '../'+folder_name_short[-max_char_length+3:]
+
+        self.setText(folder_name_short)
 

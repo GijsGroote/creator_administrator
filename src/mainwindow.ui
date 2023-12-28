@@ -75,6 +75,9 @@
    <property name="text">
     <string>Select FIle</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
   </action>
   <action name="action3D_printers">
    <property name="text">
