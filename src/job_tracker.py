@@ -29,9 +29,9 @@ class JobTracker:
         self.tracker_backup_file_path = gv['TRACKER_FILE_PATH'].replace("job_log.json",
                                         "job_log_backup.json")
 
-        self.check_tracker_file_health()
+        self.checkTrackerFileHealth()
 
-    def check_tracker_file_health(self):
+    def checkTrackerFileHealth(self):
         # Create the tracker file if it doesn't exist
         if not os.path.exists(self.tracker_file_path):
             print(f"tracker file was not detected at: {self.tracker_file_path}")
@@ -67,10 +67,10 @@ class JobTracker:
 
         print(f"{self.tracker_file_path} created!\n")
 
-    def check_health(self, gv:dict):
+    def checkHealth(self, gv:dict):
         """ Check and repair system. """
 
-        self.check_tracker_file_health()
+        self.checkTrackerFileHealth()
 
         print("Checking system health...")
 

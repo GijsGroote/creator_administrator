@@ -20,7 +20,7 @@ class EmailManager:
         except:
             self.verwerkt_folder = self.inbox.Parent.Folders.Add("Verwerkt")
 
-    def get_new_emails(self, gv: dict) -> list:
+    def getNewEmails(self, gv: dict) -> list:
         """ Return emails from Outlook inbox. """
         msgs = []
         for message in self.inbox.Items:
@@ -42,23 +42,23 @@ class EmailManager:
             print(f'processing {len(msgs)} new mails')
         return msgs
 
-    def move_email_to_verwerkt_folder(self, gv: dict, msg):
+    def moveEmailToVerwerktFolder(self, gv: dict, msg):
         """ Move email to verwerkt folder. """
         if gv["IWS_COMPUTER"]:
             msg.Move(self.verwerkt_folder)
 
-    def print_mail_body(self, msg):
+    def printMailBody(self, msg):
         """ Print mail body. """
         print(msg.Body)
 
-    def print_mail_body_from_path(self, msg_file_path: str):
+    def printMailBodyFromPath(self, msg_file_path: str):
         """ Print the content of an .msg file. """
         outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
         msg = outlook.OpenSharedItem(msg_file_path)
 
         print(msg.Body)
 
-    def get_email_address(self, msg) -> str:
+    def getEmailAdress(self, msg) -> str:
         """ Return the email adress. """
         if msg.Class==43:
             if msg.SenderEmailType=='EX':
@@ -69,7 +69,7 @@ class EmailManager:
 
         raise ValueError("Could not get email adress")
 
-    def reply_to_email_from_file_using_template(self, gv: dict, 
+    def replyToEmailFromFileUsingTemplate(self, gv: dict, 
                                                 msg_file_path: str,
                                                 template_file_name: str,
                                                 template_content: dict,
@@ -95,7 +95,7 @@ class EmailManager:
         else:
             reply.Send()
 
-    def is_mail_a_valid_job_request(self, gv: dict, msg) -> Tuple[bool, str]:
+    def isMailAValidJobRequest(self, gv: dict, msg) -> Tuple[bool, str]:
         """ Check if the requirements are met for a valid job request. """
 
         job_file_count = 0

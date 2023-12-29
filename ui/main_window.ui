@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>743</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>791</width>
+      <height>491</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="LaserJobsQTabWidget" name="widget" native="true"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>743</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="createJobsMenubar">
+    <property name="title">
+     <string>Create Jobs</string>
+    </property>
+    <addaction name="ActionImportFromMail"/>
+    <addaction name="ActionSelectFile"/>
+   </widget>
+   <widget class="QMenu" name="menuDocumentation">
+    <property name="title">
+     <string>Documentation</string>
+    </property>
+    <addaction name="action3D_printers"/>
+    <addaction name="actionPMMA_Laser_cutter"/>
+    <addaction name="actionMetal_Laser_Cutter"/>
+   </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+   </widget>
+   <addaction name="createJobsMenubar"/>
+   <addaction name="menuDocumentation"/>
+   <addaction name="menuSettings"/>
+  </widget>
+  <action name="ActionImportFromMail">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Import from Mail</string>
+   </property>
+  </action>
+  <action name="ActionSelectFile">
+   <property name="text">
+    <string>Select FIle</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="action3D_printers">
+   <property name="text">
+    <string>3D printers</string>
+   </property>
+  </action>
+  <action name="actionPMMA_Laser_cutter">
+   <property name="text">
+    <string>PMMA Laser cutter</string>
+   </property>
+  </action>
+  <action name="actionMetal_Laser_Cutter">
+   <property name="text">
+    <string>Metal Laser Cutter</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LaserJobsQTabWidget</class>
+   <extends>QWidget</extends>
+   <header>laser_tab_widget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
