@@ -6,15 +6,13 @@ import os
 import sys
 import datetime
 from typing import Tuple
-from tkinter import filedialog
 
 from global_variables import gv
 # from laser_job_tracker import LaserJobTracker
 from create_batch_file import python_to_batch
-from directory_functions import copy
-from convert_functions import make_job_name_unique
-from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
-from talk_to_sa import password_please
+from src.directory_functions import copy
+from src.convert_functions import make_job_name_unique
+from src.cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 
 
 def create_laser_jobs(folder_global_path: str, project_name: str):
@@ -95,3 +93,6 @@ def local_path_to_job_name(job_content_local_path: str) -> str:
     """ return a unique laser job name. """
     return make_job_name_unique(gv, job_content_local_path.replace(' ', '_'))
 
+if __name__ == '__main__':
+    print('ha')
+    create_laser_jobs('/home/gijs/laser_project', 'test_laser_project')

@@ -11,7 +11,7 @@ from global_variables import gv
 
 from laser_tab_widget import LaserJobsQTabWidget
 
-from app import MainWindow
+from src.app import MainWindow
 
 from select_file import create_laser_jobs
 

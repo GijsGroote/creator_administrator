@@ -3,7 +3,7 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import QDialog, QMessageBox
 
 from global_variables import gv
-from qdialog import SelectFileQDialog
+from src.qdialog import SelectFileQDialog
 
 class LaserSelectFileQDialog(SelectFileQDialog):
     """ Select file dialog. """

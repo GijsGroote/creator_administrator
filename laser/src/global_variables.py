@@ -56,11 +56,12 @@ with open(global_variables_path, 'r') as global_variables_file:
 
 gv['GLOBAL_SRC_DIR'] = os.path.join(gv['REPO_DIR_HOME'], r'src')
 gv['LOCAL_SRC_DIR'] = os.path.join(gv['REPO_DIR_HOME'],
-    r'laser\implementation\src')
+    r'laser\src')
 gv['UI_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'],
-    r'laser\implementation\ui')
+    r'laser\ui')
 
 # import functions from src
+sys.path.append(gv['REPO_DIR_HOME'])
 sys.path.append(gv['GLOBAL_SRC_DIR'])
 sys.path.append(gv['LOCAL_SRC_DIR'])
 sys.path.append(gv['UI_DIR_HOME'])
