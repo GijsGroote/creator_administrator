@@ -9,18 +9,13 @@ from typing import Tuple
 
 from global_variables import gv
 # from laser_job_tracker import LaserJobTracker
-from create_batch_file import python_to_batch
+from src.create_batch_file import python_to_batch
 from src.directory_functions import copy
 from src.convert_functions import make_job_name_unique
 from src.cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 
 
 def create_laser_jobs(folder_global_path: str, project_name: str):
-
-
-    # check health
-    # job_tracker = LaserJobTracker(gv)
-    # job_tracker.checkHealth()
 
     potential_jobs_local_paths = [folder for folder in os.listdir(folder_global_path)
                                   if os.path.isdir(os.path.join(folder_global_path, folder))]
@@ -41,16 +36,16 @@ def create_laser_jobs(folder_global_path: str, project_name: str):
 
         if is_valid_job:
             job_name = local_path_to_job_name(potential_job_local_path)
-            job_folder_name = project_name + '_' + job_name
 
-            create_laser_job(job_folder_name, potential_job_global_path)
+            create_laser_job(job_name=project_name+'_'+job_name,
+                             job_content_global_path=potential_job_global_path)
             n_valid_laser_jobs += 1
-            print(f'({job_number}/{n_potential_jobs}) created laser job: {job_name}')
+            print(f'({job_number+1}/{n_potential_jobs}) created laser job: {job_name}')
 
             # job_tracker.add_job(job_name, "WACHTRIJ")
 
         else:
-            print(f'({job_number}/{n_potential_jobs}) from folder {potential_job_local_path} not'
+            print(f'({job_number+1}/{n_potential_jobs}) from folder {potential_job_local_path} not'
                   f' converted to laser job because:\n {invalid_reason} abort!\n')
 
     print(f'created {n_valid_laser_jobs} laser jobs out of {n_potential_jobs} potential jobs')
@@ -70,7 +65,7 @@ def is_folder_a_valid_laser_job(global_path: str) -> Tuple[bool, str]:
                 laser_file_count += 1
 
     if laser_file_count == 0:
-        return False, 'no .stl attachment found'
+        return False, f'no {gv["ACCEPTED_EXTENSIONS"]} attachment found'
 
     return True, ' '
 
@@ -78,21 +73,14 @@ def create_laser_job(job_name: str, job_content_global_path: str):
     """ Create a laser job from content in job_content_global_path in folder WACHTRIJ. """
 
     today = datetime.date.today()
-    job_folder_name = str(today.strftime('%d')) + '-' + str(today.strftime('%m')) + '_' + job_name
+    job_folder_name = str(today.strftime('%d'))+'-'+str(today.strftime('%m'))+'_'+job_name
 
-    job_global_path = os.path.join(os.path.join(gv['JOBS_DIR_HOME'], 'WACHTRIJ', job_folder_name))
+    job_global_path = os.path.join(os.path.join(gv['JOBS_DIR_HOME'], job_folder_name))
 
-    os.mkdir(job_global_path)
     copy(job_content_global_path, job_global_path)
-
-    python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), job_name, 'WACHTRIJ')
-    python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'gesliced.py'), job_name, 'WACHTRIJ')
 
 
 def local_path_to_job_name(job_content_local_path: str) -> str:
     """ return a unique laser job name. """
     return make_job_name_unique(gv, job_content_local_path.replace(' ', '_'))
 
-if __name__ == '__main__':
-    print('ha')
-    create_laser_jobs('/home/gijs/laser_project', 'test_laser_project')

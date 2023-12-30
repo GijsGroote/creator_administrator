@@ -14,7 +14,10 @@ from app import MainWindow
 class PrintMainWindow(MainWindow):
 
     def __init__(self, *args, **kwargs):
-        MainWindow.__init__(self, *args, **kwargs)
+        ui_global_path = os.path.join(gv['UI_DIR_HOME'], 'printer_main_window.ui')
+        print(ui_global_path)
+        MainWindow.__init__(self, ui_global_path, *args, **kwargs)
+
 
         # btn = JumpButton()
 

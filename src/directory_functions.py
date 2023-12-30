@@ -8,7 +8,6 @@ import json
 import subprocess
 from typing import List
 
-
 def create_new_job_folder(gv: dict, job_name, new_job_folder_name: str, target_main_folder: str, source_main_folder: str) -> str:
     """ Create a new job folder. """
 
@@ -46,12 +45,13 @@ def copy_job_files(target_dir_global_path: str, source_dir_global_path: str, exc
 
 def copy(source_dir_global: str, target_dir_global: str):
     """ Copy directory and subdirectories recursively. """
+
     if os.path.exists(target_dir_global):
         return
-    
+
     elif os.path.isdir(source_dir_global):
         shutil.copytree(source_dir_global, target_dir_global)   
-    
+
     else:
         shutil.copy(source_dir_global, target_dir_global)
         
@@ -69,7 +69,6 @@ def move(source_dir_global: str, target_dir_global: str):
 
 def delete(gv, item_global_path: str):
     """ Delete the file from the file system. """
-    print(f'fuck lets remove {item_global_path}')
     if os.path.exists(item_global_path):
         try:
             if os.path.isdir(item_global_path):
@@ -108,23 +107,9 @@ def get_job_global_paths(gv: dict, search_in_main_folder=None) -> List[str]:
 
     return job_global_paths
 
-def get_job_folder_names(gv: dict, search_in_main_folder=None) -> List[str]:
+def get_job_folder_names(gv: dict) -> List[str]:
     """ Return all folder names corresponding to a job name.  """
-
-    job_names = []
-
-    if search_in_main_folder is None:
-        main_folders = os.listdir(gv['JOBS_DIR_HOME'])
-    else:
-        main_folders = [search_in_main_folder]
-
-    for main_folder in main_folders:
-        temp_job_names = list(os.listdir(os.path.join(gv['JOBS_DIR_HOME'], main_folder)))
-
-        if len(temp_job_names) > 0:
-            job_names.extend(temp_job_names)
-
-    return job_names
+    return list(os.listdir(os.path.join(gv['JOBS_DIR_HOME'])))
 
 def job_name_to_global_path(gv: dict, job_name: str, search_in_main_folder=None) -> str:
     """ Return global path of job. """

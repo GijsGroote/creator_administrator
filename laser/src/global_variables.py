@@ -9,34 +9,43 @@ import sys
 # Detect the computer.
 IWS_COMPUTER = False
 
-pmma_laser_gv_path = r'C:\Users\PMMA laser\.ssh\pmma_laser_global_variables.json'
-gijs_windows_pmma_laser_gv_path = r'C:\Users\gijsg\.ssh\pmma_laser_global_variables.json'
-gijs_linux_pmma_laser_gv_path = r'/home/gijs/.ssh/pmma_laser_global_variables.json'
+iws_data_dir_home = r'C:\Users\PMMA laser\.ssh\pmma_laser_global_variables.json'
+gijs_windows_data_dir_home = r'C:\Users\gijsg\AppData\creator-administrator'
+gijs_linux_data_dir_home = r'/home/gijs/.creator-administrator'
 
-if os.path.exists(pmma_laser_gv_path):
+if os.path.exists(iws_data_dir_home):
     IWS_COMPUTER = True
-    global_variables_path = os.path.abspath(pmma_laser_gv_path)
+    data_dir_home = os.path.abspath(iws_data_dir_home)
     
-elif os.path.exists(gijs_windows_pmma_laser_gv_path):
-    global_variables_path = os.path.abspath(gijs_windows_pmma_laser_gv_path)
+elif os.path.exists(gijs_windows_data_dir_home):
+    data_dir_home = os.path.abspath(gijs_windows_data_dir_home)
 
-elif os.path.exists(gijs_linux_pmma_laser_gv_path):
-    global_variables_path = os.path.abspath(gijs_linux_pmma_laser_gv_path)
-
+elif os.path.exists(gijs_linux_data_dir_home):
+    data_dir_home = os.path.abspath(gijs_linux_data_dir_home)
 else:
-    raise ValueError('could not find pmma_laser_global_variables.json file')
+    raise ValueError('could not find data_dir_home')
+
+global_variables_path = os.path.join(data_dir_home, 'laser_global_variables.json')
+jobs_dir_home = os.path.join(data_dir_home, 'laser_jobs')
+tracker_file_path = os.path.join(data_dir_home, 'laser_job_log.json')
+
+assert os.path.exists(global_variables_path), f'Could not find file: {global_variables_path}'
+assert os.path.exists(jobs_dir_home), f'Could not find folder: {data_dir_home}'
 
 # Global Variables (gv)
-gv = {'IWS_COMPUTER': IWS_COMPUTER}
+gv = {'IWS_COMPUTER': IWS_COMPUTER,
+      'DATA_DIR_HOME': data_dir_home,
+      'JOBS_DIR_HOME': jobs_dir_home,
+      'TRACKER_FILE_PATH': tracker_file_path}
 
 with open(global_variables_path, 'r') as global_variables_file:
     gv_data = json.load(global_variables_file)
-    gv['JOBS_DIR_HOME'] = gv_data['JOBS_DIR_HOME']
     gv['REPO_DIR_HOME'] = gv_data['REPO_DIR_HOME']
-    gv['TRACKER_FILE_PATH'] = gv_data['TRACKER_FILE_PATH']
     gv['PYTHON_PATH'] = gv_data['PYTHON_PATH']
     gv['OUTLOOK_PATH'] = gv_data['OUTLOOK_PATH']
-    gv['IOBIT_UNLOCKER_PATH'] = "there is no IOBIt UNLOCKER Any MOre" 
+    gv['IOBIT_UNLOCKER_PATH'] = "there is no IOBIt UNLOCKER Any MOre" # remove this
+    gv['ACCEPTED_EXTENSIONS'] = tuple(gv_data['ACCEPTED_EXTENSIONS'].split(', '))
+    gv['DAYS_TO_KEEP_JOBS'] = gv_data['DAYS_TO_KEEP_JOBS']
     gv['PASSWORD'] = gv_data['PASSWORD']
 
     for mail_template in ['RECEIVED_MAIL_TEMPLATE',
@@ -51,14 +60,11 @@ with open(global_variables_path, 'r') as global_variables_file:
         else:
             gv[mail_template] = os.path.join(
                     gv['REPO_DIR_HOME'],
-                    'pmma-laser/implementation/email_templates', mail_template+'.html')
+                    'laser/email_templates', mail_template+'.html')
 
-
-gv['GLOBAL_SRC_DIR'] = os.path.join(gv['REPO_DIR_HOME'], r'src')
-gv['LOCAL_SRC_DIR'] = os.path.join(gv['REPO_DIR_HOME'],
-    r'laser\src')
-gv['UI_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'],
-    r'laser\ui')
+gv['GLOBAL_SRC_DIR'] = os.path.join(gv['REPO_DIR_HOME'], 'src')
+gv['LOCAL_SRC_DIR'] = os.path.join(gv['REPO_DIR_HOME'], 'laser/src')
+gv['UI_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'], 'laser/ui')
 
 # import functions from src
 sys.path.append(gv['REPO_DIR_HOME'])
@@ -66,12 +72,8 @@ sys.path.append(gv['GLOBAL_SRC_DIR'])
 sys.path.append(gv['LOCAL_SRC_DIR'])
 sys.path.append(gv['UI_DIR_HOME'])
 
-
 gv['FIGURES_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'], r'figures')
 
-gv['ACCEPTED_EXTENSIONS'] = ('.dxf')
-
-gv['DAYS_TO_KEEP_JOBS'] = 5
 
 gv['MAIN_FOLDERS'] = {'WACHTRIJ': {'allowed_batch_files': ['laser_klaar.bat', 'afgekeurd.bat']},
                       'VERWERKT': {'allowed_batch_files': []},
@@ -80,6 +82,6 @@ gv['MAIN_FOLDERS'] = {'WACHTRIJ': {'allowed_batch_files': ['laser_klaar.bat', 'a
 gv['MINOR_FOLDERS'] = {'WACHTRIJ_MATERIAAL': {'allowed_batch_files': ['materiaal_klaar.bat']}}
 
 
-from cmd_farewell_handler import get_cmd_farewells
+from src.cmd_farewell_handler import get_cmd_farewells
 
 gv['CMD_FAREWELLS'] = get_cmd_farewells(gv)

@@ -14,53 +14,31 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="LaserJobsQTabWidget" name="tabWidget">
+   <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>0</y>
-      <width>761</width>
-      <height>481</height>
+      <x>90</x>
+      <y>40</y>
+      <width>561</width>
+      <height>321</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
-    <widget class="QWidget" name="allJobsTab">
+    <widget class="QWidget" name="tab">
      <attribute name="title">
       <string>All Jobs</string>
      </attribute>
     </widget>
-    <widget class="QWidget" name="wachtrijTab">
-     <property name="whatsThis">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wachtrij&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
+    <widget class="QWidget" name="tab_2">
      <attribute name="title">
-      <string>Wachtrij</string>
+      <string>Gesliced</string>
      </attribute>
     </widget>
-    <widget class="QWidget" name="wachtrijMateriaalTab">
-     <property name="whatsThis">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wachtrij Material&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
+    <widget class="QWidget" name="tab_3">
      <attribute name="title">
-      <string>Wachtrij Material</string>
-     </attribute>
-    </widget>
-    <widget class="QWidget" name="verwerktTab">
-     <attribute name="title">
-      <string>Verwerkt</string>
-     </attribute>
-    </widget>
-    <widget class="QWidget" name="afgekeurdTab">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <attribute name="title">
-      <string>Afgekeurd</string>
+      <string>todo</string>
      </attribute>
     </widget>
    </widget>
@@ -130,14 +108,6 @@
    </property>
   </action>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>LaserJobsQTabWidget</class>
-   <extends>QTabWidget</extends>
-   <header>laserjobsqtabwidget.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

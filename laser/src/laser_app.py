@@ -1,26 +1,18 @@
 import sys
 import os
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QDialog, QMainWindow, QPushButton
-from PyQt5.QtGui import QKeyEvent
-# from dialog import Ui_Dialog
-from PyQt5 import uic
-from PyQt5.uic import loadUi
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QDialog
+
 from global_variables import gv
-
-from laser_tab_widget import LaserJobsQTabWidget
-
 from src.app import MainWindow
-
 from select_file import create_laser_jobs
-
 from laser_qdialog import LaserSelectFileQDialog
 
 class LaserMainWindow(MainWindow):
 
     def __init__(self, *args, **kwargs):
-        MainWindow.__init__(self, *args, **kwargs)
+        ui_global_path = os.path.join(gv['UI_DIR_HOME'], 'laser_main_window.ui')
+        MainWindow.__init__(self, ui_global_path, *args, **kwargs)
 
         # menu bar actions
         self.ActionImportFromMail.triggered.connect(self.onActionImportFromMail)

@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>795</width>
-    <height>516</height>
+    <width>870</width>
+    <height>631</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="LaserJobsQTabWidget" name="tabWidget">
+   <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>0</y>
+      <x>70</x>
+      <y>10</y>
       <width>761</width>
       <height>481</height>
      </rect>
@@ -30,6 +30,46 @@
      <attribute name="title">
       <string>All Jobs</string>
      </attribute>
+     <widget class="QWidget" name="">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>761</width>
+        <height>441</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="AllJobsQListWidget" name="listWidget"/>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="pushButton_4">
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_5">
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton">
+           <property name="text">
+            <string>PushButton</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
     </widget>
     <widget class="QWidget" name="wachtrijTab">
      <property name="whatsThis">
@@ -70,7 +110,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>795</width>
+     <width>870</width>
      <height>24</height>
     </rect>
    </property>
@@ -132,10 +172,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>LaserJobsQTabWidget</class>
-   <extends>QTabWidget</extends>
-   <header>laserjobsqtabwidget.h</header>
-   <container>1</container>
+   <class>AllJobsQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>jobs_qlist_widget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

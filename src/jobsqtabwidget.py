@@ -1,6 +1,4 @@
-import os
-
-from PyQt5.QtWidgets import QApplication, QDialog, QMainWindow, QPushButton, QTabWidget
+from PyQt5.QtWidgets import QTabWidget
 
 from PyQt5.uic import loadUi
 from global_variables import gv

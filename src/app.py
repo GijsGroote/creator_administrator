@@ -7,9 +7,9 @@ from PyQt5 import uic
 
 class MainWindow(QMainWindow):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, ui_global_path, *args, **kwargs):
         QMainWindow.__init__(self, *args, **kwargs)
-        uic.loadUi(os.path.abspath('ui/main_window.ui'), self)
+        uic.loadUi(ui_global_path, self)
 
     def keyPressEvent(self, event):
         ''' Handle shortcuts on main window. '''

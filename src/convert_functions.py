@@ -3,6 +3,7 @@ Extract information from input.
 """
 
 import re
+import os
 from unidecode import unidecode
 
 from directory_functions import (
@@ -50,12 +51,11 @@ def make_job_name_unique(gv: dict, job_name: str) -> str:
     job_name = unidecode(job_name)
 
     max_job_number = 0
-    for folder_name in get_job_folder_names(gv):
+    for folder_name in os.listdir(gv['JOBS_DIR_HOME']):
 
         match_job_number= re.search(rf'.*{job_name}_\((\d+)\)$', folder_name)
 
         if match_job_number:
-
             job_number = int(match_job_number.group(1))
             if job_number > max_job_number:
                 max_job_number = job_number
