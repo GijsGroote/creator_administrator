@@ -6,111 +6,336 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>870</width>
-    <height>631</height>
+    <width>722</width>
+    <height>582</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QTabWidget" name="tabWidget">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>10</y>
-      <width>761</width>
-      <height>481</height>
-     </rect>
-    </property>
-    <property name="currentIndex">
-     <number>0</number>
-    </property>
-    <widget class="QWidget" name="allJobsTab">
-     <attribute name="title">
-      <string>All Jobs</string>
-     </attribute>
-     <widget class="QWidget" name="">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>761</width>
-        <height>441</height>
-       </rect>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="AllJobsQListWidget" name="listWidget"/>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QPushButton" name="pushButton_4">
-           <property name="text">
-            <string>PushButton</string>
-           </property>
+      <property name="currentIndex">
+       <number>1</number>
+      </property>
+      <widget class="QWidget" name="allJobsTab">
+       <attribute name="title">
+        <string>All Jobs</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_7">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QStackedWidget" name="allQStackedWidget">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <widget class="QWidget" name="jobsListPage">
+             <property name="job_name" stdset="0">
+              <string>Noneeee</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <item>
+               <widget class="JobsQListWidget" name="allJobsQListWidget"/>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="jobPage">
+             <widget class="BackQPushButton" name="backPushButton">
+              <property name="geometry">
+               <rect>
+                <x>50</x>
+                <y>20</y>
+                <width>87</width>
+                <height>27</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>back</string>
+              </property>
+             </widget>
+             <widget class="JobContentQListWidget" name="allJobContentQListWidget">
+              <property name="geometry">
+               <rect>
+                <x>50</x>
+                <y>60</y>
+                <width>601</width>
+                <height>281</height>
+               </rect>
+              </property>
+             </widget>
+             <widget class="QPushButton" name="pushButton">
+              <property name="geometry">
+               <rect>
+                <x>120</x>
+                <y>410</y>
+                <width>87</width>
+                <height>27</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>PushButton</string>
+              </property>
+             </widget>
+             <widget class="QPushButton" name="pushButton_2">
+              <property name="geometry">
+               <rect>
+                <x>450</x>
+                <y>400</y>
+                <width>87</width>
+                <height>27</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>PushButton</string>
+              </property>
+             </widget>
+            </widget>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="wachtrijTab">
+       <property name="whatsThis">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wachtrij&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <attribute name="title">
+        <string>Wachtrij</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QStackedWidget" name="wachtrijQStackedWidget">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <widget class="QWidget" name="jobsListPage_2">
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <widget class="JobsQListWidget" name="wachtrijJobsQListWidget"/>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="jobPage_2">
+             <property name="job_name" stdset="0">
+              <string>Noneeee</string>
+             </property>
+             <widget class="BackQPushButton" name="backPushButton_2">
+              <property name="geometry">
+               <rect>
+                <x>50</x>
+                <y>20</y>
+                <width>87</width>
+                <height>27</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>back</string>
+              </property>
+             </widget>
+             <widget class="JobContentQListWidget" name="listWidget_10">
+              <property name="geometry">
+               <rect>
+                <x>50</x>
+                <y>110</y>
+                <width>601</width>
+                <height>281</height>
+               </rect>
+              </property>
+             </widget>
+            </widget>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="wachtrijMateriaalTab">
+       <property name="whatsThis">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wachtrij Material&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <attribute name="title">
+        <string>Wachtrij Material</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <widget class="QStackedWidget" name="wachtrijMateriaalQStackedWidget">
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="jobsListPage_3">
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="JobsQListWidget" name="wachtrijMateriaalJobsQListWidget"/>
+            </item>
+           </layout>
           </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButton_5">
-           <property name="text">
-            <string>PushButton</string>
-           </property>
+          <widget class="QWidget" name="jobPage_3">
+           <widget class="JobContentQListWidget" name="listWidget_7">
+            <property name="geometry">
+             <rect>
+              <x>40</x>
+              <y>100</y>
+              <width>601</width>
+              <height>281</height>
+             </rect>
+            </property>
+           </widget>
+           <widget class="BackQPushButton" name="backPushButton_3">
+            <property name="geometry">
+             <rect>
+              <x>50</x>
+              <y>40</y>
+              <width>87</width>
+              <height>27</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>back</string>
+            </property>
+           </widget>
           </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButton">
-           <property name="text">
-            <string>PushButton</string>
-           </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="verwerktTab">
+       <attribute name="title">
+        <string>Verwerkt</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_9">
+        <item>
+         <widget class="QStackedWidget" name="verwerktQStackedWidget">
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="jobsListPage_4">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="JobsQListWidget" name="verwerktJobsQListWidget"/>
+            </item>
+           </layout>
           </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
+          <widget class="QWidget" name="jobPage_4">
+           <widget class="BackQPushButton" name="backPushButton_4">
+            <property name="geometry">
+             <rect>
+              <x>40</x>
+              <y>60</y>
+              <width>80</width>
+              <height>27</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>back</string>
+            </property>
+           </widget>
+           <widget class="JobContentQListWidget" name="listWidget_8">
+            <property name="geometry">
+             <rect>
+              <x>150</x>
+              <y>50</y>
+              <width>501</width>
+              <height>311</height>
+             </rect>
+            </property>
+           </widget>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="afgekeurdTab">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <attribute name="title">
+        <string>Afgekeurd</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QStackedWidget" name="afgekeurdQStackedWidget">
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="jobsListPage_5">
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="JobsQListWidget" name="afgekeurdJobsQListWidget"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="jobPage_5">
+           <widget class="JobContentQListWidget" name="listWidget_9">
+            <property name="geometry">
+             <rect>
+              <x>60</x>
+              <y>110</y>
+              <width>601</width>
+              <height>281</height>
+             </rect>
+            </property>
+           </widget>
+           <widget class="BackQPushButton" name="backPushButton_5">
+            <property name="geometry">
+             <rect>
+              <x>50</x>
+              <y>30</y>
+              <width>87</width>
+              <height>27</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>back</string>
+            </property>
+           </widget>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
-    </widget>
-    <widget class="QWidget" name="wachtrijTab">
-     <property name="whatsThis">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wachtrij&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <attribute name="title">
-      <string>Wachtrij</string>
-     </attribute>
-    </widget>
-    <widget class="QWidget" name="wachtrijMateriaalTab">
-     <property name="whatsThis">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wachtrij Material&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <attribute name="title">
-      <string>Wachtrij Material</string>
-     </attribute>
-    </widget>
-    <widget class="QWidget" name="verwerktTab">
-     <attribute name="title">
-      <string>Verwerkt</string>
-     </attribute>
-    </widget>
-    <widget class="QWidget" name="afgekeurdTab">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <attribute name="title">
-      <string>Afgekeurd</string>
-     </attribute>
-    </widget>
-   </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>870</width>
+     <width>722</width>
      <height>24</height>
     </rect>
    </property>
@@ -172,7 +397,17 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>AllJobsQListWidget</class>
+   <class>BackQPushButton</class>
+   <extends>QPushButton</extends>
+   <header>button.h</header>
+  </customwidget>
+  <customwidget>
+   <class>JobContentQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>jobs_qlist_widget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>JobsQListWidget</class>
    <extends>QListWidget</extends>
    <header>jobs_qlist_widget.h</header>
   </customwidget>

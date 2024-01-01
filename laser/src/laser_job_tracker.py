@@ -1,5 +1,5 @@
 """
-Job tracker, a backup to check and repair the actual files on the file system.
+Laser Job tracker, tracking laser jobs.
 """
 
 import json
@@ -18,10 +18,8 @@ from datetime import datetime
 from global_variables import gv
 from laser_directory_functions import create_files_dict, move_job_to_main_folder
 
-from create_batch_file import create_batch_files_for_job_folder, python_to_batch_in_folder
-from create_batch_file import python_to_batch_in_folder
-from mail_functions import EmailManager
-from directory_functions import (
+# from mail_functions import EmailManager
+from src.directory_functions import (
     copy, 
     delete,
     get_job_global_paths, 
@@ -33,11 +31,10 @@ from directory_functions import (
 from convert_functions import job_folder_name_to_job_name
 from talk_to_sa import yes_or_no
 
+from src.job_tracker import JobTracker
 
 
-# TODO: make this an abstract tracker in tracker, and extend that tracker to reuse functions
-
-class LaserJobTracker:
+class LaserJobTracker(JobTracker):
     """
     Before changing files on file system, change the job_log.json
 
@@ -45,21 +42,20 @@ class LaserJobTracker:
     """
 
     def __init__(self):
-        self.job_keys = ['job_name', 'main_folder', 'created_on_date', 'laser_files']
-        self.tracker_file_path = gv['TRACKER_FILE_PATH']
-        self.tracker_backup_file_path = gv['TRACKER_FILE_PATH'].replace("job_log.json",
-                                        "job_log_backup.json")
+        JobTracker.__init__(self, gv)
 
-        self.checkTrackerFileHealth()
+        self.job_keys.append(['laserfiles'])
 
-    def add_job(self, job_name: str, main_folder: str, files_dict: dict) -> dict:
+    def addJob(self, job_name: str, job_folder_global_path: str, files_dict: dict, status='WACHTRIJ') -> dict:
         """ Add a job to the tracker. """
 
         with open(self.tracker_file_path, 'r') as tracker_file:
             tracker_dict = json.load(tracker_file)
 
         add_job_dict = {'job_name': job_name,
-                        'main_folder': main_folder,
+                        'job_folder_global_path': job_folder_global_path,
+                        'dynamic_job_name': str(datetime.now().strftime("%d-%m"))+'_'+job_name,
+                        'status': status,
                         'created_on_date': str(datetime.now().strftime("%d-%m-%Y")),
                         'laser_files': files_dict
                         }
@@ -69,34 +65,37 @@ class LaserJobTracker:
         with open(self.tracker_file_path, 'w') as tracker_file:
             json.dump(tracker_dict, tracker_file, indent=4)
 
-        self.add_file_to_wachtrij_material(add_job_dict)      
+        # self.addFileToWachtrijMaterial(add_job_dict)      
 
         return add_job_dict
     
-    def add_file_to_wachtrij_material(self, job_dict: dict):
+    # TODO: copy all files from materials 
+    def addFileToWachtrijMaterial(self, job_dict: dict):
+
         """ Add a file to the WACHTRIJ_MATERIAAL folder. """
+        pass
 
-        for file_key, file_dict in job_dict['laser_files'].items():
-            material_folder_global_path = os.path.join(gv['JOBS_DIR_HOME'], 'WACHTRIJ_MATERIAAL',
-                                                        file_dict['material']+'_'+file_dict['thickness'])
-            if not os.path.exists(material_folder_global_path):
-                os.mkdir(material_folder_global_path)
-            if not os.path.exists(os.path.join(material_folder_global_path, 'materiaal_klaar.bat')):
-                python_to_batch_in_folder(gv, 
-                            os.path.join(gv['FUNCTIONS_DIR_HOME'], 'materiaal_klaar.py'),
-                            material_folder_global_path,
-                            pass_parameter=material_folder_global_path)
+        # for file_key, file_dict in job_dict['laser_files'].items():
+        #     material_folder_global_path = os.path.join(gv['JOBS_DIR_HOME'], 'WACHTRIJ_MATERIAAL',
+        #                                                 file_dict['material']+'_'+file_dict['thickness'])
+        #     if not os.path.exists(material_folder_global_path):
+        #         os.mkdir(material_folder_global_path)
+        #     if not os.path.exists(os.path.join(material_folder_global_path, 'materiaal_klaar.bat')):
+        #         python_to_batch_in_folder(gv, 
+        #                     os.path.join(gv['FUNCTIONS_DIR_HOME'], 'materiaal_klaar.py'),
+        #                     material_folder_global_path,
+        #                     pass_parameter=material_folder_global_path)
                 
-            file_global_path = os.path.join(material_folder_global_path,
-                                            file_dict['amount']+'x_'+file_key)
+        #     file_global_path = os.path.join(material_folder_global_path,
+        #                                     file_dict['amount']+'x_'+file_key)
             
-            if os.path.exists(file_dict['file_global_path']):
-                copy(file_dict['file_global_path'], file_global_path)
-            else: 
-                print(f'Warning, could not find {file_dict['file_global_path']}')
-                raise ValueError('here ai m')
+        #     if os.path.exists(file_dict['file_global_path']):
+        #         copy(file_dict['file_global_path'], file_global_path)
+        #     else: 
+        #         print(f'Warning, could not find {file_dict["file_global_path"]}')
+        #         raise ValueError('here ai m')
 
-    def remove_job_from_wachtrij_material(self, job_name: str, remove_material_folder='true'):
+    def removeJobFromWachtrijMaterial(self, job_name: str, remove_material_folder='true'):
         """ Remove a job from the WACHTRIJ_MATERIAAL folder. """
 
         job_dict = self.job_name_to_job_dict(job_name)
@@ -117,7 +116,7 @@ class LaserJobTracker:
                     delete(gv, os.path.join(material_dir_global_path,
                             file_dict['amount']+'x_'+file_key))
                 
-    def remove_files_from_wachtrij_material(self, files_keys: list, call_fake_laser_klaar=False):
+    def removeFilesFromWachtrijMaterial(self, files_keys: list, call_fake_laser_klaar=False):
         """ Remove multiple files from the WACHTRIJ_MATERIAAL folder. """
 
         print('in remove files from wachtrij')
@@ -163,84 +162,7 @@ class LaserJobTracker:
                             delete(gv, os.path.join(material_dir_global_path,
                                 file_dict['amount']+'x_'+file_key))
                         
-    def checkTrackerFileHealth(self):
-        # Create the tracker file if it doesn't exist
-        if not os.path.exists(self.tracker_file_path):
-            print(f"tracker file was not detected at: {self.tracker_file_path}")
-            self.create_tracker_file()
-
-        try:
-            with open(self.tracker_file_path, 'r') as tracker_file:
-                json.load(tracker_file)
-        except Exception as e:
-            print(f"Cannot read tracker file at: {self.tracker_file_path}")
-            
-            if os.path.isfile(self.tracker_backup_file_path):
-                print("\nBackup file exists :)")
-                if yes_or_no('Do you want to restore the backup tracker file (Y/n)?'):
-                    os.remove(self.tracker_file_path)
-                    os.rename(self.tracker_backup_file_path, self.tracker_file_path)
-                print('backup tracker file restored.')
-            else: 
-                print(f"MANUALLY REPAIR TRACKER FILE!")
-
-            sys.exit(0)
-
-    def create_tracker_file(self):
-        """ Create the file that tracks jobs. """
-        if os.path.exists(self.tracker_backup_file_path):
-            if yes_or_no(f"Backup file detected at: {self.tracker_backup_file_path}, do you want to restore it (Y/n)?"):
-                os.rename(self.tracker_backup_file_path, self.tracker_file_path)
-                print("Backup restored!")
-                return
-
-        with open(self.tracker_file_path, 'w') as tracker_file:
-            json.dump(dict(), tracker_file, indent=4)
-
-        print(f"{self.tracker_file_path} created!\n")
-
-    def job_name_to_job_dict(self, job_name: str) -> dict:
-        """ Return the job_dict from a job_name. """
-        with open(self.tracker_file_path, 'r') as tracker_file:
-            return json.load(tracker_file)[job_name]
-
-    def job_global_path_to_tracker_job_dict(self, tracker_dict: dict, job_folder_name: str) -> Tuple[str, dict]:
-        """ If exists, return job name and data from tracker dictionary
-        corresponding to the job with name job_folder_name. """
-        for tracker_job_name, tracker_job_dict in tracker_dict.items():
-            if job_folder_name.endswith(tracker_job_name):
-                return tracker_job_name, tracker_job_dict
-        return None, None
-
-    def is_job_old(self, created_on_date: str) -> bool:
-        """ Check if the job is old. """
-        created_on_date_object = datetime.strptime(created_on_date, "%d-%m-%Y")
-        current_date_object = datetime.now()
-        date_difference = current_date_object - created_on_date_object
-        return date_difference.days > gv['DAYS_TO_KEEP_JOBS']
-
-    def make_backup(self):
-        """ Make a backup of the tracker file. """
-        try:
-            shutil.copy(self.tracker_file_path, self.tracker_backup_file_path)
-        except FileExistsError:
-            os.remove(self.tracker_backup_file_path)
-            shutil.copy(self.tracker_file_path, self.tracker_backup_file_path)    
-
-    def update_job_main_folder(self, job_name, new_main_folder):
-        """ Update the main folder in the tracker. """
-        with open(self.tracker_file_path, 'r') as tracker_file:
-            tracker_dict = json.load(tracker_file)
-
-        tracker_dict[job_name]["main_folder"] = new_main_folder
-        if new_main_folder == 'VERWERKT':
-            for file_dict in tracker_dict[job_name]['laser_files'].values():
-                file_dict['done'] = True
-
-        with open(self.tracker_file_path, 'w') as tracker_file:
-            json.dump(tracker_dict, tracker_file, indent=4)
-
-    def check_health(self):
+    def checkHealth(self):
         """ Check and repair system. """
 
         self.checkTrackerFileHealth()
@@ -346,6 +268,8 @@ class LaserJobTracker:
         self.make_backup()
         print("system healthy :)\n")
 
+
+    # TODO: call this stuff materiaal_klaar
     def fake_laser_klaar(self, job_name):
         """ Laser is klaar function, to be called from material klaar. """
         job_global_path = job_name_to_global_path(gv,
@@ -359,12 +283,13 @@ class LaserJobTracker:
             input('press enter to send response mail...')
 
         if len(msg_file_paths) > 0:
-            email_manager = EmailManager()
-            email_manager.reply_to_email_from_file_using_template(gv,
-                                                    msg_file_paths[0],
-                                                    "FINISHED_MAIL_TEMPLATE",
-                                                    {},
-                                                    popup_reply=False)
+            pass
+            # email_manager = EmailManager()
+            # email_manager.reply_to_email_from_file_using_template(gv,
+            #                                         msg_file_paths[0],
+            #                                         "FINISHED_MAIL_TEMPLATE",
+            #                                         {},
+            #                                         popup_reply=False)
         else:
             print(f'folder: {job_global_path} does not contain any .msg files,'\
                     f'no response mail can be send')
@@ -385,3 +310,27 @@ class LaserJobTracker:
         copy_job_files(target_job_folder_global_path, source_job_folder_global_path, ['.bat'])
 
         delete(gv, source_job_folder_global_path)
+
+    def getWachtrijMaterialsFolderNames(self):
+        ''' return back all folder names for the materials and thickness in the wachtrij. '''
+        return []
+
+# def main():
+
+#     job_name = 'test_jn'
+#     file_name = '_attachment_1' 
+
+#     files_dict = {}
+#     files_dict[job_name + file_name] = {
+#                         'file_name': file_name,
+#                         'file_global_path': '/text/somewhre/',
+#                         'material': 'steel',
+#                         'thickness': '3cm',
+#                         'amount': '3',
+#                         'done': False}
+
+#     LaserJobTracker().addJob(job_name, files_dict)
+
+
+# if __name__ == '__main__':
+#     main()

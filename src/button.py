@@ -1,6 +1,14 @@
-
 from os.path import expanduser
 from PyQt5.QtWidgets import QPushButton, QFileDialog
+
+class BackQPushButton(QPushButton):
+
+    def __init__(self, *args, **kwargs):
+        QPushButton.__init__(self, *args, **kwargs)
+        self.clicked.connect(self.on_click)
+
+    def on_click(self):
+        self.parent().parent().setCurrentIndex(0) 
 
 class SelectFolderQPushButton(QPushButton):
 
