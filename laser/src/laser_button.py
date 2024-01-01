@@ -3,9 +3,16 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import (
         QPushButton, QFileDialog,
+        QListWidget,
         QShortcut)
 
 from jobs_qlist_widget import JobContentQListWidget
+
+from jobs_qlist_widget import JobsQListWidget
+
+from global_variables import gv
+
+from laser_job_tracker import LaserJobTracker
 
 class LaserKlaarQPushButton(QPushButton):
 
@@ -15,8 +22,18 @@ class LaserKlaarQPushButton(QPushButton):
  
     def on_click(self):
         job_name = self.parent().findChild(JobContentQListWidget).current_job_name
+        LaserJobTracker().updateJobStatus(job_name, 'VERWERKT')
+        
 
-        print(f'laser klaar {job_name}')
+        qlist_widgets = self.window().findChildren(JobsQListWidget)
+
+        # refresh all laser job tabs
+        for list_widget in qlist_widgets:
+            list_widget.refresh()
+
+        # switch tab back to wachtrij
+        self.parent().parent().setCurrentIndex(0)
+
 
 class MateriaalKlaarQPushButton(QPushButton):
 

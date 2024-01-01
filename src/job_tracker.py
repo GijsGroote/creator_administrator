@@ -96,18 +96,19 @@ class JobTracker:
         with open(self.tracker_file_path, 'w') as tracker_file:
             json.dump(tracker_dict, tracker_file, indent=4)
 
-    def getDynamicJobNamesWithStatus(self, status: str) -> List[str]:
+    def getStaticAndDynamicJobNamesWithStatus(self, status: str) -> List[tuple]:
         ''' Return a list containing all dynamic job names that have a given status '''
 
         with open(self.tracker_file_path, 'r') as tracker_file:
             tracker_dict = json.load(tracker_file)
 
-        return [job_dict['dynamic_job_name'] for job_dict in tracker_dict.values() if job_dict['status'] == status]
+        return [(job_name, job_dict['dynamic_job_name']) for job_name, job_dict in tracker_dict.items() if job_dict['status'] == status]
 
-    def getAllDynamicJobNames(self) -> List[str]:
+    def getAllStaticAndDynamicJobNames(self) -> List[tuple]:
         ''' Return a list containing all dynamic job names. '''
 
         with open(self.tracker_file_path, 'r') as tracker_file:
             tracker_dict = json.load(tracker_file)
 
-        return [job_dict['dynamic_job_name'] for job_dict in tracker_dict.values()]
+        return [(job_name, job_dict['dynamic_job_name']) for job_name, job_dict in tracker_dict.items()]
+

@@ -1,12 +1,12 @@
-import sys
 import os
+from typing import List
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence
-from PyQt5.QtCore import QEvent
-from PyQt5.QtWidgets import (QTabWidget, QShortcut,
+from PyQt5.QtWidgets import (
+        QShortcut,
         QListWidget, QPushButton,
         QWidget, QListWidgetItem, QStackedWidget,
-QVBoxLayout)
+        QVBoxLayout)
 
 from global_variables import gv
 from laser_job_tracker import LaserJobTracker
@@ -30,36 +30,37 @@ class JobsQListWidget(QListWidget):
     def storeObjectNameInit(self):
         ''' store the object name and initialize. '''
         self.object_name = self.objectName()
-        self.initialize(self.getJobs())
+        self.initialize(self.getJobNames())
         
-    def getJobs(self):
+    def getJobNames(self) -> List[tuple]:
         job_tracker = LaserJobTracker()
         if self.object_name == 'allJobsQListWidget':
-            return job_tracker.getAllDynamicJobNames()
+            return job_tracker.getAllStaticAndDynamicJobNames()
         elif self.object_name == 'wachtrijJobsQListWidget':
-            return job_tracker.getDynamicJobNamesWithStatus('WACHTRIJ')
+            return job_tracker.getStaticAndDynamicJobNamesWithStatus('WACHTRIJ')
         elif self.object_name == 'wachtrijMateriaalJobsQListWidget':
-            return job_tracker.getWachtrijMaterialsFolderNames()
+            return job_tracker.getStaticAndDynamicJobNamesWithStatus('TODO') # TODO: this special boyy
         elif self.object_name == 'verwerktJobsQListWidget':
-            return job_tracker.getDynamicJobNamesWithStatus('VERWERKT')
+            return job_tracker.getStaticAndDynamicJobNamesWithStatus('VERWERKT')
         elif self.object_name == 'afgekeurdJobsQListWidget':
-            return job_tracker.getDynamicJobNamesWithStatus('AFGEKEURD')
+            return job_tracker.getStaticAndDynamicJobNamesWithStatus('AFGEKEURD')
         else:
             raise ValueError(f'could not find jobs for {self.objectName()}')
 
     def refresh(self):
         ''' Refresh displayed jobs. '''
         self.clear()
-        self.initialize(self.getJobs())
+        self.initialize(self.getJobNames())
 
 
 
-    def initialize(self, dyn_job_names:list):
+    def initialize(self, job_names: list):
 
-        for dyn_job_name in dyn_job_names:
+        for (static_job_name, dynamic_job_name) in job_names:
+
             item = QListWidgetItem()
-            item.setText(dyn_job_name)
-            self.addItem(item)
+            item.setText(dynamic_job_name)
+            item.setData(1, static_job_name) # save unique job name
             self.addItem(item)
 
         self.itemClicked.connect(self.jobClicked)
@@ -69,7 +70,7 @@ class JobsQListWidget(QListWidget):
 
     def jobClicked(self, clicked_job):
         ''' Display the content of the job clicked. '''
-        self.displayJob(clicked_job.text())
+        self.displayJob(clicked_job.data(1)) # get the unique job name
 
     def displayJob(self, job_item_text):
         ''' Display the job page and load content for the highlighted job. '''
@@ -96,7 +97,9 @@ class JobContentQListWidget(QListWidget):
         self.current_job_name = job_name
 
         # TODO: make this come form the tracker mostly.
-        for file in os.listdir(os.path.join(gv['JOBS_DIR_HOME'], job_name)):
+        job_dict = LaserJobTracker().getJobDict(job_name)
+
+        for file in os.listdir(job_dict['job_folder_global_path']):
 
             item = QListWidgetItem()
             item_widget = QWidget()

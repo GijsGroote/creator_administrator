@@ -69,98 +69,23 @@ class LaserJobTracker(JobTracker):
 
         return add_job_dict
     
-    # TODO: copy all files from materials 
-    def addFileToWachtrijMaterial(self, job_dict: dict):
+    def updateJobStatus(self, job_name: str, new_job_status: str):
+        ''' Update status of a job. '''
 
-        """ Add a file to the WACHTRIJ_MATERIAAL folder. """
-        pass
-
-        # for file_key, file_dict in job_dict['laser_files'].items():
-        #     material_folder_global_path = os.path.join(gv['JOBS_DIR_HOME'], 'WACHTRIJ_MATERIAAL',
-        #                                                 file_dict['material']+'_'+file_dict['thickness'])
-        #     if not os.path.exists(material_folder_global_path):
-        #         os.mkdir(material_folder_global_path)
-        #     if not os.path.exists(os.path.join(material_folder_global_path, 'materiaal_klaar.bat')):
-        #         python_to_batch_in_folder(gv, 
-        #                     os.path.join(gv['FUNCTIONS_DIR_HOME'], 'materiaal_klaar.py'),
-        #                     material_folder_global_path,
-        #                     pass_parameter=material_folder_global_path)
-                
-        #     file_global_path = os.path.join(material_folder_global_path,
-        #                                     file_dict['amount']+'x_'+file_key)
-            
-        #     if os.path.exists(file_dict['file_global_path']):
-        #         copy(file_dict['file_global_path'], file_global_path)
-        #     else: 
-        #         print(f'Warning, could not find {file_dict["file_global_path"]}')
-        #         raise ValueError('here ai m')
-
-    def removeJobFromWachtrijMaterial(self, job_name: str, remove_material_folder='true'):
-        """ Remove a job from the WACHTRIJ_MATERIAAL folder. """
-
-        job_dict = self.job_name_to_job_dict(job_name)
-
-        for file_key, file_dict in job_dict['laser_files'].items():
-
-            material_dir_global_path = os.path.join(gv['JOBS_DIR_HOME'], 'WACHTRIJ_MATERIAAL',
-                        file_dict['material']+'_'+file_dict['thickness'])
-        
-            if os.path.exists(material_dir_global_path):
-                # TODO: remove from tracker if it is at wachtrij, but not in wachtrij_material
-                number_of_laser_files_in_wachtrij_material = len([
-                    file for file in os.listdir(material_dir_global_path) if file.endswith(gv['ACCEPTED_EXTENSIONS'])])
-
-                if number_of_laser_files_in_wachtrij_material <= 1:
-                    delete(gv, material_dir_global_path)
-                else: 
-                    delete(gv, os.path.join(material_dir_global_path,
-                            file_dict['amount']+'x_'+file_key))
-                
-    def removeFilesFromWachtrijMaterial(self, files_keys: list, call_fake_laser_klaar=False):
-        """ Remove multiple files from the WACHTRIJ_MATERIAAL folder. """
-
-        print('in remove files from wachtrij')
-        # read job log
         with open(self.tracker_file_path, 'r') as tracker_file:
-                job_log_dict = json.load(tracker_file)
+            tracker_dict = json.load(tracker_file)
 
-        print(f'the file keys {files_keys}')
+        tracker_dict[job_name]['status'] = new_job_status
+
+        with open(self.tracker_file_path, 'w') as tracker_file:
+            json.dump(tracker_dict, tracker_file, indent=4)
+
+    def getJobDict(self, job_name: str) -> dict:
+        ''' return the job dict from a job name. '''
         
-        for file_key in files_keys:
-            print(f'now at file key: {file_key}')
-            for job_dict in job_log_dict.values():
-                if file_key in job_dict['laser_files'].keys():
-                   
-                    file_dict = job_dict['laser_files'][file_key]
-                    file_dict['done'] = True
-                
-                    # call laser_klaar.bat if all laser files in a laser job are done 
-                    if all(file_dict['done'] for file_dict in job_dict['laser_files'].values()):
+        with open(self.tracker_file_path, 'r') as tracker_file:
+            return json.load(tracker_file)[job_name]
 
-                        for file_name in job_dict['laser_files'].keys():
-                            print(f'    {file_name}')
-                        
-                        if call_fake_laser_klaar:
-                            self.fake_laser_klaar(job_dict['job_name'])
-
-                        
-                        # subprocess.run([os.path.join(job_name_to_global_path(gv, job_dict['job_name']),
-                        #                 'laser_klaar.bat'), job_dict['job_name']])
-
-                        print('yes I see')
-                        
-                    else:
-                        material_dir_global_path = os.path.join(gv['JOBS_DIR_HOME'], 'WACHTRIJ_MATERIAAL',
-                                    file_dict['material']+'_'+file_dict['thickness'])
-                        
-                        number_of_laser_files_in_wachtrij_material = len([
-                            file for file in os.listdir(material_dir_global_path) if file.endswith(gv['ACCEPTED_EXTENSIONS'])])
-
-                        if number_of_laser_files_in_wachtrij_material <= 0:
-                            delete(gv, material_dir_global_path)
-                        else:      
-                            delete(gv, os.path.join(material_dir_global_path,
-                                file_dict['amount']+'x_'+file_key))
                         
     def checkHealth(self):
         """ Check and repair system. """
@@ -269,6 +194,10 @@ class LaserJobTracker(JobTracker):
         print("system healthy :)\n")
 
 
+    def getWachtrijMaterialsFolderNames(self):
+        ''' return back all folder names for the materials and thickness in the wachtrij. '''
+        return [] # TODO: implement this function
+
     # TODO: call this stuff materiaal_klaar
     def fake_laser_klaar(self, job_name):
         """ Laser is klaar function, to be called from material klaar. """
@@ -311,26 +240,103 @@ class LaserJobTracker(JobTracker):
 
         delete(gv, source_job_folder_global_path)
 
-    def getWachtrijMaterialsFolderNames(self):
-        ''' return back all folder names for the materials and thickness in the wachtrij. '''
-        return []
-
-# def main():
-
-#     job_name = 'test_jn'
-#     file_name = '_attachment_1' 
-
-#     files_dict = {}
-#     files_dict[job_name + file_name] = {
-#                         'file_name': file_name,
-#                         'file_global_path': '/text/somewhre/',
-#                         'material': 'steel',
-#                         'thickness': '3cm',
-#                         'amount': '3',
-#                         'done': False}
-
-#     LaserJobTracker().addJob(job_name, files_dict)
 
 
-# if __name__ == '__main__':
-#     main()
+
+
+
+
+    # TODO: copy all files from materials 
+    def addFileToWachtrijMaterial(self, job_dict: dict):
+
+        """ Add a file to the WACHTRIJ_MATERIAAL folder. """
+        pass
+
+        # for file_key, file_dict in job_dict['laser_files'].items():
+        #     material_folder_global_path = os.path.join(gv['JOBS_DIR_HOME'], 'WACHTRIJ_MATERIAAL',
+        #                                                 file_dict['material']+'_'+file_dict['thickness'])
+        #     if not os.path.exists(material_folder_global_path):
+        #         os.mkdir(material_folder_global_path)
+        #     if not os.path.exists(os.path.join(material_folder_global_path, 'materiaal_klaar.bat')):
+        #         python_to_batch_in_folder(gv, 
+        #                     os.path.join(gv['FUNCTIONS_DIR_HOME'], 'materiaal_klaar.py'),
+        #                     material_folder_global_path,
+        #                     pass_parameter=material_folder_global_path)
+                
+        #     file_global_path = os.path.join(material_folder_global_path,
+        #                                     file_dict['amount']+'x_'+file_key)
+            
+        #     if os.path.exists(file_dict['file_global_path']):
+        #         copy(file_dict['file_global_path'], file_global_path)
+        #     else: 
+        #         print(f'Warning, could not find {file_dict["file_global_path"]}')
+        #         raise ValueError('here ai m')
+
+    def removeJobFromWachtrijMaterial(self, job_name: str, remove_material_folder='true'):
+        """ Remove a job from the WACHTRIJ_MATERIAAL folder. """
+
+        job_dict = self.job_name_to_job_dict(job_name)
+
+        for file_key, file_dict in job_dict['laser_files'].items():
+
+            material_dir_global_path = os.path.join(gv['JOBS_DIR_HOME'], 'WACHTRIJ_MATERIAAL',
+                        file_dict['material']+'_'+file_dict['thickness'])
+        
+            if os.path.exists(material_dir_global_path):
+                # TODO: remove from tracker if it is at wachtrij, but not in wachtrij_material
+                number_of_laser_files_in_wachtrij_material = len([
+                    file for file in os.listdir(material_dir_global_path) if file.endswith(gv['ACCEPTED_EXTENSIONS'])])
+
+                if number_of_laser_files_in_wachtrij_material <= 1:
+                    delete(gv, material_dir_global_path)
+                else: 
+                    delete(gv, os.path.join(material_dir_global_path,
+                            file_dict['amount']+'x_'+file_key))
+                
+    def removeFilesFromWachtrijMaterial(self, files_keys: list, call_fake_laser_klaar=False):
+        """ Remove multiple files from the WACHTRIJ_MATERIAAL folder. """
+
+        print('in remove files from wachtrij')
+        # read job log
+        with open(self.tracker_file_path, 'r') as tracker_file:
+                job_log_dict = json.load(tracker_file)
+
+        print(f'the file keys {files_keys}')
+        
+        for file_key in files_keys:
+            print(f'now at file key: {file_key}')
+            for job_dict in job_log_dict.values():
+                if file_key in job_dict['laser_files'].keys():
+                   
+                    file_dict = job_dict['laser_files'][file_key]
+                    file_dict['done'] = True
+                
+                    # call laser_klaar.bat if all laser files in a laser job are done 
+                    if all(file_dict['done'] for file_dict in job_dict['laser_files'].values()):
+
+                        for file_name in job_dict['laser_files'].keys():
+                            print(f'    {file_name}')
+                        
+                        if call_fake_laser_klaar:
+                            self.fake_laser_klaar(job_dict['job_name'])
+
+                        
+                        # subprocess.run([os.path.join(job_name_to_global_path(gv, job_dict['job_name']),
+                        #                 'laser_klaar.bat'), job_dict['job_name']])
+
+                        print('yes I see')
+                        
+                    else:
+                        material_dir_global_path = os.path.join(gv['JOBS_DIR_HOME'], 'WACHTRIJ_MATERIAAL',
+                                    file_dict['material']+'_'+file_dict['thickness'])
+                        
+                        number_of_laser_files_in_wachtrij_material = len([
+                            file for file in os.listdir(material_dir_global_path) if file.endswith(gv['ACCEPTED_EXTENSIONS'])])
+
+                        if number_of_laser_files_in_wachtrij_material <= 0:
+                            delete(gv, material_dir_global_path)
+                        else:      
+                            delete(gv, os.path.join(material_dir_global_path,
+                                file_dict['amount']+'x_'+file_key))
+
+
