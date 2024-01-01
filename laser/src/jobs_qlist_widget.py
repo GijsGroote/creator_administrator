@@ -1,6 +1,7 @@
 import sys
 import os
-from PyQt5 import QtGui, QtCore
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QKeySequence
 from PyQt5.QtCore import QEvent
 from PyQt5.QtWidgets import (QTabWidget, QShortcut,
         QListWidget, QPushButton,
@@ -16,18 +17,14 @@ class JobsQListWidget(QListWidget):
     def __init__(self, *args, **kwargs):
         QListWidget.__init__(self, *args, **kwargs)
 
-        # catch events on list
-        self.installEventFilter(self)
-
         self.object_name = None
         
         # initialize  
         self.objectNameChanged.connect(self.storeObjectNameInit)
 
-        shortcut = QShortcut(
-            QtGui.QKeySequence(QtCore.Qt.Key_Return),
-            self)
-        shortcut.activated.connect(self.jobEnterPressed)
+
+        # shortcut on Esc button
+        QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.jobEnterPressed)
 
     
     def storeObjectNameInit(self):
@@ -90,11 +87,13 @@ class JobContentQListWidget(QListWidget):
 
     def __init__(self, *args, **kwargs):
         QListWidget.__init__(self, *args, **kwargs)
+        self.current_job_name = None
 
         
     def loadJob(self, job_name):
 
         self.clear()
+        self.current_job_name = job_name
 
         # TODO: make this come form the tracker mostly.
         for file in os.listdir(os.path.join(gv['JOBS_DIR_HOME'], job_name)):

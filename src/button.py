@@ -1,13 +1,25 @@
 from os.path import expanduser
-from PyQt5.QtWidgets import QPushButton, QFileDialog
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QKeySequence
+from PyQt5.QtWidgets import (
+        QPushButton, QFileDialog,
+        QShortcut,
+
+        )
 
 class BackQPushButton(QPushButton):
 
     def __init__(self, *args, **kwargs):
         QPushButton.__init__(self, *args, **kwargs)
         self.clicked.connect(self.on_click)
+ 
+        # shortcut on Esc button
+        QShortcut(QKeySequence(Qt.Key_Escape), self).activated.connect(self.on_click)
+
 
     def on_click(self):
+        print('clicked on back button')
         self.parent().parent().setCurrentIndex(0) 
 
 class SelectFolderQPushButton(QPushButton):
