@@ -65,10 +65,23 @@ class LaserJobTracker(JobTracker):
         with open(self.tracker_file_path, 'w') as tracker_file:
             json.dump(tracker_dict, tracker_file, indent=4)
 
-        # self.addFileToWachtrijMaterial(add_job_dict)      
-
         return add_job_dict
     
+    def deleteJob(self, job_name: str) -> dict:
+        """ Delete a job from the job tracker. """
+
+        with open(self.tracker_file_path, 'r') as tracker_file:
+            tracker_dict = json.load(tracker_file)
+
+        deleted_job_dict = tracker_dict.pop(job_name)
+
+        delete(gv, deleted_job_dict['job_folder_global_path'])
+        
+
+        with open(self.tracker_file_path, 'w') as tracker_file:
+            json.dump(tracker_dict, tracker_file, indent=4)
+
+
     def updateJobStatus(self, job_name: str, new_job_status: str):
         ''' Update status of a job. '''
 

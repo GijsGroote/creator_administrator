@@ -10,6 +10,12 @@
     <height>582</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -22,7 +28,7 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
-     <widget class="QTabWidget" name="tabWidget">
+     <widget class="QTabWidget" name="jobsQTabWidget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -70,14 +76,14 @@
                 <item>
                  <widget class="BackQPushButton" name="backPushButton">
                   <property name="text">
-                   <string>back</string>
+                   <string>Back</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="OverigQPushButton" name="pushButton_2">
+                 <widget class="OptionsQPushButton" name="allJobsOptionsQPushButton">
                   <property name="text">
-                   <string>Overig</string>
+                   <string>Options</string>
                   </property>
                  </widget>
                 </item>
@@ -157,9 +163,9 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="OverigQPushButton" name="pushButton_9">
+                 <widget class="OptionsQPushButton" name="wachtrijOptionsQPushButton">
                   <property name="text">
-                   <string>Overig</string>
+                   <string>Options</string>
                   </property>
                  </widget>
                 </item>
@@ -215,9 +221,9 @@
                </widget>
               </item>
               <item>
-               <widget class="OverigQPushButton" name="pushButton_8">
+               <widget class="OptionsQPushButton" name="wachtrijMateriaalOptionsQPushButton">
                 <property name="text">
-                 <string>Overig</string>
+                 <string>Options</string>
                 </property>
                </widget>
               </item>
@@ -261,9 +267,9 @@
                </widget>
               </item>
               <item>
-               <widget class="OverigQPushButton" name="pushButton_6">
+               <widget class="OptionsQPushButton" name="verwerktOptionsQPushButton">
                 <property name="text">
-                 <string>Overig</string>
+                 <string>Options</string>
                 </property>
                </widget>
               </item>
@@ -289,7 +295,7 @@
         <item>
          <widget class="QStackedWidget" name="afgekeurdQStackedWidget">
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="jobsListPage_5">
            <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -313,9 +319,9 @@
                </widget>
               </item>
               <item>
-               <widget class="OverigQPushButton" name="pushButton_7">
+               <widget class="OptionsQPushButton" name="afgekeurdOptionsQPushButton">
                 <property name="text">
-                 <string>Overig</string>
+                 <string>Options</string>
                 </property>
                </widget>
               </item>
@@ -403,11 +409,6 @@
    <header>button.h</header>
   </customwidget>
   <customwidget>
-   <class>JobContentQListWidget</class>
-   <extends>QListWidget</extends>
-   <header>jobs_qlist_widget.h</header>
-  </customwidget>
-  <customwidget>
    <class>JobsQListWidget</class>
    <extends>QListWidget</extends>
    <header>jobs_qlist_widget.h</header>
@@ -428,7 +429,12 @@
    <header>laser_button.h</header>
   </customwidget>
   <customwidget>
-   <class>OverigQPushButton</class>
+   <class>JobContentQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>jobs_qlist_widget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>OptionsQPushButton</class>
    <extends>QPushButton</extends>
    <header>laser_button.h</header>
   </customwidget>

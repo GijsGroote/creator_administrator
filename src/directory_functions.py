@@ -3,6 +3,7 @@ Functionality for moving/copying or searching in directories.
 """
 
 import os
+import sys
 import shutil
 import json
 import subprocess
@@ -181,3 +182,18 @@ def write_json_file(dictionary: dict, json_file_global_path: str):
 
     with open(json_file_global_path, 'w') as file:
         json.dump(dictionary, file, indent=4) 
+
+
+def open_folder(folder_global_path: str):
+    ''' Open a folder in the default file explorer. '''
+
+    assert os.path.exists(folder_global_path), f'could not find folder: {folder_global_path}'
+
+    if sys.platform == 'darwin':
+        subprocess.Popen(['open', folder_global_path])
+    elif sys.platform == 'linux':
+        subprocess.Popen(['xdg-open', folder_global_path])
+    elif sys.platform == 'win32':
+        subprocess.Popen(['explorer', folder_global_path])
+    else: 
+        raise ValueError(f'unknown platform: {sys.platform}')
