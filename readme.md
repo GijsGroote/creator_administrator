@@ -14,3 +14,13 @@ Do you look for an organized workflow to make all these requests?
 
 Project started at the Technical University Delft workshop that manages 3D printers and laser cutting machines.
 
+
+{
+    "REPO_DIR_HOME":  "/home/gijs/Documents/creator-administrator",
+    "PYTHON_PATH": "/usr/bin/python3",
+    "OUTLOOK_PATH":  "There is no Outlook on arch linux",
+    "IOBIT_UNLOCKER_PATH":  "There is no IOBIT_UNLOCKER on arch linux",
+    "ACCEPTED_EXTENSIONS": ".dxf, .txt",
+    "DAYS_TO_KEEP_JOBS": "5",
+    "PASSWORD":  ""
+}
