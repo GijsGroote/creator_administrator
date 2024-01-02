@@ -9,35 +9,39 @@ import sys
 # Detect the computer.
 IWS_COMPUTER = False
 
-iws_data_dir_home = r'C:\Users\PMMA laser\.ssh\pmma_laser_global_variables.json'
-gijs_windows_data_dir_home = r'C:\Users\gijsg\AppData\creator-administrator'
-gijs_linux_data_dir_home = r'/home/gijs/.creator-administrator'
+if sys.platform == 'linux':
+    raise ValueError('got to folder linux method')
+elif sys.platform == 'win32':
+    data_dir_home = os.path.join(os.getenv('LOCALAPPDATA'), 'creator-administrator')
+else: 
+    raise ValueError(f'unknown platform: {sys.platform}')
 
-if os.path.exists(iws_data_dir_home):
+print(data_dir_home)
+   
+if not os.path.exists(data_dir_home):
+    os.mkdir(data_dir_home)
+
+if 'iws' in data_dir_home.lower():
     IWS_COMPUTER = True
-    data_dir_home = os.path.abspath(iws_data_dir_home)
     
-elif os.path.exists(gijs_windows_data_dir_home):
-    data_dir_home = os.path.abspath(gijs_windows_data_dir_home)
-
-elif os.path.exists(gijs_linux_data_dir_home):
-    data_dir_home = os.path.abspath(gijs_linux_data_dir_home)
-else:
-    raise ValueError('could not find data_dir_home')
-
 global_variables_path = os.path.join(data_dir_home, 'laser_global_variables.json')
 jobs_dir_home = os.path.join(data_dir_home, 'laser_jobs')
 tracker_file_path = os.path.join(data_dir_home, 'laser_job_log.json')
 
-assert os.path.exists(global_variables_path), f'Could not find file: {global_variables_path}'
-assert os.path.exists(jobs_dir_home), f'Could not find folder: {data_dir_home}'
+if not os.path.exists(global_variables_path):
+    with open(global_variables_path, 'w') as gv_file:
+        json.dump(dict(), gv_file, indent=4)
 
+if not os.path.exists(jobs_dir_home):
+    os.mkdir(jobs_dir_home)
+    
 # Global Variables (gv)
 gv = {'IWS_COMPUTER': IWS_COMPUTER,
       'DATA_DIR_HOME': data_dir_home,
       'JOBS_DIR_HOME': jobs_dir_home,
       'TRACKER_FILE_PATH': tracker_file_path}
 
+# TODO: if this is not all in the file, do a setup wizard please
 with open(global_variables_path, 'r') as global_variables_file:
     gv_data = json.load(global_variables_file)
     gv['REPO_DIR_HOME'] = gv_data['REPO_DIR_HOME']

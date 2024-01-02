@@ -188,9 +188,7 @@ def open_file(gv: dict, file_global_path: str):
 
     assert os.path.exists(file_global_path), f'could not find file: {file_global_path}'
 
-    if sys.platform == 'darwin':
-        subprocess.Popen(['open', file_global_path])
-    elif sys.platform == 'linux':
+    if sys.platform == 'linux':
         subprocess.Popen(['xdg-open', file_global_path])
     elif sys.platform == 'win32':
         subprocess.Popen(['explorer', folder_global_path])
@@ -202,9 +200,7 @@ def open_folder(folder_global_path: str):
 
     assert os.path.exists(folder_global_path), f'could not find folder: {folder_global_path}'
 
-    if sys.platform == 'darwin':
-        subprocess.Popen(['open', folder_global_path])
-    elif sys.platform == 'linux':
+    if sys.platform == 'linux':
         subprocess.Popen(['xdg-open', folder_global_path])
     elif sys.platform == 'win32':
         subprocess.Popen(['explorer', folder_global_path])
