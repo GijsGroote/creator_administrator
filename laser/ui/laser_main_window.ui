@@ -28,7 +28,7 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
-     <widget class="QTabWidget" name="jobsQTabWidget">
+     <widget class="JobsQTabWidget" name="jobsQTabWidget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -437,6 +437,12 @@
    <class>OptionsQPushButton</class>
    <extends>QPushButton</extends>
    <header>laser_button.h</header>
+  </customwidget>
+  <customwidget>
+   <class>JobsQTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>tab_widget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

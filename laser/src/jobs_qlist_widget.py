@@ -9,6 +9,10 @@ from PyQt5.QtWidgets import (
         QVBoxLayout, QTabWidget
 )
 
+from global_variables import gv
+from src.directory_functions import open_file, open_folder
+
+
 from laser_job_tracker import LaserJobTracker
 
 class JobsQListWidget(QListWidget):
@@ -111,29 +115,31 @@ class JobContentQListWidget(QListWidget):
         QListWidget.__init__(self, *args, **kwargs)
         self.current_job_name = None
 
+
+        # shortcut for the Enter button
+        QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.jobFileEnterPressed)
         
+
+    def jobFileEnterPressed(self):
+        self.jobFileClicked(self.currentItem())
+
+    def jobFileClicked(self, clicked_file):
+        open_file(gv, os.path.join(clicked_file.data(1), clicked_file.text()))
+
     def loadJob(self, job_name):
         self.clear()
         self.current_job_name = job_name
 
-        # TODO: make this come form the tracker mostly.
         job_dict = LaserJobTracker().getJobDict(job_name)
-        
-
 
         for file in os.listdir(job_dict['job_folder_global_path']):
 
             item = QListWidgetItem()
-            item_widget = QWidget()
-            line_push_button = QPushButton(file)
-            line_push_button.setObjectName(file)
-            line_push_button.clicked.connect(self.fileClicked)
-            item_layout = QVBoxLayout()
-            item_layout.addWidget(line_push_button)
-            item_widget.setLayout(item_layout)
-            item.setSizeHint(item_widget.sizeHint())
+            item.setText(file)
+            item.setData(1, job_dict['job_folder_global_path']) # save unique job name
             self.addItem(item)
-            self.setItemWidget(item, item_widget)
+
+        self.itemClicked.connect(self.jobFileClicked)
 
     def fileClicked(self):
         print('a file was clicked hree thus now')
