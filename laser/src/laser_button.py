@@ -1,3 +1,4 @@
+import glob
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import (
@@ -10,6 +11,7 @@ from global_variables import gv
 from laser_job_tracker import LaserJobTracker
 from src.button import JobsQPushButton
 from src.directory_functions import open_folder
+from src.mail_functions import EmailManager
 
 
 class LaserKlaarQPushButton(JobsQPushButton):
@@ -20,7 +22,28 @@ class LaserKlaarQPushButton(JobsQPushButton):
  
     def on_click(self):
         job_name = self.getCurrentStaticJobName()
-        # TODO: mail the peeps, print job is ready
+        
+        job_folder_global_path = LaserJobTracker().jobNameToJobFolderGlobalPath(job_name)
+        
+
+        # send response mail
+        msg_file_paths = list(glob.glob(job_folder_global_path + "/*.msg"))
+
+        if len(msg_file_paths) > 1:
+            print(f'Warning! more than one: {len(msg_file_paths)} .msg files detected')
+            input('press enter to send response mail...')
+
+        if len(msg_file_paths) > 0:
+            email_manager = EmailManager()
+            email_manager.replyToEmailFromFileUsingTemplate(gv,
+                                                    msg_file_paths[0],
+                                                    "FINISHED_MAIL_TEMPLATE",
+                                                    {},
+                                                    popup_reply=False)
+        else:
+            print(f'folder: {job_folder_global_path} does not contain any .msg files,'\
+                    f'no response mail can be send')
+            
         LaserJobTracker().updateJobStatus(job_name, 'VERWERKT')
         self.refreshAllQListWidgets()
 

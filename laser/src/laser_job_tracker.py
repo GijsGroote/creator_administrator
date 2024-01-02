@@ -94,11 +94,17 @@ class LaserJobTracker(JobTracker):
             json.dump(tracker_dict, tracker_file, indent=4)
 
     def getJobDict(self, job_name: str) -> dict:
-        ''' return the job dict from a job name. '''
+        ''' Return the job dict from a job name. '''
         
         with open(self.tracker_file_path, 'r') as tracker_file:
             return json.load(tracker_file)[job_name]
 
+    def jobNameToJobFolderGlobalPath(self, job_name: str) -> str:
+        ''' Return the job folder global path from the job name. '''
+        with open(self.tracker_file_path, 'r') as tracker_file:
+            tracker_dict = json.load(tracker_file)
+
+        return tracker_dict[job_name]['job_folder_global_path']
                         
     def checkHealth(self):
         """ Check and repair system. """
