@@ -2,7 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import (
         QMenu,
-        )
+        QShortcut)
 
 from jobs_qlist_widget import JobContentQListWidget
 from jobs_qlist_widget import JobsQListWidget

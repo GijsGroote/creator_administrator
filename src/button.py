@@ -42,6 +42,7 @@ class BackQPushButton(QPushButton):
     def __init__(self, *args, **kwargs):
         QPushButton.__init__(self, *args, **kwargs)
         self.clicked.connect(self.on_click)
+
  
         # shortcut on Esc button
         QShortcut(QKeySequence(Qt.Key_Escape), self).activated.connect(self.on_click)
