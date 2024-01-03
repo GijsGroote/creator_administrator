@@ -41,7 +41,7 @@ def create_print_job(job_name: str, job_content_global_path: str):
 
     job_global_path = os.path.join(os.path.join(gv['JOBS_DIR_HOME'], 'WACHTRIJ', job_folder_name))
 
-    os.mkdir(job_global_path)
+
     copy(job_content_global_path, job_global_path)
 
 
@@ -89,7 +89,7 @@ if __name__ == '__main__':
         is_valid_job, invalid_reason = is_folder_a_valid_print_job(potential_job_global_path)
 
         if is_valid_job:
-            job_name =  make_job_name_unique(potential_job_local_path)
+            job_name = make_job_name_unique(gv, potential_job_local_path)
             job_folder_name = project_name + '_' + job_name
 
             create_print_job(job_folder_name, potential_job_global_path)
