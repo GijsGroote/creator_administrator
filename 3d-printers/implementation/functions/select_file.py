@@ -41,9 +41,9 @@ def create_print_job(job_name: str, job_content_global_path: str):
 
     job_global_path = os.path.join(os.path.join(gv['JOBS_DIR_HOME'], 'WACHTRIJ', job_folder_name))
 
+    JobTracker().add_job(job_name, "WACHTRIJ")
 
     copy(job_content_global_path, job_global_path)
-
 
     python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), job_name=job_name)
     python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'gesliced.py'), job_name=job_name)
