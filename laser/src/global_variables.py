@@ -10,14 +10,12 @@ import sys
 IWS_COMPUTER = False
 
 if sys.platform == 'linux':
-    raise ValueError('got to folder linux method')
+    data_dir_home = os.path.join(os.path.expanduser('~'), '.creator-administrator')
 elif sys.platform == 'win32':
     data_dir_home = os.path.join(os.getenv('LOCALAPPDATA'), 'creator-administrator')
 else: 
-    raise ValueError(f'unknown platform: {sys.platform}')
+    raise ValueError(f'This software does not work for platform: {sys.platform}')
 
-print(data_dir_home)
-   
 if not os.path.exists(data_dir_home):
     os.mkdir(data_dir_home)
 

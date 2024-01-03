@@ -8,7 +8,8 @@ import sys
 from global_variables import gv
 from laser_directory_functions import move_job_to_main_folder
 
-from mail_functions import EmailManager
+from src.mail_manager import create_mail_manager
+
 
 from directory_functions import (
     job_name_to_global_path)
@@ -32,8 +33,10 @@ if __name__ == '__main__':
         input('press enter to send response mail...')
 
     if len(msg_file_paths) > 0:
-        email_manager = EmailManager()
-        email_manager.reply_to_email_from_file_using_template(gv,
+
+        mail_manager = create_mail_manager()
+
+        mail_manager.reply_to_email_from_file_using_template(gv,
                                                 msg_file_paths[0],
                                                 "FINISHED_MAIL_TEMPLATE",
                                                 {},

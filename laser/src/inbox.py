@@ -10,20 +10,19 @@ from global_variables import gv
 from laser_job_tracker import LaserJobTracker
 from pmma_talk_to_ta import enter_material_thickness_amount
 
-from create_batch_file import python_to_batch, python_to_batch_in_folder
-from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
-from directory_functions import get_jobs_in_queue, get_prefix_of_subfolders
-from mail_functions import EmailManager
-from convert_functions import mail_to_name, make_job_name_unique
-from talk_to_sa import choose_one_option, yes_or_no
+from src.create_batch_file import python_to_batch, python_to_batch_in_folder
+from src.cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
+from src.directory_functions import get_jobs_in_queue, get_prefix_of_subfolders
+from src.mail_manager import MailManager 
+from src.convert_functions import mail_to_name, make_job_name_unique
+from src.talk_to_sa import choose_one_option, yes_or_no
 
 
 def enter_laser_file_details(msg, attachment) -> Tuple[str, str, str]:
     """ Return the material, thickness and amount of a laser file. """
     while True:
         if attachment.FileName.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
-            print(f'mail from {str(msg.Sender)}:')
-            email_manager.print_mail_body(msg)
+            mail_manager.print_mail_body(msg)
 
             material, thickness, amount = enter_material_thickness_amount(attachment.FileName)
  
@@ -68,6 +67,7 @@ def save_attachments(attachments, laser_job_global_path: str) -> dict:
 def create_laser_job(job_name: str, msg) -> str:
     """ Create a 'laser job' or folder in WACHTRIJ and
     put all corresponding files in the laser job. """
+    print('well in well')
 
     today = datetime.date.today()
     job_folder_name = str(today.strftime('%d')) + '-' + str(today.strftime('%m')) + '_' + job_name
@@ -89,47 +89,45 @@ def create_laser_job(job_name: str, msg) -> str:
 
 if __name__ == '__main__':
 
-    LaserJobTracker().checkHealth()
+    # LaserJobTracker().checkHealth()
     
     print('searching for new mail...')
-    email_manager = EmailManager()
+    mail_manager = MailManager(gv)
+
 
     # read unread mails and convert to the email format and mark them as read
-    msgs = email_manager.get_new_emails(gv)
+    msgs = mail_manager.getUnreadEmails()
     created_laser_jobs = False
 
     # loop over all mails, check if they are valid and create laser jobs
     for msg in msgs:
-        print(f'processing incoming mail from: {msg.Sender}')
+        print(f'processing incoming mail from: {mail_manager.getEmailAdress(msg)}')
 
-        (is_valid, invalid_reason) = email_manager.is_mail_a_valid_job_request(gv, msg)
+        (is_valid, invalid_reason) = mail_manager.isMailAValidJobRequest(msg)
 
         if is_valid:
             created_laser_jobs = True
 
-            sender_name = mail_to_name(str(msg.Sender))
+            sender_name = mail_to_name(mail_manager.getEmailAdress(msg))
             job_name = make_job_name_unique(gv, sender_name)
 
-            print(f'mail from: {email_manager.get_email_address(msg)} is valid request,'
+            print(f'mail from: {mail_manager.get_email_address(msg)} is valid request,'
                   f' create laser job: {job_name}')
 
             laser_job_global_path = create_laser_job(job_name, msg)
 
             # send a confirmation mail
             msg_file_path = os.path.join(laser_job_global_path, "mail.msg")
-            email_manager.reply_to_email_from_file_using_template(gv,
-                                    msg_file_path,
+            mail_manager.replyToEmailFromFileUsingTemplate(msg_file_path,
                                     "RECEIVED_MAIL_TEMPLATE",
                                     {"{jobs_in_queue}": get_jobs_in_queue(gv)},
                                     popup_reply=False)
 
-            email_manager.moveEmailToVerwerktFolder(gv, msg)
+            mail_manager.moveEmailToVerwerktFolder(msg)
 
             print(f'laser job: {job_name} created\n')
 
         else:
-            print(f'mail from {msg.Sender} is not a valid request '
+            print(f'mail from {mail_manager.getEmailAdress(msg)} is not a valid request '
                   f'because:\n {invalid_reason}, abort!\n')
 
-    if created_laser_jobs:
-        open_wachtrij_folder_cmd_farewell()

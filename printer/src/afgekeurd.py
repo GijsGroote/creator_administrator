@@ -8,7 +8,8 @@ import glob
 from global_variables import gv
 from local_directory_functions import move_job_to_main_folder
 
-from mail_functions import EmailManager
+from src.mail_manager import create_mail_manager
+
 from directory_functions import (
     job_name_to_global_path)
 from cmd_farewell_handler import remove_directory_and_close_cmd_farewell
@@ -24,16 +25,16 @@ if __name__ == '__main__':
 
     if len(msg_file_paths) > 0:
 
-        email_manager = EmailManager()
+        mail_manager = create_mail_manager()
 
         print('latest mail message:')
-        email_manager.print_mail_body_from_path(msg_file_paths[0])
+        mail_manager.print_mail_body_from_path(msg_file_paths[0])
         declined_reason = input("Why is the print job rejected?")
         if len(msg_file_paths) > 1:
             print(f'Warning! more than one: {len(msg_file_paths)} .eml files detected')
             input('press enter to send response mail. . .')
 
-        email_manager.reply_to_email_from_file_using_template(gv,
+        mail_manager.reply_to_email_from_file_using_template(gv,
                                                                 msg_file_paths[0],
                                                                 'DECLINED_MAIL_TEMPLATE',
                                                                 {'{declined_reason}': declined_reason},

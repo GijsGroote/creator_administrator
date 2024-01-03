@@ -36,7 +36,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="allJobsTab">
        <attribute name="title">
@@ -116,7 +116,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="jobsListPage_2">
              <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -139,6 +139,9 @@
                  <widget class="BackQPushButton" name="backPushButton_2">
                   <property name="text">
                    <string>Back</string>
+                  </property>
+                  <property name="shortcut">
+                   <string>Esc</string>
                   </property>
                  </widget>
                 </item>
@@ -190,7 +193,7 @@
         <item>
          <widget class="QStackedWidget" name="wachtrijMateriaalQStackedWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="jobsListPage_3">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -376,6 +379,9 @@
    </property>
    <property name="text">
     <string>Import from Mail</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
    </property>
   </action>
   <action name="ActionSelectFile">

@@ -19,7 +19,17 @@ class LaserMainWindow(MainWindow):
         self.ActionSelectFile.triggered.connect(self.onActionSelectFileclicked)
 
     def onActionImportFromMail(self):
-        print('please import mail now')
+        dialog = LaserSelectFileQDialog(self)
+
+        if dialog.exec_() == QDialog.Accepted:
+            folder_global_path = dialog.selectFolderButton.folder_global_path
+            project_name = dialog.ProjectNameQLineEdit.text()
+            create_laser_jobs(folder_global_path, project_name)
+
+            # refresh all laser job tabs
+            qlist_widgets = self.findChildren(QListWidget)
+            for list_widget in qlist_widgets:
+                list_widget.refresh()
 
     def onActionSelectFileclicked(self):
         dialog = LaserSelectFileQDialog(self)
@@ -28,12 +38,12 @@ class LaserMainWindow(MainWindow):
             folder_global_path = dialog.selectFolderButton.folder_global_path
             project_name = dialog.ProjectNameQLineEdit.text()
             create_laser_jobs(folder_global_path, project_name)
+
             # refresh all laser job tabs
             qlist_widgets = self.findChildren(QListWidget)
             for list_widget in qlist_widgets:
                 list_widget.refresh()
     
-
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     laser_window = LaserMainWindow()

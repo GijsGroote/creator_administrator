@@ -1,5 +1,5 @@
-from os.path import expanduser
 
+import os
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import (
@@ -60,7 +60,7 @@ class SelectFolderQPushButton(QPushButton):
     def on_click(self):
         self.folder_global_path = QFileDialog.getExistingDirectory(self,
             'Select Folder',
-            expanduser('~'),
+            os.path.expanduser('~'),
             QFileDialog.ShowDirsOnly)
 
         folder_name_short = self.folder_global_path

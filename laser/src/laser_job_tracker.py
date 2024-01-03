@@ -18,9 +18,7 @@ from datetime import datetime
 from global_variables import gv
 from laser_directory_functions import create_files_dict, move_job_to_main_folder
 
-# from mail_functions import EmailManager
 from src.directory_functions import (
-    copy, 
     delete,
     get_job_global_paths, 
     global_path_to_main_folder,
@@ -232,8 +230,8 @@ class LaserJobTracker(JobTracker):
 
         if len(msg_file_paths) > 0:
             pass
-            # email_manager = EmailManager()
-            # email_manager.reply_to_email_from_file_using_template(gv,
+            # mail_manager = create_mail_manager()
+            # mail_manager.reply_to_email_from_file_using_template(gv,
             #                                         msg_file_paths[0],
             #                                         "FINISHED_MAIL_TEMPLATE",
             #                                         {},

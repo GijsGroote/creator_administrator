@@ -10,7 +10,8 @@ from local_directory_functions import move_job_to_main_folder
 from local_cmd_farewell_handler import open_gesliced_folder_cmd_farewell
 
 from job_tracker import JobTracker
-from mail_functions import EmailManager
+
+from src.mail_manager import create_mail_manager
 from directory_functions import (
     job_name_to_global_path,
     does_job_exist_in_main_folder,
