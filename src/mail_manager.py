@@ -1,4 +1,5 @@
 """
+
 Handle mail functionality.
 """
 
@@ -11,11 +12,14 @@ if sys.platform == 'linux':
     import imaplib
     import email
     import smtplib
+    import ssl
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
     from email.mime.image import MIMEImage
     from email.mime.application import MIMEApplication
-    from email.utils import formatdate
+    from email.utils import formatdate, parseaddr, formataddr 
+    from email.parser import BytesParser
+    from email.policy import default
     from email.header import decode_header
 
 elif sys.platform == 'win32':
@@ -46,21 +50,44 @@ class MailManager():
                 password = file.read()
             self.username = 'gijsgroote@hotmail.com'
             self.password = password
+
+            # specific to gmail and outlook
+            self.smtp_server = 'smtp-mail.outlook.com'
+            self.smtp_port = 587 
             self.imap_server = 'outlook.office365.com'
-            self.smtp_server = 'smtp.live.com'
-            self.smtp_port = 587
+            self.imap_mail_server_running = False
 
-            self.mail = imaplib.IMAP4_SSL(self.imap_server)
-            self.mail.login(self.username, self.password)
+    def imapLogin(self):
+        ''' Login to the IMAP server to download mails. '''
+        if not self.imap_mail_server_running:
+            self.imap_mail = imaplib.IMAP4_SSL(self.imap_server)
+            self.imap_mail.login(self.username, self.password)
 
-            self.mail.select('inbox')
-            # create Verwerkt folder
+            self.imap_mail.select('inbox')
+            self.imap_mail_server_running = True
 
-            status, mailboxes = self.mail.list()
-            if status == 'OK':
-                if not any('Verwerkt' in mbox.decode() for mbox in mailboxes):
-                    self.mail.create('Verwerkt')
+        # create Verwerkt folder
+        status, mailboxes = self.imap_mail.list()
+        if status == 'OK':
+            if not any('Verwerkt' in mbox.decode() for mbox in mailboxes):
+                self.imap_mail.create('Verwerkt')
 
+    def imapLogout(self):
+        ''' Logout of the IMAP server. '''
+        self.imap_mail.close()
+        self.imap_mail.logout()
+        self.imap_mail_server_running = False
+
+    def smtpSendMessage(self, msg):
+        if self.imap_mail_server_running:
+            self.imapLogout()
+
+        context = ssl.create_default_context()
+
+        with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
+            server.starttls(context=context)
+            server.login(self.username, self.password)
+            server.sendmail(self.username, self.username, msg)
 
     def getUnreadEmails(self) -> list:
         """ Return emails from Outlook inbox. """
@@ -87,27 +114,37 @@ class MailManager():
 
 
         if sys.platform == 'linux':
-            status, response = self.mail.search(None, 'UNSEEN')
+            self.imapLogin()
+
+            status, response = self.imap_mail.search(None, 'UNSEEN')
             if status != 'OK':
                 return []
 
-            mail_ids = response[0].split()
-
             msgs = []
-            for mail_id in mail_ids:
-                status, msg_data = self.mail.fetch(mail_id, "(RFC822)")
+            for mail_id in response[0].split():
+                print(f"mail id yo {mail_id}")
+                status, msg_data = self.imap_mail.fetch(mail_id, "(RFC822)")
                 msgs.append(msg_data)
+
+            self.imapLogout()
 
             return msgs
 
-
+    
     def moveEmailToVerwerktFolder(self, msg):
         """ Move email to verwerkt folder. """
         if sys.platform == 'win32':
             msg.Move(self.verwerkt_folder)
         if sys.platform == 'linux':
-            self.mail.copy(msg, 'Verwerkt')
-            self.mail.store(msg, '+FLAGS', '\\Deleted')
+            self.imapLogin()
+
+            # find UID of mail
+            msg_uid = msg[0][0][0:5]
+            print(f"from verwerk f {msg_uid}")
+            self.imap_mail.copy(msg_uid, 'Verwerkt')
+            self.imap_mail.store(msg_uid, '+FLAGS', r'(\Deleted)')
+
+            self.imapLogout()
 
     def isMailAValidJobRequest(self, msg) -> Tuple[bool, str]:
         """ Check if the requirements are met for a valid job request. """
@@ -162,7 +199,7 @@ class MailManager():
         if sys.platform == 'linux':
 
             with open(msg_file_path, 'rb') as f:
-                msg = BytesParser(policy=policy.default).parse(f)
+                msg = BytesParser(policy=default).parse(f)
 
             self.printMailBody(msg)
 
@@ -246,17 +283,21 @@ class MailManager():
                                                 template_content: dict,
                                                 popup_reply=True):
         """ Reply to .msg file using a template. """
+
+
+        with open(self.gv[template_file_name], "r") as file:
+            html_content = file.read()
+
+
+        for key, value in template_content.items():
+            html_content = html_content.replace(key, str(value))
+
+
         if sys.platform == 'win32':
             msg = self.outlook.OpenSharedItem(msg_file_path)
 
-            with open(self.gv[template_file_name], "r") as file:
-                html_content = file.read()
-
             # load recipient_name in template
             template_content["{recipient_name}"] = mail_to_name(str(msg.Sender))
-
-            for key, value in template_content.items():
-                html_content = html_content.replace(key, str(value))
 
             reply = msg.Reply()
             reply.HTMLBody = html_content
@@ -268,27 +309,25 @@ class MailManager():
                 reply.Send()
 
         if sys.platform == 'linux':
-            with open(msg_file_path, 'rb') as f:
-                msg = BytesParser(policy=policy.default).parse(f)
-                send_to = msg.get('From')
 
-            # Read the HTML template
-            with open(template_file_name, 'r', encoding='utf-8') as f:
-                html_content = f.read()
 
-            for key, value in template_content.items():
-                html_content = html_content.replace(key, str(value))
+            with open(msg_file_path, 'rb') as file:
+                msg = email.message_from_binary_file(file, policy=default)
+                original_sender_mail_long = msg.get('From')
+                original_sender_mail = parseaddr(original_sender_mail_long)[1]
 
-            reply = msg.Reply()
-            reply.HTMLBody = html_content
+            # load recipient_name in template
+            template_content['{recipient_name}'] = mail_to_name(str(original_sender_mail_long))
 
-            try:
-                server = smtplib.SMTP(self.smtp_server, self.smtp_port)
-                server.starttls()
-                server.login(self.username, self.password)
-                server.sendmail(self.username, send_to, msg.as_string())
-                server.quit()
-                print("Email sent successfully!")
-            except Exception as e:
-                print("Error sending email:", str(e))
+            # Create the reply messageI
+            reply_msg = MIMEMultipart("alternative")
+            reply_msg["Subject"] = "Re: " + msg.get("Subject", "")
+            reply_msg["From"] = formataddr(('Your Name', self.username))
+            reply_msg["To"] = original_sender_mail
+            # reply_msg["In-Reply-To"] = msg.get('Message-ID')
+            reply_msg.attach(MIMEText(html_content, "html"))
+
+            self.smtpSendMessage(reply_msg)
+            print("Email sent successfully!")
+
 

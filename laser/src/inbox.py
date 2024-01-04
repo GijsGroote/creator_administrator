@@ -62,6 +62,8 @@ def create_laser_job(mail_manager: MailManager, job_name: str, msg) -> str:
     # LaserJobTracker().addJob(job_name, "WACHTRIJ", files_dict)
 
     os.mkdir(job_folder_global_path)
+
+
     mail_manager.saveMail(msg, job_folder_global_path)
 
     # save the attachments
@@ -117,6 +119,6 @@ if __name__ == '__main__':
             print(f'laser job: {job_name} created\n')
 
         else:
-            print(f'mail from {mail_manager.getEmailAdress(msg)} is not a valid request '
+            print(f'mail from {mail_manager.getEmailAddress(msg)} is not a valid request '
                   f'because:\n {invalid_reason}, abort!\n')
 

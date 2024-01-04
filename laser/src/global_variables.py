@@ -87,3 +87,7 @@ gv['MINOR_FOLDERS'] = {'WACHTRIJ_MATERIAAL': {'allowed_batch_files': ['materiaal
 from src.cmd_farewell_handler import get_cmd_farewells
 
 gv['CMD_FAREWELLS'] = get_cmd_farewells(gv)
+
+# if __name__ == '__main__':
+#     from mail_manager import MailManager
+#     MailManager(gv).smtpSendReply('ha')
