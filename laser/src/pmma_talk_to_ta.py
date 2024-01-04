@@ -13,7 +13,7 @@ from directory_functions import get_prefix_of_subfolders
 def enter_material_thickness_amount(file_name) -> Tuple[str, str, str]:
     """ Return strings for material, thickness and amount. """
     material = choose_one_option(f'What material is: {file_name}?',
-                get_prefix_of_subfolders(os.path.join(gv['JOBS_DIR_HOME'], 'WACHTRIJ_MATERIAAL')),
+                ['material1', 'material2'],
                 options_type='material')
 
     while True:

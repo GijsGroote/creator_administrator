@@ -96,8 +96,7 @@ class MailManager():
             msgs = []
             for mail_id in mail_ids:
                 status, msg_data = self.mail.fetch(mail_id, "(RFC822)")
-                raw_mail = msg_data[0][1]
-                msgs.append(email.message_from_bytes(raw_mail))
+                msgs.append(msg_data)
 
             return msgs
 
@@ -110,11 +109,38 @@ class MailManager():
             self.mail.copy(msg, 'Verwerkt')
             self.mail.store(msg, '+FLAGS', '\\Deleted')
 
+    def isMailAValidJobRequest(self, msg) -> Tuple[bool, str]:
+        """ Check if the requirements are met for a valid job request. """
+
+        if sys.platform == 'win32':
+            attachments = msg.Attachments
+
+            for attachment in attachments:
+                if attachment.FileName.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
+
+                    return True, ' '
+
+            return False, f'no {self.gv["ACCEPTED_EXTENSIONS"]} attachment found'
+
+        if sys.platform == 'linux':
+            attachments = self.getAttachments(msg)
+            for attachment in attachments:
+                file_name = attachment.get_filename()        
+                print(f'hey file {file_name} detected')
+                if bool(file_name):
+                    if file_name.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
+
+                        return True, ' '
+
+            return False, f'no {self.gv["ACCEPTED_EXTENSIONS"]} attachment found'
+
+
     def printMailBody(self, msg):
         """ Print mail body. """
         if sys.platform == 'win32':
             print(msg.Body)
         if sys.platform == 'linux':
+            msg = email.message_from_bytes(msg[0][1])
             content_type = msg.get_content_maintype()
 
             if content_type == 'multipart':
@@ -140,7 +166,7 @@ class MailManager():
 
             self.printMailBody(msg)
 
-    def getEmailAdress(self, msg) -> str:
+    def getEmailAddress(self, msg) -> str:
         """ Return the email adress. """
         if sys.platform == 'win32':
             if msg.Class==43:
@@ -153,7 +179,66 @@ class MailManager():
             raise ValueError("Could not get email adress")
 
         if sys.platform == 'linux':
-            return msg.get("From")
+            return email.message_from_bytes(msg[0][1]).get('From')
+
+    def getMailGlobalPathFromFolder(self, job_folder_global_path: str) -> str:
+        ''' Return the global path toward a mail file in a folder. '''
+
+        if sys.platform == 'win32':
+            return os.path.join(job_folder_global_path, 'mail.msg')
+
+        if sys.platform == 'linux':
+            return os.path.join(job_folder_global_path, 'mail.eml')
+
+    def getAttachments(self, msg) -> list:
+        ''' Return a list with attachment names. '''
+
+        if sys.platform == 'win32':
+            return msg.Attachments
+        if sys.platform == 'linux':
+           attachments = []
+           for part in email.message_from_bytes(msg[0][1]).walk():
+                # Check if the part is an attachment
+                if part.get_content_maintype() == 'multipart':
+                    continue
+                if part.get('Content-Disposition') is None:
+                    continue
+
+                if not part.get_filename():
+                    continue
+                else:
+                    attachments.append(part)
+
+           return attachments
+
+    def getAttachmentFileName(self, attachment) -> str:
+        ''' Return the attachment filename. '''
+        if sys.platform == 'win32':
+            return attachment.FileName
+        if sys.platform == 'linux':
+            return attachment.get_filename()
+
+
+    def saveMail(self, msg, job_folder_global_path: str):
+        ''' Save mail in a folder. '''
+        if sys.platform == 'win32':
+            msg.saveAs(os.path.join(laser_job_global_path, 'mail.msg'))
+
+        if sys.platform == 'linux':
+            with open(os.path.join(job_folder_global_path, 'mail.eml'), 'wb') as mail_file:
+                mail_file.write(msg[0][1])
+
+    def saveAttachment(self, attachment, file_name_global_path: str):
+        ''' Save mail in a folder. '''
+
+        if sys.platform == 'win32':
+            attachment.SaveAsFile(file_name_global_path)
+
+        if sys.platform == 'linux':
+
+            with open(file_name_global_path, 'w') as file:
+                file.write(attachment)
+
 
     def replyToEmailFromFileUsingTemplate(self,
                                                 msg_file_path: str,
@@ -207,37 +292,3 @@ class MailManager():
             except Exception as e:
                 print("Error sending email:", str(e))
 
-    def isMailAValidJobRequest(self, msg) -> Tuple[bool, str]:
-        """ Check if the requirements are met for a valid job request. """
-
-        job_file_count = 0
-
-        if sys.platform == 'win32':
-            attachments = msg.Attachments
-
-            for attachment in attachments:
-                if attachment.FileName.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
-
-                    return True, ' '
-
-            return False, f'no {self.gv["ACCEPTED_EXTENSIONS"]} attachment found'
-
-        if sys.platform == 'linux':
-            attachments = []
-            for part in msg.walk():
-                if part.get_content_maintype() == 'multipart':
-                    continue
-                if part.get('Content-Disposition') is None:
-                    continue
-                file_name = part.get_filename()        
-                if bool(file_name):
-                    if file_name.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
-
-                        return True, ' '
-
-            return False, f'no {self.gv["ACCEPTED_EXTENSIONS"]} attachment found'
-
-# filePath = os.path.join('/Users/sanketdoshi/python/', fileName)
-# if not os.path.isfile(filePath) :
-#     fp = open(filePath, 'wb')
-#     fp.write(part.get_payload(decode=True))
