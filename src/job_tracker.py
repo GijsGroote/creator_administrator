@@ -112,3 +112,12 @@ class JobTracker:
 
         return [(job_name, job_dict['dynamic_job_name']) for job_name, job_dict in tracker_dict.items()]
 
+
+    def getNumberOfJobsWithStatus(self, status_list: list) -> int:
+        """ Return the number of jobs that have a certain status. """
+
+        with open(self.tracker_file_path, 'r') as tracker_file:
+            tracker_dict = json.load(tracker_file)
+
+        return len([job_key for job_key, job_value in tracker_dict.items() if job_value['status'] in status_list])-1
+

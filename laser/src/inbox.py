@@ -10,7 +10,6 @@ from global_variables import gv
 from laser_job_tracker import LaserJobTracker
 from pmma_talk_to_ta import enter_material_thickness_amount
 
-from src.directory_functions import get_jobs_in_queue
 from src.mail_manager import MailManager 
 from src.convert_functions import mail_to_name, make_job_name_unique
 from src.talk_to_sa import yes_or_no
@@ -24,9 +23,9 @@ def enter_laser_file_details(mail_manager, msg, job_folder_global_path: str) -> 
 
     for attachment in mail_manager.getAttachments(msg):
         attachment_name = mail_manager.getAttachmentFileName(attachment)
-        print(f'what is details of {attachment_name}')
 
         if attachment_name.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
+
             mail_manager.printMailBody(msg)
 
             material, thickness, amount = enter_material_thickness_amount(attachment_name)
@@ -43,33 +42,34 @@ def enter_laser_file_details(mail_manager, msg, job_folder_global_path: str) -> 
                                 'done': False}
             attachments_dict[attachment_name] = {'attachment': attachment,
                                                  'file_global_path': file_global_path}
+        else:
+            file_global_path = os.path.join(job_folder_global_path, attachment_name)
+            attachments_dict[attachment_name] = {'attachment': attachment,
+                                                 'file_global_path': file_global_path}
 
-        return laser_cut_files_dict, attachments_dict
+
+    return laser_cut_files_dict, attachments_dict
 
 
 def create_laser_job(mail_manager: MailManager, job_name: str, msg) -> str:
     """ Create a 'laser job' or folder in WACHTRIJ and
     put all corresponding files in the laser job. """
-    print('Starting in create laser job function')
 
     job_folder_name = str(datetime.date.today().strftime('%d-%m'))+'_'+job_name
     job_folder_global_path = os.path.join(os.path.join(gv['JOBS_DIR_HOME'], job_folder_name))
 
     # find material, thickness and amount
-    files_dict, attachment_dict = enter_laser_file_details(mail_manager, msg, job_folder_global_path)
+    files_dict, attachments_dict = enter_laser_file_details(mail_manager, msg, job_folder_global_path)
 
-
-    # LaserJobTracker().addJob(job_name, "WACHTRIJ", files_dict)
+    LaserJobTracker().addJob(job_name, "WACHTRIJ", files_dict)
 
     os.mkdir(job_folder_global_path)
-
-
     mail_manager.saveMail(msg, job_folder_global_path)
 
     # save the attachments
-    for attachment, file_name_global_path in attachment_dict.values():
+    for attachment_dict in attachments_dict.values():
 
-        mail_manager.saveAttachment(attachment, file_name_global_path)
+        mail_manager.saveAttachment(attachment_dict['attachment'], attachment_dict['file_global_path'])
 
 
     return job_folder_global_path
@@ -83,7 +83,7 @@ if __name__ == '__main__':
     mail_manager = MailManager(gv)
 
     # read unread mails and convert to the email format and mark them as read
-    msgs = mail_manager.getUnreadEmails()
+    msgs = mail_manager.getNewEmails()
 
     if len(msgs) == 0:
         print('no new unread emails')
@@ -111,10 +111,10 @@ if __name__ == '__main__':
             msg_file_path = mail_manager.getMailGlobalPathFromFolder(job_folder_global_path)
             mail_manager.replyToEmailFromFileUsingTemplate(msg_file_path,
                                     "RECEIVED_MAIL_TEMPLATE",
-                                    {"{jobs_in_queue}": '5'}, # get_jobs_in_queue(gv)} 
+                                    {"{jobs_in_queue}": LaserJobTracker().getNumberOfJobsInQueue()},
                                     popup_reply=False)
 
-            mail_manager.moveEmailToVerwerktFolder(msg)
+            # mail_manager.moveEmailToVerwerktFolder(msg)
 
             print(f'laser job: {job_name} created\n')
 

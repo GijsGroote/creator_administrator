@@ -137,18 +137,6 @@ def does_job_exist_in_main_folder(gv: dict, job_name: str, main_folder: str) -> 
             return True
     return False
 
-def get_jobs_in_queue(gv: dict) -> int:
-    """ return the jobs in the main folders, exluding  the folders AAN_HET_PRINTEN, WACHTRIJ and AFGEKEURD. """
-
-    n_dirs_in_wachtrij = 0
-
-    for main_folder in gv['MAIN_FOLDERS']:
-        if main_folder in ['AAN_HET_PRINTEN', 'VERWERKT', 'AFGEKEURD']:
-            continue
-        n_dirs_in_wachtrij += len(os.listdir(os.path.join(gv['JOBS_DIR_HOME'], main_folder)))
-                                              
-    return n_dirs_in_wachtrij
-
 def folder_contains_accepted_extension_file(gv: dict, global_path: str) -> bool:
     """ Check if a folder contains at least one file with accepted extension. """
     if any(file.endswith(gv['ACCEPTED_EXTENSIONS']) for file in os.listdir(global_path)):

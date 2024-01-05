@@ -357,3 +357,7 @@ class LaserJobTracker(JobTracker):
                                 file_dict['amount']+'x_'+file_key))
 
 
+    def getNumberOfJobsInQueue(self) -> int:
+        ''' Return the number of jobs with status WACHTRIJ. '''
+        return self.getNumberOfJobsWithStatus(['WACHTRIJ'])
+
