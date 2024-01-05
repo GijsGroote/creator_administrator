@@ -35,6 +35,7 @@ class MailManager():
 
     def __init__(self, gv: dict):
         self.gv = gv
+        self.only_unread_mail = True
 
         if sys.platform == 'win32':
             self.outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
@@ -45,6 +46,8 @@ class MailManager():
                 self.verwerkt_folder = self.inbox.Parent.Folders.Add("Verwerkt")
 
         if sys.platform == 'linux':
+
+            self.inbox_folder = 'temp_inbox'
 
             with open('/home/gijs/Documents/email_password.txt', 'r') as file:
                 # Read the content of the file
@@ -64,7 +67,7 @@ class MailManager():
             self.imap_mail = imaplib.IMAP4_SSL(self.imap_server)
             self.imap_mail.login(self.username, self.password)
 
-            self.imap_mail.select('temp_inbox')
+            self.imap_mail.select(self.inbox_folder)
             self.imap_mail_server_running = True
 
         # create Verwerkt folder
@@ -92,33 +95,23 @@ class MailManager():
 
     def getNewEmails(self) -> list:
         """ Return emails from Outlook inbox. """
-        if sys.platform == 'win32':
-            msgs = []
+        msgs = []
+
+        if sys.platform == 'win32':    
             for message in self.inbox.Items:
-                # the IWS computer appends every mail in the inbox
-                if self.gv['IWS_COMPUTER']:
+                if self.only_unread_mail:
+                    if message.UnRead:
+                        msgs.append(message)
+                else:
                     msgs.append(message)
-                # other than the IWS computer only appends unread mails
-                elif message.UnRead:
-                    msgs.append(message)
-
-                if self.gv["IWS_COMPUTER"]:
-                    message.UnRead = False
-                    message.Save()
-
-            # print how many mails are processed
-            if len(msgs) == 0:
-                print('no unread mails found')
-            else:
-                print(f'processing {len(msgs)} new mails')
-            return msgs
-
+                
+                message.UnRead = False
+                message.Save()
 
         if sys.platform == 'linux':
             self.imapLogin()
 
-            only_unseen = False
-            if only_unseen:
+            if self.only_unread_mail:
                 status, response = self.imap_mail.search(None, 'UNSEEN')
             else:
                 status, response = self.imap_mail.search(None, 'ALL')
@@ -126,15 +119,18 @@ class MailManager():
             if status != 'OK':
                 return []
 
-            msgs = []
             for mail_id in response[0].split():
                 status, msg_data = self.imap_mail.fetch(mail_id, "(RFC822)")
                 msgs.append(msg_data)
 
-            self.imapLogout()
+            # self.imapLogout()
 
-            return msgs
-
+       # print how many mails are processed
+        if len(msgs) == 0:
+            print('no unread mails found')
+        else:
+            print(f'processing {len(msgs)} new mails')
+        return msgs
     
     def moveEmailToVerwerktFolder(self, msg):
         """ Move email to verwerkt folder. """
