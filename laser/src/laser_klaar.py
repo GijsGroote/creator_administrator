@@ -28,10 +28,6 @@ if __name__ == '__main__':
     # send response mail
     msg_file_paths = list(glob.glob(job_global_path + "/*.msg"))
 
-    if len(msg_file_paths) > 1:
-        print(f'Warning! more than one: {len(msg_file_paths)} .msg files detected')
-        input('press enter to send response mail...')
-
     if len(msg_file_paths) > 0:
 
         mail_manager = create_mail_manager()

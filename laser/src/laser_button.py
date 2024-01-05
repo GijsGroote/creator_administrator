@@ -25,19 +25,14 @@ class LaserKlaarQPushButton(JobsQPushButton):
         job_name = self.getCurrentStaticJobName()
         
         job_folder_global_path = LaserJobTracker().jobNameToJobFolderGlobalPath(job_name)
-        
 
         # send response mail
-        msg_file_paths = list(glob.glob(job_folder_global_path + "/*.msg"))
+        mail_manager = MailManager(gv)
+        msg_file_global_path = mail_manager.getMailGlobalPathFromFolder(job_folder_global_path)
 
-        if len(msg_file_paths) > 1:
-            print(f'Warning! more than one: {len(msg_file_paths)} .msg files detected')
-            input('press enter to send response mail...')
-
-        if len(msg_file_paths) > 0:
-            mail_manager = MailManager(gv)
+        if msg_file_path is not None:
             mail_manager.replyToEmailFromFileUsingTemplate(gv,
-                                                    msg_file_paths[0],
+                                                    msg_file_global_path,
                                                     "FINISHED_MAIL_TEMPLATE",
                                                     {},
                                                     popup_reply=False)

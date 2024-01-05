@@ -139,8 +139,8 @@ class MailManager():
 
             if match:
                 uid_msg_set = (match.group(1))
-                # self.imap_mail.copy(uid_msg_set, 'Verwerkt')
-                # self.imap_mail.store(uid_msg_set, '+FLAGS', r'(\Deleted)')
+                self.imap_mail.copy(uid_msg_set, 'Verwerkt')
+                self.imap_mail.store(uid_msg_set, '+FLAGS', r'(\Deleted)')
 
             self.imapLogout()
 
@@ -211,14 +211,18 @@ class MailManager():
         if sys.platform == 'linux':
             return email.message_from_bytes(msg[0][1]).get('From')
 
-    def getMailGlobalPathFromFolder(self, job_folder_global_path: str) -> str:
+    def getMailGlobalPathFromFolder(self, job_folder_global_path: str):
         ''' Return the global path toward a mail file in a folder. '''
 
         if sys.platform == 'win32':
-            return os.path.join(job_folder_global_path, 'mail.msg')
-
+            msg_file_global_path = os.path.join(job_folder_global_path, 'mail.msg')
         if sys.platform == 'linux':
-            return os.path.join(job_folder_global_path, 'mail.eml')
+            msg_file_global_path = os.path.join(job_folder_global_path, 'mail.eml')
+
+        if os.path.exists(msg_file_global_path):
+            return msg_file_global_path
+        else:
+            return None
 
     def getAttachments(self, msg) -> list:
         ''' Return a list with attachment names. '''
@@ -323,7 +327,7 @@ class MailManager():
             # Create the reply messageI
             reply_msg = MIMEMultipart("alternative")
             reply_msg["Subject"] = "Re: " + msg.get("Subject", "")
-            reply_msg["From"] = formataddr(('Your Name', self.username))
+            reply_msg["From"] = formataddr(('Gijs Groote', self.username))
             reply_msg["To"] = original_sender_mail
             reply_msg["In-Reply-To"] = msg.get('Message-ID')
             reply_msg.attach(MIMEText(html_content, "html"))
