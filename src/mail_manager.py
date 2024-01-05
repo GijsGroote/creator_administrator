@@ -261,7 +261,7 @@ class MailManager():
     def saveMail(self, msg, job_folder_global_path: str):
         ''' Save mail in a folder. '''
         if sys.platform == 'win32':
-            msg.saveAs(os.path.join(laser_job_global_path, 'mail.msg'))
+            msg.saveAs(os.path.join(job_folder_global_path, 'mail.msg'))
 
         if sys.platform == 'linux':
             with open(os.path.join(job_folder_global_path, 'mail.eml'), 'wb') as mail_file:
