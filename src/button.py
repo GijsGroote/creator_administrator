@@ -10,7 +10,6 @@ from jobs_qlist_widget import JobContentQListWidget, JobsQListWidget
 
 
 
-
 class JobsQPushButton(QPushButton):
     ''' Parent class for all buttons that update job status
             such as laser klaar, gesliced. '''

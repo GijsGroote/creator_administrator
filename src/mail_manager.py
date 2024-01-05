@@ -35,7 +35,7 @@ class MailManager():
 
     def __init__(self, gv: dict):
         self.gv = gv
-        self.only_unread_mail = True
+        self.only_unread_mail = False
 
         if sys.platform == 'win32':
             self.outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
@@ -125,11 +125,6 @@ class MailManager():
 
             # self.imapLogout()
 
-       # print how many mails are processed
-        if len(msgs) == 0:
-            print('no unread mails found')
-        else:
-            print(f'processing {len(msgs)} new mails')
         return msgs
     
     def moveEmailToVerwerktFolder(self, msg):
@@ -144,12 +139,12 @@ class MailManager():
 
             if match:
                 uid_msg_set = (match.group(1))
-                self.imap_mail.copy(uid_msg_set, 'Verwerkt')
-                self.imap_mail.store(uid_msg_set, '+FLAGS', r'(\Deleted)')
+                # self.imap_mail.copy(uid_msg_set, 'Verwerkt')
+                # self.imap_mail.store(uid_msg_set, '+FLAGS', r'(\Deleted)')
 
             self.imapLogout()
 
-    def isMailAValidJobRequest(self, msg) -> Tuple[bool, str]:
+    def isMailAValidJobRequest(self, msg) -> bool:
         """ Check if the requirements are met for a valid job request. """
 
         if sys.platform == 'win32':
@@ -157,10 +152,9 @@ class MailManager():
 
             for attachment in attachments:
                 if attachment.FileName.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
+                    return True
 
-                    return True, ' '
-
-            return False, f'no {self.gv["ACCEPTED_EXTENSIONS"]} attachment found'
+            return False
 
         if sys.platform == 'linux':
             attachments = self.getAttachments(msg)
@@ -168,11 +162,9 @@ class MailManager():
                 file_name = attachment.get_filename()        
                 if bool(file_name):
                     if file_name.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
+                        return True
 
-                        return True, ' '
-
-            return False, f'no {self.gv["ACCEPTED_EXTENSIONS"]} attachment found'
-
+            return False
 
     def printMailBody(self, msg):
         """ Print mail body. """

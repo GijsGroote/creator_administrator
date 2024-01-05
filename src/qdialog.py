@@ -1,18 +1,41 @@
 import os
 from PyQt5 import uic
-from PyQt5.QtWidgets import QDialog, QMessageBox
+from PyQt5.QtWidgets import (QDialog, QMessageBox,
+                             QDialogButtonBox, QShortcut)
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QKeySequence
 from PyQt5.uic import loadUi
 from global_variables import gv
 
 
+class ImportFromMailQDialog(QDialog):
+    """ Import from mail dialog. """
+    def __init__(self, parent, ui_global_path, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        loadUi(ui_global_path, self)
+
+        # shortcut on Esc button
+        QShortcut(QKeySequence(Qt.Key_Escape), self).activated.connect(self.closeDialog)
+
+
+    def closeDialog(self):
+        ''' Close the dialog, press cancel. '''
+        self.close()
+
+
 class SelectFileQDialog(QDialog):
     """ Select file dialog. """
-    def __init__(self, parent, ui_global_path):
-        super().__init__(parent)
+    def __init__(self, parent, ui_global_path, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
 
         loadUi(ui_global_path, self)
 
         self.PasswordQLineEdit.textChanged.connect(self.check_password)
+
+        # shortcut on Esc button
+        QShortcut(QKeySequence(Qt.Key_Escape), self).activated.connect(self.closeDialog)
 
     def check_password(self):
         if self.PasswordQLineEdit.text() == gv['PASSWORD']:
@@ -21,3 +44,6 @@ class SelectFileQDialog(QDialog):
             self.PasswordQLineEdit.setStyleSheet("background-color: rgba(255, 0, 0, 0.4);")
 
 
+    def closeDialog(self):
+        ''' Close the dialog, press cancel. '''
+        self.close()

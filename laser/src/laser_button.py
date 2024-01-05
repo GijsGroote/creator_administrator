@@ -12,7 +12,7 @@ from laser_job_tracker import LaserJobTracker
 from src.button import JobsQPushButton
 from src.directory_functions import open_folder
 
-from src.mail_manager import create_mail_manager
+from src.mail_manager import MailManager
 
 
 class LaserKlaarQPushButton(JobsQPushButton):
@@ -35,7 +35,7 @@ class LaserKlaarQPushButton(JobsQPushButton):
             input('press enter to send response mail...')
 
         if len(msg_file_paths) > 0:
-            mail_manager = create_mail_manager()
+            mail_manager = MailManager(gv)
             mail_manager.replyToEmailFromFileUsingTemplate(gv,
                                                     msg_file_paths[0],
                                                     "FINISHED_MAIL_TEMPLATE",

@@ -94,8 +94,6 @@ if __name__ == '__main__':
     for msg in msgs:
         print(f'processing incoming mail from: {mail_manager.getEmailAddress(msg)}')
 
-        (is_valid, invalid_reason) = mail_manager.isMailAValidJobRequest(msg)
-
         if is_valid:
             created_laser_jobs = True
 
