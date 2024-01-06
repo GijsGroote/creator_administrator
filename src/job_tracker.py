@@ -10,8 +10,6 @@ import sys
 from datetime import datetime
 from typing import List
 
-from talk_to_sa import yes_or_no
-
 class JobTracker:
 
     def __init__(self, gv: dict):

@@ -28,7 +28,6 @@ elif sys.platform == 'win32':
 else:
     raise ValueError(f'This software does not work for platform: {sys.platform}')
 
-from talk_to_sa import yes_or_no
 from convert_functions import mail_to_name
 
 class MailManager():

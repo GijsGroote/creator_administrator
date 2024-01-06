@@ -31,11 +31,11 @@ class LaserKlaarQPushButton(JobsQPushButton):
         msg_file_global_path = mail_manager.getMailGlobalPathFromFolder(job_folder_global_path)
 
         if msg_file_global_path is not None:
-            mail_manager.replyToEmailFromFileUsingTemplate(gv,
-                                                    msg_file_global_path,
-                                                    "FINISHED_MAIL_TEMPLATE",
-                                                    {},
-                                                    popup_reply=False)
+            mail_manager.replyToEmailFromFileUsingTemplate(
+                        msg_file_global_path,
+                        "FINISHED_MAIL_TEMPLATE",
+                        {},
+                        popup_reply=False)
         else:
             print(f'folder: {job_folder_global_path} does not contain any .msg files,'\
                     f'no response mail can be send')

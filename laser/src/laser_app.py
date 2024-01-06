@@ -4,14 +4,11 @@ from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 
 
-import time
-
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from global_variables import gv
 from src.app import MainWindow
-from select_file import create_laser_jobs
 from laser_qdialog import LaserImportFromMailQDialog, LaserSelectFileQDialog
 
 from src.mail_manager import MailManager
@@ -112,7 +109,8 @@ class LaserMainWindow(MainWindow):
         if dialog.exec_() == QDialog.Accepted:
             folder_global_path = dialog.selectFolderButton.folder_global_path
             project_name = dialog.ProjectNameQLineEdit.text()
-            create_laser_jobs(folder_global_path, project_name)
+            # TODO: open dialog to collect material, thickness and amount per dxf
+            # create_laser_jobs(folder_global_path, project_name)
 
             # refresh all laser job tabs
             qlist_widgets = self.findChildren(QListWidget)

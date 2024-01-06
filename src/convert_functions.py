@@ -6,26 +6,6 @@ import re
 import os
 from unidecode import unidecode
 
-from directory_functions import (
-    get_job_folder_names,
-    does_job_name_exist
-)
-
-
-
-def job_folder_name_to_job_name(job_folder_name: str) -> str:
-    """ get the job name from a job folder name. """
-
-    folder_name_without_date = re.sub(r'^\d+-\d+_', '', job_folder_name)
-    return re.sub(r'^\d+h\d+m\.', '', folder_name_without_date)
-
-def job_folder_name_to_date(job_folder_name: str) -> str:
-    """ Return date from job folder name. """
-
-    match = re.search(r'.*(\d{2}-\d{2}_).*', job_folder_name)
-    if match:
-        return match.group(1)
-    return ""
 
 def mail_to_name(mail_name: str):
     """ Convert mail in form first_name last_name <mail@adres.com> to a more friendly name. """
@@ -42,6 +22,7 @@ def mail_to_name(mail_name: str):
             return mail_name.split('@')[0]
     return mail_name
     
+# TODO: Update make_job_name_unique 
 def make_job_name_unique(gv: dict, job_name: str) -> str:
     """ Make the job name unique.
 
@@ -65,3 +46,23 @@ def make_job_name_unique(gv: dict, job_name: str) -> str:
             return job_name + '_(1)'
         return job_name
     return job_name + '_(' + str(max_job_number + 1) + ')'
+
+# TODO: This functions belongs to the job tracker
+def does_job_name_exist(gv, job_name):
+    return False
+
+# def job_folder_name_to_job_name(job_folder_name: str) -> str:
+#     """ get the job name from a job folder name. """
+
+#     folder_name_without_date = re.sub(r'^\d+-\d+_', '', job_folder_name)
+#     return re.sub(r'^\d+h\d+m\.', '', folder_name_without_date)
+
+# def job_folder_name_to_date(job_folder_name: str) -> str:
+#     """ Return date from job folder name. """
+
+#     match = re.search(r'.*(\d{2}-\d{2}_).*', job_folder_name)
+#     if match:
+#         return match.group(1)
+#     return ""
+
+

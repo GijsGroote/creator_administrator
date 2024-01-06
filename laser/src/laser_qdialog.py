@@ -159,6 +159,8 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
                             'thickness': thickness,
                             'amount': amount,
                             'done': False}
+        self.temp_attachments_dict[attachment_name] = {'attachment': attachment,
+                                                     'file_global_path': file_global_path}
         self.loadContent()
 
 
@@ -218,7 +220,6 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         """ Create a laser job. """
         msg = self.valid_msgs[self.msg_counter]
 
-
         self.job_tracker.addJob(self.temp_job_name,
                                  self.temp_job_folder_global_path,
                                  self.temp_laser_cut_files_dict)
@@ -227,7 +228,9 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         self.mail_manager.saveMail(msg, self.temp_job_folder_global_path)
 
         # save the attachments
+        print('the attachments in a dict')
         for attachment_dict in self.temp_attachments_dict.values():
+            print(attachment_dict)
             self.mail_manager.saveAttachment(attachment_dict['attachment'], attachment_dict['file_global_path'])
 
 
