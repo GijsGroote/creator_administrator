@@ -30,7 +30,7 @@ class LaserKlaarQPushButton(JobsQPushButton):
         mail_manager = MailManager(gv)
         msg_file_global_path = mail_manager.getMailGlobalPathFromFolder(job_folder_global_path)
 
-        if msg_file_path is not None:
+        if msg_file_global_path is not None:
             mail_manager.replyToEmailFromFileUsingTemplate(gv,
                                                     msg_file_global_path,
                                                     "FINISHED_MAIL_TEMPLATE",

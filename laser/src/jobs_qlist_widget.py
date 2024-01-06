@@ -82,7 +82,9 @@ class JobsQListWidget(QListWidget):
         self.itemClicked.connect(self.jobClicked)
 
     def jobEnterPressed(self):
-        self.displayJob(self.currentItem().data(1))
+        current_item = self.currentItem()
+        if current_item is not None:
+            self.displayJob(current_item.data(1))
 
     def jobClicked(self, clicked_job):
         ''' Display the content of the job clicked. '''
@@ -121,7 +123,11 @@ class JobContentQListWidget(QListWidget):
         
 
     def jobFileEnterPressed(self):
-        self.jobFileClicked(self.currentItem())
+
+        current_item = self.currentItem()
+        
+        if current_item is not None:
+            self.jobFileClicked(current_item)
 
     def jobFileClicked(self, clicked_file):
         open_file(gv, os.path.join(clicked_file.data(1), clicked_file.text()))

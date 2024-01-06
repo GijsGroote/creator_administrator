@@ -139,8 +139,8 @@ class MailManager():
 
             if match:
                 uid_msg_set = (match.group(1))
-                self.imap_mail.copy(uid_msg_set, 'Verwerkt')
-                self.imap_mail.store(uid_msg_set, '+FLAGS', r'(\Deleted)')
+                # self.imap_mail.copy(uid_msg_set, 'Verwerkt')
+                # self.imap_mail.store(uid_msg_set, '+FLAGS', r'(\Deleted)')
 
             self.imapLogout()
 
@@ -166,20 +166,24 @@ class MailManager():
 
             return False
 
-    def printMailBody(self, msg):
+    def getMailBody(self, msg):
         """ Print mail body. """
         if sys.platform == 'win32':
-            print(msg.Body)
+            return msg.Body
         if sys.platform == 'linux':
             msg = email.message_from_bytes(msg[0][1])
-            content_type = msg.get_content_maintype()
 
-            if content_type == 'multipart':
+            # Check if the email is multipart
+            if msg.is_multipart():
                 for part in msg.walk():
-                    if part.get_content_maintype() == 'text':
-                        print(part.get_payload(decode=True).decode(part.get_content_charset()))
-            elif content_type == 'text':
-                 print(msg.get_payload(decode=True).decode(msg.get_content_charset()))
+                    # Check each part for HTML content
+                    if part.get_content_type() == 'text/html':
+                        return part.get_payload(decode=True)
+
+            else:
+                # For non-multipart emails, check if the content type is HTML
+                if msg.get_content_type() == 'text/html':
+                    return msg.get_payload(decode=True)
 
     def printMailBodyFromPath(self, msg_file_path: str):
         """ Print the content of an .msg file. """

@@ -1,6 +1,7 @@
 import os
+import re
 from PyQt5 import QtCore, QtWidgets, QtWebEngineWidgets, uic
-from PyQt5.QtWidgets import QDialog, QMessageBox, QLabel, QLineEdit
+from PyQt5.QtWidgets import *
 
 from typing import Tuple
 import datetime
@@ -23,10 +24,30 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         self.valid_msgs = valid_msgs
         self.msg_counter = 0
         self.attachment_counter = 0
+        self.new_material_text = 'New Material'
+        self.job_tracker = LaserJobTracker()
         self.loadMailContent()
+
+        self.materialQComboBox.currentIndexChanged.connect(self.onMaterialComboboxChanged)
 
         self.buttonBox.accepted.connect(self.collectAttachmentInfo)
 
+
+    def loadContent(self):
+        if self.attachment_counter+1 >= len(self.temp_attachments):
+            self.createLaserJob()
+            self.sendConfirmationMail()
+
+            if self.msg_counter+1 >= len(self.valid_msgs):
+                # done! close dialog
+                self.accept() 
+            else:
+                self.msg_counter += 1
+                self.attachment_counter = 0
+                self.loadMailContent()
+        else:
+            self.attachment_counter += 1
+            self.loadAttachmentContent()
 
 
     def loadMailContent(self):
@@ -34,17 +55,12 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
         valid_msg = self.valid_msgs[self.msg_counter]
 
-        self.findChild(QLabel, 'mailQLabel').setText(
-                f'Mail ({self.msg_counter+1}/{len(self.valid_msgs)}) from: '
-                f'{mail_to_name(self.mail_manager.getEmailAddress(valid_msg))}')
-
-        print(f"Can I set this mailqlabel please to ")
-
         self.temp_attachments = self.mail_manager.getAttachments(valid_msg)
-        print(f"hoeveeel ataccchhments zitter hierin {self.temp_attachments}")
-        print(f"hoeveeel ataccchhments zitter hierin {len(self.temp_attachments)}")
         self.temp_laser_cut_files_dict = {}
         self.temp_attachments_dict = {}
+
+        self.mailFromQLabel.setText(f'Mail From: {mail_to_name(self.mail_manager.getEmailAddress(valid_msg))}')
+        self.mailProgressQLabel.setText(f'Mail ({self.msg_counter+1}/{len(self.valid_msgs)})')
 
         sender_name = mail_to_name(self.mail_manager.getEmailAddress(valid_msg))
 
@@ -52,32 +68,53 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         self.temp_job_folder_name = str(datetime.date.today().strftime('%d-%m'))+'_'+self.temp_job_name
         self.temp_job_folder_global_path = os.path.join(os.path.join(gv['JOBS_DIR_HOME'], self.temp_job_folder_name))
 
+        self.mailQWebEngineView.setHtml(self.mail_manager.getMailBody(valid_msg).decode('utf-8'))
         self.loadAttachmentContent()
 
-        #TODO load the mail into the design template
 
     def loadAttachmentContent(self):
         ''' Load content of attachment into dialog. '''
-
-        print(f"huh hoeveel in temp atach {len(self.temp_attachments)} ")
-        print(f"hoe hoog is de counter? {self.attachment_counter}')")
 
         attachment = self.temp_attachments[self.attachment_counter]
         attachment_name = self.mail_manager.getAttachmentFileName(attachment)
 
         if attachment_name.endswith(gv['ACCEPTED_EXTENSIONS']):
+            self.attachmentProgressQLabel.setText(f'Attachment ({self.attachment_counter+1}/{len(self.temp_attachments)})')
+            self.attachmentNameQLabel.setText(f'File Name: {attachment_name}')
 
-            self.findChild(QLabel, 'attachmentQLabel').setText(
-                    f'Attachments ({self.attachment_counter+1}/{len(self.temp_attachments)})')
-            self.findChild(QLabel, 'attachmentsNameQLabel').setText(
-                    f'File Name: {attachment_name}')
+            # initially hide option for new material 
+            self.newMaterialQLabel.setHidden(True)
+            self.newMaterialQLineEdit.setHidden(True)
 
-            # TODO: load with what you think is going to be the material
+            self.materialQComboBox.clear()
+            self.newMaterialQLineEdit.clear()
+            self.thicknessQLineEdit.clear()
+            self.amountQLineEdit.clear()
+
+
+
+            materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()))
+            self.materialQComboBox.addItems(materials)
+            self.materialQComboBox.addItem(self.new_material_text)
+
+            # guess the material, thickness and amount
+            for material in gv['ACCEPTED_MATERIALS']:
+                if material.lower() in attachment_name.lower():
+                    self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(material))
+            match = re.search(r"\d+\.?\d*(?=mm)", attachment_name)
+            if match:
+                self.thicknessQLineEdit.setText(match.group())
+
+            match = re.search(r"\d+\.?\d*(?=x_)", attachment_name)
+            if match:
+                self.amountQLineEdit.setText(match.group())
+            else:
+                self.amountQLineEdit.setText('1')
+
         else:
             file_global_path = os.path.join(self.temp_job_folder_global_path, attachment_name)
             self.temp_attachments_dict[attachment_name] = {'attachment': attachment,
                                                      'file_global_path': file_global_path}
-
 
             if self.attachment_counter+1 >= len(self.temp_attachments):
                 self.createLaserJob()
@@ -86,16 +123,28 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
                 if self.msg_counter+1 >= len(self.temp_attachments):
                     self.msg_counter += 1
                     self.loadMailContent()
-
             else:
                 self.attachment_counter += 1
                 self.loadAttachmentContent()
+
+    def onMaterialComboboxChanged(self):
+        if self.materialQComboBox.currentText() == self.new_material_text:
+            self.newMaterialQLabel.setHidden(False)
+            self.newMaterialQLineEdit.setHidden(False)
+        else:
+            self.newMaterialQLabel.setHidden(True)
+            self.newMaterialQLineEdit.setHidden(True)
         
     def collectAttachmentInfo(self):
         ''' Collect material, thickness and amount info. '''
-        material = self.findChild(QLineEdit, 'materialQLineEdit').text()
-        thickness = self.findChild(QLineEdit, 'thicknessQLineEdit').text()
-        amount = self.findChild(QLineEdit, 'amountQLineEdit').text()
+        material = self.materialQComboBox.currentText()
+        if material == self.new_material_text:
+            material = self.newMaterialQLineEdit.text()
+        thickness = self.thicknessQLineEdit.text()
+        amount = self.amountQLineEdit.text()
+        
+        if not self.validate(material, thickness, amount):
+            return
 
         attachment = self.temp_attachments[self.attachment_counter]
         attachment_name = self.mail_manager.getAttachmentFileName(attachment)
@@ -110,24 +159,47 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
                             'thickness': thickness,
                             'amount': amount,
                             'done': False}
-
-        if self.attachment_counter+1 >= len(self.temp_attachments):
-            self.createLaserJob()
-            self.sendConfirmationMail()
+        self.loadContent()
 
 
-            if self.msg_counter+1 >= len(self.valid_msgs):
-                print(f"you MUST accept and fuck off please now")
-                self.accept()
-            else:
-                self.msg_counter += 1
-                self.attachment_counter = 0
-                self.loadMailContent()
-        else:
+    def validate(self, material: str, thickness: str, amount: str) -> bool:
+        for (thing, value) in [('material', material), ('thickness', thickness), ('amount', amount)]:
+            if value == "":
+                dlg = QMessageBox(self)
+                dlg.setText(f'Fill in {thing}')
+                dlg.exec()
+                return False
 
-            self.attachment_counter += 1
-            print(f"hoe hoo gi se counter {self.attachment_counter} paula")
-            self.loadAttachmentContent()
+        try:
+            thickness_float = float(thickness)
+        except Exception:
+            dlg = QMessageBox(self)
+            dlg.setText(f'Thickness should be a positive number, not {thickness}')
+            dlg.exec()
+            return False
+        if thickness_float <=0:
+            dlg = QMessageBox(self)
+            dlg.setText(f'Thickness should be a positive number, not {thickness}')
+            dlg.exec()
+            return False
+
+        try:
+            amount_int = int(amount)
+        except Exception:
+            dlg = QMessageBox(self)
+            dlg.setText(f'Amount should be a positive interger, not: {amount}')
+            dlg.exec()
+            return False
+
+        if amount_int <= 0:
+            dlg = QMessageBox(self)
+            dlg.setText(f'Amount should be a positive interger, not: {amount}')
+            dlg.exec()
+            return False
+
+
+        return True
+
 
 
     def sendConfirmationMail(self):
@@ -136,7 +208,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         msg_file_path = self.mail_manager.getMailGlobalPathFromFolder(self.temp_job_folder_global_path)
         self.mail_manager.replyToEmailFromFileUsingTemplate(msg_file_path,
                                 "RECEIVED_MAIL_TEMPLATE",
-                                {"{jobs_in_queue}": LaserJobTracker().getNumberOfJobsInQueue()},
+                                {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
                                 popup_reply=False)
 
         self.mail_manager.moveEmailToVerwerktFolder(self.valid_msgs[self.msg_counter])
@@ -147,7 +219,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         msg = self.valid_msgs[self.msg_counter]
 
 
-        LaserJobTracker().addJob(self.temp_job_name,
+        self.job_tracker.addJob(self.temp_job_name,
                                  self.temp_job_folder_global_path,
                                  self.temp_laser_cut_files_dict)
 

@@ -47,6 +47,7 @@ class BackQPushButton(QPushButton):
         QShortcut(QKeySequence(Qt.Key_Escape), self).activated.connect(self.on_click)
 
     def on_click(self):
+        print('please go back')
         self.parent().parent().setCurrentIndex(0) 
 
 class SelectFolderQPushButton(QPushButton):

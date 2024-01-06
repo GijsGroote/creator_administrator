@@ -338,9 +338,6 @@ class LaserJobTracker(JobTracker):
                             self.fake_laser_klaar(job_dict['job_name'])
 
                         
-                        # subprocess.run([os.path.join(job_name_to_global_path(gv, job_dict['job_name']),
-                        #                 'laser_klaar.bat'), job_dict['job_name']])
-
                         print('yes I see')
                         
                     else:
@@ -360,4 +357,17 @@ class LaserJobTracker(JobTracker):
     def getNumberOfJobsInQueue(self) -> int:
         ''' Return the number of jobs with status WACHTRIJ. '''
         return self.getNumberOfJobsWithStatus(['WACHTRIJ'])
+
+    def getExistingMaterials(self) -> set:
+        ''' Return all materials that exist in the jobs with a wachtrij status. '''
+        with open(self.tracker_file_path, 'r') as tracker_file:
+            tracker_dict = json.load(tracker_file)
+
+        materials = set()
+        for job_dict in tracker_dict.values():
+            if job_dict['status'] == 'WACHTRIJ':
+                for laser_files_dict in job_dict['laser_files'].values():
+                    materials.add(laser_files_dict['material'])
+                    
+        return materials
 

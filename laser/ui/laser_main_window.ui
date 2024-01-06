@@ -67,29 +67,7 @@
              </layout>
             </widget>
             <widget class="QWidget" name="jobPage">
-             <layout class="QVBoxLayout" name="verticalLayout_13">
-              <item>
-               <widget class="JobContentQListWidget" name="allJobContentQListWidget"/>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_10">
-                <item>
-                 <widget class="BackQPushButton" name="backPushButton">
-                  <property name="text">
-                   <string>Back</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="OptionsQPushButton" name="allJobsOptionsQPushButton">
-                  <property name="text">
-                   <string>Options</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
+             <layout class="QVBoxLayout" name="verticalLayout_13"/>
             </widget>
            </widget>
           </item>
@@ -139,9 +117,6 @@
                  <widget class="BackQPushButton" name="backPushButton_2">
                   <property name="text">
                    <string>Back</string>
-                  </property>
-                  <property name="shortcut">
-                   <string>Esc</string>
                   </property>
                  </widget>
                 </item>

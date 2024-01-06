@@ -47,6 +47,7 @@ with open(global_variables_path, 'r') as global_variables_file:
     gv['OUTLOOK_PATH'] = gv_data['OUTLOOK_PATH']
     gv['IOBIT_UNLOCKER_PATH'] = "there is no IOBIt UNLOCKER Any MOre" # remove this
     gv['ACCEPTED_EXTENSIONS'] = tuple(gv_data['ACCEPTED_EXTENSIONS'].split(', '))
+    gv['ACCEPTED_MATERIALS'] = tuple(gv_data['ACCEPTED_MATERIALS'].split(', '))
     gv['DAYS_TO_KEEP_JOBS'] = gv_data['DAYS_TO_KEEP_JOBS']
     gv['PASSWORD'] = gv_data['PASSWORD']
 
