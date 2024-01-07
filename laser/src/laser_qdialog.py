@@ -7,9 +7,9 @@ import datetime
 from global_variables import gv
 from src.qdialog import ImportFromMailQDialog, SelectFileQDialog
 from src.mail_manager import MailManager
+from src.qmessagebox import TimedQMessageBox
 
 from laser_job_tracker import LaserJobTracker
-
 
 class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
@@ -160,7 +160,6 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
                                                      'file_global_path': file_global_path}
         self.loadContent()
 
-
     def validate(self, material: str, thickness: str, amount: str) -> bool:
         for (thing, value) in [('material', material), ('thickness', thickness), ('amount', amount)]:
             if value == "":
@@ -210,7 +209,10 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
         self.mail_manager.moveEmailToVerwerktFolder(self.valid_msgs[self.msg_counter])
 
-        print(f"confirmation mail send to {self.temp_job_name}")
+
+        TimedQMessageBox(
+                    text=f"Confirmation mail send to {self.temp_job_name}",
+                    parent=self)
 
 
     def createLaserJob(self):
@@ -229,12 +231,11 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
         # save the attachments
         for attachment_dict in self.temp_attachments_dict.values():
-            print(f"what is the damn global path?")
-            print(attachment_dict)
             self.mail_manager.saveAttachment(attachment_dict['attachment'], attachment_dict['file_global_path'])
 
-        print(f"TODO: make a message here: created new print job {self.temp_job_name} ")
-
+        TimedQMessageBox(
+                    text=f"Laser job {self.temp_job_name} created",
+                    parent=self)
 
 class LaserSelectFileQDialog(SelectFileQDialog):
     """ Select file dialog. """
@@ -243,7 +244,6 @@ class LaserSelectFileQDialog(SelectFileQDialog):
         SelectFileQDialog.__init__(self, parent, ui_global_path, *args, **kwargs)
 
         self.buttonBox.accepted.connect(self.validate)
-
 
     def validate(self):
         if self.PasswordQLineEdit.text() != gv['PASSWORD']:

@@ -306,8 +306,6 @@ class MailManager():
 
         if sys.platform == 'linux':
 
-
-
             with open(msg_file_path, 'rb') as file:
                 msg = email.message_from_binary_file(file, policy=default)
                 original_sender_mail_long = msg.get('From')

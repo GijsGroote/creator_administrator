@@ -3,6 +3,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import (
         QMenu,
+        QMessageBox,
         QShortcut)
 
 from jobs_qlist_widget import JobContentQListWidget
@@ -13,6 +14,8 @@ from src.button import JobsQPushButton
 from src.directory_functions import open_folder
 
 from src.mail_manager import MailManager
+
+from src.qmessagebox import TimedQMessageBox
 
 
 class LaserKlaarQPushButton(JobsQPushButton):
@@ -26,6 +29,9 @@ class LaserKlaarQPushButton(JobsQPushButton):
         
         job_folder_global_path = LaserJobTracker().jobNameToJobFolderGlobalPath(job_name)
 
+        LaserJobTracker().updateJobStatus(job_name, 'VERWERKT')
+        self.refreshAllQListWidgets()
+
         # send response mail
         mail_manager = MailManager(gv)
         msg_file_global_path = mail_manager.getMailGlobalPathFromFolder(job_folder_global_path)
@@ -36,14 +42,15 @@ class LaserKlaarQPushButton(JobsQPushButton):
                         "FINISHED_MAIL_TEMPLATE",
                         {},
                         popup_reply=False)
+
+            TimedQMessageBox(
+                    text=f"Pickup mail send for: {job_name}",
+                    parent=self)
         else:
-            print(f'folder: {job_folder_global_path} does not contain any .msg files,'\
-                    f'no response mail can be send')
+            TimedQMessageBox(
+                    text=f"No .msg file in job, no Pickup mail was sent for job: {self.temp_job_name}",
+                    parent=self, icon=QMessageBox.Warning)
             
-        LaserJobTracker().updateJobStatus(job_name, 'VERWERKT')
-        self.refreshAllQListWidgets()
-
-
 class MateriaalKlaarQPushButton(JobsQPushButton):
 
     def __init__(self, *args, **kwargs):
@@ -66,9 +73,21 @@ class AfgekeurdQPushButton(JobsQPushButton):
 
     def on_click(self):
         job_name = self.getCurrentStaticJobName()
-        # TODO: send mail, this is afgekeurd
         LaserJobTracker().updateJobStatus(job_name, 'AFGEKEURD')
         self.refreshAllQListWidgets()
+
+        mail_manager = MailManager(gv)
+        job_folder_global_path = LaserJobTracker().jobNameToJobFolderGlobalPath(job_name)
+
+        mail_manager.replyToEmailFromFileUsingTemplate(
+                mail_manager.getMailGlobalPathFromFolder(job_folder_global_path),
+                'DECLINED_MAIL_TEMPLATE',
+                {},
+                popup_reply=True)
+
+        TimedQMessageBox(
+                    text=f"Pickup mail send for {job_name}",
+                    parent=self)
 
 class OverigQPushButton(JobsQPushButton):
 
@@ -141,18 +160,14 @@ class OptionsQPushButton(JobsQPushButton):
         self.refreshAllQListWidgets()
 
     def openInFileExplorer(self):
-        job_folder_absolute_path = self.getJobFolderAbsolutePath()
-        open_folder(job_folder_absolute_path)
+        job_folder_global_path = self.getJobFolderGlobalPath()
+        open_folder(job_folder_global_path)
 
     def deleteJob(self):
         job_name = self.getCurrentStaticJobName()
         LaserJobTracker().deleteJob(job_name)
         self.refreshAllQListWidgets()
 
-    def getJobFolderAbsolutePath(self):
+    def getJobFolderGlobalPath(self):
         job_name = self.getCurrentStaticJobName()
         return LaserJobTracker().getJobDict(job_name)['job_folder_global_path']
-
-
-
-
