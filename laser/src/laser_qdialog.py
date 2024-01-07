@@ -3,15 +3,12 @@ import re
 from PyQt5 import QtCore, QtWidgets, QtWebEngineWidgets, uic
 from PyQt5.QtWidgets import *
 
-from typing import Tuple
 import datetime
 from global_variables import gv
 from src.qdialog import ImportFromMailQDialog, SelectFileQDialog
 from src.mail_manager import MailManager
 
 from laser_job_tracker import LaserJobTracker
-
-from src.convert_functions import mail_to_name, make_job_name_unique
 
 
 class LaserImportFromMailQDialog(ImportFromMailQDialog):
@@ -59,12 +56,12 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         self.temp_laser_cut_files_dict = {}
         self.temp_attachments_dict = {}
 
-        self.mailFromQLabel.setText(f'Mail From: {mail_to_name(self.mail_manager.getEmailAddress(valid_msg))}')
+
+        sender_name = self.mail_manager.getSenderName(valid_msg)
+        self.mailFromQLabel.setText(f'Mail From: {sender_name}')
         self.mailProgressQLabel.setText(f'Mail ({self.msg_counter+1}/{len(self.valid_msgs)})')
 
-        sender_name = mail_to_name(self.mail_manager.getEmailAddress(valid_msg))
-
-        self.temp_job_name = make_job_name_unique(gv, sender_name)
+        self.temp_job_name = self.job_tracker.makeJobNameUnique(sender_name)
         self.temp_job_folder_name = str(datetime.date.today().strftime('%d-%m'))+'_'+self.temp_job_name
         self.temp_job_folder_global_path = os.path.join(os.path.join(gv['JOBS_DIR_HOME'], self.temp_job_folder_name))
 
@@ -199,9 +196,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
             dlg.exec()
             return False
 
-
         return True
-
 
 
     def sendConfirmationMail(self):
@@ -214,6 +209,8 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
                                 popup_reply=False)
 
         self.mail_manager.moveEmailToVerwerktFolder(self.valid_msgs[self.msg_counter])
+
+        print(f"confirmation mail send to {self.temp_job_name}")
 
 
     def createLaserJob(self):
@@ -235,6 +232,8 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
             print(f"what is the damn global path?")
             print(attachment_dict)
             self.mail_manager.saveAttachment(attachment_dict['attachment'], attachment_dict['file_global_path'])
+
+        print(f"TODO: make a message here: created new print job {self.temp_job_name} ")
 
 
 class LaserSelectFileQDialog(SelectFileQDialog):

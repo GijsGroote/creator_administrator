@@ -5,7 +5,6 @@ Handle mail functionality.
 
 import os
 import sys
-from typing import Tuple
 
 
 if sys.platform == 'linux':
@@ -16,19 +15,14 @@ if sys.platform == 'linux':
     import re
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
-    from email.mime.image import MIMEImage
-    from email.mime.application import MIMEApplication
-    from email.utils import formatdate, parseaddr, formataddr 
+    from email.utils import parseaddr, formataddr 
     from email.parser import BytesParser
     from email.policy import default
-    from email.header import decode_header
 
 elif sys.platform == 'win32':
     import win32com.client
 else:
     raise ValueError(f'This software does not work for platform: {sys.platform}')
-
-from convert_functions import mail_to_name
 
 class MailManager():
 
@@ -46,8 +40,8 @@ class MailManager():
 
         if sys.platform == 'linux':
 
+            # TODO: these two LOC blow this line
             self.inbox_folder = 'temp_inbox'
-
             with open('/home/gijs/Documents/email_password.txt', 'r') as file:
                 # Read the content of the file
                 password = file.read()
@@ -291,7 +285,7 @@ class MailManager():
             msg = self.outlook.OpenSharedItem(msg_file_path)
 
             # load recipient_name in template
-            template_content["{recipient_name}"] = mail_to_name(str(msg.Sender))
+            template_content["{recipient_name}"] = self.mailToName(msg.Sender)
 
 
             with open(self.gv[template_file_name], "r") as file:
@@ -320,7 +314,7 @@ class MailManager():
                 original_sender_mail = parseaddr(original_sender_mail_long)[1]
 
             # load template content into html template
-            template_content['{recipient_name}'] = mail_to_name(str(original_sender_mail_long))
+            template_content['{recipient_name}'] = self.mailToName(str(original_sender_mail_long))
             with open(self.gv[template_file_name], "r") as file:
                 html_content = file.read()
 
@@ -335,5 +329,24 @@ class MailManager():
             reply_msg["In-Reply-To"] = msg.get('Message-ID')
             reply_msg.attach(MIMEText(html_content, "html"))
             self.smtpSendMessage(reply_msg)
+
+    def mailToName(self, mail_name: str) -> str:
+        """ Convert mail in form first_name last_name <mail@adres.com> to a more friendly name. """
+
+        matches = re.match(r"(.*?)\s*<(.*)>", mail_name)
+
+        if matches:
+            if len(matches.group(1)) > 0:
+                return matches.group(1)
+            if len(matches.group(2)):
+                return matches.group(2).split('@')[0]
+        else:
+            if '@' in mail_name:
+                return mail_name.split('@')[0]
+        return mail_name
+
+    def getSenderName(self, msg) -> str:
+        ''' Return the name of the sender. '''
+        return self.mailToName(self.getEmailAddress(msg))
 
 

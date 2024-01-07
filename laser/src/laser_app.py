@@ -3,6 +3,9 @@ import os
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 
+from qgis.core import QgsApplication
+from qgis.gui import QgsMessageBar
+
 
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -10,6 +13,7 @@ from PyQt5.QtCore import *
 from global_variables import gv
 from src.app import MainWindow
 from laser_qdialog import LaserImportFromMailQDialog, LaserSelectFileQDialog
+from src.qmessagebox import TimedQMessageBox
 
 from src.mail_manager import MailManager
 
@@ -74,10 +78,29 @@ class LaserMainWindow(MainWindow):
         ui_global_path = os.path.join(gv['UI_DIR_HOME'], 'laser_main_window.ui')
         MainWindow.__init__(self, ui_global_path, *args, **kwargs)
 
+        self.messageBar = QgsMessageBar()
+        self.messageBar.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+
 
         # menu bar actions
         self.ActionImportFromMail.triggered.connect(self.onActionImportFromMail)
         self.ActionSelectFile.triggered.connect(self.onActionSelectFileclicked)
+
+
+        QShortcut(QKeySequence('m'), self).activated.connect(self.showMessage)
+
+
+    def showMessage(self):
+        msg = QMessageBox(self)
+        msg.setIcon(QMessageBox.Warning)
+        msg.setText("Some message")
+        msg.setModal(True)
+        msg.show()
+        # msg = QMessageBox(self, text='some stuppp')
+        # msg.setIcon(QMessageBox.Warning)
+        # msg.setModal(False)
+        # msg.show()
+        # msg = TimedQMessageBox(parent=self, text='Mail versturd')
 
 
     def onActionImportFromMail(self):

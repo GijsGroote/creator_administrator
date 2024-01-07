@@ -6,7 +6,9 @@ import json
 import shutil
 import os
 import abc
+import re
 import sys
+from unidecode import unidecode
 from datetime import datetime
 from typing import List
 
@@ -119,3 +121,34 @@ class JobTracker:
 
         return len([job_key for job_key, job_value in tracker_dict.items() if job_value['status'] in status_list])-1
 
+    def makeJobNameUnique(self, job_name: str) -> str:
+        ''' Make the job name unique.
+
+        if the job name already exists append _(NUMBER) to job name to make it unique
+        if the job_name is unique but job_name_(NUMBER) exist then return job_name_(NUMBER+1).
+        '''
+        job_name = unidecode(job_name)
+
+        max_job_number = 0
+        does_job_name_exist = False
+
+        with open(self.tracker_file_path, 'r') as tracker_file:
+            tracker_dict = json.load(tracker_file)
+
+        for job_dict in tracker_dict.values():
+
+            match_job_number= re.search(rf'{job_name}_\((\d+)\)$', job_dict['job_name'])
+            if job_name == job_dict['job_name']:
+                does_job_name_exist = True
+
+            if match_job_number:
+                does_job_name_exist = True
+                job_number = int(match_job_number.group(1))
+                if job_number > max_job_number:
+                    max_job_number = job_number
+
+        if max_job_number == 0:
+            if does_job_name_exist:
+                return job_name + '_(1)'
+            return job_name
+        return job_name + '_(' + str(max_job_number + 1) + ')'
