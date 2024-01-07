@@ -215,8 +215,38 @@ class LaserJobTracker(JobTracker):
         materials = set()
         for job_dict in tracker_dict.values():
             if job_dict['status'] == 'WACHTRIJ':
-                for laser_files_dict in job_dict['laser_files'].values():
-                    materials.add(laser_files_dict['material'])
+                for laser_file_dict in job_dict['laser_files'].values():
+                    materials.add(laser_file_dict['material'])
                     
         return materials
 
+    def getMaterialAndThicknessList(self) -> list:
+        ''' Return all materials and thickness with status WACHTRIJ. '''
+
+        with open(self.tracker_file_path, 'r') as tracker_file:
+            tracker_dict = json.load(tracker_file)
+
+        materials_and_thickness_set = set()
+        for job_dict in tracker_dict.values():
+            if job_dict['status'] == 'WACHTRIJ':
+                for laser_file_dict in job_dict['laser_files'].values():
+                    materials_and_thickness_set.add(
+                            laser_file_dict['material']+'_'+laser_file_dict['thickness']+'mm')
+                    
+        return list(materials_and_thickness_set)
+
+    def getDXFsAndPaths(self, material: str, thickness: str) -> list:
+        ''' Return all names and global paths of dxf files with
+        material, thickness and status WACHTRIJ. '''
+
+        with open(self.tracker_file_path, 'r') as tracker_file:
+            tracker_dict = json.load(tracker_file)
+
+        dxfs_names_and_global_paths = []
+        for job_dict in tracker_dict.values():
+            if job_dict['status'] == 'WACHTRIJ':
+                for key, laser_file_dict in job_dict['laser_files'].items():
+                    if laser_file_dict['material'] == material and laser_file_dict['thickness'] == thickness:
+                        dxfs_names_and_global_paths.append((key, laser_file_dict['file_global_path']))
+                   
+        return dxfs_names_and_global_paths

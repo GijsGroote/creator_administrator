@@ -36,7 +36,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="allJobsTab">
        <attribute name="title">
@@ -173,14 +173,14 @@
           <widget class="QWidget" name="jobsListPage_3">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
-             <widget class="JobsQListWidget" name="wachtrijMateriaalJobsQListWidget"/>
+             <widget class="MaterialQListWidget" name="wachtrijMateriaalJobsQListWidget"/>
             </item>
            </layout>
           </widget>
           <widget class="QWidget" name="jobPage_3">
            <layout class="QVBoxLayout" name="verticalLayout_10">
             <item>
-             <widget class="JobContentQListWidget" name="listWidget_7"/>
+             <widget class="MaterialContentQListWidget" name="listWidget_7"/>
             </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -424,6 +424,16 @@
    <extends>QTabWidget</extends>
    <header>tab_widget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MaterialQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>jobs_qlist_widget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MaterialContentQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>jobs_qlist_widget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

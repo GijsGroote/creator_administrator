@@ -150,7 +150,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         attachment_name = self.mail_manager.getAttachmentFileName(attachment)
 
         file_global_path = os.path.join(self.temp_job_folder_global_path,
-                                         material+'_'+thickness+'_'+amount+'x_'+'_'+attachment_name)
+                                         material+'_'+thickness+'_'+amount+'x_'+attachment_name)
 
         self.temp_laser_cut_files_dict[self.temp_job_name + '_' + attachment_name] = {
                             'file_name': attachment_name,
@@ -224,12 +224,15 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
                                  self.temp_job_folder_global_path,
                                  self.temp_laser_cut_files_dict)
 
-        os.mkdir(self.temp_job_folder_global_path)
+
+        if not os.path.exists(self.temp_job_folder_global_path):
+            os.mkdir(self.temp_job_folder_global_path)
+
         self.mail_manager.saveMail(msg, self.temp_job_folder_global_path)
 
         # save the attachments
-        print('the attachments in a dict')
         for attachment_dict in self.temp_attachments_dict.values():
+            print(f"what is the damn global path?")
             print(attachment_dict)
             self.mail_manager.saveAttachment(attachment_dict['attachment'], attachment_dict['file_global_path'])
 
