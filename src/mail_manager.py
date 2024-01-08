@@ -278,14 +278,12 @@ class MailManager():
                                                 popup_reply=True):
         """ Reply to .msg file using a template. """
 
-
-
-
         if sys.platform == 'win32':
             msg = self.outlook.OpenSharedItem(msg_file_path)
+            print(f'can you fin this? {msg}')
 
             # load recipient_name in template
-            template_content["{recipient_name}"] = self.mailToName(msg.Sender)
+            template_content["{recipient_name}"] = msg.Sender
 
 
             with open(self.gv[template_file_name], "r") as file:
@@ -330,6 +328,7 @@ class MailManager():
 
     def mailToName(self, mail_name: str) -> str:
         """ Convert mail in form first_name last_name <mail@adres.com> to a more friendly name. """
+        print(f'what are you {mail_name}')
 
         matches = re.match(r"(.*?)\s*<(.*)>", mail_name)
 
