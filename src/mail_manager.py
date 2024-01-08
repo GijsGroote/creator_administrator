@@ -176,7 +176,7 @@ class MailManager():
             else:
                 # For non-multipart emails, check if the content type is HTML
                 if msg.get_content_type() == 'text/html':
-                    return msg.get_payload(decode=True).decode('utf-8')
+                    return msg.get_payload(decode=True)
 
     def printMailBodyFromPath(self, msg_file_path: str):
         """ Print the content of an .msg file. """

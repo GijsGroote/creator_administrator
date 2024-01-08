@@ -53,7 +53,18 @@ class SelectOptionsQDialog(QDialog):
     def __init__(self, parent, options: list, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
+        
         loadUi(os.path.abspath('ui/select_options_qdialog.ui'), self)
+
+        # QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.toggleSelection)
+
+        # shortcuts on arrow keys
+        QShortcut(QKeySequence(Qt.Key_Up), self).activated.connect(self.toPreviousRow)
+        QShortcut(QKeySequence(Qt.Key_Down), self).activated.connect(self.toNextRow)
+
+        # shortcuts on VIM motions
+        QShortcut(QKeySequence('k'), self).activated.connect(self.toPreviousRow)
+        QShortcut(QKeySequence('j'), self).activated.connect(self.toNextRow)
 
         for (option, option_data) in options:
 
@@ -61,4 +72,28 @@ class SelectOptionsQDialog(QDialog):
             item.setData(1, option_data)
             item.setText(option)
             self.optionsQListWidget.addItem(item)
+
+    # def toggleSelection(self):
+    #     current_item = self.optionsQListWidget.currentItem()
+        
+    #     if current_item is None:
+    #         print('yeah that is noen')
+    #     self.optionsQListWidget.itemClicked(current_item)
+
+    def toNextRow(self):
+        opt_ql_widget = self.optionsQListWidget
+
+        if opt_ql_widget.currentRow() == opt_ql_widget.count()-1:
+            opt_ql_widget.setCurrentRow(0)
+        else:
+            opt_ql_widget.setCurrentRow(opt_ql_widget.currentRow()+1)
+
+    def toPreviousRow(self):
+        opt_ql_widget = self.optionsQListWidget
+
+        if opt_ql_widget.currentRow() == 0:
+            opt_ql_widget.setCurrentRow(opt_ql_widget.count()-1)
+        else:
+            opt_ql_widget.setCurrentRow(opt_ql_widget.currentRow()-1)
+
 

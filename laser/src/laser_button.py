@@ -52,15 +52,17 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
         dxfs_names_and_global_paths = job_tracker.getDXFsAndPaths(material, thickness)
 
         dialog = SelectOptionsQDialog(self, dxfs_names_and_global_paths)
+
         if dialog.exec_() == QDialog.Accepted:
 
             files_names = []
             files_global_paths = []
-            for item in dialog.selectedItems():
+            for item in dialog.optionsQListWidget.selectedItems():
                 files_names.append(item.text())
                 files_global_paths.append(item.data(1))
+        else:
+            return
 
-            print(f"fucking irritatn")
 
         for file_global_path in files_global_paths:
             # find job_name
