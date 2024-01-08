@@ -81,13 +81,28 @@ class LaserJobTracker(JobTracker):
         with open(self.tracker_file_path, 'w') as tracker_file:
             json.dump(tracker_dict, tracker_file, indent=4)
 
+    def markFileIsDone(self, job_name: str, file_global_path: str):
+        ''' Update file status to done = True. '''
+        assert job_name is not None, f'Job name is None'
+
+        with open(self.tracker_file_path, 'r') as tracker_file:
+            tracker_dict = json.load(tracker_file)
+
+        for file_dict in tracker_dict[job_name]['laser_files'].values():
+            if file_dict['file_global_path']==file_global_path:
+                file_dict['done'] = True
+
+        with open(self.tracker_file_path, 'w') as tracker_file:
+            json.dump(tracker_dict, tracker_file, indent=4)
+
+
     def getJobDict(self, job_name: str) -> dict:
         ''' Return the job dict from a job name. '''
         
         with open(self.tracker_file_path, 'r') as tracker_file:
             return json.load(tracker_file)[job_name]
 
-    def jobNameToJobFolderGlobalPath(self, job_name: str) -> str:
+    def getJobFolderGlobalPathFromJobName(self, job_name: str) -> str:
         ''' Return the job folder global path from the job name. '''
         with open(self.tracker_file_path, 'r') as tracker_file:
             tracker_dict = json.load(tracker_file)
@@ -250,3 +265,28 @@ class LaserJobTracker(JobTracker):
                         dxfs_names_and_global_paths.append((key, laser_file_dict['file_global_path']))
                    
         return dxfs_names_and_global_paths
+
+    def fileGlobalPathToJobName(self, file_global_path: str) -> str:
+        ''' Return a job name from a file. '''
+        with open(self.tracker_file_path, 'r') as tracker_file:
+            tracker_dict = json.load(tracker_file)
+
+        job_name = None
+        for job_dict in tracker_dict.values():
+            for laser_file_dict in job_dict['laser_files'].values():
+                if laser_file_dict['file_global_path'] == file_global_path:
+                    job_name = job_dict['job_name']
+        return job_name
+
+    def isJobDone(self, job_name: str) -> bool: 
+        ''' Return boolean indicating if a job is done. '''
+        with open(self.tracker_file_path, 'r') as tracker_file:
+            tracker_dict = json.load(tracker_file)
+
+        for file_dict in tracker_dict[job_name]['laser_files'].values():
+            if not file_dict['done']:
+                return False
+        return True
+
+        return tracker_dict
+

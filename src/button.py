@@ -5,8 +5,13 @@ from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import (
         QPushButton, QFileDialog, QStackedWidget,
         QShortcut)
+from src.mail_manager import MailManager
 
-from laser_qlist_widget import JobContentQListWidget, JobsOverviewQListWidget
+
+from src.qlist_widget import ContentQListWidget
+from laser_qlist_widget import JobContentQListWidget, OverviewQListWidget
+
+from src.qmessagebox import TimedQMessageBox
 
 class JobsQPushButton(QPushButton):
     ''' Parent class for all buttons that update job status
@@ -24,14 +29,47 @@ class JobsQPushButton(QPushButton):
         # for qstacked_widget in qstacked_widgets:
             # qstacked_widget.setCurrentIndex(0)
 
-        qlist_widgets = self.window().findChildren(JobsOverviewQListWidget)
+        qlist_widgets = self.window().findChildren(OverviewQListWidget)
         # refresh all QListWidgets that contain jobs
         for list_widget in qlist_widgets:
             list_widget.refresh()
 
 
-    def getCurrentStaticJobName(self) -> str:
-        return self.parent().findChild(JobContentQListWidget).current_job_name
+    def getCurrentItemName(self) -> str:
+        content_qlist_widget = self.parent().findChild(ContentQListWidget)
+
+        if content_qlist_widget is not None:
+            return content_qlist_widget.current_item_name
+
+    def sendFinishedMail(self, gv: dict, job_name: str, job_folder_global_path: str) -> str:
+        ''' send please come pick up your job mail. '''
+
+        mail_manager = MailManager(gv)
+        msg_file_global_path = mail_manager.getMailGlobalPathFromFolder(job_folder_global_path)
+
+        if msg_file_global_path is not None:
+            mail_manager.replyToEmailFromFileUsingTemplate(
+                        msg_file_global_path,
+                        "FINISHED_MAIL_TEMPLATE",
+                        {},
+                        popup_reply=False)
+
+            TimedQMessageBox(text=f"Job finished mail send to {job_name}",
+                            parent=self)
+        else:
+            TimedQMessageBox(
+                    text=f"No .msg file detected, no Pickup mail was sent to {job_name}",
+                    parent=self, icon=QMessageBox.Warning)
+
+    def sendDeclinedMail(self, gv: dict, job_name: str, job_folder_global_path: str):
+        ''' popup the Declined mail. '''
+        mail_manager = MailManager(gv)
+
+        mail_manager.replyToEmailFromFileUsingTemplate(
+                mail_manager.getMailGlobalPathFromFolder(job_folder_global_path),
+                'DECLINED_MAIL_TEMPLATE',
+                {},
+                popup_reply=True)
 
 
 class BackQPushButton(QPushButton):

@@ -1,8 +1,7 @@
 import os
 from functools import partial
 from PyQt5 import uic
-from PyQt5.QtWidgets import (QDialog, QMessageBox,
-                             QDialogButtonBox, QShortcut)
+from PyQt5.QtWidgets import *
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence
@@ -47,3 +46,19 @@ class SelectFileQDialog(QDialog):
     def closeDialog(self):
         ''' Close the dialog, press cancel. '''
         self.close()
+
+class SelectOptionsQDialog(QDialog):
+    ''' Select one of the options. '''
+
+    def __init__(self, parent, options: list, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        loadUi(os.path.abspath('ui/select_options_qdialog.ui'), self)
+
+        for (option, option_data) in options:
+
+            item = QListWidgetItem()
+            item.setData(1, option_data)
+            item.setText(option)
+            self.optionsQListWidget.addItem(item)
+
