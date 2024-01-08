@@ -3,9 +3,6 @@ import os
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 
-from qgis.core import QgsApplication
-from qgis.gui import QgsMessageBar
-
 
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *

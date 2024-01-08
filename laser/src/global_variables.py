@@ -16,6 +16,7 @@ elif sys.platform == 'win32':
 else: 
     raise ValueError(f'This software does not work for platform: {sys.platform}')
 
+print(data_dir_home)
 if not os.path.exists(data_dir_home):
     os.mkdir(data_dir_home)
 
@@ -45,7 +46,6 @@ with open(global_variables_path, 'r') as global_variables_file:
     gv['REPO_DIR_HOME'] = gv_data['REPO_DIR_HOME']
     gv['PYTHON_PATH'] = gv_data['PYTHON_PATH']
     gv['OUTLOOK_PATH'] = gv_data['OUTLOOK_PATH']
-    gv['IOBIT_UNLOCKER_PATH'] = "there is no IOBIt UNLOCKER Any MOre" # remove this
     gv['ACCEPTED_EXTENSIONS'] = tuple(gv_data['ACCEPTED_EXTENSIONS'].split(', '))
     gv['ACCEPTED_MATERIALS'] = tuple(gv_data['ACCEPTED_MATERIALS'].split(', '))
     gv['DAYS_TO_KEEP_JOBS'] = gv_data['DAYS_TO_KEEP_JOBS']
