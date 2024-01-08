@@ -65,7 +65,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         self.temp_job_folder_name = str(datetime.date.today().strftime('%d-%m'))+'_'+self.temp_job_name
         self.temp_job_folder_global_path = os.path.join(os.path.join(gv['JOBS_DIR_HOME'], self.temp_job_folder_name))
 
-        self.mailQWebEngineView.setHtml(self.mail_manager.getMailBody(valid_msg).decode('utf-8'))
+        self.mailQWebEngineView.setHtml(self.mail_manager.getMailBody(valid_msg))
         self.loadAttachmentContent()
 
 
