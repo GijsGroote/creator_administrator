@@ -6,8 +6,6 @@ from PyQt5.QtWidgets import (
         QMessageBox,
         QShortcut)
 
-from jobs_qlist_widget import JobContentQListWidget
-from jobs_qlist_widget import JobsQListWidget
 from global_variables import gv
 from laser_job_tracker import LaserJobTracker
 from src.button import JobsQPushButton

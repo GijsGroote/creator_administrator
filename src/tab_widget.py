@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QTabWidget, QShortcut, QListWidget, QStackedWidget
 
 from PyQt5.QtGui import QKeySequence
 
-from jobs_qlist_widget import JobsQListWidget
+# from laser_qlist_widget import JobsOverviewQListWidget
 
 
 class JobsQTabWidget(QTabWidget):

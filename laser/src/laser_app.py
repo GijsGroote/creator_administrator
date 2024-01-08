@@ -67,8 +67,10 @@ class LaserMainWindow(MainWindow):
         valid_msgs = [msg for msg in msgs if self.mail_manager.isMailAValidJobRequest(msg)]
 
         if len(msgs) > len(valid_msgs):
+            it_or_them = 'it' if len(msgs) - len(valid_msgs) == 1 else 'them'
             TimedQMessageBox(
-                    text=f'{len(msgs)-len(valid_msgs)} invalid messages detected, respond to them manually.',
+                    text=f'{len(msgs)-len(valid_msgs)} invalid messages '\
+                    f'detected, respond to {it_or_them} manually.',
                     parent=self, icon=QMessageBox.Warning)
 
         return valid_msgs

@@ -173,7 +173,7 @@ def delete(gv, item_global_path: str):
 #     with open(json_file_global_path, 'w') as file:
 #         json.dump(dictionary, file, indent=4) 
 
-def open_file(gv: dict, file_global_path: str):
+def open_file(file_global_path: str):
     ''' Open a folder in the default file explorer. '''
 
     assert os.path.exists(file_global_path), f'could not find file: {file_global_path}'

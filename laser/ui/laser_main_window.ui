@@ -36,7 +36,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="allJobsTab">
        <attribute name="title">
@@ -62,7 +62,7 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4">
               <item>
-               <widget class="JobsQListWidget" name="allJobsQListWidget"/>
+               <widget class="JobsOverviewQListWidget" name="allJobsQListWidget"/>
               </item>
              </layout>
             </widget>
@@ -99,7 +99,7 @@
             <widget class="QWidget" name="jobsListPage_2">
              <layout class="QHBoxLayout" name="horizontalLayout_4">
               <item>
-               <widget class="JobsQListWidget" name="wachtrijJobsQListWidget"/>
+               <widget class="JobsOverviewQListWidget" name="wachtrijJobsQListWidget"/>
               </item>
              </layout>
             </widget>
@@ -173,7 +173,7 @@
           <widget class="QWidget" name="jobsListPage_3">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
-             <widget class="MaterialQListWidget" name="wachtrijMateriaalJobsQListWidget"/>
+             <widget class="MaterialOverviewQListWidget" name="wachtrijMateriaalJobsQListWidget"/>
             </item>
            </layout>
           </widget>
@@ -226,7 +226,7 @@
           <widget class="QWidget" name="jobsListPage_4">
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
-             <widget class="JobsQListWidget" name="verwerktJobsQListWidget"/>
+             <widget class="JobsOverviewQListWidget" name="verwerktJobsQListWidget"/>
             </item>
            </layout>
           </widget>
@@ -278,7 +278,7 @@
           <widget class="QWidget" name="jobsListPage_5">
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <widget class="JobsQListWidget" name="afgekeurdJobsQListWidget"/>
+             <widget class="JobsOverviewQListWidget" name="afgekeurdJobsQListWidget"/>
             </item>
            </layout>
           </widget>
@@ -390,9 +390,9 @@
    <header>button.h</header>
   </customwidget>
   <customwidget>
-   <class>JobsQListWidget</class>
+   <class>JobsOverviewQListWidget</class>
    <extends>QListWidget</extends>
-   <header>jobs_qlist_widget.h</header>
+   <header>laser_qlist_widget.h</header>
   </customwidget>
   <customwidget>
    <class>LaserKlaarQPushButton</class>
@@ -412,7 +412,7 @@
   <customwidget>
    <class>JobContentQListWidget</class>
    <extends>QListWidget</extends>
-   <header>jobs_qlist_widget.h</header>
+   <header>laser_qlist_widget.h</header>
   </customwidget>
   <customwidget>
    <class>OptionsQPushButton</class>
@@ -426,14 +426,14 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>MaterialQListWidget</class>
+   <class>MaterialOverviewQListWidget</class>
    <extends>QListWidget</extends>
-   <header>jobs_qlist_widget.h</header>
+   <header>laser_qlist_widget.h</header>
   </customwidget>
   <customwidget>
    <class>MaterialContentQListWidget</class>
    <extends>QListWidget</extends>
-   <header>jobs_qlist_widget.h</header>
+   <header>laser_qlist_widget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import (
         QPushButton, QFileDialog, QStackedWidget,
         QShortcut)
 
-from jobs_qlist_widget import JobContentQListWidget, JobsQListWidget
+from laser_qlist_widget import JobContentQListWidget, JobsOverviewQListWidget
 
 class JobsQPushButton(QPushButton):
     ''' Parent class for all buttons that update job status
@@ -24,7 +24,7 @@ class JobsQPushButton(QPushButton):
         # for qstacked_widget in qstacked_widgets:
             # qstacked_widget.setCurrentIndex(0)
 
-        qlist_widgets = self.window().findChildren(JobsQListWidget)
+        qlist_widgets = self.window().findChildren(JobsOverviewQListWidget)
         # refresh all QListWidgets that contain jobs
         for list_widget in qlist_widgets:
             list_widget.refresh()
@@ -45,7 +45,6 @@ class BackQPushButton(QPushButton):
         QShortcut(QKeySequence(Qt.Key_Escape), self).activated.connect(self.on_click)
 
     def on_click(self):
-        print('please go back')
         self.parent().parent().setCurrentIndex(0) 
 
 class SelectFolderQPushButton(QPushButton):
