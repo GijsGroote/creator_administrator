@@ -181,7 +181,7 @@ def open_file(file_global_path: str):
     if sys.platform == 'linux':
         subprocess.Popen(['xdg-open', file_global_path])
     elif sys.platform == 'win32':
-        subprocess.Popen(['explorer', folder_global_path])
+        subprocess.Popen(['explorer', file_global_path])
     else: 
         raise ValueError(f'unknown platform: {sys.platform}')
 
