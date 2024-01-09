@@ -34,10 +34,12 @@ class LaserMainWindow(MainWindow):
             dialog = LaserImportFromMailQDialog(self, valid_msgs)
 
             if dialog.exec_() == QDialog.Accepted:
-                # refresh all laser job tabs
-                qlist_widgets = self.findChildren(QListWidget)
-                for list_widget in qlist_widgets:
-                    list_widget.refresh()
+                pass
+
+            # refresh all laser job tabs
+            qlist_widgets = self.findChildren(QListWidget)
+            for list_widget in qlist_widgets:
+                list_widget.refresh()
 
 
     def onActionSelectFileclicked(self):
@@ -49,10 +51,10 @@ class LaserMainWindow(MainWindow):
             # TODO: open dialog to collect material, thickness and amount per dxf
             # create_laser_jobs(folder_global_path, project_name)
 
-            # refresh all laser job tabs
-            qlist_widgets = self.findChildren(QListWidget)
-            for list_widget in qlist_widgets:
-                list_widget.refresh()
+        # refresh all laser job tabs
+        qlist_widgets = self.findChildren(QListWidget)
+        for list_widget in qlist_widgets:
+            list_widget.refresh()
 
     def getNewValidMails(self):
         ''' Return new valid mails. '''

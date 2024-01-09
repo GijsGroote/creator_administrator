@@ -1,17 +1,19 @@
 import glob
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence
-from PyQt5.QtWidgets import (
-        QMenu,
-        QMessageBox,
-        QShortcut)
+from PyQt5.QtWidgets import *
+
 
 from global_variables import gv
 from laser_job_tracker import LaserJobTracker
 from src.button import JobsQPushButton
 from src.directory_functions import open_folder
 
+
+from convert import split_material_name
 from src.mail_manager import MailManager
+from src.qdialog import SelectOptionsQDialog
+
 
 from src.qmessagebox import TimedQMessageBox
 
@@ -23,31 +25,16 @@ class LaserKlaarQPushButton(JobsQPushButton):
         self.clicked.connect(self.on_click)
  
     def on_click(self):
-        job_name = self.getCurrentStaticJobName()
+        job_name = self.getCurrentItemName()
         
-        job_folder_global_path = LaserJobTracker().jobNameToJobFolderGlobalPath(job_name)
+        job_folder_global_path = LaserJobTracker().getJobFolderGlobalPathFromJobName(job_name)
 
         LaserJobTracker().updateJobStatus(job_name, 'VERWERKT')
         self.refreshAllQListWidgets()
 
         # send response mail
-        mail_manager = MailManager(gv)
-        msg_file_global_path = mail_manager.getMailGlobalPathFromFolder(job_folder_global_path)
+        self.sendFinishedMail(gv, job_name, job_folder_global_path)
 
-        if msg_file_global_path is not None:
-            mail_manager.replyToEmailFromFileUsingTemplate(
-                        msg_file_global_path,
-                        "FINISHED_MAIL_TEMPLATE",
-                        {},
-                        popup_reply=False)
-
-            TimedQMessageBox(
-                    text=f"Pickup mail send for: {job_name}",
-                    parent=self)
-        else:
-            TimedQMessageBox(
-                    text=f"No .msg file in job, no Pickup mail was sent for job: {self.temp_job_name}",
-                    parent=self, icon=QMessageBox.Warning)
             
 class MateriaalKlaarQPushButton(JobsQPushButton):
 
@@ -56,11 +43,43 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
         self.clicked.connect(self.on_click)
  
     def on_click(self):
-        job_name = self.getCurrentStaticJobName()
-        # TODO: this is some special stuff right here
-        # LaserJobTracker.updateJobStatus(job_name, '
+        material_name = self.getCurrentItemName()
+        material, thickness = split_material_name(material_name)
 
-        print(f'Materiaal klaarlaser klaar {job_name}')
+        job_tracker = LaserJobTracker()
+
+        # todo: not all is always done
+        dxfs_names_and_global_paths = job_tracker.getDXFsAndPaths(material, thickness)
+
+        dialog = SelectOptionsQDialog(self, dxfs_names_and_global_paths)
+
+        if dialog.exec_() == QDialog.Accepted:
+
+            files_names = []
+            files_global_paths = []
+            for item in dialog.optionsQListWidget.selectedItems():
+                files_names.append(item.text())
+                files_global_paths.append(item.data(1))
+        else:
+            return
+
+
+        for file_global_path in files_global_paths:
+            # find job_name
+            job_name = job_tracker.fileGlobalPathToJobName(file_global_path)
+
+            # material done, mark it done
+            job_tracker.markFileIsDone(job_name, file_global_path)
+
+            # if all is done, display message
+            if job_tracker.isJobDone(job_name):
+                # hey this material is done!
+
+                job_tracker.updateJobStatus(job_name, 'VERWERKT')
+                job_folder_global_path = job_tracker.getJobFolderGlobalPathFromJobName(job_name)
+                self.sendFinishedMail(gv, job_name, job_folder_global_path)
+
+        self.refreshAllQListWidgets()
 
 
 class AfgekeurdQPushButton(JobsQPushButton):
@@ -70,35 +89,23 @@ class AfgekeurdQPushButton(JobsQPushButton):
         self.clicked.connect(self.on_click)
 
     def on_click(self):
-        job_name = self.getCurrentStaticJobName()
-        LaserJobTracker().updateJobStatus(job_name, 'AFGEKEURD')
+        job_name = self.getCurrentItemName()
+        job_tracker = LaserJobTracker()
+        job_tracker.updateJobStatus(job_name, 'AFGEKEURD')
         self.refreshAllQListWidgets()
 
-        mail_manager = MailManager(gv)
-        job_folder_global_path = LaserJobTracker().jobNameToJobFolderGlobalPath(job_name)
-
-        mail_manager.replyToEmailFromFileUsingTemplate(
-                mail_manager.getMailGlobalPathFromFolder(job_folder_global_path),
-                'DECLINED_MAIL_TEMPLATE',
-                {},
-                popup_reply=True)
-
-        TimedQMessageBox(
-                    text=f"Pickup mail send for {job_name}",
-                    parent=self)
+        job_folder_global_path = job_tracker.getJobFolderGlobalPathFromJobName(job_name)
+        self.sendDeclinedMail(gv, job_name, job_folder_global_path)
 
 class OverigQPushButton(JobsQPushButton):
 
     def __init__(self, *args, **kwargs):
         JobsQPushButton.__init__(self, *args, **kwargs)
         self.clicked.connect(self.on_click)
- 
-        # shortcut on Esc button
-        # QShortcut(QKeySequence(Qt.Key_Escape), self).activated.connect(self.on_click)
 
 
     def on_click(self):
-        job_name = self.getCurrentStaticJobName()
+        job_name = self.getCurrentItemName()
         print(f'De overig knop is gedrukt {job_name}')
 
 
@@ -124,10 +131,10 @@ class OptionsQPushButton(JobsQPushButton):
             self.menu.addAction('Move to Wachtrij', self.moveJobToWachtrij)
 
         elif self.object_name == 'wachtrijOptionsQPushButton':
-            print('wachtrijOptionsQPushButton')
+            pass
 
         elif self.object_name == 'wachtrijMateriaalOptionsQPushButton':
-            print('wachtrijMateriaalOptionsQPushButton')
+            pass
 
         elif self.object_name == 'verwerktOptionsQPushButton':
             self.menu.addAction('Move to Wachtrij', self.moveJobToWachtrij)
@@ -153,7 +160,7 @@ class OptionsQPushButton(JobsQPushButton):
         self.moveJobTo('VERWERKT')
 
     def moveJobTo(self, new_status):
-        job_name = self.getCurrentStaticJobName()
+        job_name = self.getCurrentItemName()
         LaserJobTracker().updateJobStatus(job_name, new_status)
         self.refreshAllQListWidgets()
 
@@ -162,10 +169,10 @@ class OptionsQPushButton(JobsQPushButton):
         open_folder(job_folder_global_path)
 
     def deleteJob(self):
-        job_name = self.getCurrentStaticJobName()
+        job_name = self.getCurrentItemName()
         LaserJobTracker().deleteJob(job_name)
         self.refreshAllQListWidgets()
 
     def getJobFolderGlobalPath(self):
-        job_name = self.getCurrentStaticJobName()
+        job_name = self.getCurrentItemName()
         return LaserJobTracker().getJobDict(job_name)['job_folder_global_path']

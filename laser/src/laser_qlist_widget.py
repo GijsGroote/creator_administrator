@@ -1,5 +1,6 @@
 import os
-from typing import List
+import abc
+from typing import List, Tuple
 import re
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence
@@ -11,6 +12,7 @@ from PyQt5.QtWidgets import (
 )
 
 from src.directory_functions import open_file, open_folder
+from convert import split_material_name
 
 
 from laser_job_tracker import LaserJobTracker
@@ -38,8 +40,6 @@ class JobsOverviewQListWidget(OverviewQListWidget):
         # initialize  
         self.objectNameChanged.connect(self.storeObjectNameInit)
 
-        # shortcut on Enter key
-        QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.itemEnterPressed)
 
     def getItemNames(self) -> List[tuple]:
         ''' Return a list of tuples containing:
@@ -85,10 +85,6 @@ class JobContentQListWidget(ContentQListWidget):
     def __init__(self, *args, **kwargs):
         ContentQListWidget.__init__(self, *args, **kwargs)
 
-        # shortcut for the Enter button
-        # QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.jobFileEnterPressed)        
-
-
     def loadContent(self, job_name):
         self.clear()
         self.current_item_name = job_name
@@ -103,7 +99,6 @@ class JobContentQListWidget(ContentQListWidget):
                 job_dict['job_folder_global_path'], file))
             self.addItem(item)
 
-        self.itemClicked.connect(self.fileClicked)
 
 class MaterialOverviewQListWidget(OverviewQListWidget):
 
@@ -113,16 +108,20 @@ class MaterialOverviewQListWidget(OverviewQListWidget):
         self.initialize(self.getItemNames())
 
         # shortcut on Enter key
+        # TODO: this should be in src/qlist_widget, why must it also be here to work?
         QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.itemEnterPressed)
+
+        self.itemDoubleClicked.connect(self.itemIsDoubleClicked)
+        
     
-    def getItemNames(self):
+    def getItemNames(self) -> list:
         ''' Return the materials and thickness in a list. '''
         return LaserJobTracker().getMaterialAndThicknessList()
+
 
     def displayItem(self, material_name: str):
         ''' Display the material page and load content for the highlighted material. '''
 
-        print(f"display item yo {material_name}")   
 
         stacked_widget = self.window().findChild(
                 QStackedWidget,
@@ -139,24 +138,18 @@ class MaterialContentQListWidget(ContentQListWidget):
     def __init__(self, *args, **kwargs):
         ContentQListWidget.__init__(self, *args, **kwargs)
 
-
     def loadContent(self, material_name):
         self.clear()
-        self.current_material_name = material_name
+        self.current_item_name = material_name
 
+        material, thickness = split_material_name(material_name)
 
-        match = re.search(r'(.+)_(\d+)mm', material_name)
-        if match:
-            material = match.group(1)
-            thickness = match.group(2)
+        dxfs_names_and_global_paths = LaserJobTracker().getDXFsAndPaths(material, thickness)
 
-            dxfs_names_and_global_paths = LaserJobTracker().getDXFsAndPaths(material, thickness)
+        for (dxf_name, dxf_global_path) in dxfs_names_and_global_paths:
 
-            for (dxf_name, dxf_global_path) in dxfs_names_and_global_paths:
+            item = QListWidgetItem()
+            item.setText(dxf_name)
+            item.setData(1, dxf_global_path)
+            self.addItem(item)
 
-                item = QListWidgetItem()
-                item.setText(dxf_name)
-                item.setData(1, dxf_global_path)
-                self.addItem(item)
-
-            self.itemClicked.connect(self.fileClicked)

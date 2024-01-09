@@ -176,7 +176,7 @@ class MailManager():
             else:
                 # For non-multipart emails, check if the content type is HTML
                 if msg.get_content_type() == 'text/html':
-                    return msg.get_payload(decode=True).decode('utf-8')
+                    return msg.get_payload(decode=True)
 
     def printMailBodyFromPath(self, msg_file_path: str):
         """ Print the content of an .msg file. """
@@ -278,14 +278,12 @@ class MailManager():
                                                 popup_reply=True):
         """ Reply to .msg file using a template. """
 
-
-
-
         if sys.platform == 'win32':
             msg = self.outlook.OpenSharedItem(msg_file_path)
+            print(f'can you fin this? {msg}')
 
             # load recipient_name in template
-            template_content["{recipient_name}"] = self.mailToName(msg.Sender)
+            template_content["{recipient_name}"] = msg.Sender
 
 
             with open(self.gv[template_file_name], "r") as file:
@@ -330,6 +328,7 @@ class MailManager():
 
     def mailToName(self, mail_name: str) -> str:
         """ Convert mail in form first_name last_name <mail@adres.com> to a more friendly name. """
+        print(f'what are you {mail_name}')
 
         matches = re.match(r"(.*?)\s*<(.*)>", mail_name)
 
