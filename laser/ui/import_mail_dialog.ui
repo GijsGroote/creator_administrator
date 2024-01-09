@@ -191,14 +191,14 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QPushButton" name="skipPushButton">
        <property name="text">
         <string>Skip</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="sendUnclearMailPushButton">
        <property name="text">
         <string>Send material, thickness or amount unclear Mail</string>
        </property>
