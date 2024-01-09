@@ -13,142 +13,208 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <widget class="QLabel" name="mailFromQLabel">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Mail From: </string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QLabel" name="mailProgressQLabel">
+        <widget class="QLabel" name="label">
          <property name="text">
-          <string>Mail (?/x)</string>
+          <string>Mail From: </string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="attachmentProgressQLabel">
+        <widget class="QLabel" name="mailFromQLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
-          <string>Attachment (?/z)</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:20pt;&quot;&gt;mail_name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QLabel" name="mailProgressQLabel">
+           <property name="text">
+            <string>Mail (?/x)</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="attachmentProgressQLabel">
+           <property name="text">
+            <string>Attachment (?/z)</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QWebEngineView" name="mailQWebEngineView">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="url">
+        <url>
+         <string>about:blank</string>
+        </url>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>File Name:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="attachmentNameQLabel">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:20pt; font-weight:600;&quot;&gt;file_name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QFormLayout" name="formLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="materialQLabel">
+         <property name="text">
+          <string>Material:</string>
+         </property>
+         <property name="buddy">
+          <cstring>materialQComboBox</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="materialQComboBox"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="newMaterialQLabel">
+         <property name="text">
+          <string>New Material:</string>
+         </property>
+         <property name="buddy">
+          <cstring>newMaterialQLineEdit</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="newMaterialQLineEdit"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="thicknessQLabel">
+         <property name="text">
+          <string>Thickness (mm):</string>
+         </property>
+         <property name="buddy">
+          <cstring>thicknessQLineEdit</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="thicknessQLineEdit"/>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="amountQLabel">
+         <property name="text">
+          <string>Amount:</string>
+         </property>
+         <property name="buddy">
+          <cstring>amountQLineEdit</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="amountQLineEdit"/>
        </item>
       </layout>
      </item>
     </layout>
    </item>
    <item>
-    <widget class="QWebEngineView" name="mailQWebEngineView">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="url">
-      <url>
-       <string>about:blank</string>
-      </url>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="attachmentNameQLabel">
-     <property name="text">
-      <string>File Name:</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QFormLayout" name="formLayout">
-     <item row="0" column="0">
-      <widget class="QLabel" name="materialQLabel">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QPushButton" name="pushButton_2">
        <property name="text">
-        <string>Material:</string>
-       </property>
-       <property name="buddy">
-        <cstring>materialQComboBox</cstring>
+        <string>Skip</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
-      <widget class="QComboBox" name="materialQComboBox"/>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="thicknessQLabel">
+     <item>
+      <widget class="QPushButton" name="pushButton">
        <property name="text">
-        <string>Thickness (mm):</string>
-       </property>
-       <property name="buddy">
-        <cstring>thicknessQLineEdit</cstring>
+        <string>Send material, thickness or amount unclear Mail</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QLineEdit" name="thicknessQLineEdit"/>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="amountQLabel">
-       <property name="text">
-        <string>Amount:</string>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
-       <property name="buddy">
-        <cstring>amountQLineEdit</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QLineEdit" name="amountQLineEdit"/>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="newMaterialQLineEdit"/>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="newMaterialQLabel">
-       <property name="text">
-        <string>New Material:</string>
-       </property>
-       <property name="buddy">
-        <cstring>newMaterialQLineEdit</cstring>
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
        </property>
       </widget>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>

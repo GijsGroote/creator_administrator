@@ -27,6 +27,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
         self.materialQComboBox.currentIndexChanged.connect(self.onMaterialComboboxChanged)
 
+        self.skipPushButton.clicked.connect(self.skipMail)
         self.buttonBox.accepted.connect(self.collectAttachmentInfo)
 
 
@@ -58,7 +59,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
 
         sender_name = self.mail_manager.getSenderName(valid_msg)
-        self.mailFromQLabel.setText(f'Mail From: {sender_name}')
+        self.mailFromQLabel.setText(sender_name)
         self.mailProgressQLabel.setText(f'Mail ({self.msg_counter+1}/{len(self.valid_msgs)})')
 
         self.temp_job_name = self.job_tracker.makeJobNameUnique(sender_name)
@@ -81,7 +82,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
         if attachment_name.endswith(gv['ACCEPTED_EXTENSIONS']):
             self.attachmentProgressQLabel.setText(f'Attachment ({self.attachment_counter+1}/{len(self.temp_attachments)})')
-            self.attachmentNameQLabel.setText(f'File Name: {attachment_name}')
+            self.attachmentNameQLabel.setText(attachment_name)
 
             # initially hide option for new material 
             self.newMaterialQLabel.setHidden(True)
@@ -91,7 +92,6 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
             self.newMaterialQLineEdit.clear()
             self.thicknessQLineEdit.clear()
             self.amountQLineEdit.clear()
-
 
 
             materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()))
@@ -164,6 +164,11 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
                                                      'file_global_path': file_global_path}
         self.loadContent()
 
+    def skipMail(self):
+        ''' Skip mail and go to the next. '''
+        print(f"skip mail button pushed")   
+        
+
     def validate(self, material: str, thickness: str, amount: str) -> bool:
         for (thing, value) in [('material', material), ('thickness', thickness), ('amount', amount)]:
             if value == "":
@@ -200,6 +205,28 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
             return False
 
         return True
+
+
+    def sendUnclearMaterialDetailsMail(self):
+        ''' Send a mail asking for the material, thickness and amount. '''
+        print(f"unclear stuff hyo")
+
+
+        # send a confirmation mail
+        msg_file_path = self.mail_manager.getMailGlobalPathFromFolder(self.temp_job_folder_global_path)
+        self.mail_manager.replyToEmailFromFileUsingTemplate(msg_file_path,
+                                "RECEIVED_MAIL_TEMPLATE",
+                                {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
+                                popup_reply=False)
+
+        self.mail_manager.moveEmailToVerwerktFolder(self.valid_msgs[self.msg_counter])
+
+
+        TimedQMessageBox(
+                    text=f"Confirmation mail send to {self.temp_job_name}",
+                    parent=self)
+
+
 
 
     def sendConfirmationMail(self):
