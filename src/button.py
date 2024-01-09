@@ -1,11 +1,15 @@
 
 import os
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QKeySequence
-from PyQt5.QtWidgets import (
-        QPushButton, QFileDialog, QStackedWidget,
-        QShortcut)
+
+from PyQt5 import *
+from PyQt5.QtCore import *
+from PyQt5 import QtWebEngineWidgets
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+
 from src.mail_manager import MailManager
+
+from src.worker import Worker
 
 
 from src.qlist_widget import ContentQListWidget
@@ -20,6 +24,7 @@ class JobsQPushButton(QPushButton):
 
     def __init__(self, *args, **kwargs):
         QPushButton.__init__(self, *args, **kwargs)
+        self.threadpool = QThreadPool()
 
 
     def refreshAllQListWidgets(self):
@@ -48,18 +53,22 @@ class JobsQPushButton(QPushButton):
         msg_file_global_path = mail_manager.getMailGlobalPathFromFolder(job_folder_global_path)
 
         if msg_file_global_path is not None:
-            mail_manager.replyToEmailFromFileUsingTemplate(
-                        msg_file_global_path,
-                        "FINISHED_MAIL_TEMPLATE",
-                        {},
-                        popup_reply=False)
+            # send finished mail on a seperate thread
+            send_mail_worker = Worker(mail_manager.replyToEmailFromFileUsingTemplate,
+                    msg_file_path=msg_file_global_path,
+                    template_file_name="FINISHED_MAIL_TEMPLATE",
+                    template_content={},
+                    popup_reply=False)
 
-            TimedQMessageBox(text=f"Job finished mail send to {job_name}",
-                            parent=self)
-        else:
-            TimedQMessageBox(
-                    text=f"No .msg file detected, no Pickup mail was sent to {job_name}",
-                    parent=self, icon=QMessageBox.Warning)
+            self.threadpool.start(send_mail_worker)
+
+            # TimedQMessageBox(text=f"Job finished mail send to {job_name}",
+                            # parent=self)
+        # else:
+            # TimedQMessageBox(
+                    # text=f"No .msg file detected, no Pickup mail was sent to {job_name}",
+                    # parent=self, icon=QMessageBox.Warning)
+        print(f"function done before please")
 
     def sendDeclinedMail(self, gv: dict, job_name: str, job_folder_global_path: str):
         ''' popup the Declined mail. '''

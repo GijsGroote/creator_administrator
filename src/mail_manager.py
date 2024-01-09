@@ -327,6 +327,8 @@ class MailManager():
             reply_msg.attach(MIMEText(html_content, "html"))
             self.smtpSendMessage(reply_msg)
 
+            print('mail sent')
+
     def mailToName(self, mail_name: str) -> str:
         """ Convert mail in form first_name last_name <mail@adres.com> to a more friendly name. """
 
