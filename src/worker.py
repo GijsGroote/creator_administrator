@@ -19,7 +19,7 @@ class Worker(QRunnable):
     '''
 
     def __init__(self, fn, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__()
         # Store constructor arguments (re-used for processing)
         self.fn = fn
         self.args = args

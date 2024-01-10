@@ -49,7 +49,6 @@ class LaserMainWindow(MainWindow):
         self.get_mail_worker.signals.result.connect(self.openImportFromMailDialog)
 
 
-
         # self.threadpool.start(self.loading_widget_worker)
         self.valid_msgs = self.threadpool.start(self.get_mail_worker)
 

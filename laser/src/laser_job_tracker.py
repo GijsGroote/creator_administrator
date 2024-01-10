@@ -288,5 +288,16 @@ class LaserJobTracker(JobTracker):
                 return False
         return True
 
-        return tracker_dict
+
+    def getLaserFilesString(self, job_name: str) -> str:
+        ''' Return a sting representation of all laser files. '''
+
+        with open(self.tracker_file_path, 'r') as tracker_file:
+            tracker_dict = json.load(tracker_file)
+
+        return_string = ""
+        for file_dict in tracker_dict[job_name]['laser_files'].values():
+            return_string += f'{file_dict["file_name"]}\n'
+
+        return return_string
 

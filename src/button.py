@@ -27,7 +27,8 @@ class JobsQPushButton(QPushButton):
         super().__init__(parent, *args, **kwargs)
         # self.parent = parent
 
-        # self.threadpool = get_thread_pool(self)
+        # self.threadpool = get_thread_pool(self) jobPage_2 annoyingly is not a child of QStackedWidget
+        self.threadpool = QThreadPool()
 
 
     def refreshAllQListWidgets(self):
@@ -49,7 +50,7 @@ class JobsQPushButton(QPushButton):
         if content_qlist_widget is not None:
             return content_qlist_widget.current_item_name
 
-    def sendFinishedMail(self, gv: dict, job_name: str, job_folder_global_path: str) -> str:
+    def sendFinishedMail(self, gv: dict, job_name: str, job_folder_global_path: str):
         ''' send please come pick up your job mail. '''
 
         mail_manager = MailManager(gv)
@@ -65,13 +66,10 @@ class JobsQPushButton(QPushButton):
 
             self.threadpool.start(send_mail_worker)
 
-            # TimedQMessageBox(text=f"Job finished mail send to {job_name}",
-                            # parent=self)
-        # else:
-            # TimedQMessageBox(
-                    # text=f"No .msg file detected, no Pickup mail was sent to {job_name}",
-                    # parent=self, icon=QMessageBox.Warning)
-        print(f"function done before please")
+        else:
+            TimedQMessageBox(
+                    text=f"No .msg file detected, no Pickup mail was sent to {job_name}",
+                    parent=self, icon=QMessageBox.Warning)
 
     def sendDeclinedMail(self, gv: dict, job_name: str, job_folder_global_path: str):
         ''' popup the Declined mail. '''

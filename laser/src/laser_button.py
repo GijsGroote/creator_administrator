@@ -1,7 +1,8 @@
 import glob
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QKeySequence
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+from src.worker import Worker
 
 
 from global_variables import gv
@@ -15,7 +16,8 @@ from src.mail_manager import MailManager
 from src.qdialog import SelectOptionsQDialog
 
 
-from src.qmessagebox import TimedQMessageBox
+from src.app import get_main_window
+from src.qmessagebox import TimedQMessageBox, JobFinishedMessageBox
 
 
 class LaserKlaarQPushButton(JobsQPushButton):
@@ -63,7 +65,6 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
         else:
             return
 
-
         for file_global_path in files_global_paths:
             # find job_name
             job_name = job_tracker.fileGlobalPathToJobName(file_global_path)
@@ -75,11 +76,26 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
             if job_tracker.isJobDone(job_name):
                 # hey this material is done!
 
+
+                TimedQMessageBox(text=f"Job finished mail send to {job_name}",
+                            parent=get_main_window(self))
+
+
                 job_tracker.updateJobStatus(job_name, 'VERWERKT')
                 job_folder_global_path = job_tracker.getJobFolderGlobalPathFromJobName(job_name)
                 self.sendFinishedMail(gv, job_name, job_folder_global_path)
 
+                 
+                print(job_tracker.getLaserFilesString(job_name))
+
+                JobFinishedMessageBox(text=f"Job {job_name} is finished, put it the Uitgifterek:\n"\
+                        f"{job_tracker.getLaserFilesString(job_name)}",
+                            parent=self)
+
         self.refreshAllQListWidgets()
+
+    def temp(self):
+        print('temp func')
 
 
 class AfgekeurdQPushButton(JobsQPushButton):

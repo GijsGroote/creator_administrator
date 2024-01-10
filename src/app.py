@@ -12,6 +12,14 @@ class MainWindow(QMainWindow):
         uic.loadUi(ui_global_path, self)
         self.threadpool = QThreadPool() # the one and only threadpool
 
+
+        # job_name = 'haha'
+
+        # message_worker = Worker(TimedQMessageBox,
+        #                         text=f"Job finished mail send to {job_name}",
+        #                         parent=self)
+        # self.threadpool.start(message_worker)
+
         # TODO: save height and widtt and position when closing, use that when opening
         # desktop_center = QApplication.desktop().availableGeometry().center()
         # self.move(desktop_center.x() - int(self.width()*0.5), desktop_center.y() - int(self.height()*0.5))
