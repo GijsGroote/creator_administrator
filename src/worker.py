@@ -19,7 +19,7 @@ class Worker(QRunnable):
     '''
 
     def __init__(self, fn, *args, **kwargs):
-        super(Worker, self).__init__()
+        super().__init__(*args, **kwargs)
         # Store constructor arguments (re-used for processing)
         self.fn = fn
         self.args = args
@@ -31,7 +31,9 @@ class Worker(QRunnable):
         '''
         Initialise the runner function with passed args, kwargs.
         '''
-        self.fn(*self.args, **self.kwargs)
+        data = self.fn(*self.args, **self.kwargs)
+        self.signals.result.emit(data)
+        self.signals.finished.emit()
 
 class WorkerSignals(QObject):
     '''

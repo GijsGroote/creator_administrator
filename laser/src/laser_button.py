@@ -20,8 +20,8 @@ from src.qmessagebox import TimedQMessageBox
 
 class LaserKlaarQPushButton(JobsQPushButton):
 
-    def __init__(self, *args, **kwargs):
-        JobsQPushButton.__init__(self, *args, **kwargs)
+    def __init__(self, parent=None, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
         self.clicked.connect(self.on_click)
  
     def on_click(self):

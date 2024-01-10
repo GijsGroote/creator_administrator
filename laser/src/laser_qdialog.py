@@ -7,6 +7,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import time
 
+from src.app import get_thread_pool
 import datetime
 from global_variables import gv
 from src.qdialog import ImportFromMailQDialog, SelectFileQDialog
@@ -16,20 +17,27 @@ from src.qmessagebox import TimedQMessageBox
 from laser_job_tracker import LaserJobTracker
 from src.worker import Worker
 
+from src.app import get_thread_pool
 
 
 class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
     def __init__(self, parent, valid_msgs, *args, **kwargs):
         ui_global_path = os.path.join(gv['REPO_DIR_HOME'], 'laser/ui/import_mail_dialog.ui')
-        ImportFromMailQDialog.__init__(self, parent, ui_global_path, *args, **kwargs)
+        super().__init__(parent, ui_global_path, *args, **kwargs)
+
 
         self.mail_manager = parent.mail_manager
         self.valid_msgs = valid_msgs
+ 
         self.msg_counter = 0
         self.attachment_counter = 0
         self.new_material_text = 'New Material'
-        self.threadpool = QThreadPool()
+
+
+        self.threadpool = get_thread_pool(self)
+
+
         self.job_tracker = LaserJobTracker()
         self.loadMailContent()
 

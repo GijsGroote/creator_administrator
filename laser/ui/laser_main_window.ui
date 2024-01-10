@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>722</width>
-    <height>582</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -66,9 +66,6 @@
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="jobPage">
-             <layout class="QVBoxLayout" name="verticalLayout_13"/>
-            </widget>
            </widget>
           </item>
          </layout>
@@ -82,7 +79,7 @@
        <attribute name="title">
         <string>Wachtrij</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_6">
+       <layout class="QHBoxLayout" name="horizontalLayout_10">
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
@@ -320,7 +317,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>722</width>
+     <width>800</width>
      <height>24</height>
     </rect>
    </property>

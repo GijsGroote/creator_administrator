@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from global_variables import gv
 from src.app import MainWindow
+from src.app import get_thread_pool
 from laser_qdialog import LaserImportFromMailQDialog, LaserSelectFileQDialog
 from src.qmessagebox import TimedQMessageBox
 
@@ -20,40 +21,50 @@ from src.mail_manager import MailManager
 class LaserMainWindow(MainWindow):
     def __init__(self, *args, **kwargs):
         ui_global_path = os.path.join(gv['UI_DIR_HOME'], 'laser_main_window.ui')
-        MainWindow.__init__(self, ui_global_path, *args, **kwargs)
+        super().__init__(ui_global_path, *args, **kwargs)
 
-        self.threadpool = QThreadPool()
-        self.loading_widget = LoadingQDialog()
+        print(f"just after laserMainwindows")
+        self.loading_dialog = LoadingQDialog(self, gv)
+        self.loading_dialog.hide()
+
+        # self.threadpool = get_thread_pool(self)
+        # print(f' this threadpool is of type {type(self.threadpool)}')
+
         self.valid_msgs = []
 
         # menu bar actions
         self.ActionImportFromMail.triggered.connect(self.onActionImportFromMail)
         self.ActionSelectFile.triggered.connect(self.onActionSelectFileclicked)
 
+
     def onActionImportFromMail(self):
 
 
-        get_mail_worker = Worker(self.getNewValidMails)
-        get_mail_worker.signals.finished.connect(self.openImportFromMailDialog)
-        get_mail_worker.signals.finished.connect(self.loading_widget.stopAnimation)
-        self.valid_msgs = self.threadpool.start(get_mail_worker)
-        self.loading_widget.startAnimation()
+        self.loading_dialog.show()
+        self.loading_widget = LoadingQDialog(self, gv)
+
+        # create workers
+        self.get_mail_worker = Worker(self.getNewValidMails)
+        self.get_mail_worker.signals.finished.connect(self.loading_dialog.hide)
+        self.get_mail_worker.signals.result.connect(self.openImportFromMailDialog)
+
+
+
+        # self.threadpool.start(self.loading_widget_worker)
+        self.valid_msgs = self.threadpool.start(self.get_mail_worker)
 
 
         
         print('done?')
 
-    def openImportFromMailDialog(self):
+    def openImportFromMailDialog(self, valid_msgs: list):
         ''' open import from mail dialog. '''
 
-        print(f"stoping that animation now")
-        # self.loading_widget.stopAnimation()
-
-        if len(self.valid_msgs) == 0:
+        if len(valid_msgs) == 0:
             TimedQMessageBox(text='No new mails', parent=self)
         else:
 
-            dialog = LaserImportFromMailQDialog(self, self.valid_msgs)
+            dialog = LaserImportFromMailQDialog(self, valid_msgs)
 
             if dialog.exec_() == QDialog.Accepted:
                 pass

@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import *
 
 from src.mail_manager import MailManager
 
+from src.app import get_thread_pool
 from src.worker import Worker
 
 
@@ -22,9 +23,11 @@ class JobsQPushButton(QPushButton):
             such as laser klaar, gesliced. '''
 
 
-    def __init__(self, *args, **kwargs):
-        QPushButton.__init__(self, *args, **kwargs)
-        self.threadpool = QThreadPool()
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        # self.parent = parent
+
+        # self.threadpool = get_thread_pool(self)
 
 
     def refreshAllQListWidgets(self):
@@ -83,8 +86,8 @@ class JobsQPushButton(QPushButton):
 
 class BackQPushButton(QPushButton):
 
-    def __init__(self, *args, **kwargs):
-        QPushButton.__init__(self, *args, **kwargs)
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
         self.clicked.connect(self.on_click)
 
  
@@ -96,8 +99,8 @@ class BackQPushButton(QPushButton):
 
 class SelectFolderQPushButton(QPushButton):
 
-    def __init__(self, parent=None):
-        QPushButton.__init__(self, parent)
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
         self.folder_global_path = None
         self.clicked.connect(self.on_click)
 

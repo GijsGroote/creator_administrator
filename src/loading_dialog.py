@@ -1,43 +1,31 @@
 # from PyQt5 import Qt
+import os
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+from src.app import get_main_window
 
 class LoadingQDialog(QDialog):
 
-    def __init__(self):
-        QWidget.__init__(self)
+    def __init__(self, parent, gv: dict, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
 
-        self.setFixedSize(200, 200)
         self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.CustomizeWindowHint)
-        self.label_animation = QLabel(self)
-        self.movie = QMovie('/home/gijs/loader.gif')
-        self.label_animation.setMovie(self.movie)
-        self.timer=QTimer(self)
 
+
+        self.setStyleSheet("background-color: rgba(0, 255, 0, 0.4);")
         layout = QVBoxLayout()
-        layout.addWidget(self.label_animation)
 
-        # Set the layout for the dialog
-        self.setLayout(layout)
-        self.setWindowTitle('GIF Dialog')
-        self.setGeometry(300, 300, 500, 500)
-        self.setFixedSize(500, 500)  # Fix the size of the dialog
+        self.label = QLabel('Loading...', self)
+        self.label.setAlignment(Qt.AlignCenter)
+        layout.addWidget(self.label)
 
 
 
-    def startAnimation(self):
-
-        self.show()
-        self.timer.singleShot(10000, self.stopAnimation)
-        print(f"started the animationnnn")
-        print(f"started the animationnnnNNNN")
-        self.movie.start()
-        print(f"started the animationnnnNNNNNNNNN")
-
-    def stopAnimation(self):
-
-        print(f"stopped the animationNN")
-        self.movie.stop()
-        self.close()
-
+    def centerOnMainWindow(self):
+        main_window = get_main_window(self)
+        if main_window is not None:
+            self.setGeometry(main_window.frameGeometry())
+            # self.setGeometry(main_geometry.x() + main_geometry.width()//2 - self.width(),
+            #                  main_geometry.y() + main_geometry.height()//2 - self.height(),
+            #             480, 480)

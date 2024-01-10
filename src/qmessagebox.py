@@ -4,8 +4,8 @@ from PyQt5.QtCore import *
 
 class TimedQMessageBox(QMessageBox):
 
-    def __init__(self, text='setthis', parent=None, icon=QMessageBox.Information, *args, **kwargs):
-        QMessageBox.__init__(self, *args, **kwargs)
+    def __init__(self, parent, text='setthis', icon=QMessageBox.Information, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
 
         self.setText(text)
         self.timeout = 10

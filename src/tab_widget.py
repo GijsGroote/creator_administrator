@@ -9,8 +9,8 @@ from PyQt5.QtGui import QKeySequence
 
 class JobsQTabWidget(QTabWidget):
 
-    def __init__(self, *args, **kwargs):
-        QTabWidget.__init__(self, *args, **kwargs)
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
 
         # shortcuts on arrow keys
         QShortcut(QKeySequence(Qt.Key_Left), self).activated.connect(self.toLeftTab)

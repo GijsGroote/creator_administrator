@@ -9,6 +9,8 @@ from PyQt5.uic import loadUi
 
 from global_variables import gv
 
+from src.app import get_main_window
+
 
 class ImportFromMailQDialog(QDialog):
     """ Import from mail dialog. """
@@ -16,6 +18,9 @@ class ImportFromMailQDialog(QDialog):
         super().__init__(parent, *args, **kwargs)
 
         loadUi(ui_global_path, self)
+        
+
+        main_widget = get_main_window(self)
 
         # shortcut on Esc button
         QShortcut(QKeySequence(Qt.Key_Escape), self).activated.connect(self.closeDialog)
