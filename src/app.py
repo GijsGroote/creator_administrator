@@ -12,6 +12,10 @@ class MainWindow(QMainWindow):
         uic.loadUi(ui_global_path, self)
         self.threadpool = QThreadPool() # the one and only threadpool
 
+        # TODO: save height and widtt and position when closing, use that when opening
+        # desktop_center = QApplication.desktop().availableGeometry().center()
+        # self.move(desktop_center.x() - int(self.width()*0.5), desktop_center.y() - int(self.height()*0.5))
+
     def keyPressEvent(self, event):
         ''' Handle shortcuts on main window. '''
 

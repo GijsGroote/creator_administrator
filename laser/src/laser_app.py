@@ -24,8 +24,8 @@ class LaserMainWindow(MainWindow):
         super().__init__(ui_global_path, *args, **kwargs)
 
         print(f"just after laserMainwindows")
-        self.loading_dialog = LoadingQDialog(self, gv)
-        self.loading_dialog.hide()
+        # self.loading_dialog.show()
+        # self.loading_dialog.hide()
 
         # self.threadpool = get_thread_pool(self)
         # print(f' this threadpool is of type {type(self.threadpool)}')
@@ -40,12 +40,12 @@ class LaserMainWindow(MainWindow):
     def onActionImportFromMail(self):
 
 
+        self.loading_dialog = LoadingQDialog(self, gv)
         self.loading_dialog.show()
-        self.loading_widget = LoadingQDialog(self, gv)
 
         # create workers
         self.get_mail_worker = Worker(self.getNewValidMails)
-        self.get_mail_worker.signals.finished.connect(self.loading_dialog.hide)
+        self.get_mail_worker.signals.finished.connect(self.loading_dialog.accept)
         self.get_mail_worker.signals.result.connect(self.openImportFromMailDialog)
 
 
@@ -53,8 +53,6 @@ class LaserMainWindow(MainWindow):
         # self.threadpool.start(self.loading_widget_worker)
         self.valid_msgs = self.threadpool.start(self.get_mail_worker)
 
-
-        
         print('done?')
 
     def openImportFromMailDialog(self, valid_msgs: list):
