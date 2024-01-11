@@ -41,7 +41,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="allJobsTab">
        <attribute name="title">
@@ -102,7 +102,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="jobsListPage_2">
              <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -176,7 +176,7 @@
         <item>
          <widget class="QStackedWidget" name="wachtrijMateriaalQStackedWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="jobsListPage_3">
            <layout class="QHBoxLayout" name="horizontalLayout_5">

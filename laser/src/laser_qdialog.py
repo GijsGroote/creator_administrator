@@ -41,7 +41,6 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         self.job_tracker = LaserJobTracker()
         self.loadMailContent()
 
-        print(f'made the LaserImportFromMailDialog, please open up')
 
 
         self.materialQComboBox.currentIndexChanged.connect(self.onMaterialComboboxChanged)
@@ -83,9 +82,6 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
         self.temp_attachments = self.mail_manager.getAttachments(valid_msg)
 
-        print(f'the attachments that wre found are')
-        for attach in self.temp_attachments:
-            print(attach)
         self.temp_laser_cut_files_dict = {}
         self.temp_attachments_dict = {}
 
