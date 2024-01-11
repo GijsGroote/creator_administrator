@@ -192,7 +192,14 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
     def skipMail(self):
         ''' Skip mail and go to the next. '''
-        print(f"skip mail button pushed")   
+        if self.msg_counter+1 >= len(self.valid_msgs):
+            # done! close dialog
+            self.accept() 
+
+        self.msg_counter += 1
+        self.attachment_counter = 0
+        self.loadMailContent()
+
         
 
     def validate(self, material: str, thickness: str, amount: str) -> bool:
@@ -239,20 +246,22 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         # TODO: mail from a mail that is not yet downloaded. 
 
 
-        # send a confirmation mail
-        msg_file_path = self.mail_manager.getMailGlobalPathFromFolder(self.temp_job_folder_global_path)
-        self.mail_manager.replyToEmailFromFileUsingTemplate(msg_file_path,
-                                "RECEIVED_MAIL_TEMPLATE",
-                                {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
-                                popup_reply=False)
+#         # send a confirmation mail
+#         msg_file_path = self.mail_manager.getMailGlobalPathFromFolder(self.temp_job_folder_global_path)
+#         self.mail_manager.replyToEmailFromFileUsingTemplate(msg_file_path,
+#                                 "RECEIVED_MAIL_TEMPLATE",
+#                                 {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
+#                                 popup_reply=False)
 
-        self.mail_manager.moveEmailToVerwerktFolder(self.valid_msgs[self.msg_counter])
+#         self.mail_manager.moveEmailToVerwerktFolder(self.valid_msgs[self.msg_counter])
 
+        # TimedQMessageBox(
+        #             text=f"Confirmation mail send to {self.temp_job_name}",
+        #             parent=self)
 
         TimedQMessageBox(
-                    text=f"Confirmation mail send to {self.temp_job_name}",
+                    text=f"This function is not yet implemented",
                     parent=self)
-
 
 
 
