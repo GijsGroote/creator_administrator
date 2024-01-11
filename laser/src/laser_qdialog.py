@@ -125,10 +125,6 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
             self.thicknessQLineEdit.clear()
             self.amountQLineEdit.clear()
 
-<<<<<<< HEAD
-=======
-
->>>>>>> c4513004bdcbf6ac2f139ab99670a02d119891a1
             materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()))
             self.materialQComboBox.addItems(materials)
             self.materialQComboBox.addItem(self.new_material_text)

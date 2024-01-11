@@ -210,7 +210,7 @@ class OptionsQPushButton(JobsQPushButton):
 
         dxfs_names_and_global_paths = LaserJobTracker().getDXFsAndPaths(material, thickness)
 
-        target_folder_global_path = os.path.abspath('/home/gijs/Documents/temp/')
+        target_folder_global_path = os.path.abspath(r'C:\\Users\\PMMA laser\\Desktop\\Laser TODO')
 
         for file_name, file_global_path in dxfs_names_and_global_paths:
             copy(file_global_path, os.path.join(target_folder_global_path, file_name))
