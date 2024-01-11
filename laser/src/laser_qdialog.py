@@ -35,7 +35,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         self.new_material_text = 'New Material'
 
 
-        self.threadpool = get_thread_pool(self)
+        # self.threadpool = get_thread_pool(self)
 
 
         self.job_tracker = LaserJobTracker()
@@ -269,19 +269,25 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
     def sendConfirmationMail(self):
         ''' Send a confirmation mail on a new thread. ''' 
-
-        # make workers
-        send_mail_worker = Worker(self.mail_manager.replyToEmailFromFileUsingTemplate,
+        self.mail_manager.replyToEmailFromFileUsingTemplate(
                 msg_file_path=self.mail_manager.getMailGlobalPathFromFolder(self.temp_job_folder_global_path), 
                 template_file_name="RECEIVED_MAIL_TEMPLATE",
                 template_content={"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
                 popup_reply=False)
-        move_mail_worker = Worker(self.mail_manager.moveEmailToVerwerktFolder,
+        self.mail_manager.moveEmailToVerwerktFolder(
                                   msg=self.valid_msgs[self.msg_counter])
+        # make workers
+        # send_mail_worker = Worker(self.mail_manager.replyToEmailFromFileUsingTemplate,
+        #         msg_file_path=self.mail_manager.getMailGlobalPathFromFolder(self.temp_job_folder_global_path), 
+        #         template_file_name="RECEIVED_MAIL_TEMPLATE",
+        #         template_content={"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
+        #         popup_reply=False)
+        # move_mail_worker = Worker(self.mail_manager.moveEmailToVerwerktFolder,
+        #                           msg=self.valid_msgs[self.msg_counter])
 
-        # start workers
-        self.threadpool.start(send_mail_worker)
-        self.threadpool.start(move_mail_worker)
+        # # start workers
+        # self.threadpool.start(send_mail_worker)
+        # self.threadpool.start(move_mail_worker)
     
     def createLaserJob(self):
         """ Create a laser job. """

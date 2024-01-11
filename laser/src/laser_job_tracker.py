@@ -247,8 +247,9 @@ class LaserJobTracker(JobTracker):
         for job_dict in tracker_dict.values():
             if job_dict['status'] == 'WACHTRIJ':
                 for laser_file_dict in job_dict['laser_files'].values():
-                    materials_and_thickness_set.add(
-                            laser_file_dict['material']+'_'+laser_file_dict['thickness']+'mm')
+                    if not laser_file_dict['done']:
+                        materials_and_thickness_set.add(
+                                laser_file_dict['material']+'_'+laser_file_dict['thickness']+'mm')
                     
         return list(materials_and_thickness_set)
 
@@ -267,6 +268,13 @@ class LaserJobTracker(JobTracker):
                         dxfs_names_and_global_paths.append((key, laser_file_dict['file_global_path']))
                    
         return dxfs_names_and_global_paths
+    
+    def getLaserFilesDict(self, job_name) -> dict:
+        ''' TODO '''
+
+        with open(self.tracker_file_path, 'r') as tracker_file:
+            tracker_dict = json.load(tracker_file)
+        return tracker_dict[job_name]['laser_files']
 
     def fileGlobalPathToJobName(self, file_global_path: str) -> str:
         ''' Return a job name from a file. '''

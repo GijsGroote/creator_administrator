@@ -98,9 +98,6 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
 
         self.refreshAllQListWidgets()
 
-    def temp(self):
-        print('temp func')
-
 
 class AfgekeurdQPushButton(JobsQPushButton):
 
@@ -149,18 +146,20 @@ class OptionsQPushButton(JobsQPushButton):
 
         if self.object_name == 'allJobsOptionsQPushButton':
             self.menu.addAction('Move to Wachtrij', self.moveJobToWachtrij)
-
+                        
         elif self.object_name == 'wachtrijOptionsQPushButton':
-            pass
+            self.menu.addAction('Copy Files to ..', self.copyLaserFilesTo)
 
         elif self.object_name == 'wachtrijMateriaalOptionsQPushButton':
             self.menu.addAction('Copy Files to ..', self.copyMaterialWachtrijFilesTo)
 
         elif self.object_name == 'verwerktOptionsQPushButton':
+            self.menu.addAction('Copy Laser Files to ..', self.copyLaserFilesTo)
             self.menu.addAction('Move to Wachtrij', self.moveJobToWachtrij)
             self.menu.addAction('Move to Afgekeurd', self.moveJobToAfgekeurd)
 
         elif self.object_name == 'afgekeurdOptionsQPushButton':
+            self.menu.addAction('Copy Laser Files to ..', self.copyLaserFilesTo)
             self.menu.addAction('Move to Wachtrij', self.moveJobToWachtrij)
             self.menu.addAction('Move to Verwerkt', self.moveJobToVerwerkt)
 
@@ -196,11 +195,32 @@ class OptionsQPushButton(JobsQPushButton):
     def getJobFolderGlobalPath(self):
         job_name = self.getCurrentItemName()
         return LaserJobTracker().getJobDict(job_name)['job_folder_global_path']
+    
+    def copyLaserFilesTo(self):
+        '''Copy the laser files from a job to a specified folder. '''
+
+        job_name = self.getCurrentItemName()
+        laser_file_dict =  LaserJobTracker().getLaserFilesDict(job_name)
+        target_folder_global_path = os.path.abspath(r'C:\\Users\\PMMA laser\\Desktop\\Laser TODO')
+
+        for file_key, file_dict in laser_file_dict.items():
+
+            # TODO: you could copy all unwanted stuff better
+
+            source_item_global_path = file_dict['file_global_path']
+            target_item_global_path = os.path.join(target_folder_global_path,
+                file_dict['material']+"_"+file_dict['thickness']+'mm_'+file_dict['amount']+"x_"+file_key)
+
+            copy(source_item_global_path, target_item_global_path)
+
+
+        open_folder(target_folder_global_path)
+
+
 
     def copyMaterialWachtrijFilesTo(self):
         ''' Copy the dxf files in wachtrij to a specified folder. '''
         # get dxf files path
-
 
         material_name = get_main_window(self).findChild(
                 MaterialContentQListWidget).current_item_name
@@ -215,10 +235,4 @@ class OptionsQPushButton(JobsQPushButton):
         for file_name, file_global_path in dxfs_names_and_global_paths:
             copy(file_global_path, os.path.join(target_folder_global_path, file_name))
 
-
-        # Ask to specify a folder
-
-        # copy files
-        
-        # open that folder
         open_folder(target_folder_global_path)

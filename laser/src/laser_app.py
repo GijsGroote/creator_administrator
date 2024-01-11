@@ -39,18 +39,19 @@ class LaserMainWindow(MainWindow):
 
     def onActionImportFromMail(self):
 
+        self.openImportFromMailDialog(self.getNewValidMails())
 
-        self.loading_dialog = LoadingQDialog(self, gv)
-        self.loading_dialog.show()
+        # self.loading_dialog = LoadingQDialog(self, gv)
+        # self.loading_dialog.show()
 
         # create workers
-        self.get_mail_worker = Worker(self.getNewValidMails)
-        self.get_mail_worker.signals.finished.connect(self.loading_dialog.accept)
-        self.get_mail_worker.signals.result.connect(self.openImportFromMailDialog)
+        # self.get_mail_worker = Worker(self.getNewValidMails)
+        # self.get_mail_worker.signals.finished.connect(self.loading_dialog.accept)
+        # self.get_mail_worker.signals.result.connect(self.openImportFromMailDialog)
 
 
         # self.threadpool.start(self.loading_widget_worker)
-        self.valid_msgs = self.threadpool.start(self.get_mail_worker)
+        # self.valid_msgs = self.threadpool.start(self.get_mail_worker)
 
         print('done?')
 

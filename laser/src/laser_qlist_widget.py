@@ -33,9 +33,7 @@ class JobsOverviewQListWidget(OverviewQListWidget):
                                  'tab_widget_position': 3},
                             'AFGEKEURD': 
                                 {'QStackedWidget': 'afgekeurdQStackedWidget',
-                                 'tab_widget_position': 4}}
-
-        
+                                 'tab_widget_position': 4}}        
 
         # initialize  
         self.objectNameChanged.connect(self.storeObjectNameInit)
@@ -147,6 +145,9 @@ class MaterialContentQListWidget(ContentQListWidget):
         dxfs_names_and_global_paths = LaserJobTracker().getDXFsAndPaths(material, thickness)
 
         for (dxf_name, dxf_global_path) in dxfs_names_and_global_paths:
+
+            # TODO: this is a temp solution
+            dxf_name = os.path.basename(dxf_global_path)+dxf_name
 
             item = QListWidgetItem()
             item.setText(dxf_name)
