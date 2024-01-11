@@ -9,23 +9,53 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from global_variables import gv
 from src.app import MainWindow
+from src.app import get_thread_pool
 from laser_qdialog import LaserImportFromMailQDialog, LaserSelectFileQDialog
 from src.qmessagebox import TimedQMessageBox
+
+from src.worker import Worker
+from src.loading_dialog import LoadingQDialog
 
 from src.mail_manager import MailManager
 
 class LaserMainWindow(MainWindow):
     def __init__(self, *args, **kwargs):
         ui_global_path = os.path.join(gv['UI_DIR_HOME'], 'laser_main_window.ui')
-        MainWindow.__init__(self, ui_global_path, *args, **kwargs)
+        super().__init__(ui_global_path, *args, **kwargs)
+
+        print(f"just after laserMainwindows")
+        # self.loading_dialog.show()
+        # self.loading_dialog.hide()
+
+        # self.threadpool = get_thread_pool(self)
+        # print(f' this threadpool is of type {type(self.threadpool)}')
+
+        self.valid_msgs = []
 
         # menu bar actions
         self.ActionImportFromMail.triggered.connect(self.onActionImportFromMail)
         self.ActionSelectFile.triggered.connect(self.onActionSelectFileclicked)
 
+
     def onActionImportFromMail(self):
 
-        valid_msgs = self.getNewValidMails()
+
+        self.loading_dialog = LoadingQDialog(self, gv)
+        self.loading_dialog.show()
+
+        # create workers
+        self.get_mail_worker = Worker(self.getNewValidMails)
+        self.get_mail_worker.signals.finished.connect(self.loading_dialog.accept)
+        self.get_mail_worker.signals.result.connect(self.openImportFromMailDialog)
+
+
+        # self.threadpool.start(self.loading_widget_worker)
+        self.valid_msgs = self.threadpool.start(self.get_mail_worker)
+
+        print('done?')
+
+    def openImportFromMailDialog(self, valid_msgs: list):
+        ''' open import from mail dialog. '''
 
         if len(valid_msgs) == 0:
             TimedQMessageBox(text='No new mails', parent=self)
@@ -58,6 +88,7 @@ class LaserMainWindow(MainWindow):
 
     def getNewValidMails(self):
         ''' Return new valid mails. '''
+        print(f"getting mails")
 
         self.mail_manager = MailManager(gv)
         # read unread mails and convert to the email format and mark them as read
@@ -71,6 +102,8 @@ class LaserMainWindow(MainWindow):
                     text=f'{len(msgs)-len(valid_msgs)} invalid messages '\
                     f'detected, respond to {it_or_them} manually.',
                     parent=self, icon=QMessageBox.Warning)
+
+        print(f"yeah sending back mails now")
 
         return valid_msgs
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>722</width>
-    <height>582</height>
+    <width>800</width>
+    <height>604</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -15,6 +15,11 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>14</pointsize>
+   </font>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
@@ -62,12 +67,15 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4">
               <item>
-               <widget class="JobsOverviewQListWidget" name="allJobsQListWidget"/>
+               <widget class="JobsOverviewQListWidget" name="allJobsQListWidget">
+                <property name="font">
+                 <font>
+                  <pointsize>14</pointsize>
+                 </font>
+                </property>
+               </widget>
               </item>
              </layout>
-            </widget>
-            <widget class="QWidget" name="jobPage">
-             <layout class="QVBoxLayout" name="verticalLayout_13"/>
             </widget>
            </widget>
           </item>
@@ -82,7 +90,7 @@
        <attribute name="title">
         <string>Wachtrij</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_6">
+       <layout class="QHBoxLayout" name="horizontalLayout_10">
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
@@ -320,8 +328,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>722</width>
-     <height>24</height>
+     <width>800</width>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="createJobsMenubar">

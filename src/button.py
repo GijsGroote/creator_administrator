@@ -1,11 +1,16 @@
 
 import os
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QKeySequence
-from PyQt5.QtWidgets import (
-        QPushButton, QFileDialog, QStackedWidget,
-        QShortcut)
+
+from PyQt5 import *
+from PyQt5.QtCore import *
+from PyQt5 import QtWebEngineWidgets
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+
 from src.mail_manager import MailManager
+
+from src.app import get_thread_pool
+from src.worker import Worker
 
 
 from src.qlist_widget import ContentQListWidget
@@ -18,8 +23,12 @@ class JobsQPushButton(QPushButton):
             such as laser klaar, gesliced. '''
 
 
-    def __init__(self, *args, **kwargs):
-        QPushButton.__init__(self, *args, **kwargs)
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        # self.parent = parent
+
+        # self.threadpool = get_thread_pool(self) jobPage_2 annoyingly is not a child of QStackedWidget
+        self.threadpool = QThreadPool()
 
 
     def refreshAllQListWidgets(self):
@@ -41,21 +50,22 @@ class JobsQPushButton(QPushButton):
         if content_qlist_widget is not None:
             return content_qlist_widget.current_item_name
 
-    def sendFinishedMail(self, gv: dict, job_name: str, job_folder_global_path: str) -> str:
+    def sendFinishedMail(self, gv: dict, job_name: str, job_folder_global_path: str):
         ''' send please come pick up your job mail. '''
 
         mail_manager = MailManager(gv)
         msg_file_global_path = mail_manager.getMailGlobalPathFromFolder(job_folder_global_path)
 
         if msg_file_global_path is not None:
-            mail_manager.replyToEmailFromFileUsingTemplate(
-                        msg_file_global_path,
-                        "FINISHED_MAIL_TEMPLATE",
-                        {},
-                        popup_reply=False)
+            # send finished mail on a seperate thread
+            send_mail_worker = Worker(mail_manager.replyToEmailFromFileUsingTemplate,
+                    msg_file_path=msg_file_global_path,
+                    template_file_name="FINISHED_MAIL_TEMPLATE",
+                    template_content={},
+                    popup_reply=False)
 
-            TimedQMessageBox(text=f"Job finished mail send to {job_name}",
-                            parent=self)
+            self.threadpool.start(send_mail_worker)
+
         else:
             TimedQMessageBox(
                     text=f"No .msg file detected, no Pickup mail was sent to {job_name}",
@@ -74,8 +84,8 @@ class JobsQPushButton(QPushButton):
 
 class BackQPushButton(QPushButton):
 
-    def __init__(self, *args, **kwargs):
-        QPushButton.__init__(self, *args, **kwargs)
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
         self.clicked.connect(self.on_click)
 
  
@@ -87,8 +97,8 @@ class BackQPushButton(QPushButton):
 
 class SelectFolderQPushButton(QPushButton):
 
-    def __init__(self, parent=None):
-        QPushButton.__init__(self, parent)
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
         self.folder_global_path = None
         self.clicked.connect(self.on_click)
 

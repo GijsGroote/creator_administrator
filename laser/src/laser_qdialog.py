@@ -1,8 +1,13 @@
 import os
 import re
-from PyQt5 import QtCore, QtWidgets, QtWebEngineWidgets, uic
+from PyQt5 import *
+from PyQt5.QtCore import *
+from PyQt5 import QtWebEngineWidgets
+from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+import time
 
+from src.app import get_thread_pool
 import datetime
 from global_variables import gv
 from src.qdialog import ImportFromMailQDialog, SelectFileQDialog
@@ -10,18 +15,29 @@ from src.mail_manager import MailManager
 from src.qmessagebox import TimedQMessageBox
 
 from laser_job_tracker import LaserJobTracker
+from src.worker import Worker
+
+from src.app import get_thread_pool
+
 
 class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
     def __init__(self, parent, valid_msgs, *args, **kwargs):
         ui_global_path = os.path.join(gv['REPO_DIR_HOME'], 'laser/ui/import_mail_dialog.ui')
-        ImportFromMailQDialog.__init__(self, parent, ui_global_path, *args, **kwargs)
+        super().__init__(parent, ui_global_path, *args, **kwargs)
+
 
         self.mail_manager = parent.mail_manager
         self.valid_msgs = valid_msgs
+ 
         self.msg_counter = 0
         self.attachment_counter = 0
         self.new_material_text = 'New Material'
+
+
+        self.threadpool = get_thread_pool(self)
+
+
         self.job_tracker = LaserJobTracker()
         self.loadMailContent()
 
@@ -30,13 +46,23 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
         self.materialQComboBox.currentIndexChanged.connect(self.onMaterialComboboxChanged)
 
-        self.buttonBox.accepted.connect(self.collectAttachmentInfo)
 
+        # self.findChild(QPushButton, 'skipPushButton').clicked.connect(self.skipMail)
+
+        self.skipPushButton.clicked.connect(self.skipMail)
+
+        self.sendUnclearMailPushButton.clicked.connect(self.sendUnclearMaterialDetailsMail)
+        self.buttonBox.accepted.connect(self.collectAttachmentInfo)
 
     def loadContent(self):
         if self.attachment_counter+1 >= len(self.temp_attachments):
             self.createLaserJob()
+
+            # msg = self.valid_msgs[self.msg_counter]
             self.sendConfirmationMail()
+
+
+            # self.sendConfirmationMail()
 
             if self.msg_counter+1 >= len(self.valid_msgs):
                 # done! close dialog
@@ -65,7 +91,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
 
         sender_name = self.mail_manager.getSenderName(valid_msg)
-        self.mailFromQLabel.setText(f'Mail From: {sender_name}')
+        self.mailFromQLabel.setText(sender_name)
         self.mailProgressQLabel.setText(f'Mail ({self.msg_counter+1}/{len(self.valid_msgs)})')
 
         self.temp_job_name = self.job_tracker.makeJobNameUnique(sender_name)
@@ -88,7 +114,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
         if attachment_name.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
             self.attachmentProgressQLabel.setText(f'Attachment ({self.attachment_counter+1}/{len(self.temp_attachments)})')
-            self.attachmentNameQLabel.setText(f'File Name: {attachment_name}')
+            self.attachmentNameQLabel.setText(attachment_name)
 
             # initially hide option for new material 
             self.newMaterialQLabel.setHidden(True)
@@ -99,6 +125,10 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
             self.thicknessQLineEdit.clear()
             self.amountQLineEdit.clear()
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> c4513004bdcbf6ac2f139ab99670a02d119891a1
             materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()))
             self.materialQComboBox.addItems(materials)
             self.materialQComboBox.addItem(self.new_material_text)
@@ -124,6 +154,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
             if self.attachment_counter+1 >= len(self.temp_attachments):
                 self.createLaserJob()
+                print(f"fuck it is you, not good")
                 self.sendConfirmationMail()
 
                 if self.msg_counter+1 >= len(self.temp_attachments):
@@ -169,6 +200,18 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
                                                      'file_global_path': file_global_path}
         self.loadContent()
 
+    def skipMail(self):
+        ''' Skip mail and go to the next. '''
+        if self.msg_counter+1 >= len(self.valid_msgs):
+            # done! close dialog
+            self.accept() 
+
+        self.msg_counter += 1
+        self.attachment_counter = 0
+        self.loadMailContent()
+
+        
+
     def validate(self, material: str, thickness: str, amount: str) -> bool:
         for (thing, value) in [('material', material), ('thickness', thickness), ('amount', amount)]:
             if value == "":
@@ -207,23 +250,47 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         return True
 
 
-    def sendConfirmationMail(self):
+    def sendUnclearMaterialDetailsMail(self):
+        ''' Send a mail asking for the material, thickness and amount. '''
+        print(f"unclear stuff hyo")
+        # TODO: mail from a mail that is not yet downloaded. 
 
-        # send a confirmation mail
-        msg_file_path = self.mail_manager.getMailGlobalPathFromFolder(self.temp_job_folder_global_path)
-        self.mail_manager.replyToEmailFromFileUsingTemplate(msg_file_path,
-                                "RECEIVED_MAIL_TEMPLATE",
-                                {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
-                                popup_reply=False)
 
-        self.mail_manager.moveEmailToVerwerktFolder(self.valid_msgs[self.msg_counter])
+#         # send a confirmation mail
+#         msg_file_path = self.mail_manager.getMailGlobalPathFromFolder(self.temp_job_folder_global_path)
+#         self.mail_manager.replyToEmailFromFileUsingTemplate(msg_file_path,
+#                                 "RECEIVED_MAIL_TEMPLATE",
+#                                 {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
+#                                 popup_reply=False)
 
+#         self.mail_manager.moveEmailToVerwerktFolder(self.valid_msgs[self.msg_counter])
+
+        # TimedQMessageBox(
+        #             text=f"Confirmation mail send to {self.temp_job_name}",
+        #             parent=self)
 
         TimedQMessageBox(
-                    text=f"Confirmation mail send to {self.temp_job_name}",
+                    text=f"This function is not yet implemented",
                     parent=self)
 
 
+
+    def sendConfirmationMail(self):
+        ''' Send a confirmation mail on a new thread. ''' 
+
+        # make workers
+        send_mail_worker = Worker(self.mail_manager.replyToEmailFromFileUsingTemplate,
+                msg_file_path=self.mail_manager.getMailGlobalPathFromFolder(self.temp_job_folder_global_path), 
+                template_file_name="RECEIVED_MAIL_TEMPLATE",
+                template_content={"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
+                popup_reply=False)
+        move_mail_worker = Worker(self.mail_manager.moveEmailToVerwerktFolder,
+                                  msg=self.valid_msgs[self.msg_counter])
+
+        # start workers
+        self.threadpool.start(send_mail_worker)
+        self.threadpool.start(move_mail_worker)
+    
     def createLaserJob(self):
         """ Create a laser job. """
         msg = self.valid_msgs[self.msg_counter]

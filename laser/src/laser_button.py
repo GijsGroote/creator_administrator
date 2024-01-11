@@ -1,7 +1,9 @@
 import glob
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QKeySequence
+import os
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+from src.worker import Worker
 
 
 from global_variables import gv
@@ -15,13 +17,17 @@ from src.mail_manager import MailManager
 from src.qdialog import SelectOptionsQDialog
 
 
-from src.qmessagebox import TimedQMessageBox
+from src.directory_functions import copy
+from src.app import get_main_window
+from src.qmessagebox import TimedQMessageBox, JobFinishedMessageBox
+from laser_qlist_widget import MaterialContentQListWidget
+from src.app import get_main_window
 
 
 class LaserKlaarQPushButton(JobsQPushButton):
 
-    def __init__(self, *args, **kwargs):
-        JobsQPushButton.__init__(self, *args, **kwargs)
+    def __init__(self, parent=None, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
         self.clicked.connect(self.on_click)
  
     def on_click(self):
@@ -63,7 +69,6 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
         else:
             return
 
-
         for file_global_path in files_global_paths:
             # find job_name
             job_name = job_tracker.fileGlobalPathToJobName(file_global_path)
@@ -75,11 +80,26 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
             if job_tracker.isJobDone(job_name):
                 # hey this material is done!
 
+
+                TimedQMessageBox(text=f"Job finished mail send to {job_name}",
+                            parent=get_main_window(self))
+
+
                 job_tracker.updateJobStatus(job_name, 'VERWERKT')
                 job_folder_global_path = job_tracker.getJobFolderGlobalPathFromJobName(job_name)
                 self.sendFinishedMail(gv, job_name, job_folder_global_path)
 
+                 
+                print(job_tracker.getLaserFilesString(job_name))
+
+                JobFinishedMessageBox(text=f"Job {job_name} is finished, put it the Uitgifterek:\n"\
+                        f"{job_tracker.getLaserFilesString(job_name)}",
+                            parent=self)
+
         self.refreshAllQListWidgets()
+
+    def temp(self):
+        print('temp func')
 
 
 class AfgekeurdQPushButton(JobsQPushButton):
@@ -134,7 +154,7 @@ class OptionsQPushButton(JobsQPushButton):
             pass
 
         elif self.object_name == 'wachtrijMateriaalOptionsQPushButton':
-            pass
+            self.menu.addAction('Copy Files to ..', self.copyMaterialWachtrijFilesTo)
 
         elif self.object_name == 'verwerktOptionsQPushButton':
             self.menu.addAction('Move to Wachtrij', self.moveJobToWachtrij)
@@ -176,3 +196,29 @@ class OptionsQPushButton(JobsQPushButton):
     def getJobFolderGlobalPath(self):
         job_name = self.getCurrentItemName()
         return LaserJobTracker().getJobDict(job_name)['job_folder_global_path']
+
+    def copyMaterialWachtrijFilesTo(self):
+        ''' Copy the dxf files in wachtrij to a specified folder. '''
+        # get dxf files path
+
+
+        material_name = get_main_window(self).findChild(
+                MaterialContentQListWidget).current_item_name
+        print(f"material_name {material_name}")
+
+        material, thickness = split_material_name(material_name)
+
+        dxfs_names_and_global_paths = LaserJobTracker().getDXFsAndPaths(material, thickness)
+
+        target_folder_global_path = os.path.abspath('/home/gijs/Documents/temp/')
+
+        for file_name, file_global_path in dxfs_names_and_global_paths:
+            copy(file_global_path, os.path.join(target_folder_global_path, file_name))
+
+
+        # Ask to specify a folder
+
+        # copy files
+        
+        # open that folder
+        open_folder(target_folder_global_path)

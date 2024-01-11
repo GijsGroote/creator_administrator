@@ -1,14 +1,16 @@
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+from src.worker import Worker
+from src.app import get_thread_pool, get_main_window
 
 class TimedQMessageBox(QMessageBox):
 
-    def __init__(self, text='setthis', parent=None, icon=QMessageBox.Information, *args, **kwargs):
-        QMessageBox.__init__(self, *args, **kwargs)
+    def __init__(self, parent, text='setthis', icon=QMessageBox.Information, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
 
         self.setText(text)
-        self.timeout = 10
+        self.timeout = 5
         self.timer = QTimer(self)
         self.timer.setInterval(1000*self.timeout)
         self.timer.start()
@@ -17,9 +19,16 @@ class TimedQMessageBox(QMessageBox):
         self.setIcon(icon)
 
         # self.show() # needed to move to top right
-        # self.moveToTopRightCorner(parent)
+        self.move(25,25)
         self.setIcon(QMessageBox.Question)
         self.exec_()
+        # self.threadpool = get_thread_pool(self)
+
+        # message_worker = Worker(self.exec_)
+
+        # parent.threadpool.start(message_worker)
+
+        
 
     def moveToTopRightCorner(self, parent):
         parent_geometry = parent.geometry()
@@ -28,3 +37,14 @@ class TimedQMessageBox(QMessageBox):
         margin = 0
 
         self.move(parent_right_x-self.geometry().width()-30-margin, parent_top_y+38+margin)
+
+class JobFinishedMessageBox(QMessageBox):
+
+    def __init__(self, parent, text='setthis', icon=QMessageBox.Information, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        self.setText(text)
+        self.addButton(QMessageBox.Ok)
+        self.setIcon(icon)
+        self.exec_()
+

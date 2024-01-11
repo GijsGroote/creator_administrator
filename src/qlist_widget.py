@@ -17,8 +17,8 @@ class OverviewQListWidget(QListWidget):
     ''' Overview of multiple items in a list. In most subclasses
     these items are job folders. '''
 
-    def __init__(self, *args, **kwargs):
-        QListWidget.__init__(self, *args, **kwargs)
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
 
         # shortcut on the Enter key
         QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.itemEnterPressed)
@@ -71,8 +71,8 @@ class OverviewQListWidget(QListWidget):
 
 class ContentQListWidget(QListWidget):
 
-    def __init__(self, *args, **kwargs):
-        QListWidget.__init__(self, *args, **kwargs)
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
         self.current_item_name = None
 
 

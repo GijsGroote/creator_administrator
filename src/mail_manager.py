@@ -71,9 +71,10 @@ class MailManager():
 
     def imapLogout(self):
         ''' Logout of the IMAP server. '''
-        self.imap_mail.close()
-        self.imap_mail.logout()
-        self.imap_mail_server_running = False
+        pass
+        # self.imap_mail.close()
+        # self.imap_mail.logout()
+        # self.imap_mail_server_running = False
 
     def smtpSendMessage(self, msg):
         if self.imap_mail_server_running:
@@ -326,9 +327,10 @@ class MailManager():
             reply_msg.attach(MIMEText(html_content, "html"))
             self.smtpSendMessage(reply_msg)
 
+            print('mail sent')
+
     def mailToName(self, mail_name: str) -> str:
         """ Convert mail in form first_name last_name <mail@adres.com> to a more friendly name. """
-        print(f'what are you {mail_name}')
 
         matches = re.match(r"(.*?)\s*<(.*)>", mail_name)
 
