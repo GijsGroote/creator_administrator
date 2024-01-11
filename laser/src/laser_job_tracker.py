@@ -99,8 +99,10 @@ class LaserJobTracker(JobTracker):
     def getJobDict(self, job_name: str) -> dict:
         ''' Return the job dict from a job name. '''
         
+        
         with open(self.tracker_file_path, 'r') as tracker_file:
-            return json.load(tracker_file)[job_name]
+        
+            return json.load(tracker_file)[job_name] # returns a key error if the files are deleted from disk while creator administrator is open
 
     def getJobFolderGlobalPathFromJobName(self, job_name: str) -> str:
         ''' Return the job folder global path from the job name. '''

@@ -77,4 +77,3 @@ sys.path.append(gv['UI_DIR_HOME'])
 
 gv['FIGURES_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'], r'figures')
 
-

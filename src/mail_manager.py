@@ -124,6 +124,7 @@ class MailManager():
         """ Move email to verwerkt folder. """
         if sys.platform == 'win32':
             msg.Move(self.verwerkt_folder)
+
         if sys.platform == 'linux':
             self.imapLogin()
 
@@ -280,7 +281,6 @@ class MailManager():
 
         if sys.platform == 'win32':
             msg = self.outlook.OpenSharedItem(msg_file_path)
-            print(f'can you fin this? {msg}')
 
             # load recipient_name in template
             template_content["{recipient_name}"] = msg.Sender

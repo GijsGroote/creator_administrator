@@ -25,6 +25,9 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         self.job_tracker = LaserJobTracker()
         self.loadMailContent()
 
+        print(f'made the LaserImportFromMailDialog, please open up')
+
+
         self.materialQComboBox.currentIndexChanged.connect(self.onMaterialComboboxChanged)
 
         self.buttonBox.accepted.connect(self.collectAttachmentInfo)
@@ -53,6 +56,10 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         valid_msg = self.valid_msgs[self.msg_counter]
 
         self.temp_attachments = self.mail_manager.getAttachments(valid_msg)
+
+        print(f'the attachments that wre found are')
+        for attach in self.temp_attachments:
+            print(attach)
         self.temp_laser_cut_files_dict = {}
         self.temp_attachments_dict = {}
 
@@ -79,7 +86,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         attachment = self.temp_attachments[self.attachment_counter]
         attachment_name = self.mail_manager.getAttachmentFileName(attachment)
 
-        if attachment_name.endswith(gv['ACCEPTED_EXTENSIONS']):
+        if attachment_name.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
             self.attachmentProgressQLabel.setText(f'Attachment ({self.attachment_counter+1}/{len(self.temp_attachments)})')
             self.attachmentNameQLabel.setText(f'File Name: {attachment_name}')
 
@@ -91,8 +98,6 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
             self.newMaterialQLineEdit.clear()
             self.thicknessQLineEdit.clear()
             self.amountQLineEdit.clear()
-
-
 
             materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()))
             self.materialQComboBox.addItems(materials)
