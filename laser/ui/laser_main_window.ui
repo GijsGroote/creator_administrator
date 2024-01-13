@@ -31,7 +31,7 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_3">
+   <layout class="QHBoxLayout" name="horizontalLayout_16">
     <item>
      <widget class="JobsQTabWidget" name="jobsQTabWidget">
       <property name="sizePolicy">
@@ -41,7 +41,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="allJobsTab">
        <attribute name="title">
@@ -102,7 +102,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="jobsListPage_2">
              <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -117,43 +117,84 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_8">
               <item>
-               <widget class="JobContentQListWidget" name="listWidget_10"/>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_6">
+               <layout class="QVBoxLayout" name="verticalLayout_3">
                 <item>
-                 <widget class="BackQPushButton" name="backPushButton_2">
-                  <property name="text">
-                   <string>Back</string>
-                  </property>
-                 </widget>
+                 <layout class="QHBoxLayout" name="horizontalLayout_17">
+                  <item>
+                   <spacer name="horizontalSpacer_8">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="jobQLabel">
+                    <property name="text">
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;job_name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_7">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
                 </item>
                 <item>
-                 <widget class="LaserKlaarQPushButton" name="pushButton_3">
-                  <property name="text">
-                   <string>Laser Klaar</string>
-                  </property>
-                  <property name="shortcut">
-                   <string>Ctrl+K</string>
-                  </property>
-                 </widget>
+                 <widget class="JobContentQListWidget" name="listWidget_10"/>
                 </item>
                 <item>
-                 <widget class="AfgekeurdQPushButton" name="pushButton_4">
-                  <property name="text">
-                   <string>Afgekeurd</string>
-                  </property>
-                  <property name="shortcut">
-                   <string>Ctrl+S</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="OptionsQPushButton" name="wachtrijOptionsQPushButton">
-                  <property name="text">
-                   <string>Options</string>
-                  </property>
-                 </widget>
+                 <layout class="QHBoxLayout" name="horizontalLayout_6">
+                  <item>
+                   <widget class="BackQPushButton" name="backPushButton_2">
+                    <property name="text">
+                     <string>Back</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="LaserKlaarQPushButton" name="pushButton_3">
+                    <property name="text">
+                     <string>Laser Klaar</string>
+                    </property>
+                    <property name="shortcut">
+                     <string>Ctrl+K</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="AfgekeurdQPushButton" name="pushButton_4">
+                    <property name="text">
+                     <string>Afgekeurd</string>
+                    </property>
+                    <property name="shortcut">
+                     <string>Ctrl+S</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="OptionsQPushButton" name="wachtrijOptionsQPushButton">
+                    <property name="text">
+                     <string>Options</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                </layout>
               </item>
@@ -176,7 +217,7 @@
         <item>
          <widget class="QStackedWidget" name="wachtrijMateriaalQStackedWidget">
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="jobsListPage_3">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -186,9 +227,50 @@
            </layout>
           </widget>
           <widget class="QWidget" name="jobPage_3">
-           <layout class="QVBoxLayout" name="verticalLayout_10">
+           <layout class="QVBoxLayout" name="verticalLayout_12">
             <item>
-             <widget class="MaterialContentQListWidget" name="listWidget_7"/>
+             <layout class="QVBoxLayout" name="verticalLayout_10">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_15">
+                <item>
+                 <spacer name="horizontalSpacer_5">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QLabel" name="materialQLabel">
+                  <property name="text">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;material_name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_6">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="MaterialContentQListWidget" name="listWidget_7"/>
+              </item>
+             </layout>
             </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -239,25 +321,66 @@
            </layout>
           </widget>
           <widget class="QWidget" name="jobPage_4">
-           <layout class="QVBoxLayout" name="verticalLayout_11">
+           <layout class="QHBoxLayout" name="horizontalLayout_14">
             <item>
-             <widget class="JobContentQListWidget" name="listWidget_8"/>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_8">
+             <layout class="QVBoxLayout" name="verticalLayout_11">
               <item>
-               <widget class="BackQPushButton" name="backPushButton_4">
-                <property name="text">
-                 <string>Back</string>
-                </property>
-               </widget>
+               <layout class="QHBoxLayout" name="horizontalLayout_13">
+                <item>
+                 <spacer name="horizontalSpacer_4">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QLabel" name="jobQLabel_2">
+                  <property name="text">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;job_name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_3">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
               </item>
               <item>
-               <widget class="OptionsQPushButton" name="verwerktOptionsQPushButton">
-                <property name="text">
-                 <string>Options</string>
-                </property>
-               </widget>
+               <widget class="JobContentQListWidget" name="listWidget_8"/>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_8">
+                <item>
+                 <widget class="BackQPushButton" name="backPushButton_4">
+                  <property name="text">
+                   <string>Back</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="OptionsQPushButton" name="verwerktOptionsQPushButton">
+                  <property name="text">
+                   <string>Options</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
              </layout>
             </item>
@@ -291,25 +414,66 @@
            </layout>
           </widget>
           <widget class="QWidget" name="jobPage_5">
-           <layout class="QVBoxLayout" name="verticalLayout_12">
+           <layout class="QHBoxLayout" name="horizontalLayout_12">
             <item>
-             <widget class="JobContentQListWidget" name="listWidget_9"/>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_9">
+             <layout class="QVBoxLayout" name="verticalLayout_6">
               <item>
-               <widget class="BackQPushButton" name="backPushButton_5">
-                <property name="text">
-                 <string>Back</string>
-                </property>
-               </widget>
+               <layout class="QHBoxLayout" name="horizontalLayout_11">
+                <item>
+                 <spacer name="horizontalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QLabel" name="jobQLabel_3">
+                  <property name="text">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;job_name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_2">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
               </item>
               <item>
-               <widget class="OptionsQPushButton" name="afgekeurdOptionsQPushButton">
-                <property name="text">
-                 <string>Options</string>
-                </property>
-               </widget>
+               <widget class="JobContentQListWidget" name="listWidget_9"/>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_9">
+                <item>
+                 <widget class="BackQPushButton" name="backPushButton_5">
+                  <property name="text">
+                   <string>Back</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="OptionsQPushButton" name="afgekeurdOptionsQPushButton">
+                  <property name="text">
+                   <string>Options</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
              </layout>
             </item>

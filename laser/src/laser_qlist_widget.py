@@ -4,12 +4,7 @@ from typing import List, Tuple
 import re
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence
-from PyQt5.QtWidgets import (
-        QShortcut,
-        QListWidget, QPushButton,
-        QWidget, QListWidgetItem, QStackedWidget,
-        QVBoxLayout, QTabWidget
-)
+from PyQt5.QtWidgets import *
 
 from src.directory_functions import open_file, open_folder
 from convert import split_material_name
@@ -88,6 +83,7 @@ class JobContentQListWidget(ContentQListWidget):
         self.current_item_name = job_name
 
         job_dict = LaserJobTracker().getJobDict(job_name)
+        self.parent().findChild(QLabel).setText(job_dict['dynamic_job_name'])
 
         for file in os.listdir(job_dict['job_folder_global_path']):
 
@@ -139,6 +135,8 @@ class MaterialContentQListWidget(ContentQListWidget):
     def loadContent(self, material_name):
         self.clear()
         self.current_item_name = material_name
+
+        self.parent().findChild(QLabel, 'materialQLabel').setText(material_name)
 
         material, thickness = split_material_name(material_name)
 

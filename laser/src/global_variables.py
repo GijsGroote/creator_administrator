@@ -49,6 +49,22 @@ with open(global_variables_path, 'r') as global_variables_file:
     gv['ACCEPTED_EXTENSIONS'] = tuple(gv_data['ACCEPTED_EXTENSIONS'].split(', '))
     gv['ACCEPTED_MATERIALS'] = tuple(gv_data['ACCEPTED_MATERIALS'].split(', '))
     gv['DAYS_TO_KEEP_JOBS'] = gv_data['DAYS_TO_KEEP_JOBS']
+    gv['ONLY_UNREAD_MAIL'] = gv_data['ONLY_UNREAD_MAIL']
+
+    # TODO: these should be checked, because if MAIL_NAME is not in gv, errors
+    if 'MAIL_NAME' in gv_data:
+        gv['MAIL_NAME'] = gv_data['MAIL_NAME']
+    if 'MAIL_ADRESS' in gv_data:
+        gv['MAIL_ADRESS'] = gv_data['MAIL_ADRESS']
+    if 'MAIL_PASSWORD' in gv_data:
+        gv['MAIL_PASSWORD'] = gv_data['MAIL_PASSWORD']
+
+    if 'MAIL_INBOX_NAME' in gv_data:
+        gv['MAIL_INBOX_NAME'] = gv_data['MAIL_INBOX_NAME']
+    else:
+        gv['MAIL_INBOX_NAME'] = 'Inbox'
+
+    gv['MOVE_MAILS_TO_VERWERKT_FOLDER'] = gv_data['MOVE_MAILS_TO_VERWERKT_FOLDER']
     gv['PASSWORD'] = gv_data['PASSWORD']
 
     for mail_template in ['RECEIVED_MAIL_TEMPLATE',

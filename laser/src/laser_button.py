@@ -19,10 +19,10 @@ from src.qdialog import SelectOptionsQDialog
 
 from src.directory_functions import copy
 from src.app import get_main_window
-from src.qmessagebox import TimedQMessageBox, JobFinishedMessageBox
+from src.qmessagebox import TimedQMessageBox, JobFinishedMessageBox, YesOrNoMessageBox
 from laser_qlist_widget import MaterialContentQListWidget
 from src.app import get_main_window
-
+from requests.exceptions import ConnectionError
 
 class LaserKlaarQPushButton(JobsQPushButton):
 
@@ -34,12 +34,18 @@ class LaserKlaarQPushButton(JobsQPushButton):
         job_name = self.getCurrentItemName()
         
         job_folder_global_path = LaserJobTracker().getJobFolderGlobalPathFromJobName(job_name)
+        try:
+            self.sendFinishedMail(gv, job_name, job_folder_global_path)
+        except ConnectionError as e:
+             if not YesOrNoMessageBox(
+                    text=f'Job finished mail not send because: {str(e)}\nDo you still want to mark this job as Done?',
+                    parent=self).exec_() == QMessageBox.Yes:
+                return
 
         LaserJobTracker().updateJobStatus(job_name, 'VERWERKT')
         self.refreshAllQListWidgets()
 
-        # send response mail
-        self.sendFinishedMail(gv, job_name, job_folder_global_path)
+
 
             
 class MateriaalKlaarQPushButton(JobsQPushButton):
@@ -87,10 +93,15 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
 
                 job_tracker.updateJobStatus(job_name, 'VERWERKT')
                 job_folder_global_path = job_tracker.getJobFolderGlobalPathFromJobName(job_name)
-                self.sendFinishedMail(gv, job_name, job_folder_global_path)
 
-                 
-                print(job_tracker.getLaserFilesString(job_name))
+                try:
+                    self.sendFinishedMail(gv, job_name, job_folder_global_path)
+                except ConnectionError as e:
+                    TimedQMessageBox(
+                            text=str(e),
+                            parent=self, icon=QMessageBox.Critical)
+                    return
+
 
                 JobFinishedMessageBox(text=f"Job {job_name} is finished, put it the Uitgifterek:\n"\
                         f"{job_tracker.getLaserFilesString(job_name)}",
@@ -112,7 +123,14 @@ class AfgekeurdQPushButton(JobsQPushButton):
         self.refreshAllQListWidgets()
 
         job_folder_global_path = job_tracker.getJobFolderGlobalPathFromJobName(job_name)
-        self.sendDeclinedMail(gv, job_name, job_folder_global_path)
+
+        try:
+            self.sendDeclinedMail(gv, job_name, job_folder_global_path)
+        except ConnectionError as e:
+            TimedQMessageBox(
+                    text=str(e),
+                    parent=self, icon=QMessageBox.Critical)
+            return
 
 class OverigQPushButton(JobsQPushButton):
 

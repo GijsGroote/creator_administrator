@@ -10,7 +10,6 @@ from PyQt5 import QtCore
 FullPathRole = Qt.UserRole + 1
 
 
-
 from src.directory_functions import open_file, open_folder
 
 class OverviewQListWidget(QListWidget):
@@ -78,43 +77,43 @@ class ContentQListWidget(QListWidget):
 
         # shortcut for the Enter button
         QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.fileEnterPressed)
-
-        self.setDragEnabled(True)
         self.itemDoubleClicked.connect(self.fileDoubleClicked)
+
+        # self.setDragEnabled(True)
         # self.itemPressed.connect(self.startDrag)
         # self.itemEntered.connect(self.on_item_entered)
         # self.itemMoved.connect(self.on_item_moved)
         # self.itemDropped.connect(self.on_item_dropped)
 
-    def startDrag(self, actions):
-        drag = QDrag(self)
-        indexes = self.selectedIndexes()
-        mime = self.model().mimeData(indexes)
-        urlList = []
-        for index in indexes:
-            urlList.append(QUrl.fromLocalFile(index.data()))
-        mime.setUrls(urlList)
+    # def startDrag(self, actions):
+    #     drag = QDrag(self)
+    #     indexes = self.selectedIndexes()
+    #     mime = self.model().mimeData(indexes)
+    #     urlList = []
+    #     for index in indexes:
+    #         urlList.append(QUrl.fromLocalFile(index.data()))
+    #     mime.setUrls(urlList)
 
-        print(f"start dragging this {urlList}")
-        drag.setMimeData(mime)
-        drag.exec_(actions)
+    #     print(f"start dragging this {urlList}")
+    #     drag.setMimeData(mime)
+    #     drag.exec_(actions)
 
-    def dropEvent(self, e):
-        if e.mimeData().hasUrls():
-            e.setDropAction(Qt.CopyAction)
-            e.accept()
-            fpath_list = []
-            for url in e.mimeData().urls():
-                fpath_list.append(str(url.toLocalFile()))
-            print(f"the list of paths {fpath_list}")
+    # def dropEvent(self, e):
+    #     if e.mimeData().hasUrls():
+    #         e.setDropAction(Qt.CopyAction)
+    #         e.accept()
+    #         fpath_list = []
+    #         for url in e.mimeData().urls():
+    #             fpath_list.append(str(url.toLocalFile()))
+    #         print(f"the list of paths {fpath_list}")
 
-            for fpath in fpath_list:
-                print(f'IMPORT {fpath}')
-                fileName = QFileInfo(fpath).fileName()
-                item = QListWidgetItem(fileName)
-                item.setData(FullPathRole, fpath)
-                self.addItem(fpath)
-            print(f"done somehow")
+    #         for fpath in fpath_list:
+    #             print(f'IMPORT {fpath}')
+    #             fileName = QFileInfo(fpath).fileName()
+    #             item = QListWidgetItem(fileName)
+    #             item.setData(FullPathRole, fpath)
+    #             self.addItem(fpath)
+    #         print(f"done somehow")
 
     # def startDrag(self, file):
 

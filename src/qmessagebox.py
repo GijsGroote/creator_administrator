@@ -28,7 +28,6 @@ class TimedQMessageBox(QMessageBox):
 
         # parent.threadpool.start(message_worker)
 
-        
 
     def moveToTopRightCorner(self, parent):
         parent_geometry = parent.geometry()
@@ -47,4 +46,15 @@ class JobFinishedMessageBox(QMessageBox):
         self.addButton(QMessageBox.Ok)
         self.setIcon(icon)
         self.exec_()
+
+class YesOrNoMessageBox(QMessageBox):
+
+    def __init__(self, parent, text='setthis', icon=QMessageBox.Question, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        self.setText(text)
+        self.addButton(QMessageBox.No)
+        self.addButton(QMessageBox.Yes)
+        self.setDefaultButton(QMessageBox.Yes)
+        self.setIcon(icon)
 

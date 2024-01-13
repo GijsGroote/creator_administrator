@@ -7,6 +7,7 @@ import os
 import sys
 import re
 
+
 if sys.platform == 'linux':
     import imaplib
     import email
@@ -18,6 +19,8 @@ if sys.platform == 'linux':
     from email.utils import parseaddr, formataddr 
     from email.parser import BytesParser
     from email.policy import default
+    import http.client as httplib
+    from requests.exceptions import ConnectionError
 
 elif sys.platform == 'win32':
     import win32com.client
@@ -28,42 +31,36 @@ class MailManager():
 
     def __init__(self, gv: dict):
         self.gv = gv
-        self.only_unread_mail = False
 
         if sys.platform == 'win32':
+            try:
+                if gv['MAIL_INBOX_NAME'] == 'Inbox':
+                    self.inbox = self.outlook.GetDefaultFolder(6)
+                else:
+                    account_name = self.outlook.Session.Accounts.Item(1).DeliveryStore.DisplayName
+                    self.inbox = self.outlook.Folders[account_name].Folders[gv['MAIL_INBOX_NAME']]
+
+            except Exception as e:
+                print(f"Error accessing inbox: {e}")
+
             self.outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
-            self.inbox = self.outlook.GetDefaultFolder(6)
             try:
                 self.verwerkt_folder = self.inbox.Parent.Folders.Item("Verwerkt")
             except:
                 self.verwerkt_folder = self.inbox.Parent.Folders.Add("Verwerkt")
 
         if sys.platform == 'linux':
-
-            # TODO: these two LOC blow this line
-            self.inbox_folder = 'temp_inbox'
-            with open('/home/gijs/Documents/email_password.txt', 'r') as file:
-                # Read the content of the file
-                password = file.read()
-            self.username = 'gijsgroote@hotmail.com'
-            self.password = password
-
             # specific to gmail and outlook
             self.smtp_server = 'smtp-mail.outlook.com'
             self.smtp_port = 587 
             self.imap_server = 'outlook.office365.com'
-            self.imap_mail_server_running = False
 
     def imapLogin(self):
         ''' Login to the IMAP server to download mails. '''
-        if not self.imap_mail_server_running:
-            self.imap_mail = imaplib.IMAP4_SSL(self.imap_server)
-            self.imap_mail.login(self.username, self.password)
+        self.imap_mail = imaplib.IMAP4_SSL(self.imap_server)
+        self.imap_mail.login(self.gv['MAIL_ADRESS'], self.gv['MAIL_PASSWORD'])
+        self.imap_mail.select(self.gv['MAIL_INBOX_NAME'])
 
-            self.imap_mail.select(self.inbox_folder)
-            self.imap_mail_server_running = True
-
-        # create Verwerkt folder
         status, mailboxes = self.imap_mail.list()
         if status == 'OK':
             if not any('Verwerkt' in mbox.decode() for mbox in mailboxes):
@@ -71,29 +68,19 @@ class MailManager():
 
     def imapLogout(self):
         ''' Logout of the IMAP server. '''
-        pass
-        # self.imap_mail.close()
-        # self.imap_mail.logout()
-        # self.imap_mail_server_running = False
+        self.imap_mail.close()
+        self.imap_mail.logout()
 
-    def smtpSendMessage(self, msg):
-        if self.imap_mail_server_running:
-            self.imapLogout()
-
-        context = ssl.create_default_context()
-
-        with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
-            server.starttls(context=context)
-            server.login(self.username, self.password)
-            server.send_message(msg)
 
     def getNewEmails(self) -> list:
         """ Return emails from Outlook inbox. """
         msgs = []
 
+        # TODO: if mails have come but no internet connection,m what hten huh
+
         if sys.platform == 'win32':    
             for message in self.inbox.Items:
-                if self.only_unread_mail:
+                if self.gv['ONLY_UNREAD_MAIL']:
                     if message.UnRead:
                         msgs.append(message)
                 else:
@@ -103,9 +90,13 @@ class MailManager():
                 message.Save()
 
         if sys.platform == 'linux':
+
+            if not self.isThereInternet():
+                raise ConnectionError('Not connected to the internet')
+
             self.imapLogin()
 
-            if self.only_unread_mail:
+            if self.gv['ONLY_UNREAD_MAIL']:
                 status, response = self.imap_mail.search(None, 'UNSEEN')
             else:
                 status, response = self.imap_mail.search(None, 'ALL')
@@ -117,25 +108,31 @@ class MailManager():
                 status, msg_data = self.imap_mail.fetch(mail_id, "(RFC822)")
                 msgs.append(msg_data)
 
-            # self.imapLogout()
+            self.imapLogout()
 
         return msgs
     
+
     def moveEmailToVerwerktFolder(self, msg):
         """ Move email to verwerkt folder. """
         if sys.platform == 'win32':
-            msg.Move(self.verwerkt_folder)
+            if self.gv['MOVE_MAILS_TO_VERWERKT_FOLDER']:
+                msg.Move(self.verwerkt_folder)
 
         if sys.platform == 'linux':
+            if not self.isThereInternet():
+                raise ConnectionError('Not connected to the internet')
+
             self.imapLogin()
 
             # Extract the mail UID using regular expression
             match = re.search(rb'\b(\d+)\b', msg[0][0])
 
             if match:
-                uid_msg_set = (match.group(1))
-                # self.imap_mail.copy(uid_msg_set, 'Verwerkt')
-                # self.imap_mail.store(uid_msg_set, '+FLAGS', r'(\Deleted)')
+                if self.gv['MOVE_MAILS_TO_VERWERKT_FOLDER']:
+                    uid_msg_set = (match.group(1))
+                    self.imap_mail.copy(uid_msg_set, 'Verwerkt')
+                    self.imap_mail.store(uid_msg_set, '+FLAGS', r'(\Deleted)')
 
             self.imapLogout()
 
@@ -279,6 +276,8 @@ class MailManager():
                                                 template_content: dict,
                                                 popup_reply=True):
         """ Reply to .msg file using a template. """
+        if not self.isThereInternet():
+            raise ConnectionError('Not connected to the internet')
 
         if sys.platform == 'win32':
             msg = self.outlook.OpenSharedItem(msg_file_path)
@@ -321,13 +320,18 @@ class MailManager():
             # Create the reply messageI
             reply_msg = MIMEMultipart("alternative")
             reply_msg["Subject"] = "Re: " + msg.get("Subject", "")
-            reply_msg["From"] = formataddr(('Gijs Groote', self.username))
+            reply_msg["From"] = formataddr((self.gv['MAIL_NAME'], self.gv['MAIL_ADRESS']))
             reply_msg["To"] = original_sender_mail
             reply_msg["In-Reply-To"] = msg.get('Message-ID')
             reply_msg.attach(MIMEText(html_content, "html"))
-            self.smtpSendMessage(reply_msg)
 
-            print('mail sent')
+            context = ssl.create_default_context()
+
+
+            with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
+                server.starttls(context=context)
+                server.login(self.gv['MAIL_ADRESS'], self.gv['MAIL_PASSWORD'])
+                server.send_message(msg)
 
     def mailToName(self, mail_name: str) -> str:
         """ Convert mail in form first_name last_name <mail@adres.com> to a more friendly name. """
@@ -349,3 +353,12 @@ class MailManager():
         return self.mailToName(self.getEmailAddress(msg))
 
 
+    def isThereInternet(self) -> bool:
+        conn = httplib.HTTPSConnection("8.8.8.8", timeout=5)
+        try:
+            conn.request("HEAD", "/")
+            return True
+        except Exception:
+            return False
+        finally:
+            conn.close()

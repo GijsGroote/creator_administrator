@@ -2,6 +2,7 @@ import sys
 import os
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
+from requests.exceptions import ConnectionError
 
 
 from PyQt5.QtGui import *
@@ -39,7 +40,11 @@ class LaserMainWindow(MainWindow):
 
     def onActionImportFromMail(self):
 
-        self.openImportFromMailDialog(self.getNewValidMails())
+        valid_msgs = self.getNewValidMails()
+        self.openImportFromMailDialog(valid_msgs)
+
+
+        # TODO: the error function should handle how upon error the message if displayed to the user.
 
         # self.loading_dialog = LoadingQDialog(self, gv)
         # self.loading_dialog.show()
@@ -89,11 +94,21 @@ class LaserMainWindow(MainWindow):
 
     def getNewValidMails(self):
         ''' Return new valid mails. '''
-        print(f"getting mails")
 
-        self.mail_manager = MailManager(gv)
-        # read unread mails and convert to the email format and mark them as read
-        msgs = self.mail_manager.getNewEmails()
+        try:
+            self.mail_manager = MailManager(gv)
+            msgs = self.mail_manager.getNewEmails()
+
+        except ConnectionError as e:
+            TimedQMessageBox(
+                    text=f'Error getting mails becuase: {str(e)}',
+                    parent=self, icon=QMessageBox.Critical)
+            return
+        except Exception as e:
+            TimedQMessageBox(
+                    text=f'Error: {str(e)}',
+                    parent=self, icon=QMessageBox.Critical)
+            return
 
         valid_msgs = [msg for msg in msgs if self.mail_manager.isMailAValidJobRequest(msg)]
 
@@ -104,10 +119,7 @@ class LaserMainWindow(MainWindow):
                     f'detected, respond to {it_or_them} manually.',
                     parent=self, icon=QMessageBox.Warning)
 
-        print(f"yeah sending back mails now")
-
         return valid_msgs
-
     
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

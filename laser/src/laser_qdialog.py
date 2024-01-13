@@ -14,6 +14,7 @@ from src.qdialog import ImportFromMailQDialog, SelectFileQDialog
 from src.mail_manager import MailManager
 from src.qmessagebox import TimedQMessageBox
 
+from requests.exceptions import ConnectionError
 from laser_job_tracker import LaserJobTracker
 from src.worker import Worker
 
@@ -250,6 +251,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
 #         # send a confirmation mail
 #         msg_file_path = self.mail_manager.getMailGlobalPathFromFolder(self.temp_job_folder_global_path)
+# TODO: do net forget ConnectionError
 #         self.mail_manager.replyToEmailFromFileUsingTemplate(msg_file_path,
 #                                 "RECEIVED_MAIL_TEMPLATE",
 #                                 {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
@@ -269,13 +271,21 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
     def sendConfirmationMail(self):
         ''' Send a confirmation mail on a new thread. ''' 
-        self.mail_manager.replyToEmailFromFileUsingTemplate(
-                msg_file_path=self.mail_manager.getMailGlobalPathFromFolder(self.temp_job_folder_global_path), 
-                template_file_name="RECEIVED_MAIL_TEMPLATE",
-                template_content={"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
-                popup_reply=False)
-        self.mail_manager.moveEmailToVerwerktFolder(
-                                  msg=self.valid_msgs[self.msg_counter])
+
+        try:
+            self.mail_manager.replyToEmailFromFileUsingTemplate(
+                    msg_file_path=self.mail_manager.getMailGlobalPathFromFolder(self.temp_job_folder_global_path), 
+                    template_file_name="RECEIVED_MAIL_TEMPLATE",
+                    template_content={"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
+                    popup_reply=False)
+            self.mail_manager.moveEmailToVerwerktFolder(
+                                      msg=self.valid_msgs[self.msg_counter])
+        except ConnectionError as e:
+            TimedQMessageBox(
+                    text=str(e),
+                    parent=self, icon=QMessageBox.Critical)
+            return
+
         # make workers
         # send_mail_worker = Worker(self.mail_manager.replyToEmailFromFileUsingTemplate,
         #         msg_file_path=self.mail_manager.getMailGlobalPathFromFolder(self.temp_job_folder_global_path), 
