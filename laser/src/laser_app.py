@@ -11,7 +11,7 @@ from PyQt5.QtCore import *
 from global_variables import gv
 from src.app import MainWindow
 from src.app import get_thread_pool
-from laser_qdialog import LaserImportFromMailQDialog, LaserSelectFileQDialog
+from laser_qdialog import LaserImportFromMailQDialog, LaserFilesSelectQDialog, LaserFolderSelectQDialog
 from src.qmessagebox import TimedQMessageBox
 
 from src.worker import Worker
@@ -34,11 +34,12 @@ class LaserMainWindow(MainWindow):
         self.valid_msgs = []
 
         # menu bar actions
-        self.ActionImportFromMail.triggered.connect(self.onActionImportFromMail)
-        self.ActionSelectFile.triggered.connect(self.onActionSelectFileclicked)
+        self.importFromMailQAction.triggered.connect(self.importFromMailAction)
+        self.selectFilesQAction.triggered.connect(self.selectFilesAction)
+        self.selectFoldersQAction.triggered.connect(self.selectFoldersAction)
 
 
-    def onActionImportFromMail(self):
+    def importFromMailAction(self):
 
         valid_msgs = self.getNewValidMails()
         self.openImportFromMailDialog(valid_msgs)
@@ -77,9 +78,9 @@ class LaserMainWindow(MainWindow):
             for list_widget in qlist_widgets:
                 list_widget.refresh()
 
-
-    def onActionSelectFileclicked(self):
-        dialog = LaserSelectFileQDialog(self)
+    def selectFilesAction(self):
+        ''' Open dialog to select multiple files. ''' 
+        dialog = LaserFilesSelectQDialog(self)
 
         if dialog.exec_() == QDialog.Accepted:
             folder_global_path = dialog.selectFolderButton.folder_global_path
@@ -91,6 +92,22 @@ class LaserMainWindow(MainWindow):
         qlist_widgets = self.findChildren(QListWidget)
         for list_widget in qlist_widgets:
             list_widget.refresh()
+
+    def selectFoldersAction(self):
+        ''' Open dialog to select folder with multiple subfolders. ''' 
+        dialog = LaserFolderSelectQDialog(self)
+
+        if dialog.exec_() == QDialog.Accepted:
+            folder_global_path = dialog.selectFolderButton.folder_global_path
+            project_name = dialog.ProjectNameQLineEdit.text()
+            # TODO: open dialog to collect material, thickness and amount per dxf
+            # create_laser_jobs(folder_global_path, project_name)
+
+        # refresh all laser job tabs
+        qlist_widgets = self.findChildren(QListWidget)
+        for list_widget in qlist_widgets:
+            list_widget.refresh()
+
 
     def getNewValidMails(self):
         ''' Return new valid mails. '''

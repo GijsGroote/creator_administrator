@@ -500,8 +500,9 @@
     <property name="title">
      <string>Create Jobs</string>
     </property>
-    <addaction name="ActionImportFromMail"/>
-    <addaction name="ActionSelectFile"/>
+    <addaction name="importFromMailQAction"/>
+    <addaction name="selectFilesQAction"/>
+    <addaction name="selectFoldersQAction"/>
    </widget>
    <widget class="QMenu" name="menuDocumentation">
     <property name="title">
@@ -520,7 +521,7 @@
    <addaction name="menuDocumentation"/>
    <addaction name="menuSettings"/>
   </widget>
-  <action name="ActionImportFromMail">
+  <action name="importFromMailQAction">
    <property name="checkable">
     <bool>false</bool>
    </property>
@@ -531,12 +532,12 @@
     <string>Ctrl+M</string>
    </property>
   </action>
-  <action name="ActionSelectFile">
+  <action name="selectFilesQAction">
    <property name="text">
-    <string>Select FIle</string>
+    <string>Select Files</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+F</string>
+    <string>Ctrl+I</string>
    </property>
   </action>
   <action name="action3D_printers">
@@ -552,6 +553,11 @@
   <action name="actionMetal_Laser_Cutter">
    <property name="text">
     <string>Metal Laser Cutter</string>
+   </property>
+  </action>
+  <action name="selectFoldersQAction">
+   <property name="text">
+    <string>Select Folders</string>
    </property>
   </action>
  </widget>

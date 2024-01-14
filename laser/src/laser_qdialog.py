@@ -10,7 +10,8 @@ import time
 from src.app import get_thread_pool
 import datetime
 from global_variables import gv
-from src.qdialog import ImportFromMailQDialog, SelectFileQDialog
+from src.qdialog import ImportFromMailQDialog, SelectQDialog
+
 from src.mail_manager import MailManager
 from src.qmessagebox import TimedQMessageBox
 
@@ -321,11 +322,41 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
                     text=f"Laser job {self.temp_job_name} created",
                     parent=self)
 
-class LaserSelectFileQDialog(SelectFileQDialog):
-    """ Select file dialog. """
+class LaserFilesSelectQDialog(SelectQDialog):
+    """ Select files dialog. """
     def __init__(self, parent, *args, **kwargs):
-        ui_global_path = os.path.join(gv['REPO_DIR_HOME'], 'laser/ui/select_file_dialog.ui')
-        SelectFileQDialog.__init__(self, parent, ui_global_path, *args, **kwargs)
+        ui_global_path = os.path.join(gv['REPO_DIR_HOME'], 'laser/ui/select_files_dialog.ui')
+        super().__init__(parent, ui_global_path, *args, **kwargs)
+
+        self.buttonBox.accepted.connect(self.validate)
+
+    def validate(self):
+        if self.PasswordQLineEdit.text() != gv['PASSWORD']:
+            dlg = QMessageBox(self)
+            dlg.setText('Password Incorrect')
+            dlg.exec()
+            return
+
+        if self.selectFolderButton.folder_global_path is None:
+            dlg = QMessageBox(self)
+            dlg.setText('Select a Folder')
+            button = dlg.exec()
+            return
+
+        if len(self.ProjectNameQLineEdit.text()) == 0:
+            dlg = QMessageBox(self)
+            dlg.setText('Provide a Project Name')
+            button = dlg.exec()
+            return
+
+        self.accept()
+
+
+class LaserFolderSelectQDialog(SelectQDialog):
+    """ Select folder dialog. """
+    def __init__(self, parent, *args, **kwargs):
+        ui_global_path = os.path.join(gv['REPO_DIR_HOME'], 'laser/ui/select_folders_dialog.ui')
+        super().__init__(parent, ui_global_path, *args, **kwargs)
 
         self.buttonBox.accepted.connect(self.validate)
 

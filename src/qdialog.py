@@ -30,8 +30,7 @@ class ImportFromMailQDialog(QDialog):
         ''' Close the dialog, press cancel. '''
         self.close()
 
-
-class SelectFileQDialog(QDialog):
+class SelectQDialog(QDialog):
     """ Select file dialog. """
     def __init__(self, parent, ui_global_path, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)

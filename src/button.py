@@ -116,7 +116,32 @@ class BackQPushButton(QPushButton):
     def on_click(self):
         self.parent().parent().setCurrentIndex(0) 
 
+class SelectFilesQPushButton(QPushButton):
+    ''' Select multiple files from file system. '''
+
+
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.files_global_paths = []
+        self.clicked.connect(self.on_click)
+
+    def on_click(self):
+        self.folder_global_path = QFileDialog.getExistingDirectory(self,
+            'Select Folder',
+            os.path.expanduser('~'),
+            QFileDialog.ShowDirsOnly)
+
+        folder_name_short = self.folder_global_path
+
+        max_char_length = 50
+
+        if len(folder_name_short) > max_char_length:
+            folder_name_short = '../'+folder_name_short[-max_char_length+3:]
+
+        self.setText(folder_name_short)
+
 class SelectFolderQPushButton(QPushButton):
+    ''' Select a folder from file system. '''
 
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
