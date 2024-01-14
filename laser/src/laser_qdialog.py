@@ -327,26 +327,27 @@ class LaserFilesSelectQDialog(SelectQDialog):
     def __init__(self, parent, *args, **kwargs):
         ui_global_path = os.path.join(gv['REPO_DIR_HOME'], 'laser/ui/select_files_dialog.ui')
         super().__init__(parent, ui_global_path, *args, **kwargs)
+        self.filesGlobalPathsQLabel.hide()
 
         self.buttonBox.accepted.connect(self.validate)
 
     def validate(self):
-        if self.PasswordQLineEdit.text() != gv['PASSWORD']:
+        if self.passwordQLineEdit.text() != gv['PASSWORD']:
             dlg = QMessageBox(self)
             dlg.setText('Password Incorrect')
             dlg.exec()
             return
 
-        if self.selectFolderButton.folder_global_path is None:
+        if len(self.selectFilesButton.folder_global_path) == 0:
             dlg = QMessageBox(self)
-            dlg.setText('Select a Folder')
-            button = dlg.exec()
+            dlg.setText('Select Files')
+            dlg.exec()
             return
 
         if len(self.ProjectNameQLineEdit.text()) == 0:
             dlg = QMessageBox(self)
-            dlg.setText('Provide a Project Name')
-            button = dlg.exec()
+            dlg.setText('Provide a Job Name')
+            dlg.exec()
             return
 
         self.accept()
@@ -361,7 +362,7 @@ class LaserFolderSelectQDialog(SelectQDialog):
         self.buttonBox.accepted.connect(self.validate)
 
     def validate(self):
-        if self.PasswordQLineEdit.text() != gv['PASSWORD']:
+        if self.passwordQLineEdit.text() != gv['PASSWORD']:
             dlg = QMessageBox(self)
             dlg.setText('Password Incorrect')
             dlg.exec()

@@ -59,8 +59,6 @@ class LaserMainWindow(MainWindow):
         # self.threadpool.start(self.loading_widget_worker)
         # self.valid_msgs = self.threadpool.start(self.get_mail_worker)
 
-        print('done?')
-
     def openImportFromMailDialog(self, valid_msgs: list):
         ''' open import from mail dialog. '''
 

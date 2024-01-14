@@ -36,16 +36,16 @@ class SelectQDialog(QDialog):
         super().__init__(parent, *args, **kwargs)
 
         loadUi(ui_global_path, self)
-        self.PasswordQLineEdit.textChanged.connect(partial(self.check_password, gv=gv))
+        self.passwordQLineEdit.textChanged.connect(partial(self.check_password, gv=gv))
 
         # shortcut on Esc button
         QShortcut(QKeySequence(Qt.Key_Escape), self).activated.connect(self.closeDialog)
 
     def check_password(self, gv: dict):
-        if self.PasswordQLineEdit.text() == gv['PASSWORD']:
-            self.PasswordQLineEdit.setStyleSheet("background-color: rgba(0, 255, 0, 0.4);")
+        if self.passwordQLineEdit.text() == gv['PASSWORD']:
+            self.passwordQLineEdit.setStyleSheet("background-color: rgba(0, 255, 0, 0.4);")
         else:
-            self.PasswordQLineEdit.setStyleSheet("background-color: rgba(255, 0, 0, 0.4);")
+            self.passwordQLineEdit.setStyleSheet("background-color: rgba(255, 0, 0, 0.4);")
 
     def closeDialog(self):
         ''' Close the dialog, press cancel. '''

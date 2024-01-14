@@ -108,7 +108,6 @@ class BackQPushButton(QPushButton):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.clicked.connect(self.on_click)
-
  
         # shortcut on Esc button
         QShortcut(QKeySequence(Qt.Key_Escape), self).activated.connect(self.on_click)
@@ -119,26 +118,31 @@ class BackQPushButton(QPushButton):
 class SelectFilesQPushButton(QPushButton):
     ''' Select multiple files from file system. '''
 
-
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.files_global_paths = []
         self.clicked.connect(self.on_click)
 
     def on_click(self):
-        self.folder_global_path = QFileDialog.getExistingDirectory(self,
-            'Select Folder',
+      # Get list of selected file paths
+        files_paths, _ = QFileDialog.getOpenFileNames(
+            self,
+            'Select Files',
             os.path.expanduser('~'),
-            QFileDialog.ShowDirsOnly)
+            'All Files (*)')
+        self.files_global_paths.extend(files_paths)
+        print(self.files_global_paths)
 
-        folder_name_short = self.folder_global_path
+        selected_files_str = 'Selected Files:\n'
+        for file_global_path in self.files_global_paths:
+            selected_files_str += f'{os.path.basename(file_global_path)}, '
+        selected_files_str = selected_files_str[:-2]
 
-        max_char_length = 50
+        if len(self.files_global_paths) > 0:
+            self.parent().filesGlobalPathsQLabel.setText(selected_files_str)
+            print(self.parent().children())
+            self.parent().filesGlobalPathsQLabel.show()
 
-        if len(folder_name_short) > max_char_length:
-            folder_name_short = '../'+folder_name_short[-max_char_length+3:]
-
-        self.setText(folder_name_short)
 
 class SelectFolderQPushButton(QPushButton):
     ''' Select a folder from file system. '''
