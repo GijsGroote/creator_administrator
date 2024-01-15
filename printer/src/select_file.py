@@ -11,11 +11,11 @@ from tkinter import filedialog
 from global_variables import gv
 from job_tracker import JobTracker
 
-from directory_functions import copy
-from create_batch_file import python_to_batch
-from cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
-from talk_to_sa import password_please
-from convert_functions import make_job_name_unique
+from src.directory_functions import copy
+from src.create_batch_file import python_to_batch
+from src.cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
+from src.talk_to_sa import password_please
+from src.convert_functions import make_job_name_unique
 
 
 def is_folder_a_valid_print_job(global_path: str) -> Tuple[bool, str]:
