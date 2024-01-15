@@ -82,7 +82,7 @@ class LaserMainWindow(MainWindow):
 
         if dialog.exec_() == QDialog.Accepted:
             files_global_paths = dialog.selectFilesButton.files_global_paths
-            job_name = dialog.ProjectNameQLineEdit.text()
+            job_name = dialog.projectNameQLineEdit.text()
 
             LaserFileInfoQDialog(self, job_name, files_global_paths).exec_()
             
@@ -97,7 +97,7 @@ class LaserMainWindow(MainWindow):
 
         if dialog.exec_() == QDialog.Accepted:
             folder_global_path = dialog.selectFolderButton.folder_global_path
-            project_name = dialog.ProjectNameQLineEdit.text()
+            project_name = dialog.projectNameQLineEdit.text()
             # TODO: open dialog to collect material, thickness and amount per dxf
             # create_laser_jobs(folder_global_path, project_name)
 

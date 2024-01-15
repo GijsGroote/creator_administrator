@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>861</width>
-    <height>492</height>
+    <width>860</width>
+    <height>394</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Select Folder..</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -33,19 +33,29 @@
       <layout class="QFormLayout" name="formLayout">
        <item row="0" column="0">
         <widget class="QLabel" name="label">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>&amp;Password</string>
          </property>
          <property name="buddy">
-          <cstring>PasswordQLineEdit</cstring>
+          <cstring>passwordQLineEdit</cstring>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLineEdit" name="PasswordQLineEdit"/>
+        <widget class="QLineEdit" name="passwordQLineEdit"/>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="label_2">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>&amp;Select a &lt;FOLDER&gt; with the following structure:
 
@@ -66,6 +76,11 @@
        </item>
        <item row="2" column="1">
         <widget class="SelectFolderQPushButton" name="selectFolderButton">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Select &lt;Folder&gt;</string>
          </property>
@@ -73,18 +88,33 @@
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="label_3">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>&amp;Project Name</string>
          </property>
          <property name="buddy">
-          <cstring>ProjectNameQLineEdit</cstring>
+          <cstring>projectNameQLineEdit</cstring>
          </property>
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QLineEdit" name="ProjectNameQLineEdit"/>
+        <widget class="QLineEdit" name="projectNameQLineEdit"/>
        </item>
       </layout>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
      </item>
      <item>
       <spacer name="verticalSpacer_2">
@@ -99,16 +129,6 @@
        </property>
       </spacer>
      </item>
-     <item>
-      <widget class="QDialogButtonBox" name="buttonBox">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="standardButtons">
-        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
   </layout>
@@ -121,7 +141,9 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>PasswordQLineEdit</tabstop>
+  <tabstop>passwordQLineEdit</tabstop>
+  <tabstop>projectNameQLineEdit</tabstop>
+  <tabstop>selectFolderButton</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -132,8 +154,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>466</x>
-     <y>370</y>
+     <x>476</x>
+     <y>481</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

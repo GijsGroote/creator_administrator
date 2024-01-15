@@ -194,14 +194,11 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
     def skipMail(self):
         ''' Skip mail and go to the next. '''
         if self.msg_counter+1 >= len(self.valid_msgs):
-            # done! close dialog
             self.accept() 
-
-        self.msg_counter += 1
-        self.attachment_counter = 0
-        self.loadMailContent()
-
-        
+        else:
+            self.msg_counter += 1
+            self.attachment_counter = 0
+            self.loadMailContent()
 
     def validate(self, material: str, thickness: str, amount: str) -> bool:
         for (thing, value) in [('material', material), ('thickness', thickness), ('amount', amount)]:
@@ -352,7 +349,7 @@ class LaserFilesSelectQDialog(SelectQDialog):
             dlg.exec()
             return
 
-        if len(self.ProjectNameQLineEdit.text()) == 0:
+        if len(self.projectNameQLineEdit.text()) == 0:
             dlg = QMessageBox(self)
             dlg.setText('Provide a Job Name')
             dlg.exec()
@@ -372,19 +369,19 @@ class LaserFolderSelectQDialog(SelectQDialog):
         if self.passwordQLineEdit.text() != gv['PASSWORD']:
             dlg = QMessageBox(self)
             dlg.setText('Password Incorrect')
-            dlg.exec()
+            dlg.exec_()
             return
 
         if self.selectFolderButton.folder_global_path is None:
             dlg = QMessageBox(self)
             dlg.setText('Select a Folder')
-            button = dlg.exec()
+            dlg.exec_()
             return
 
-        if len(self.ProjectNameQLineEdit.text()) == 0:
+        if len(self.projectNameQLineEdit.text()) == 0:
             dlg = QMessageBox(self)
             dlg.setText('Provide a Project Name')
-            button = dlg.exec()
+            dlg.exec_()
             return
 
         self.accept()
@@ -411,19 +408,14 @@ class LaserFileInfoQDialog(QDialog):
         self.file_counter = 0
         self.job_name_list = job_name_list
         self.files_global_paths_list = files_global_paths_list
-
         self.temp_job_name = self.job_tracker.makeJobNameUnique(self.job_name_list[self.job_counter])
         self.temp_files_global_paths = files_global_paths_list[self.job_counter]
  
         self.new_material_text = 'New Material'
-
-        self.loadJobContent()
-
         self.materialQComboBox.currentIndexChanged.connect(self.onMaterialComboboxChanged)
-
         self.skipPushButton.clicked.connect(self.skipJob)
-
         self.buttonBox.accepted.connect(self.collectFileInfo)
+        self.loadJobContent()
 
     def loadContent(self):
         if self.file_counter+1 >= len(self.temp_files_global_paths):
@@ -450,7 +442,7 @@ class LaserFileInfoQDialog(QDialog):
         self.temp_files_dict = {}
 
         self.jobNameQLabel.setText(self.temp_job_name)
-        self.jobProgressQLabel.setText(f'Job ({self.job_counter+1}/{len(self.job_name_list)}')
+        self.jobProgressQLabel.setText(f'Job ({self.job_counter+1}/{len(self.job_name_list)})')
 
         self.temp_job_folder_name = str(datetime.date.today().strftime('%d-%m'))+'_'+self.temp_job_name
         self.temp_job_folder_global_path = os.path.join(os.path.join(gv['JOBS_DIR_HOME'], self.temp_job_folder_name))
@@ -462,6 +454,7 @@ class LaserFileInfoQDialog(QDialog):
 
         file_global_path = self.temp_files_global_paths[self.file_counter]
         file_name = os.path.basename(file_global_path)
+        print(f"loading this file now {file_name}")
 
         if file_name.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
             self.fileProgressQLabel.setText(f'File({self.file_counter+1}/{len(self.temp_files_global_paths)})')
@@ -497,9 +490,9 @@ class LaserFileInfoQDialog(QDialog):
         else:
             file_global_path = os.path.join(self.temp_job_folder_global_path, file_name)
             self.temp_files_dict[file_name] = {'source_file_global_path': file_global_path,
-                                             'target_file_global_path': os.path.join(
-                                                 self.temp_job_folder_name, os.path.basename(
-                                                     file_global_path))}
+                                             'target_file_global_path': self.temp_files_global_paths[self.file_counter]}
+
+            print(f"correct you txt file file {self.temp_files_dict[file_name]}")
 
             if self.file_counter+1 >= len(self.temp_files_global_paths):
                 self.createLaserJob()
@@ -508,7 +501,7 @@ class LaserFileInfoQDialog(QDialog):
                     self.job_counter += 1
                     self.loadJobContent()
             else:
-                self.file_counter+= 1
+                self.file_counter += 1
                 self.loadFileContent()
 
     def onMaterialComboboxChanged(self):
@@ -532,6 +525,7 @@ class LaserFileInfoQDialog(QDialog):
 
 
         source_file_global_path = self.temp_files_global_paths[self.file_counter]
+        print(f"this is a  full path right {source_file_global_path}")
         file_name = os.path.basename(source_file_global_path)
 
 
@@ -545,18 +539,20 @@ class LaserFileInfoQDialog(QDialog):
                             'thickness': thickness,
                             'amount': amount,
                             'done': False}
+
         self.temp_files_dict[file_name] = {'source_file_global_path': source_file_global_path,
-                                                     'target_file_global_path': target_file_global_path}
+                                             'target_file_global_path': target_file_global_path}
         self.loadContent()
 
     def skipJob(self):
         ''' Skip job and go to the next. '''
         if self.job_counter+1 >= len(self.job_name_list):
             self.accept() 
+        else:
 
-        self.job_counter += 1
-        self.file_counter = 0
-        self.loadJobContent()
+            self.job_counter += 1
+            self.file_counter = 0
+            self.loadJobContent()
 
     def validate(self, material: str, thickness: str, amount: str) -> bool:
         for (thing, value) in [('material', material), ('thickness', thickness), ('amount', amount)]:

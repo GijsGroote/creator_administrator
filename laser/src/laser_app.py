@@ -82,7 +82,7 @@ class LaserMainWindow(MainWindow):
 
         if dialog.exec_() == QDialog.Accepted:
             files_global_paths = dialog.selectFilesButton.files_global_paths
-            job_name = dialog.ProjectNameQLineEdit.text()
+            job_name = dialog.projectNameQLineEdit.text()
 
             LaserFileInfoQDialog(self, [job_name], [files_global_paths]).exec_()
             
@@ -97,10 +97,37 @@ class LaserMainWindow(MainWindow):
 
         if dialog.exec_() == QDialog.Accepted:
             folder_global_path = dialog.selectFolderButton.folder_global_path
-            project_name = dialog.ProjectNameQLineEdit.text()
-            # TODO: open dialog to collect material, thickness and amount per dxf
-            # create_laser_jobs(folder_global_path, project_name)
+            project_name = dialog.projectNameQLineEdit.text()
+            folders_global_paths_list = []
+            jobs_names_list = []
 
+            for subfolder in os.listdir(folder_global_path):
+                subfolder_global_path = os.path.join(folder_global_path, subfolder)
+
+                if os.path.isdir(subfolder_global_path):
+                    files_in_subfolder_global_paths = []
+                    subfolder_contains_laser_file = False
+                    for item in os.listdir(subfolder_global_path):
+                        item_global_path = os.path.join(subfolder_global_path, item)
+                        if os.path.isdir(item_global_path):
+                            TimedQMessageBox(text=f'{subfolder_global_path} contains a folder '\
+                                f'{item_global_path} which is skipped' ,
+                                parent=self, icon=QMessageBox.Warning)
+                            continue
+
+                        if item_global_path.endswith(gv['ACCEPTED_EXTENSIONS']):
+                            files_in_subfolder_global_paths.append(item_global_path)
+                            subfolder_contains_laser_file = True
+
+                    if subfolder_contains_laser_file:
+                        folders_global_paths_list.append(files_in_subfolder_global_paths)
+                        jobs_names_list.append(project_name+'_'+os.path.basename(subfolder))
+                    else:
+                        TimedQMessageBox(text=f'No laser file found in {subfolder_global_path}'\
+                                f'skip this subfolder' ,
+                                parent=self, icon=QMessageBox.Warning)
+
+            LaserFileInfoQDialog(self, jobs_names_list, folders_global_paths_list).exec_()
         # refresh all laser job tabs
         qlist_widgets = self.findChildren(QListWidget)
         for list_widget in qlist_widgets:

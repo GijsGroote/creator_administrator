@@ -27,7 +27,7 @@ class PrinterMainWindow(MainWindow):
 
     #     if dialog.exec_() == QDialog.Accepted:
     #         folder_global_path = dialog.selectFolderButton.folder_global_path
-    #         project_name = dialog.ProjectNameQLineEdit.text()
+    #         project_name = dialog.projectNameQLineEdit.text()
     #         print(f'the folder is {folder_global_path} and pj {project_name}')
     #         create_laser_jobs(folder_global_path, project_name)
     

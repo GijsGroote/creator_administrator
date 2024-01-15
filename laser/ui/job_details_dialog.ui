@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>831</width>
-    <height>509</height>
+    <width>860</width>
+    <height>325</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -251,8 +251,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>295</x>
-     <y>688</y>
+     <x>391</x>
+     <y>400</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
