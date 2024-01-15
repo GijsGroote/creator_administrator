@@ -7,6 +7,8 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import time
 
+from PyQt5.uic import loadUi
+
 from src.app import get_thread_pool
 import datetime
 from global_variables import gv
@@ -18,6 +20,7 @@ from src.qmessagebox import TimedQMessageBox
 from requests.exceptions import ConnectionError
 from laser_job_tracker import LaserJobTracker
 from src.worker import Worker
+from src.directory_functions import copy
 
 from src.app import get_thread_pool
 
@@ -27,7 +30,6 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
     def __init__(self, parent, valid_msgs, *args, **kwargs):
         ui_global_path = os.path.join(gv['REPO_DIR_HOME'], 'laser/ui/import_mail_dialog.ui')
         super().__init__(parent, ui_global_path, *args, **kwargs)
-
 
         self.mail_manager = parent.mail_manager
         self.valid_msgs = valid_msgs
@@ -39,17 +41,12 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
         # self.threadpool = get_thread_pool(self)
 
-
         self.job_tracker = LaserJobTracker()
         self.loadMailContent()
 
-
-
         self.materialQComboBox.currentIndexChanged.connect(self.onMaterialComboboxChanged)
 
-
         # self.findChild(QPushButton, 'skipPushButton').clicked.connect(self.skipMail)
-
         self.skipPushButton.clicked.connect(self.skipMail)
 
         self.sendUnclearMailPushButton.clicked.connect(self.sendUnclearMaterialDetailsMail)
@@ -338,9 +335,20 @@ class LaserFilesSelectQDialog(SelectQDialog):
             dlg.exec()
             return
 
-        if len(self.selectFilesButton.folder_global_path) == 0:
+        if len(self.selectFilesButton.files_global_paths) == 0:
             dlg = QMessageBox(self)
             dlg.setText('Select Files')
+            dlg.exec()
+            return
+
+        contains_accepted_extension = False
+        for file_global_path in self.selectFilesButton.files_global_paths:
+            if file_global_path.endswith(gv['ACCEPTED_EXTENSIONS']):
+                contains_accepted_extension = True
+
+        if not contains_accepted_extension:
+            dlg = QMessageBox(self)
+            dlg.setText(f'Select should contain one or more files with extension {gv["ACCEPTED_EXTENSIONS"]}')
             dlg.exec()
             return
 
@@ -351,7 +359,6 @@ class LaserFilesSelectQDialog(SelectQDialog):
             return
 
         self.accept()
-
 
 class LaserFolderSelectQDialog(SelectQDialog):
     """ Select folder dialog. """
@@ -381,4 +388,228 @@ class LaserFolderSelectQDialog(SelectQDialog):
             return
 
         self.accept()
+
+class LaserFileInfoQDialog(QDialog):
+    ''' Ask for file laser file details (material, thickness, amount) and create laser jobs.
+    job_name: List with job names
+    files_global_paths_list: nested lists with global paths for every file in the job.  
+
+    '''
+
+
+    def __init__(self, parent, job_name_list: list, files_global_paths_list: list, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        loadUi(os.path.join(gv['REPO_DIR_HOME'], 'laser/ui/job_details_dialog.ui'), self)
+
+        assert len(job_name_list) == len(files_global_paths_list),\
+            f'length of job name list: {len(job_name_list)} should'\
+            f'be equal to the files_global_path_list: {len(files_global_paths_list)}'
+
+        self.job_tracker = LaserJobTracker()
+        self.job_counter = 0
+        self.file_counter = 0
+        self.job_name_list = job_name_list
+        self.files_global_paths_list = files_global_paths_list
+
+        self.temp_job_name = self.job_tracker.makeJobNameUnique(self.job_name_list[self.job_counter])
+        self.temp_files_global_paths = files_global_paths_list[self.job_counter]
+ 
+        self.new_material_text = 'New Material'
+
+        self.loadJobContent()
+
+        self.materialQComboBox.currentIndexChanged.connect(self.onMaterialComboboxChanged)
+
+        self.skipPushButton.clicked.connect(self.skipJob)
+
+        self.buttonBox.accepted.connect(self.collectFileInfo)
+
+    def loadContent(self):
+        if self.file_counter+1 >= len(self.temp_files_global_paths):
+            self.createLaserJob()
+
+            if self.job_counter+1 >= len(self.job_name_list):
+                self.accept()
+            else:
+                self.job_counter += 1
+                self.file_counter= 0
+                self.loadJobContent()
+        else:
+            # self.attachment_counter += 1
+            self.loadFileContent()
+
+
+    def loadJobContent(self):
+        ''' Load content of mail into dialog. '''
+
+        self.temp_job_name = self.job_tracker.makeJobNameUnique(self.job_name_list[self.job_counter])
+        self.temp_files_global_paths = self.files_global_paths_list[self.job_counter]
+
+        self.temp_laser_cut_files_dict = {}
+        self.temp_files_dict = {}
+
+        self.jobNameQLabel.setText(self.temp_job_name)
+        self.jobProgressQLabel.setText(f'Job ({self.job_counter+1}/{len(self.job_name_list)}')
+
+        self.temp_job_folder_name = str(datetime.date.today().strftime('%d-%m'))+'_'+self.temp_job_name
+        self.temp_job_folder_global_path = os.path.join(os.path.join(gv['JOBS_DIR_HOME'], self.temp_job_folder_name))
+        self.loadFileContent()
+
+
+    def loadFileContent(self):
+        ''' Load content of attachment into dialog. '''
+
+        file_global_path = self.temp_files_global_paths[self.file_counter]
+        file_name = os.path.basename(file_global_path)
+
+        if file_name.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
+            self.fileProgressQLabel.setText(f'File({self.file_counter+1}/{len(self.temp_files_global_paths)})')
+            self.fileNameQLabel.setText(file_name)
+
+            # initially hide option for new material 
+            self.newMaterialQLabel.setHidden(True)
+            self.newMaterialQLineEdit.setHidden(True)
+
+            self.materialQComboBox.clear()
+            self.newMaterialQLineEdit.clear()
+            self.thicknessQLineEdit.clear()
+            self.amountQLineEdit.clear()
+
+            materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()))
+            self.materialQComboBox.addItems(materials)
+            self.materialQComboBox.addItem(self.new_material_text)
+
+            # guess the material, thickness and amount
+            for material in gv['ACCEPTED_MATERIALS']:
+                if material.lower() in file_name.lower():
+                    self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(material))
+            match = re.search(r"\d+\.?\d*(?=mm)", file_name)
+            if match:
+                self.thicknessQLineEdit.setText(match.group())
+
+            match = re.search(r"\d+\.?\d*(?=x_)", file_name)
+            if match:
+                self.amountQLineEdit.setText(match.group())
+            else:
+                self.amountQLineEdit.setText('1')
+
+        else:
+            file_global_path = os.path.join(self.temp_job_folder_global_path, file_name)
+            self.temp_files_dict[file_name] = {'source_file_global_path': file_global_path,
+                                             'target_file_global_path': os.path.join(
+                                                 self.temp_job_folder_name, os.path.basename(
+                                                     file_global_path))}
+
+            if self.file_counter+1 >= len(self.temp_files_global_paths):
+                self.createLaserJob()
+
+                if self.job_counter+1 >= len(self.job_name_list):
+                    self.job_counter += 1
+                    self.loadJobContent()
+            else:
+                self.file_counter+= 1
+                self.loadFileContent()
+
+    def onMaterialComboboxChanged(self):
+        if self.materialQComboBox.currentText() == self.new_material_text:
+            self.newMaterialQLabel.setHidden(False)
+            self.newMaterialQLineEdit.setHidden(False)
+        else:
+            self.newMaterialQLabel.setHidden(True)
+            self.newMaterialQLineEdit.setHidden(True)
+        
+    def collectFileInfo(self):
+        ''' Collect material, thickness and amount info. '''
+        material = self.materialQComboBox.currentText()
+        if material == self.new_material_text:
+            material = self.newMaterialQLineEdit.text()
+        thickness = self.thicknessQLineEdit.text()
+        amount = self.amountQLineEdit.text()
+        
+        if not self.validate(material, thickness, amount):
+            return
+
+
+        source_file_global_path = self.temp_files_global_paths[self.file_counter]
+        file_name = os.path.basename(source_file_global_path)
+
+
+        target_file_global_path = os.path.join(self.temp_job_folder_global_path,
+                                         material+'_'+thickness+'_'+amount+'x_'+file_name)
+
+        self.temp_laser_cut_files_dict[self.temp_job_name + '_' + file_name] = {
+                            'file_name': file_name,
+                            'file_global_path': target_file_global_path,
+                            'material': material,
+                            'thickness': thickness,
+                            'amount': amount,
+                            'done': False}
+        self.temp_files_dict[file_name] = {'source_file_global_path': source_file_global_path,
+                                                     'target_file_global_path': target_file_global_path}
+        self.loadContent()
+
+    def skipJob(self):
+        ''' Skip job and go to the next. '''
+        if self.job_counter+1 >= len(self.job_name_list):
+            self.accept() 
+
+        self.job_counter += 1
+        self.file_counter = 0
+        self.loadJobContent()
+
+    def validate(self, material: str, thickness: str, amount: str) -> bool:
+        for (thing, value) in [('material', material), ('thickness', thickness), ('amount', amount)]:
+            if value == "":
+                dlg = QMessageBox(self)
+                dlg.setText(f'Fill in {thing}')
+                dlg.exec()
+                return False
+
+        try:
+            thickness_float = float(thickness)
+        except Exception:
+            dlg = QMessageBox(self)
+            dlg.setText(f'Thickness should be a positive number, not {thickness}')
+            dlg.exec()
+            return False
+        if thickness_float <=0:
+            dlg = QMessageBox(self)
+            dlg.setText(f'Thickness should be a positive number, not {thickness}')
+            dlg.exec()
+            return False
+
+        try:
+            amount_int = int(amount)
+        except Exception:
+            dlg = QMessageBox(self)
+            dlg.setText(f'Amount should be a positive interger, not: {amount}')
+            dlg.exec()
+            return False
+
+        if amount_int <= 0:
+            dlg = QMessageBox(self)
+            dlg.setText(f'Amount should be a positive interger, not: {amount}')
+            dlg.exec()
+            return False
+
+        return True
+
+    def createLaserJob(self):
+        """ Create a laser job. """
+
+        self.job_tracker.addJob(self.temp_job_name,
+                                 self.temp_job_folder_global_path,
+                                 self.temp_laser_cut_files_dict)
+
+        if not os.path.exists(self.temp_job_folder_global_path):
+            os.mkdir(self.temp_job_folder_global_path)
+
+        # save the attachments
+        for file_dict in self.temp_files_dict.values():
+            copy(file_dict['source_file_global_path'], file_dict['target_file_global_path'])
+
+        TimedQMessageBox(
+                    text=f"Laser job {self.temp_job_name} created",
+                    parent=self)
 

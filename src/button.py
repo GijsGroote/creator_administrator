@@ -53,7 +53,6 @@ class JobsQPushButton(QPushButton):
     def sendFinishedMail(self, gv: dict, job_name: str, job_folder_global_path: str):
         ''' send please come pick up your job mail. '''
         mail_manager = MailManager(gv)
-        print(f'sending a finished mail to {job_name}')
         msg_file_global_path = mail_manager.getMailGlobalPathFromFolder(job_folder_global_path)
 
         if msg_file_global_path is not None:
@@ -131,7 +130,6 @@ class SelectFilesQPushButton(QPushButton):
             os.path.expanduser('~'),
             'All Files (*)')
         self.files_global_paths.extend(files_paths)
-        print(self.files_global_paths)
 
         selected_files_str = 'Selected Files:\n'
         for file_global_path in self.files_global_paths:
@@ -140,7 +138,6 @@ class SelectFilesQPushButton(QPushButton):
 
         if len(self.files_global_paths) > 0:
             self.parent().filesGlobalPathsQLabel.setText(selected_files_str)
-            print(self.parent().children())
             self.parent().filesGlobalPathsQLabel.show()
 
 

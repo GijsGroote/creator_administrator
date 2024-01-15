@@ -115,6 +115,7 @@
  </customwidgets>
  <tabstops>
   <tabstop>passwordQLineEdit</tabstop>
+  <tabstop>ProjectNameQLineEdit</tabstop>
   <tabstop>selectFilesButton</tabstop>
  </tabstops>
  <resources/>

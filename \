@@ -84,7 +84,7 @@ class LaserMainWindow(MainWindow):
             files_global_paths = dialog.selectFilesButton.files_global_paths
             job_name = dialog.ProjectNameQLineEdit.text()
 
-            LaserFileInfoQDialog(self, [job_name], [files_global_paths]).exec_()
+            LaserFileInfoQDialog(self, job_name, files_global_paths).exec_()
             
         # refresh all laser job tabs
         qlist_widgets = self.findChildren(QListWidget)
