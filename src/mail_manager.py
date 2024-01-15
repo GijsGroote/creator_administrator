@@ -33,6 +33,7 @@ class MailManager():
         self.gv = gv
 
         if sys.platform == 'win32':
+            self.outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
             try:
                 if gv['MAIL_INBOX_NAME'] == 'Inbox':
                     self.inbox = self.outlook.GetDefaultFolder(6)
@@ -43,7 +44,6 @@ class MailManager():
             except Exception as e:
                 print(f"Error accessing inbox: {e}")
 
-            self.outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
             try:
                 self.verwerkt_folder = self.inbox.Parent.Folders.Item("Verwerkt")
             except:

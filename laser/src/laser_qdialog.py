@@ -340,7 +340,7 @@ class LaserFilesSelectQDialog(SelectQDialog):
 
         contains_accepted_extension = False
         for file_global_path in self.selectFilesButton.files_global_paths:
-            if file_global_path.endswith(gv['ACCEPTED_EXTENSIONS']):
+            if file_global_path.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
                 contains_accepted_extension = True
 
         if not contains_accepted_extension:
