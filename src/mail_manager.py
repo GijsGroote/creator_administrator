@@ -86,8 +86,9 @@ class MailManager():
                 else:
                     msgs.append(message)
                 
-                message.UnRead = False
-                message.Save()
+                # TODO
+                # message.UnRead = False
+                # message.Save()
 
         if sys.platform == 'linux':
 
@@ -117,7 +118,8 @@ class MailManager():
         """ Move email to verwerkt folder. """
         if sys.platform == 'win32':
             if self.gv['MOVE_MAILS_TO_VERWERKT_FOLDER']:
-                msg.Move(self.verwerkt_folder)
+                pass
+                # msg.Move(self.verwerkt_folder)
 
         if sys.platform == 'linux':
             if not self.isThereInternet():
@@ -177,19 +179,19 @@ class MailManager():
                 if msg.get_content_type() == 'text/html':
                     return msg.get_payload(decode=True)
 
-    def printMailBodyFromPath(self, msg_file_path: str):
-        """ Print the content of an .msg file. """
+    # def printMailBodyFromPath(self, msg_file_path: str):
+    #     """ Print the content of an .msg file. """
 
-        if sys.platform == 'win32':
-            outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
-            msg = outlook.OpenSharedItem(msg_file_path)
+    #     if sys.platform == 'win32':
+    #         outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
+    #         msg = outlook.OpenSharedItem(msg_file_path)
 
-            print(msg.Body)
+    #         print(msg.Body)
 
-        if sys.platform == 'linux':
+    #     if sys.platform == 'linux':
 
-            with open(msg_file_path, 'rb') as f:
-                msg = BytesParser(policy=default).parse(f)
+    #         with open(msg_file_path, 'rb') as f:
+    #             msg = BytesParser(policy=default).parse(f)
 
 
     def getEmailAddress(self, msg) -> str:
@@ -225,6 +227,7 @@ class MailManager():
 
         if sys.platform == 'win32':
             return msg.Attachments
+        
         if sys.platform == 'linux':
            attachments = []
            for part in email.message_from_bytes(msg[0][1]).walk():

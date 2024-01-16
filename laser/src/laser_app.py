@@ -73,14 +73,14 @@ class LaserMainWindow(MainWindow):
 
         # self.threadpool.start(self.loading_widget_worker)
 
-    def openImportFromMailDialog(self):
+    def openImportFromMailDialog(self, valid_msgs):
         ''' open import from mail dialog. '''
 
-        if len(self.valid_msgs) == 0:
-            TimedQMessageBox(text='No new mails', parent=self)
+        if len(valid_msgs) == 0:
+            TimedQMessageBox(text='No new mails')
         else:
 
-            dialog = LaserImportFromMailQDialog(self, self.valid_msgs)
+            dialog = LaserImportFromMailQDialog(self, valid_msgs)
             dialog.exec_()
 
             # refresh all laser job tabs
@@ -156,13 +156,14 @@ class LaserMainWindow(MainWindow):
         except ConnectionError as e:
             TimedQMessageBox(
                     text=f'Error getting mails becuase: {str(e)}',
-                    parent=self, icon=QMessageBox.Critical)
+                    icon=QMessageBox.Critical)
             return
         except Exception as e:
             TimedQMessageBox(
                     text=f'Error: {str(e)}',
-                    parent=self, icon=QMessageBox.Critical)
+                    icon=QMessageBox.Critical)
             return
+
 
         valid_msgs = [msg for msg in msgs if self.mail_manager.isMailAValidJobRequest(msg)]
 
@@ -171,9 +172,9 @@ class LaserMainWindow(MainWindow):
             TimedQMessageBox(
                     text=f'{len(msgs)-len(valid_msgs)} invalid messages '\
                     f'detected, respond to {it_or_them} manually.',
-                    parent=self, icon=QMessageBox.Warning)
+                    icon=QMessageBox.Warning)
 
-        self.valid_msgs = valid_msgs
+        return valid_msgs
     
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

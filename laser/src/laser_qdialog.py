@@ -29,7 +29,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         ui_global_path = os.path.join(gv['REPO_DIR_HOME'], 'laser/ui/import_mail_dialog.ui')
         super().__init__(parent, ui_global_path, *args, **kwargs)
 
-        self.mail_manager = parent.mail_manager
+        self.mail_manager = MailManager(gv)
         self.valid_msgs = valid_msgs
  
         self.msg_counter = 0
@@ -40,7 +40,6 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         self.threadpool = gv['THREAD_POOL']
 
         self.job_tracker = LaserJobTracker()
-        self.loadMailContent()
 
         self.materialQComboBox.currentIndexChanged.connect(self.onMaterialComboboxChanged)
 
@@ -49,6 +48,9 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
         self.sendUnclearMailPushButton.clicked.connect(self.sendUnclearMaterialDetailsMail)
         self.buttonBox.accepted.connect(self.collectAttachmentInfo)
+
+        self.loadMailContent()
+
 
     def loadContent(self):
         if self.attachment_counter+1 >= len(self.temp_attachments):
@@ -76,6 +78,12 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         ''' Load content of mail into dialog. '''
 
         valid_msg = self.valid_msgs[self.msg_counter]
+
+        print(f'what can we do witht this? {type(valid_msg)}')
+
+
+
+
 
         self.temp_attachments = self.mail_manager.getAttachments(valid_msg)
 
