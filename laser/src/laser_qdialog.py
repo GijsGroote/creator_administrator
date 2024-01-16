@@ -14,7 +14,7 @@ from global_variables import gv
 from src.qdialog import ImportFromMailQDialog, SelectQDialog
 
 from src.mail_manager import MailManager
-from src.qmessagebox import TimedQMessageBox
+from src.qmessagebox import TimedMessage
 
 from requests.exceptions import ConnectionError
 from laser_job_tracker import LaserJobTracker
@@ -264,9 +264,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         #             text=f"Confirmation mail send to {self.temp_job_name}",
         #             parent=self)
 
-        TimedQMessageBox(
-                    text=f"This function is not yet implemented",
-                    parent=self)
+        TimedMessage(self, f"This function is not yet implemented")
 
 
 
@@ -282,9 +280,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
             self.mail_manager.moveEmailToVerwerktFolder(
                                       msg=self.valid_msgs[self.msg_counter])
         except ConnectionError as e:
-            TimedQMessageBox(
-                    text=str(e),
-                    parent=self, icon=QMessageBox.Critical)
+            TimedMessage(self, text=str(e))
             return
 
         # make workers
@@ -318,9 +314,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         for attachment_dict in self.temp_attachments_dict.values():
             self.mail_manager.saveAttachment(attachment_dict['attachment'], attachment_dict['file_global_path'])
 
-        TimedQMessageBox(
-                    text=f"Laser job {self.temp_job_name} created",
-                    parent=self)
+        TimedMessage(self, text=f'Laser job {self.temp_job_name} created')
 
 class LaserFilesSelectQDialog(SelectQDialog):
     """ Select files dialog. """
@@ -611,7 +605,5 @@ class LaserFileInfoQDialog(QDialog):
         for file_dict in self.temp_files_dict.values():
             copy(file_dict['source_file_global_path'], file_dict['target_file_global_path'])
 
-        TimedQMessageBox(
-                    text=f"Laser job {self.temp_job_name} created",
-                    parent=self)
+        TimedMessage(self, text=f"Laser job {self.temp_job_name} created")
 

@@ -20,7 +20,7 @@ from src.qdialog import SelectOptionsQDialog
 
 
 from src.directory_functions import copy
-from src.qmessagebox import TimedQMessageBox, JobFinishedMessageBox, YesOrNoMessageBox
+from src.qmessagebox import TimedMessage, JobFinishedMessageBox, YesOrNoMessageBox
 from laser_qlist_widget import MaterialContentQListWidget
 from requests.exceptions import ConnectionError
 
@@ -90,8 +90,7 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
                 # hey this material is done!
 
 
-                TimedQMessageBox(text=f"Job finished mail send to {job_name}",
-                            parent=get_main_window(self))
+                TimedMessage(self, f"Job finished mail send to {job_name}")
 
 
                 job_tracker.updateJobStatus(job_name, 'VERWERKT')
@@ -100,9 +99,7 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
                 try:
                     self.sendFinishedMail(gv, job_name, job_folder_global_path)
                 except ConnectionError as e:
-                    TimedQMessageBox(
-                            text=str(e),
-                            parent=self, icon=QMessageBox.Critical)
+                    TimedMessage(self, text=str(e))
                     return
 
 
@@ -130,9 +127,7 @@ class AfgekeurdQPushButton(JobsQPushButton):
         try:
             self.sendDeclinedMail(gv, job_name, job_folder_global_path)
         except ConnectionError as e:
-            TimedQMessageBox(
-                    text=str(e),
-                    parent=self, icon=QMessageBox.Critical)
+            TimedMessage(self, text=str(e))
             return
 
 class OptionsQPushButton(JobsQPushButton):

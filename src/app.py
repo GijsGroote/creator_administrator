@@ -5,6 +5,8 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 
+from src.button import BackQPushButton
+
 class MainWindow(QMainWindow):
 
     def __init__(self, ui_global_path, *args, **kwargs):
@@ -36,41 +38,23 @@ class MainWindow(QMainWindow):
             if event.key() == Qt.Key_H or event.key() == Qt.Key_Left:
                 self.jobsQTabWidget.toLeftTab()
 
-        if isinstance(event, QKeyEvent):
             if event.key() == Qt.Key_L or event.key() == Qt.Key_Right:
                 self.jobsQTabWidget.toRightTab()
 
-        if isinstance(event, QKeyEvent):
             if event.key() == Qt.Key_K or event.key() == Qt.Key_Up:
                 self.jobsQTabWidget.toPreviousRow()
 
-        if isinstance(event, QKeyEvent):
             if event.key() == Qt.Key_J or event.key() == Qt.Key_Down:
                 self.jobsQTabWidget.toNextRow()
 
-
-# def get_thread_pool(widget) -> QThreadPool:
-#     ''' Return the thread pool. '''
-#     main_window = get_main_window(widget)
-#     if main_window is not None:
-#         return main_window.threadpool
-
-#     raise ValueError(f'Could not find QMainWindow.threadpool from object with type {type(main_window)}')
-
-# def get_main_window(widget):
-#     """
-#     Traverses the parent hierarchy of a widget to find the main window.
-    
-#     :param widget: The starting widget (child)
-#     :return: The found QMainWindow instance or None
-#     """
-#     current_widget = widget
-#     while current_widget is not None:
-#         if isinstance(current_widget, MainWindow):
-#             return current_widget
-
-#         print(f"current widget: {current_widget.objectName()}")
-#         print(f"haha {current_widget.parentWidget()}")
-#         current_widget = current_widget.parent()
-
-#     raise ValueError(f'Could not find QMainWindow as parent from {widget.objectName()} of type {type(widget)}')
+            # shortcut on Enter key
+            if event.key() == Qt.Key_Return:
+                # go through GUI structure to call the itemEnterPressed function the currenlty displayed item
+                self.jobsQTabWidget.currentWidget().findChild(QStackedWidget).currentWidget().findChild(QListWidget).itemEnterPressed()
+            # shortcut on Esc button
+            # if event.key() == Qt.Key_Escape:
+                
+            #     for child in self.jobsQTabWidget.currentWidget().findChild(QStackedWidget).currentWidget().findChildren(QPushButton):
+            #         print(f"stupid {child.objectName()}")
+            #     print(f"who you {self.jobsQTabWidget.currentWidget().findChild(QStackedWidget).currentWidget().objectName()}")
+            #     print(self.jobsQTabWidget.currentWidget().findChild(QStackedWidget).currentWidget().findChild(BackQPushButton).objectName())

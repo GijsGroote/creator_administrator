@@ -9,13 +9,12 @@ from PyQt5.QtWidgets import *
 
 from src.mail_manager import MailManager
 
-from src.worker import Worker
 
 
 from src.qlist_widget import ContentQListWidget
 from laser_qlist_widget import JobContentQListWidget, OverviewQListWidget
 
-from src.qmessagebox import TimedQMessageBox
+from src.qmessagebox import TimedMessage
 
 class JobsQPushButton(QPushButton):
     ''' Parent class for all buttons that update job status
@@ -62,15 +61,10 @@ class JobsQPushButton(QPushButton):
                     template_content={},
                     popup_reply=False)
             
-            TimedQMessageBox(
-        text=f"Job Finished mail was sent to {job_name}",
-        parent=self, icon=QMessageBox.Warning)
-
+            TimedMessage(self, f"Job Finished mail was sent to {job_name}")
 
         else:
-            TimedQMessageBox(
-                    text=f"No .msg file detected, no Pickup mail was sent to {job_name}",
-                    parent=self, icon=QMessageBox.Warning)
+            TimedMessage(self, f"No .msg file detected, no Pickup mail was sent to {job_name}")
 
         # mail_manager = MailManager(gv)
         # msg_file_global_path = mail_manager.getMailGlobalPathFromFolder(job_folder_global_path)

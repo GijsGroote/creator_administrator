@@ -76,7 +76,7 @@ class ContentQListWidget(QListWidget):
 
 
         # shortcut for the Enter button
-        QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.fileEnterPressed)
+        QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.itemEnterPressed)
         self.itemDoubleClicked.connect(self.fileDoubleClicked)
 
         # self.setDragEnabled(True)
@@ -166,7 +166,7 @@ class ContentQListWidget(QListWidget):
             self.clear()
             self.loadContent(self.current_item_name)
 
-    def fileEnterPressed(self):
+    def itemEnterPressed(self):
         current_file = self.currentItem()
         
         if current_file is not None:

@@ -18,11 +18,8 @@ class ImportFromMailQDialog(QDialog):
 
         loadUi(ui_global_path, self)
         
-
-
         # shortcut on Esc button
         QShortcut(QKeySequence(Qt.Key_Escape), self).activated.connect(self.closeDialog)
-
 
     def closeDialog(self):
         ''' Close the dialog, press cancel. '''

@@ -101,9 +101,6 @@ class MaterialOverviewQListWidget(OverviewQListWidget):
 
         self.initialize(self.getItemNames())
 
-        # shortcut on Enter key
-        # TODO: this should be in src/qlist_widget, why must it also be here to work?
-        QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.itemEnterPressed)
 
         self.itemDoubleClicked.connect(self.itemIsDoubleClicked)
         
