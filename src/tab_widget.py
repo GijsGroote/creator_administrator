@@ -12,17 +12,17 @@ class JobsQTabWidget(QTabWidget):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
-        # shortcuts on arrow keys
-        QShortcut(QKeySequence(Qt.Key_Left), self).activated.connect(self.toLeftTab)
-        QShortcut(QKeySequence(Qt.Key_Right), self).activated.connect(self.toRightTab)
-        QShortcut(QKeySequence(Qt.Key_Up), self).activated.connect(self.toPreviousRow)
-        QShortcut(QKeySequence(Qt.Key_Down), self).activated.connect(self.toNextRow)
+        # # shortcuts on arrow keys
+        # QShortcut(QKeySequence(Qt.Key_Left), self).activated.connect(self.toLeftTab)
+        # QShortcut(QKeySequence(Qt.Key_Right), self).activated.connect(self.toRightTab)
+        # QShortcut(QKeySequence(Qt.Key_Up), self).activated.connect(self.toPreviousRow)
+        # QShortcut(QKeySequence(Qt.Key_Down), self).activated.connect(self.toNextRow)
 
-        # shortcuts on VIM motions
-        QShortcut(QKeySequence('h'), self).activated.connect(self.toLeftTab)
-        QShortcut(QKeySequence('l'), self).activated.connect(self.toRightTab)
-        QShortcut(QKeySequence('k'), self).activated.connect(self.toPreviousRow)
-        QShortcut(QKeySequence('j'), self).activated.connect(self.toNextRow)
+        # # shortcuts on VIM motions
+        # # QShortcut(QKeySequence('h'), self).activated.connect(self.toLeftTab)
+        # QShortcut(QKeySequence('l'), self).activated.connect(self.toRightTab)
+        # QShortcut(QKeySequence('k'), self).activated.connect(self.toPreviousRow)
+        # QShortcut(QKeySequence('j'), self).activated.connect(self.toNextRow)
 
     def toRightTab(self):
         if self.currentIndex() == self.count()-1:
@@ -40,7 +40,8 @@ class JobsQTabWidget(QTabWidget):
 
     def toNextRow(self):
         # from current tab get current page and get the QListWidget from there
-        qlist_widget = self.currentWidget().findChild(QStackedWidget).currentWidget().findChild(QListWidget)
+        qlist_widget = self.currentWidget().findChild(
+                QStackedWidget).currentWidget().findChild(QListWidget)
         current_row = qlist_widget.currentRow()
 
         if current_row == qlist_widget.count()-1:

@@ -5,6 +5,7 @@ from PyQt5 import QtCore
 from requests.exceptions import ConnectionError
 
 
+
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -13,8 +14,7 @@ from src.app import MainWindow
 from laser_qdialog import (
         LaserImportFromMailQDialog, LaserFilesSelectQDialog,
         LaserFolderSelectQDialog, LaserFileInfoQDialog)
-from src.qmessagebox import TimedQMessageBox
-
+from src.qmessagebox import TimedQMessageBox, Dialog2
 from src.worker import Worker
 from src.loading_dialog import LoadingQDialog
 
@@ -32,7 +32,8 @@ class LaserMainWindow(MainWindow):
         self.threadpool = gv['THREAD_POOL']
         # print(f' this threadpool is of type {type(self.threadpool)}')
 
-        QShortcut(QKeySequence(Qt.CTRL + Qt.Key_P), self).activated.connect(self.disp_message_worker)
+        QShortcut(QKeySequence(Qt.CTRL + Qt.Key_P), self).activated.connect(self.simple)
+        # QShortcut(QKeySequence(Qt.CTRL + Qt.Key_P), self).activated.connect(self.disp_message_worker)
 
 
         self.valid_msgs = []
@@ -42,16 +43,55 @@ class LaserMainWindow(MainWindow):
         self.selectFilesQAction.triggered.connect(self.selectFilesAction)
         self.selectFoldersQAction.triggered.connect(self.selectFoldersAction)
 
+    def simple(self):
+
+        Dialog2(self, text='I am not to be interacted with!')
+        self.jobsQTabWidget.activateWindow()
+        print(f"the jobs widget is this right? {self.jobsQTabWidget.objectName()}")
+        self.jobsQTabWidget.grabKeyboard()
+
+        # parent.activateWindow()
+
+
+        # print(f"gberuer hier iets")
+
+        # geom = self.geometry()
+        # print(f"what is the geomteryu {geom}")
+        # c = self.rect().center()
+        # print(self.mapToGlobal(c))
+        # print(f"say somethig!")
+        
+        # self.setFocus()
+        # press_event = QMouseEvent(QEvent.MouseButtonPress, QPoint(3, 3),
+        #                             Qt.LeftButton, Qt.LeftButton, Qt.NoModifier)
+
+        # self.mousePressEvent(press_event)
+
 
     def disp_message_worker(self):
 
         message_worker = Worker(self.disp_message_box)
+        print(f"tbe prented immeat")
         self.threadpool.start(message_worker)
         print(f"this shoudl be prented immeat")
 
     def disp_message_box(self):
+
+        Dialog2(self, text='I am not to be interacted with!')
         print(f"haahhaha")  
-        TimedQMessageBox(text='hjo ther')
+
+        geom = self.geometry()
+        print(f"what is the geomteryu {geom}")
+        c = self.rect().center()
+        print(self.mapToGlobal(c))
+        print(f"say somethig!")
+        
+        self.setFocus()
+        press_event = QMouseEvent(QEvent.MouseButtonPress, QPoint(geom.x(), geom.y()),
+                                    Qt.LeftButton, Qt.LeftButton, Qt.NoModifier)
+
+        self.mousePressEvent(press_event)
+        # TimedQMessageBox(text='hjo ther')
 
 
     def importFromMailAction(self):

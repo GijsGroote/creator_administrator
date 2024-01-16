@@ -3,21 +3,56 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from src.worker import Worker
 
+class Dialog2(QDialog):
+
+    def __init__(self, parent, text='sometext'):
+        QDialog.__init__(self, parent)
+
+        self.setModal(0)
+        self.label = QLabel(text, self)
+        self.timeout = 3
+        self.timer = QTimer(self)
+        self.timer.setInterval(1000*self.timeout)
+        self.timer.start()
+        print(f"tart timer!")   
+        self.timer.timeout.connect(self.exit)
+
+        # b1 = QPushButton("ok", self)
+        # b1.move(50, 50)
+        # b1.clicked.connect(self.exit)
+        self.setWindowTitle("Nonmodal Dialog")
+        self.show()
+
+        print(f"is partent active window {parent.isActiveWindow()} and self. {self.isActiveWindow()}")
+
+        # parent.activateWindow()
+
+# self.setFocus()
+
+
+    def exit(self):
+        print(f"exit klicked")  
+        self.deleteLater() 
+        self.close()
+
 class TimedQMessageBox(QMessageBox):
 
     def __init__(self, parent=None, text='setthis', icon=QMessageBox.Information, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
-
         self.setText(text)
         self.timeout = 5
         self.timer = QTimer(self)
         self.timer.setInterval(1000*self.timeout)
         self.timer.start()
         self.timer.timeout.connect(self.accept)
+        self.setModal(0)
+        # self.setWindowModality(Qt.NonModal)
 
         self.setIcon(icon)
 
         # self.show() # needed to move to top right
+        print(f"show the dialog now~!")
+        self.show()
         self.exec_()
 
 

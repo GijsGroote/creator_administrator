@@ -31,6 +31,24 @@ class MainWindow(QMainWindow):
             if event.key() == Qt.Key_Q:
                 self.close()
 
+        # Move around using arrows or vim style
+        if isinstance(event, QKeyEvent):
+            if event.key() == Qt.Key_H or event.key() == Qt.Key_Left:
+                self.jobsQTabWidget.toLeftTab()
+
+        if isinstance(event, QKeyEvent):
+            if event.key() == Qt.Key_L or event.key() == Qt.Key_Right:
+                self.jobsQTabWidget.toRightTab()
+
+        if isinstance(event, QKeyEvent):
+            if event.key() == Qt.Key_K or event.key() == Qt.Key_Up:
+                self.jobsQTabWidget.toPreviousRow()
+
+        if isinstance(event, QKeyEvent):
+            if event.key() == Qt.Key_J or event.key() == Qt.Key_Down:
+                self.jobsQTabWidget.toNextRow()
+
+
 # def get_thread_pool(widget) -> QThreadPool:
 #     ''' Return the thread pool. '''
 #     main_window = get_main_window(widget)
