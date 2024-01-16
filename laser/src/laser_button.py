@@ -3,10 +3,12 @@ import os
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+
+from global_variables import gv
 from src.worker import Worker
 
 
-from global_variables import gv
+
 from laser_job_tracker import LaserJobTracker
 from src.button import JobsQPushButton
 from src.directory_functions import open_folder
@@ -18,10 +20,8 @@ from src.qdialog import SelectOptionsQDialog
 
 
 from src.directory_functions import copy
-from src.app import get_main_window
 from src.qmessagebox import TimedQMessageBox, JobFinishedMessageBox, YesOrNoMessageBox
 from laser_qlist_widget import MaterialContentQListWidget
-from src.app import get_main_window
 from requests.exceptions import ConnectionError
 
 class LaserKlaarQPushButton(JobsQPushButton):
@@ -50,9 +50,12 @@ class LaserKlaarQPushButton(JobsQPushButton):
             
 class MateriaalKlaarQPushButton(JobsQPushButton):
 
-    def __init__(self, *args, **kwargs):
-        JobsQPushButton.__init__(self, *args, **kwargs)
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
         self.clicked.connect(self.on_click)
+
+        self.threadpool = gv['THREAD_POOL']
+
  
     def on_click(self):
         material_name = self.getCurrentItemName()
@@ -112,8 +115,8 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
 
 class AfgekeurdQPushButton(JobsQPushButton):
 
-    def __init__(self, *args, **kwargs):
-        JobsQPushButton.__init__(self, *args, **kwargs)
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
         self.clicked.connect(self.on_click)
 
     def on_click(self):
@@ -132,22 +135,10 @@ class AfgekeurdQPushButton(JobsQPushButton):
                     parent=self, icon=QMessageBox.Critical)
             return
 
-class OverigQPushButton(JobsQPushButton):
-
-    def __init__(self, *args, **kwargs):
-        JobsQPushButton.__init__(self, *args, **kwargs)
-        self.clicked.connect(self.on_click)
-
-
-    def on_click(self):
-        job_name = self.getCurrentItemName()
-        print(f'De overig knop is gedrukt {job_name}')
-
-
 class OptionsQPushButton(JobsQPushButton):
 
-    def __init__(self, *args, **kwargs):
-        JobsQPushButton.__init__(self, *args, **kwargs)
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
 
         self.menu = QMenu()
 

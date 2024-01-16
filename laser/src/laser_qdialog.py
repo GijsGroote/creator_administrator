@@ -9,7 +9,6 @@ import time
 
 from PyQt5.uic import loadUi
 
-from src.app import get_thread_pool
 import datetime
 from global_variables import gv
 from src.qdialog import ImportFromMailQDialog, SelectQDialog
@@ -22,7 +21,6 @@ from laser_job_tracker import LaserJobTracker
 from src.worker import Worker
 from src.directory_functions import copy
 
-from src.app import get_thread_pool
 
 
 class LaserImportFromMailQDialog(ImportFromMailQDialog):
@@ -39,7 +37,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         self.new_material_text = 'New Material'
 
 
-        # self.threadpool = get_thread_pool(self)
+        self.threadpool = gv['THREAD_POOL']
 
         self.job_tracker = LaserJobTracker()
         self.loadMailContent()

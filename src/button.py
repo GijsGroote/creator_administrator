@@ -9,7 +9,6 @@ from PyQt5.QtWidgets import *
 
 from src.mail_manager import MailManager
 
-from src.app import get_thread_pool
 from src.worker import Worker
 
 
@@ -27,8 +26,8 @@ class JobsQPushButton(QPushButton):
         super().__init__(parent, *args, **kwargs)
         # self.parent = parent
 
-        # self.threadpool = get_thread_pool(self) jobPage_2 annoyingly is not a child of QStackedWidget
-        self.threadpool = QThreadPool()
+        # jobPage_2 annoyingly is not a child of QStackedWidget
+        # self.threadpool = QThreadPool()
 
 
     def refreshAllQListWidgets(self):
@@ -121,6 +120,7 @@ class SelectFilesQPushButton(QPushButton):
         super().__init__(parent, *args, **kwargs)
         self.files_global_paths = []
         self.clicked.connect(self.on_click)
+
 
     def on_click(self):
       # Get list of selected file paths

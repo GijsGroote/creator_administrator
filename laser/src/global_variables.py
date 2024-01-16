@@ -5,9 +5,7 @@ Global variables specific for the local machine managing the PMMA laser.
 import json
 import os
 import sys
-
-# Detect the computer.
-IWS_COMPUTER = False
+from PyQt5.QtCore import QThreadPool
 
 if sys.platform == 'linux':
     data_dir_home = os.path.join(os.path.expanduser('~'), '.creator-administrator')
@@ -16,12 +14,8 @@ elif sys.platform == 'win32':
 else: 
     raise ValueError(f'This software does not work for platform: {sys.platform}')
 
-print(data_dir_home)
 if not os.path.exists(data_dir_home):
     os.mkdir(data_dir_home)
-
-if 'iws' in data_dir_home.lower():
-    IWS_COMPUTER = True
     
 global_variables_path = os.path.join(data_dir_home, 'laser_global_variables.json')
 jobs_dir_home = os.path.join(data_dir_home, 'laser_jobs')
@@ -35,8 +29,7 @@ if not os.path.exists(jobs_dir_home):
     os.mkdir(jobs_dir_home)
     
 # Global Variables (gv)
-gv = {'IWS_COMPUTER': IWS_COMPUTER,
-      'DATA_DIR_HOME': data_dir_home,
+gv = {'DATA_DIR_HOME': data_dir_home,
       'JOBS_DIR_HOME': jobs_dir_home,
       'TRACKER_FILE_PATH': tracker_file_path}
 print(data_dir_home)
@@ -93,3 +86,4 @@ sys.path.append(gv['UI_DIR_HOME'])
 
 gv['FIGURES_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'], r'figures')
 
+gv['THREAD_POOL'] = QThreadPool() # the one and only threadpool

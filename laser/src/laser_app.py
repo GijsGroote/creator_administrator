@@ -10,7 +10,6 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from global_variables import gv
 from src.app import MainWindow
-from src.app import get_thread_pool
 from laser_qdialog import (
         LaserImportFromMailQDialog, LaserFilesSelectQDialog,
         LaserFolderSelectQDialog, LaserFileInfoQDialog)
@@ -26,12 +25,15 @@ class LaserMainWindow(MainWindow):
         ui_global_path = os.path.join(gv['UI_DIR_HOME'], 'laser_main_window.ui')
         super().__init__(ui_global_path, *args, **kwargs)
 
-        print(f"just after laserMainwindows")
+
         # self.loading_dialog.show()
         # self.loading_dialog.hide()
 
-        # self.threadpool = get_thread_pool(self)
+        self.threadpool = gv['THREAD_POOL']
         # print(f' this threadpool is of type {type(self.threadpool)}')
+
+        QShortcut(QKeySequence(Qt.CTRL + Qt.Key_P), self).activated.connect(self.disp_message_worker)
+
 
         self.valid_msgs = []
 
@@ -41,34 +43,44 @@ class LaserMainWindow(MainWindow):
         self.selectFoldersQAction.triggered.connect(self.selectFoldersAction)
 
 
+    def disp_message_worker(self):
+
+        message_worker = Worker(self.disp_message_box)
+        self.threadpool.start(message_worker)
+        print(f"this shoudl be prented immeat")
+
+    def disp_message_box(self):
+        print(f"haahhaha")  
+        TimedQMessageBox(text='hjo ther')
+
+
     def importFromMailAction(self):
 
-        valid_msgs = self.getNewValidMails()
-        self.openImportFromMailDialog(valid_msgs)
+        # self.valid_msgs = self.getNewValidMails()
+        # self.openImportFromMailDialog()
 
 
         # TODO: the error function should handle how upon error the message if displayed to the user.
 
-        # self.loading_dialog = LoadingQDialog(self, gv)
-        # self.loading_dialog.show()
+        self.loading_dialog = LoadingQDialog(self, gv)
+        self.loading_dialog.show()
 
         # create workers
-        # self.get_mail_worker = Worker(self.getNewValidMails)
-        # self.get_mail_worker.signals.finished.connect(self.loading_dialog.accept)
-        # self.get_mail_worker.signals.result.connect(self.openImportFromMailDialog)
-
+        get_mail_worker = Worker(self.getNewValidMails)
+        get_mail_worker.signals.finished.connect(self.loading_dialog.accept)
+        get_mail_worker.signals.result.connect(self.openImportFromMailDialog)
+        self.valid_msgs = self.threadpool.start(get_mail_worker)
 
         # self.threadpool.start(self.loading_widget_worker)
-        # self.valid_msgs = self.threadpool.start(self.get_mail_worker)
 
-    def openImportFromMailDialog(self, valid_msgs: list):
+    def openImportFromMailDialog(self):
         ''' open import from mail dialog. '''
 
-        if len(valid_msgs) == 0:
+        if len(self.valid_msgs) == 0:
             TimedQMessageBox(text='No new mails', parent=self)
         else:
 
-            dialog = LaserImportFromMailQDialog(self, valid_msgs)
+            dialog = LaserImportFromMailQDialog(self, self.valid_msgs)
             dialog.exec_()
 
             # refresh all laser job tabs
@@ -115,7 +127,7 @@ class LaserMainWindow(MainWindow):
                                 parent=self, icon=QMessageBox.Warning)
                             continue
 
-                        if item_global_path.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
+                        if item_global_path.endswith(gv['ACCEPTED_EXTENSIONS']):
                             files_in_subfolder_global_paths.append(item_global_path)
                             subfolder_contains_laser_file = True
 
@@ -161,7 +173,7 @@ class LaserMainWindow(MainWindow):
                     f'detected, respond to {it_or_them} manually.',
                     parent=self, icon=QMessageBox.Warning)
 
-        return valid_msgs
+        self.valid_msgs = valid_msgs
     
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

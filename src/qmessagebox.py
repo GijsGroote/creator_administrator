@@ -2,11 +2,10 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from src.worker import Worker
-from src.app import get_thread_pool, get_main_window
 
 class TimedQMessageBox(QMessageBox):
 
-    def __init__(self, parent, text='setthis', icon=QMessageBox.Information, *args, **kwargs):
+    def __init__(self, parent=None, text='setthis', icon=QMessageBox.Information, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         self.setText(text)
@@ -19,10 +18,8 @@ class TimedQMessageBox(QMessageBox):
         self.setIcon(icon)
 
         # self.show() # needed to move to top right
-        self.move(25,25)
-        self.setIcon(QMessageBox.Question)
         self.exec_()
-        # self.threadpool = get_thread_pool(self)
+
 
         # message_worker = Worker(self.exec_)
 
