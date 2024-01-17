@@ -3,6 +3,7 @@ import os
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+from PyQt5 import uic
 
 class LoadingQDialog(QDialog):
 
@@ -10,7 +11,6 @@ class LoadingQDialog(QDialog):
         super().__init__(parent, *args, **kwargs)
 
 
-        from PyQt5 import uic
         uic.loadUi(os.path.join(gv['REPO_DIR_HOME'], 'ui/loading_dialog.ui'), self)
 
         self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.CustomizeWindowHint)

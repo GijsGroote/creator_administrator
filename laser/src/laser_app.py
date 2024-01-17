@@ -3,6 +3,7 @@ import os
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 from requests.exceptions import ConnectionError
+import time
 
 
 
@@ -29,6 +30,7 @@ class LaserMainWindow(MainWindow):
 
         QShortcut(QKeySequence(Qt.CTRL + Qt.Key_P), self).activated.connect(self.simple)
 
+
         self.valid_msgs = []
 
         # menu bar actions
@@ -45,12 +47,6 @@ class LaserMainWindow(MainWindow):
         print(f"the jobs widget is this right? {self.jobsQTabWidget.objectName()}")
 
     def importFromMailAction(self):
-
-        # self.valid_msgs = self.getNewValidMails()
-        # self.openImportFromMailDialog()
-
-
-        # TODO: the error function should handle how upon error the message if displayed to the user.
 
         self.loading_dialog = LoadingQDialog(self, gv)
         self.loading_dialog.show()
