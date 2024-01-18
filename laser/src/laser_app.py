@@ -5,6 +5,8 @@ from PyQt5 import QtCore
 from requests.exceptions import ConnectionError
 import time
 
+import traceback 
+
 
 
 from PyQt5.QtGui import *
@@ -15,8 +17,8 @@ from src.app import MainWindow
 from laser_qdialog import (
         LaserImportFromMailQDialog, LaserFilesSelectQDialog,
         LaserFolderSelectQDialog, LaserFileInfoQDialog)
-from src.qmessagebox import TimedMessage
-from src.worker import Worker
+from src.qmessagebox import TimedMessage, WarningQMessageBox, ErrorQMessageBox
+from src.worker import MailWorker, Worker
 from src.loading_dialog import LoadingQDialog
 
 from src.mail_manager import MailManager
@@ -26,25 +28,16 @@ class LaserMainWindow(MainWindow):
         ui_global_path = os.path.join(gv['UI_DIR_HOME'], 'laser_main_window.ui')
         super().__init__(ui_global_path, *args, **kwargs)
 
-        self.threadpool = gv['THREAD_POOL']
-
-        QShortcut(QKeySequence(Qt.CTRL + Qt.Key_P), self).activated.connect(self.simple)
-
-
+        self.mail_manager = MailManager(gv)
         self.valid_msgs = []
+
+        self.threadpool = gv['THREAD_POOL']
 
         # menu bar actions
         self.importFromMailQAction.triggered.connect(self.importFromMailAction)
         self.selectFilesQAction.triggered.connect(self.selectFilesAction)
         self.selectFoldersQAction.triggered.connect(self.selectFoldersAction)
 
-    # TODO:# delete this function
-    def simple(self):
-
-
-        TimedMessage(self, text='I am not to be interacted with!')
-        # self.activateWindow()
-        print(f"the jobs widget is this right? {self.jobsQTabWidget.objectName()}")
 
     def importFromMailAction(self):
 
@@ -52,15 +45,15 @@ class LaserMainWindow(MainWindow):
         self.loading_dialog.show()
 
         # create workers
-        get_mail_worker = Worker(self.getNewValidMails)
-        get_mail_worker.signals.finished.connect(self.loading_dialog.accept)
-        get_mail_worker.signals.result.connect(self.openImportFromMailDialog)
+        get_mail_worker = MailWorker(self.getNewValidMails, self.mail_manager.marshalled_outlook)
+        # get_mail_worker.signals.finished.connect(self.loading_dialog.accept)
+        # get_mail_worker.signals.result.connect(self.openImportFromMailDialog)
         self.valid_msgs = self.threadpool.start(get_mail_worker)
-
-        # self.threadpool.start(self.loading_widget_worker)
 
     def openImportFromMailDialog(self, valid_msgs):
         ''' open import from mail dialog. '''
+
+        print(f' the messages are here in openImportFromMailDialog {valid_msgs}')
 
         if len(valid_msgs) == 0:
             TimedMessage(self, text='No new mails')
@@ -108,9 +101,9 @@ class LaserMainWindow(MainWindow):
                     for item in os.listdir(subfolder_global_path):
                         item_global_path = os.path.join(subfolder_global_path, item)
                         if os.path.isdir(item_global_path):
-                            TimedQMessageBox(text=f'{subfolder_global_path} contains a folder '\
-                                f'{item_global_path} which is skipped' ,
-                                parent=self, icon=QMessageBox.Warning)
+                            WarningQMessageBox(self, text=f'{subfolder_global_path} contains a folder '\
+                                f'{item_global_path} which is skipped' )
+                                
                             continue
 
                         if item_global_path.endswith(gv['ACCEPTED_EXTENSIONS']):
@@ -121,9 +114,8 @@ class LaserMainWindow(MainWindow):
                         folders_global_paths_list.append(files_in_subfolder_global_paths)
                         jobs_names_list.append(project_name+'_'+os.path.basename(subfolder))
                     else:
-                        TimedQMessageBox(text=f'No laser file found in {subfolder_global_path}'\
-                                f'skip this subfolder' ,
-                                parent=self, icon=QMessageBox.Warning)
+                        WarningQMessageBox(self, text=f'No laser file found in {subfolder_global_path}'\
+                                f'skip this subfolder')
 
             LaserFileInfoQDialog(self, jobs_names_list, folders_global_paths_list).exec_()
         # refresh all laser job tabs
@@ -134,32 +126,38 @@ class LaserMainWindow(MainWindow):
 
     def getNewValidMails(self):
         ''' Return new valid mails. '''
+        print('get net valid mails please')
 
         try:
-            self.mail_manager = MailManager(gv)
             msgs = self.mail_manager.getNewEmails()
 
         except ConnectionError as e:
-            TimedQMessageBox(
-                    text=f'Error getting mails becuase: {str(e)}',
-                    icon=QMessageBox.Critical)
+                # printing stack trace 
+            
+            print('Error?')
+            # ErrorQMessageBox(self,
+            #         text=f'Error getting mails becuase: {str(e)}')
             return
         except Exception as e:
-            TimedQMessageBox(
-                    text=f'Error: {str(e)}',
-                    icon=QMessageBox.Critical)
-            return
+            print(f'Error: {str(e)}')
+            traceback.print_exc() 
 
+            # ErrorQMessageBox(self,
+            #         text=f'Error: {str(e)}')
+            return
 
         valid_msgs = [msg for msg in msgs if self.mail_manager.isMailAValidJobRequest(msg)]
 
         if len(msgs) > len(valid_msgs):
             it_or_them = 'it' if len(msgs) - len(valid_msgs) == 1 else 'them'
-            TimedQMessageBox(
-                    text=f'{len(msgs)-len(valid_msgs)} invalid messages '\
-                    f'detected, respond to {it_or_them} manually.',
-                    icon=QMessageBox.Warning)
+            
+            print(f'{len(msgs)-len(valid_msgs)} invalid messages '\
+                    f'detected, respond to {it_or_them} manually.')
+            # WarningQMessageBox(self,
+            #         text=f'{len(msgs)-len(valid_msgs)} invalid messages '\
+            #         f'detected, respond to {it_or_them} manually.')
 
+        print('hey4')
         return valid_msgs
     
 if __name__ == '__main__':

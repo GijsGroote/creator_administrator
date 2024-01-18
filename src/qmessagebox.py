@@ -62,3 +62,22 @@ class YesOrNoMessageBox(QMessageBox):
         self.setDefaultButton(QMessageBox.Yes)
         self.setIcon(icon)
 
+
+class WarningQMessageBox(QMessageBox):
+
+    def __init__(self, parent, text=None, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        self.setText(text)
+        self.addButton(QMessageBox.Ok)
+        self.setIcon(QMessageBox.Warning)
+
+
+class ErrorQMessageBox(QMessageBox):
+
+    def __init__(self, parent, text=None, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        self.setText(text)
+        self.addButton(QMessageBox.Ok)
+        self.setIcon(QMessageBox.Critical)

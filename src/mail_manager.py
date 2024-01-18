@@ -24,6 +24,7 @@ if sys.platform == 'linux':
 
 elif sys.platform == 'win32':
     import win32com.client
+    import pythoncom
 else:
     raise ValueError(f'This software does not work for platform: {sys.platform}')
 
@@ -33,7 +34,30 @@ class MailManager():
         self.gv = gv
 
         if sys.platform == 'win32':
-            self.outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
+            # Initialize
+            
+            coinit = pythoncom.CoInitialize()
+            rolinit = pythoncom.RoInitialize()
+            coinitex = pythoncom.CoInitializeEx()
+            
+            
+            print(f'coinit {coinit}, roInit {rolinit} coiinit tex {coinitex}')
+            print(coinit)
+
+            self.outlook =  win32com.client.Dispatch("Outlook.Application").GetNamespace('MAPI')
+
+            # Create id
+            self.marshalled_outlook = pythoncom.CoMarshalInterThreadInterfaceInStream(pythoncom.IID_IDispatch, self.outlook)
+
+            print("Threaded LocationURL:", self.outlook)
+
+            print("Threaded marshalled LocationURL:", self.marshalled_outlook)
+
+            # self.outlook = self.marshalled_outlook
+
+            # Pass the id to the new thread
+            # thread = threading.Thread(target=run_in_thread, kwargs={'xl_id': xl_id})
+            
             try:
                 if gv['MAIL_INBOX_NAME'] == 'Inbox':
                     self.inbox = self.outlook.GetDefaultFolder(6)
@@ -76,7 +100,10 @@ class MailManager():
         """ Return emails from Outlook inbox. """
         msgs = []
 
+
+
         # TODO: if mails have come but no internet connection,m what hten huh
+        print(f'inbox shape?> {self.inbox}')
 
         if sys.platform == 'win32':    
             for message in self.inbox.Items:
@@ -109,7 +136,13 @@ class MailManager():
                 status, msg_data = self.imap_mail.fetch(mail_id, "(RFC822)")
                 msgs.append(msg_data)
 
+
             self.imapLogout()
+
+
+
+        print(f' the messages are here inthe maoil manager {msgs}')
+
 
         return msgs
     

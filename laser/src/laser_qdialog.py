@@ -82,9 +82,6 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         print(f'what can we do witht this? {type(valid_msg)}')
 
 
-
-
-
         self.temp_attachments = self.mail_manager.getAttachments(valid_msg)
 
         self.temp_laser_cut_files_dict = {}

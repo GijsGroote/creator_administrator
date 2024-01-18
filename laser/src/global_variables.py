@@ -43,6 +43,8 @@ with open(global_variables_path, 'r') as global_variables_file:
     gv['ACCEPTED_MATERIALS'] = tuple(gv_data['ACCEPTED_MATERIALS'].split(', '))
     gv['DAYS_TO_KEEP_JOBS'] = gv_data['DAYS_TO_KEEP_JOBS']
     gv['ONLY_UNREAD_MAIL'] = gv_data['ONLY_UNREAD_MAIL']
+    
+
 
     # TODO: these should be checked, because if MAIL_NAME is not in gv, errors
     if 'MAIL_NAME' in gv_data:
