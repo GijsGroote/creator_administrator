@@ -32,7 +32,7 @@ if not os.path.exists(jobs_dir_home):
 gv = {'DATA_DIR_HOME': data_dir_home,
       'JOBS_DIR_HOME': jobs_dir_home,
       'TRACKER_FILE_PATH': tracker_file_path}
-print(data_dir_home)
+
 # TODO: if this is not all in the file, do a setup wizard please
 with open(global_variables_path, 'r') as global_variables_file:
     gv_data = json.load(global_variables_file)

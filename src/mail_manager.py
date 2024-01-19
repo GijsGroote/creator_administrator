@@ -146,9 +146,15 @@ class MailManager():
     
     def saveMsgAndAttachmentsInTempFolder(self, msg) -> str:
         ''' Save Outlook msg and attachments in a temperary folder. '''
+        unique_mail_code = unidecode(self.getEmailAddress(msg)+'_'+str(msg.Size))
 
-        temp_folder_global_path = os.path.join(self.gv['DATA_DIR_HOME'], 'TEMP', unidecode(msg.SenderEmailAddress+'_'+str(msg.Size)))
+        print(f'uniq mail code {unique_mail_code}')
+        temp_folder_global_path = os.path.join(self.gv['DATA_DIR_HOME'], 'TEMP', unique_mail_code)
         # create folder
+        print(f' data dir home is {self.gv['DATA_DIR_HOME']} \n\n')
+        print(f' temp folder at  {temp_folder_global_path} \n\n\n\n')
+        
+
         os.mkdir(temp_folder_global_path)
         # save the msg file
         msg.saveAs(os.path.join(temp_folder_global_path, 'mail.msg'))
@@ -211,7 +217,8 @@ class MailManager():
     def getMailBody(self, msg):
         """ Print mail body. """
         if sys.platform == 'win32':
-            msg = self.getMsgFromGlobalPath(msg)
+            if isinstance(msg, str):
+                msg = self.getMsgFromGlobalPath(msg)
             return msg.Body
         if sys.platform == 'linux':
             msg = email.message_from_bytes(msg[0][1])
@@ -232,7 +239,8 @@ class MailManager():
     def getEmailAddress(self, msg) -> str:
         """ Return the email adress. """
         if sys.platform == 'win32':
-            msg = self.getMsgFromGlobalPath(msg)
+            if isinstance(msg, str):
+                msg = self.getMsgFromGlobalPath(msg)
 
             if msg.Class==43:
                 if msg.SenderEmailType=='EX':
@@ -301,7 +309,8 @@ class MailManager():
     def saveMail(self, msg, job_folder_global_path: str):
         ''' Save mail in a folder. '''
         if sys.platform == 'win32': 
-            msg = self.getMsgFromGlobalPath(msg)
+            if isinstance(msg, str):
+                msg = self.getMsgFromGlobalPath(msg)
             msg.saveAs(os.path.join(job_folder_global_path, 'mail.msg'))
 
         if sys.platform == 'linux':

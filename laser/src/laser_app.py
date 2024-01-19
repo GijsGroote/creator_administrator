@@ -127,9 +127,6 @@ class LaserMainWindow(MainWindow):
         try:
             msgs = MailManager(gv).getNewEmails()
 
-            for msg in msgs:
-                print(msg)
-
         except ConnectionError as e:
             
             
