@@ -26,16 +26,15 @@ class TimedMessage(QDialog):
         self.show()
         self.moveToTopRightCorner(parent)
 
-        # let main window catch key press events
-        main_window_or_dialog = self.getMainWidget(parent)
-        jobs_qtab_widget = main_window_or_dialog.findChild(JobsQTabWidget, 'jobsQTabWidget')
-        if jobs_qtab_widget is None:
-            # main_window_or_dialog.grabKeyboard()
-            pass
-        else:
-            jobs_qtab_widget.grabKeyboard()
+        # # let main window catch key press events
+        # main_window_or_dialog = self.getMainWidget(parent)
+        # jobs_qtab_widget = main_window_or_dialog.findChild(JobsQTabWidget, 'jobsQTabWidget')
+        # if jobs_qtab_widget is None:
+        #     # main_window_or_dialog.grabKeyboard()
+        #     pass
+        # else:
+        #     jobs_qtab_widget.grabKeyboard()
 
-        print('oke oke oke')
         
 
     def moveToTopRightCorner(self, parent):
