@@ -26,6 +26,7 @@ class TimedMessage(QDialog):
         self.show()
         self.moveToTopRightCorner(parent)
 
+
         # # let main window catch key press events
         # main_window_or_dialog = self.getMainWidget(parent)
         # jobs_qtab_widget = main_window_or_dialog.findChild(JobsQTabWidget, 'jobsQTabWidget')
