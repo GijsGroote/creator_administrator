@@ -59,6 +59,7 @@ class LaserMainWindow(MainWindow):
             dialog = LaserImportFromMailQDialog(self, valid_msgs)
             dialog.exec_()
 
+
             # refresh all laser job tabs
             qlist_widgets = self.findChildren(QListWidget)
             for list_widget in qlist_widgets:
