@@ -1,4 +1,3 @@
-
 import os
 
 from PyQt5 import *
@@ -8,7 +7,6 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 from src.mail_manager import MailManager
-
 
 
 from src.qlist_widget import ContentQListWidget

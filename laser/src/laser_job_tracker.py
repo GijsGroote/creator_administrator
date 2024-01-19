@@ -20,7 +20,7 @@ from global_variables import gv
 from src.directory_functions import delete
 
 from src.job_tracker import JobTracker
-
+from src.qmessagebox import TimedMessage
 
 class LaserJobTracker(JobTracker):
     """
@@ -29,8 +29,8 @@ class LaserJobTracker(JobTracker):
     use the check_health function to check the file system health based on the job_log.json file
     """
 
-    def __init__(self):
-        JobTracker.__init__(self, gv)
+    def __init__(self, parent_widget):
+        super().__init__(gv, parent_widget)
 
         self.job_keys.append(['laserfiles'])
 
@@ -114,112 +114,109 @@ class LaserJobTracker(JobTracker):
         return tracker_dict[job_name]['job_folder_global_path']
                         
     # TODO: This checkhealth really is not up-to-date
-    def checkHealth(self):
+    def checkHealth(self, parent_widget):
         """ Check and repair system. """
-        pass
 
-#         self.checkTrackerFileHealth()
+        self.checkTrackerFileHealth(parent_widget)
 
-#         print("Checking system health...")
+        # # check JOBS_DIR_HOME and MAIN_FOLDERS existance
+        # for folder in ['', *gv['MAIN_FOLDERS'].keys(), *gv['MINOR_FOLDERS'].keys()]:
+        #     folder_global_path = os.path.join(gv['JOBS_DIR_HOME'], folder)
 
-#         # check JOBS_DIR_HOME and MAIN_FOLDERS existance
-#         for folder in ['', *gv['MAIN_FOLDERS'].keys(), *gv['MINOR_FOLDERS'].keys()]:
-#             folder_global_path = os.path.join(gv['JOBS_DIR_HOME'], folder)
+        #     if not os.path.exists(folder_global_path):
+        #         os.mkdir(folder_global_path)
+        #         print(f'created folder: {folder_global_path}')
 
-#             if not os.path.exists(folder_global_path):
-#                 os.mkdir(folder_global_path)
-#                 print(f'created folder: {folder_global_path}')
+        # # Get job info from tracker file
+        # with open(self.tracker_file_path, 'r') as tracker_file:
+        #     tracker_dict = json.load(tracker_file)
 
-#         # Get job info from tracker file
-#         with open(self.tracker_file_path, 'r') as tracker_file:
-#             tracker_dict = json.load(tracker_file)
+        # # get job info from file system
+        # actual_job_global_paths = get_job_global_paths(gv)
 
-#         # get job info from file system
-#         actual_job_global_paths = get_job_global_paths(gv)
+        # # keep track of the jobs checked
+        # jobs_checked = {actual_job_name: False for actual_job_name in tracker_dict.keys()}
 
-#         # keep track of the jobs checked
-#         jobs_checked = {actual_job_name: False for actual_job_name in tracker_dict.keys()}
+        # for actual_job_global_path in actual_job_global_paths:
+        #     actual_job_main_folder = os.path.basename(os.path.dirname(actual_job_global_path))
 
-#         for actual_job_global_path in actual_job_global_paths:
-#             actual_job_main_folder = os.path.basename(os.path.dirname(actual_job_global_path))
+        #     tracker_job_name, tracker_job_dict = self.job_global_path_to_tracker_job_dict(
+        #         tracker_dict, actual_job_global_path)
 
-#             tracker_job_name, tracker_job_dict = self.job_global_path_to_tracker_job_dict(
-#                 tracker_dict, actual_job_global_path)
+        #     if tracker_job_name is None:
+        #         print("SYNCHRONIZE ISSUES! Job Tracker and jobs on File System are out of sync!\n")
+        #         print(f"Job in: {actual_job_global_path} is not in the job tracker")
 
-#             if tracker_job_name is None:
-#                 print("SYNCHRONIZE ISSUES! Job Tracker and jobs on File System are out of sync!\n")
-#                 print(f"Job in: {actual_job_global_path} is not in the job tracker")
+        #         if yes_or_no(
+        #                 f"\n{actual_job_global_path} will be removed\nor do you want to add it to the job tracker (Y/n)?"):
+        #             tracker_job_name = job_folder_name_to_job_name(os.path.basename(actual_job_global_path))
 
-#                 if yes_or_no(
-#                         f"\n{actual_job_global_path} will be removed\nor do you want to add it to the job tracker (Y/n)?"):
-#                     tracker_job_name = job_folder_name_to_job_name(os.path.basename(actual_job_global_path))
+        #             # remove all batch files (they will be recreated later)
+        #             for file in os.listdir(actual_job_global_path):
+        #                 if file.endswith('.bat'):
+        #                     delete(gv['IOBIT_UNLOCKER_PATH'], os.path.join(actual_job_global_path, file))
 
-#                     # remove all batch files (they will be recreated later)
-#                     for file in os.listdir(actual_job_global_path):
-#                         if file.endswith('.bat'):
-#                             delete(gv['IOBIT_UNLOCKER_PATH'], os.path.join(actual_job_global_path, file))
-
-#                     tracker_job_dict = {
-#                         'job_name': tracker_job_name,
-#                         'main_folder': global_path_to_main_folder(gv, actual_job_global_path),
-#                         'created_on_date': str(datetime.now().strftime("%d-%m-%Y")),
-#                         'laser_files': create_files_dict(tracker_job_name)
-#                         }
+        #             tracker_job_dict = {
+        #                 'job_name': tracker_job_name,
+        #                 'main_folder': global_path_to_main_folder(gv, actual_job_global_path),
+        #                 'created_on_date': str(datetime.now().strftime("%d-%m-%Y")),
+        #                 'laser_files': create_files_dict(tracker_job_name)
+        #                 }
                     
-#                     tracker_dict[tracker_job_name] = tracker_job_dict
+        #             tracker_dict[tracker_job_name] = tracker_job_dict
 
-#                 else:
-#                     # remove that directory
-#                     delete(gv['IOBIT_UNLOCKER_PATH'], actual_job_global_path)
-#                     continue
+        #         else:
+        #             # remove that directory
+        #             delete(gv['IOBIT_UNLOCKER_PATH'], actual_job_global_path)
+        #             continue
 
-#             # check if the job is in the correct main folder
-#             if not actual_job_main_folder == tracker_job_dict["main_folder"]:
-#                 print(f"\nWarning: Job Tracker and folders on File System disagree...")
-#                 print(f"Job: {tracker_job_name} location according to:")
-#                 print(f"    Job Tracker: {tracker_job_dict['main_folder']}")
-#                 print(f"    File System: {actual_job_main_folder}\n")
-#                 if yes_or_no(f"Delete job {tracker_job_name} (Y/n)?"):
-#                     delete(gv['IOBIT_UNLOCKER_PATH'], actual_job_global_path)
-#                     print(f"Job {tracker_job_name} deleted")
-#                     continue
-#                 else:
-#                     print("aborting..")
-#                     sys.exit(0)
+        #     # check if the job is in the correct main folder
+        #     if not actual_job_main_folder == tracker_job_dict["main_folder"]:
+        #         print(f"\nWarning: Job Tracker and folders on File System disagree...")
+        #         print(f"Job: {tracker_job_name} location according to:")
+        #         print(f"    Job Tracker: {tracker_job_dict['main_folder']}")
+        #         print(f"    File System: {actual_job_main_folder}\n")
+        #         if yes_or_no(f"Delete job {tracker_job_name} (Y/n)?"):
+        #             delete(gv['IOBIT_UNLOCKER_PATH'], actual_job_global_path)
+        #             print(f"Job {tracker_job_name} deleted")
+        #             continue
+        #         else:
+        #             print("aborting..")
+        #             sys.exit(0)
             
-#             # create batch files for jobs
-#             if not all([os.path.exists(os.path.join(actual_job_global_path, batch_file)) for batch_file in 
-#                                        gv['MAIN_FOLDERS'][tracker_job_dict['main_folder']]['allowed_batch_files']]):
-#                 create_batch_files_for_job_folder(gv, tracker_job_dict['job_name'], tracker_job_dict['main_folder'])
+        #     # create batch files for jobs
+        #     if not all([os.path.exists(os.path.join(actual_job_global_path, batch_file)) for batch_file in 
+        #                                gv['MAIN_FOLDERS'][tracker_job_dict['main_folder']]['allowed_batch_files']]):
+        #         create_batch_files_for_job_folder(gv, tracker_job_dict['job_name'], tracker_job_dict['main_folder'])
                     
-#             # repair the WACHTRIJ_MATERIAAL folder
-#             for job_dict in tracker_dict.values():
-#                 if job_dict['main_folder'] == 'WACHTRIJ':
-#                     for key, file_dict in job_dict['laser_files'].items():
+        #     # repair the WACHTRIJ_MATERIAAL folder
+        #     for job_dict in tracker_dict.values():
+        #         if job_dict['main_folder'] == 'WACHTRIJ':
+        #             for key, file_dict in job_dict['laser_files'].items():
                                         
-#                         material_folder_global_path = os.path.join(gv['JOBS_DIR_HOME'],
-#                                                     'WACHTRIJ_MATERIAAL', file_dict['material']+'_'+file_dict['thickness'])
+        #                 material_folder_global_path = os.path.join(gv['JOBS_DIR_HOME'],
+        #                                             'WACHTRIJ_MATERIAAL', file_dict['material']+'_'+file_dict['thickness'])
 
-#                         # repair WACHTRIJ_MATERIAAL folder
-#                         if not (os.path.exists(material_folder_global_path) and
-#                                 os.path.exists(os.path.join(material_folder_global_path,
-#                                 file_dict['amount']+'x_'+key)) and
-#                                 os.path.exists(os.path.join(material_folder_global_path, 'materiaal_klaar.bat'))):
-#                             self.add_file_to_wachtrij_material(job_dict)
+        #                 # repair WACHTRIJ_MATERIAAL folder
+        #                 if not (os.path.exists(material_folder_global_path) and
+        #                         os.path.exists(os.path.join(material_folder_global_path,
+        #                         file_dict['amount']+'x_'+key)) and
+        #                         os.path.exists(os.path.join(material_folder_global_path, 'materiaal_klaar.bat'))):
+        #                     self.add_file_to_wachtrij_material(job_dict)
 
-#             jobs_checked[tracker_job_name] = True
+        #     jobs_checked[tracker_job_name] = True
 
-#         for tracker_job_name, pj_checked in jobs_checked.items():
-#             if not pj_checked:
-#                 print(f"Job: {tracker_job_name} not found on file system and removed from job tracker")
+        # for tracker_job_name, pj_checked in jobs_checked.items():
+        #     if not pj_checked:
+        #         print(f"Job: {tracker_job_name} not found on file system and removed from job tracker")
 
-#                 tracker_dict.pop(tracker_job_name)
+        #         tracker_dict.pop(tracker_job_name)
 
-#         with open(self.tracker_file_path, 'w') as tracker_file:
-#             json.dump(tracker_dict, tracker_file, indent=4)
+        # with open(self.tracker_file_path, 'w') as tracker_file:
+        #     json.dump(tracker_dict, tracker_file, indent=4)
 
-#         self.make_backup()
-#         print("system healthy :)\n")
+        self.makeBackup()
+        TimedMessage(self.parent_widget, text='System healthy :)')
 
 
     def getNumberOfJobsInQueue(self) -> int:

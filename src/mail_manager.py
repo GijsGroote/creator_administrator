@@ -151,8 +151,6 @@ class MailManager():
         print(f'uniq mail code {unique_mail_code}')
         temp_folder_global_path = os.path.join(self.gv['DATA_DIR_HOME'], 'TEMP', unique_mail_code)
         # create folder
-        print(f' data dir home is {self.gv['DATA_DIR_HOME']} \n\n')
-        print(f' temp folder at  {temp_folder_global_path} \n\n\n\n')
         
 
         os.mkdir(temp_folder_global_path)

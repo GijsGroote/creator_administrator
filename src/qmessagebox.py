@@ -7,7 +7,7 @@ class TimedMessage(QDialog):
     ''' Short message that can only be clicked away. 
     It should not interfere with the main application, it does that anyway...'''
 
-    def __init__(self, parent, text: str):
+    def __init__(self, parent, text: str, loc='top'):
         QDialog.__init__(self, parent)
 
         self.setModal(0)
@@ -24,9 +24,16 @@ class TimedMessage(QDialog):
         self.timer.timeout.connect(self.exit)
 
         self.show()
-        self.moveToTopRightCorner(parent)
+        if loc=='top':
+            self.moveToTopOfScreen()
+        elif loc=='topright':
+            self.moveToTopRightCorner(parent)
+        else: 
+            raise ValueError(f'Unknown location {loc}')
 
 
+
+        parent.grabKeyboard()
         # # let main window catch key press events
         # main_window_or_dialog = self.getMainWidget(parent)
         # jobs_qtab_widget = main_window_or_dialog.findChild(JobsQTabWidget, 'jobsQTabWidget')
@@ -37,6 +44,10 @@ class TimedMessage(QDialog):
         #     jobs_qtab_widget.grabKeyboard()
 
         
+    def moveToTopOfScreen(self):
+        ''' Move widget to top of screen, horizontally centered. '''
+        x = (QApplication.desktop().screenGeometry().width() - self.width()) // 2
+        self.move(x, 100)
 
     def moveToTopRightCorner(self, parent):
         parent_geometry = parent.geometry()
@@ -77,6 +88,9 @@ class YesOrNoMessageBox(QMessageBox):
         self.addButton(QMessageBox.Yes)
         self.setDefaultButton(QMessageBox.Yes)
         self.setIcon(icon)
+
+
+
 
 
 class WarningQMessageBox(QMessageBox):

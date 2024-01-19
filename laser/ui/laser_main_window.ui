@@ -102,7 +102,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="jobsListPage_2">
              <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -156,12 +156,28 @@
                  </layout>
                 </item>
                 <item>
-                 <widget class="JobContentQListWidget" name="listWidget_10"/>
+                 <widget class="JobContentQListWidget" name="listWidget_10">
+                  <property name="toolTip">
+                   <string>Shortcut: Esc</string>
+                  </property>
+                  <property name="toolTipDuration">
+                   <number>4</number>
+                  </property>
+                  <property name="statusTip">
+                   <string>statustip</string>
+                  </property>
+                  <property name="whatsThis">
+                   <string>what is ths</string>
+                  </property>
+                 </widget>
                 </item>
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_6">
                   <item>
                    <widget class="BackQPushButton" name="backPushButton_2">
+                    <property name="toolTip">
+                     <string extracomment="Shortcut: Esc"/>
+                    </property>
                     <property name="text">
                      <string>Back</string>
                     </property>
@@ -217,7 +233,7 @@
         <item>
          <widget class="QStackedWidget" name="wachtrijMateriaalQStackedWidget">
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="jobsListPage_3">
            <layout class="QHBoxLayout" name="horizontalLayout_5">

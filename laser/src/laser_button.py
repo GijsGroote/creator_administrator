@@ -33,17 +33,20 @@ class LaserKlaarQPushButton(JobsQPushButton):
     def on_click(self):
         job_name = self.getCurrentItemName()
         
-        job_folder_global_path = LaserJobTracker().getJobFolderGlobalPathFromJobName(job_name)
+        job_folder_global_path = LaserJobTracker(self).getJobFolderGlobalPathFromJobName(job_name)
+
+        LaserJobTracker(self).updateJobStatus(job_name, 'VERWERKT')
+        self.refreshAllQListWidgets()
+
         try:
             self.sendFinishedMail(gv, job_name, job_folder_global_path)
         except ConnectionError as e:
              if not YesOrNoMessageBox(
-                    text=f'Job finished mail not send because: {str(e)}\nDo you still want to mark this job as Done?',
-                    parent=self).exec_() == QMessageBox.Yes:
+                    text=f'Job finished mail not send because: {str(e)}\nDo '\
+                          'you still want to mark this job as Done?',
+                          parent=self).exec_() == QMessageBox.Yes:
                 return
 
-        LaserJobTracker().updateJobStatus(job_name, 'VERWERKT')
-        self.refreshAllQListWidgets()
 
 
 
@@ -61,7 +64,7 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
         material_name = self.getCurrentItemName()
         material, thickness = split_material_name(material_name)
 
-        job_tracker = LaserJobTracker()
+        job_tracker = LaserJobTracker(self)
 
         # todo: not all is always done
         dxfs_names_and_global_paths = job_tracker.getDXFsAndPaths(material, thickness)
@@ -118,7 +121,7 @@ class AfgekeurdQPushButton(JobsQPushButton):
 
     def on_click(self):
         job_name = self.getCurrentItemName()
-        job_tracker = LaserJobTracker()
+        job_tracker = LaserJobTracker(self)
         job_tracker.updateJobStatus(job_name, 'AFGEKEURD')
         self.refreshAllQListWidgets()
 
@@ -184,7 +187,7 @@ class OptionsQPushButton(JobsQPushButton):
 
     def moveJobTo(self, new_status):
         job_name = self.getCurrentItemName()
-        LaserJobTracker().updateJobStatus(job_name, new_status)
+        LaserJobTracker(self).updateJobStatus(job_name, new_status)
         self.refreshAllQListWidgets()
 
     def openInFileExplorer(self):
@@ -193,18 +196,18 @@ class OptionsQPushButton(JobsQPushButton):
 
     def deleteJob(self):
         job_name = self.getCurrentItemName()
-        LaserJobTracker().deleteJob(job_name)
+        LaserJobTracker(self).deleteJob(job_name)
         self.refreshAllQListWidgets()
 
     def getJobFolderGlobalPath(self):
         job_name = self.getCurrentItemName()
-        return LaserJobTracker().getJobDict(job_name)['job_folder_global_path']
+        return LaserJobTracker(self).getJobDict(job_name)['job_folder_global_path']
     
     def copyLaserFilesTo(self):
         '''Copy the laser files from a job to a specified folder. '''
 
         job_name = self.getCurrentItemName()
-        laser_file_dict =  LaserJobTracker().getLaserFilesDict(job_name)
+        laser_file_dict =  LaserJobTracker(self).getLaserFilesDict(job_name)
         target_folder_global_path = os.path.abspath(r'C:\\Users\\PMMA laser\\Desktop\\Laser TODO')
 
         for file_key, file_dict in laser_file_dict.items():
@@ -232,7 +235,7 @@ class OptionsQPushButton(JobsQPushButton):
 
         material, thickness = split_material_name(material_name)
 
-        dxfs_names_and_global_paths = LaserJobTracker().getDXFsAndPaths(material, thickness)
+        dxfs_names_and_global_paths = LaserJobTracker(self).getDXFsAndPaths(material, thickness)
 
         target_folder_global_path = os.path.abspath(r'C:\\Users\\PMMA laser\\Desktop\\Laser TODO')
 

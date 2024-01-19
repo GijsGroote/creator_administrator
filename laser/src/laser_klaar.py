@@ -41,7 +41,7 @@ if __name__ == '__main__':
         print(f'folder: {job_global_path} does not contain any .msg files,'\
                 f'no response mail can be send')
     
-    job_tracker = LaserJobTracker()
+    job_tracker = LaserJobTracker(self)
     
     job_tracker.remove_job_from_wachtrij_material(job_name)
     job_tracker.update_job_main_folder(job_name, 'VERWERKT')

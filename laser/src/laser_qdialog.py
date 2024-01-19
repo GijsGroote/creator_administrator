@@ -39,7 +39,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
         self.threadpool = gv['THREAD_POOL']
 
-        self.job_tracker = LaserJobTracker()
+        self.job_tracker = LaserJobTracker(self)
 
         self.materialQComboBox.currentIndexChanged.connect(self.onMaterialComboboxChanged)
 
@@ -394,7 +394,7 @@ class LaserFileInfoQDialog(QDialog):
             f'length of job name list: {len(job_name_list)} should'\
             f'be equal to the files_global_path_list: {len(files_global_paths_list)}'
 
-        self.job_tracker = LaserJobTracker()
+        self.job_tracker = LaserJobTracker(self)
         self.job_counter = 0
         self.file_counter = 0
         self.job_name_list = job_name_list

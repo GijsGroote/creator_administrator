@@ -21,6 +21,7 @@ from src.qmessagebox import TimedMessage, WarningQMessageBox, ErrorQMessageBox
 from src.worker import Worker
 from src.loading_dialog import LoadingQDialog
 from unidecode import unidecode
+from laser_job_tracker import LaserJobTracker
 
 from src.mail_manager import MailManager
 
@@ -31,6 +32,9 @@ class LaserMainWindow(MainWindow):
 
         self.valid_msgs = []
         self.threadpool = gv['THREAD_POOL']
+
+        self.job_tracker = LaserJobTracker(self)
+        self.job_tracker.checkHealth(self)
 
         # menu bar actions
         self.importFromMailQAction.triggered.connect(self.importFromMailAction)

@@ -3,11 +3,9 @@ from PyQt5 import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-import pythoncom
 
 if sys.platform == 'win32':
     import win32com.client
-
 
 class Worker(QRunnable):
     '''

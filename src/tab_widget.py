@@ -13,16 +13,16 @@ class JobsQTabWidget(QTabWidget):
         super().__init__(parent, *args, **kwargs)
 
         # # shortcuts on arrow keys
-        # QShortcut(QKeySequence(Qt.Key_Left), self).activated.connect(self.toLeftTab)
-        # QShortcut(QKeySequence(Qt.Key_Right), self).activated.connect(self.toRightTab)
-        # QShortcut(QKeySequence(Qt.Key_Up), self).activated.connect(self.toPreviousRow)
-        # QShortcut(QKeySequence(Qt.Key_Down), self).activated.connect(self.toNextRow)
+        QShortcut(QKeySequence(Qt.Key_Left), self).activated.connect(self.toLeftTab)
+        QShortcut(QKeySequence(Qt.Key_Right), self).activated.connect(self.toRightTab)
+        QShortcut(QKeySequence(Qt.Key_Up), self).activated.connect(self.toPreviousRow)
+        QShortcut(QKeySequence(Qt.Key_Down), self).activated.connect(self.toNextRow)
 
         # # shortcuts on VIM motions
-        # # QShortcut(QKeySequence('h'), self).activated.connect(self.toLeftTab)
-        # QShortcut(QKeySequence('l'), self).activated.connect(self.toRightTab)
-        # QShortcut(QKeySequence('k'), self).activated.connect(self.toPreviousRow)
-        # QShortcut(QKeySequence('j'), self).activated.connect(self.toNextRow)
+        QShortcut(QKeySequence('h'), self).activated.connect(self.toLeftTab)
+        QShortcut(QKeySequence('l'), self).activated.connect(self.toRightTab)
+        QShortcut(QKeySequence('k'), self).activated.connect(self.toPreviousRow)
+        QShortcut(QKeySequence('j'), self).activated.connect(self.toNextRow)
 
     def toRightTab(self):
         if self.currentIndex() == self.count()-1:

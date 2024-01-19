@@ -39,7 +39,7 @@ class JobsOverviewQListWidget(OverviewQListWidget):
                 first the short unique job name
                 second the informative dynamic job name '''
 
-        job_tracker = LaserJobTracker()
+        job_tracker = LaserJobTracker(self)
         if self.object_name == 'allJobsQListWidget':
             return job_tracker.getAllStaticAndDynamicJobNames()
         elif self.object_name == 'wachtrijJobsQListWidget':
@@ -55,7 +55,7 @@ class JobsOverviewQListWidget(OverviewQListWidget):
     def displayItem(self, job_name: str):
         ''' Display the job page and load content for the highlighted job. '''
 
-        job_status = LaserJobTracker().getJobDict(job_name)['status']
+        job_status = LaserJobTracker(self).getJobDict(job_name)['status']
 
         # find QStackedWidget for job_status
         stacked_widget = self.window().findChild(
@@ -82,7 +82,7 @@ class JobContentQListWidget(ContentQListWidget):
         self.clear()
         self.current_item_name = job_name
 
-        job_dict = LaserJobTracker().getJobDict(job_name)
+        job_dict = LaserJobTracker(self).getJobDict(job_name)
         self.parent().findChild(QLabel).setText(job_dict['dynamic_job_name'])
 
         for file in os.listdir(job_dict['job_folder_global_path']):
@@ -107,7 +107,7 @@ class MaterialOverviewQListWidget(OverviewQListWidget):
     
     def getItemNames(self) -> list:
         ''' Return the materials and thickness in a list. '''
-        return LaserJobTracker().getMaterialAndThicknessList()
+        return LaserJobTracker(self).getMaterialAndThicknessList()
 
 
     def displayItem(self, material_name: str):
@@ -137,7 +137,7 @@ class MaterialContentQListWidget(ContentQListWidget):
 
         material, thickness = split_material_name(material_name)
 
-        dxfs_names_and_global_paths = LaserJobTracker().getDXFsAndPaths(material, thickness)
+        dxfs_names_and_global_paths = LaserJobTracker(self).getDXFsAndPaths(material, thickness)
 
         for (dxf_name, dxf_global_path) in dxfs_names_and_global_paths:
 
