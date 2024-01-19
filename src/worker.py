@@ -3,10 +3,10 @@ from PyQt5 import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+import pythoncom
 
 if sys.platform == 'win32':
     import win32com.client
-    import pythoncom
 
 
 class Worker(QRunnable):
@@ -43,45 +43,45 @@ class Worker(QRunnable):
 
 
 
-# class MailWorker(QRunnable):
-#     '''
+class MailWorker(QRunnable):
+    '''
 
-#     '''
+    '''
 
-#     def __init__(self, fn, marshalled_outlook, *args, **kwargs):
-#         super().__init__()
-#         # Store constructor arguments (re-used for processing)
-#         self.fn = fn
-#         self.marshalled_outlook = marshalled_outlook
-#         self.args = args
-#         self.kwargs = kwargs
-#         self.signals = WorkerSignals()
+    def __init__(self, fn, marshalled_outlook, *args, **kwargs):
+        super().__init__()
+        # Store constructor arguments (re-used for processing)
+        self.fn = fn
+        self.marshalled_outlook = marshalled_outlook
+        self.args = args
+        self.kwargs = kwargs
+        self.signals = WorkerSignals()
 
-#     @pyqtSlot()
-#     def run(self):
-#         '''
-#         Initialise the runner function with passed args, kwargs.
-#         '''
+    # @pyqtSlot()
+    # def run(self):
+    #     '''
+    #     Initialise the runner function with passed args, kwargs.
+    #     '''
 
-#         pythoncom.CoInitialize ()
+    #     pythoncom.CoInitialize ()
 
-#         outlook = win32com.client.Dispatch (
-#             pythoncom.CoGetInterfaceAndReleaseStream (
-#                 self.marshalled_outlook, 
-#                 pythoncom.IID_IDispatch
-#             )
-#         )
+    #     outlook = win32com.client.Dispatch (
+    #         pythoncom.CoGetInterfaceAndReleaseStream (
+    #             self.marshalled_outlook, 
+    #             pythoncom.IID_IDispatch
+    #         )
+    #     )
         
-#         print("worker Threaded LocationURL:", outlook)
+    #     print("worker Threaded LocationURL:", outlook)
 
-#         print("worker Threaded marshalled LocationURL:", self.marshalled_outlook)
+    #     print("worker Threaded marshalled LocationURL:", self.marshalled_outlook)
 
 
-#         data = self.fn(*self.args, **self.kwargs)
-#         self.signals.result.emit(data)
-#         self.signals.finished.emit()
+    #     data = self.fn(*self.args, **self.kwargs)
+    #     self.signals.result.emit(data)
+    #     self.signals.finished.emit()
 
-#         pythoncom.CoUninitialize ()
+    #     pythoncom.CoUninitialize ()
 
 class WorkerSignals(QObject):
     '''
