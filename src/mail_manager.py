@@ -6,7 +6,7 @@ Handle mail functionality.
 import os
 import sys
 import re
-
+import http.client as httplib
 
 if sys.platform == 'linux':
     import imaplib
@@ -19,10 +19,12 @@ if sys.platform == 'linux':
     from email.utils import parseaddr, formataddr 
     from email.parser import BytesParser
     from email.policy import default
-    import http.client as httplib
+
     from requests.exceptions import ConnectionError
 
 elif sys.platform == 'win32':
+    from unidecode import unidecode
+    import shutil
     import win32com.client
     import pythoncom
 else:
@@ -36,22 +38,18 @@ class MailManager():
         if sys.platform == 'win32':
             # Initialize
             
-            coinit = pythoncom.CoInitialize()
-            rolinit = pythoncom.RoInitialize()
-            coinitex = pythoncom.CoInitializeEx()
+            # coinit = pythoncom.CoInitialize()
             
             
-            print(f'coinit {coinit}, roInit {rolinit} coiinit tex {coinitex}')
-            print(coinit)
-
+        
             self.outlook =  win32com.client.Dispatch("Outlook.Application").GetNamespace('MAPI')
 
             # Create id
-            self.marshalled_outlook = pythoncom.CoMarshalInterThreadInterfaceInStream(pythoncom.IID_IDispatch, self.outlook)
+            # self.marshalled_outlook = pythoncom.CoMarshalInterThreadInterfaceInStream(pythoncom.IID_IDispatch, self.outlook)
 
-            print("Threaded LocationURL:", self.outlook)
+            # print("Threaded LocationURL:", self.outlook)
 
-            print("Threaded marshalled LocationURL:", self.marshalled_outlook)
+            # print("Threaded marshalled LocationURL:", self.marshalled_outlook)
 
             # self.outlook = self.marshalled_outlook
 
@@ -100,19 +98,23 @@ class MailManager():
         """ Return emails from Outlook inbox. """
         msgs = []
 
-
-
         # TODO: if mails have come but no internet connection,m what hten huh
-        print(f'inbox shape?> {self.inbox}')
 
-        if sys.platform == 'win32':    
+        if sys.platform == 'win32':
+
+            temp_folder_global_path = os.path.join(self.gv['DATA_DIR_HOME'], 'TEMP')
+            if os.path.isdir(temp_folder_global_path):
+                shutil.rmtree(temp_folder_global_path)
+            os.mkdir(temp_folder_global_path)
+
             for message in self.inbox.Items:
                 if self.gv['ONLY_UNREAD_MAIL']:
                     if message.UnRead:
-                        msgs.append(message)
+                        msgs.append(self.saveMsgAndAttachmentsInTempFolder(message))
+
                 else:
-                    msgs.append(message)
-                
+                    msgs.append(self.saveMsgAndAttachmentsInTempFolder(message))
+
                 # TODO
                 # message.UnRead = False
                 # message.Save()
@@ -140,12 +142,25 @@ class MailManager():
             self.imapLogout()
 
 
-
-        print(f' the messages are here inthe maoil manager {msgs}')
-
-
         return msgs
     
+    def saveMsgAndAttachmentsInTempFolder(self, msg) -> str:
+        ''' Save Outlook msg and attachments in a temperary folder. '''
+
+        temp_folder_global_path = os.path.join(self.gv['DATA_DIR_HOME'], 'TEMP', unidecode(msg.SenderEmailAddress+'_'+str(msg.Size)))
+        # create folder
+        os.mkdir(temp_folder_global_path)
+        # save the msg file
+        msg.saveAs(os.path.join(temp_folder_global_path, 'mail.msg'))
+
+        # save attachments
+        for attachment in msg.Attachments:
+            attachment.SaveAsFile(os.path.join(temp_folder_global_path, unidecode(attachment.FileName)))
+
+        return temp_folder_global_path
+
+        # you probably have to move it to verwerkt here already      
+
 
     def moveEmailToVerwerktFolder(self, msg):
         """ Move email to verwerkt folder. """
@@ -175,10 +190,10 @@ class MailManager():
         """ Check if the requirements are met for a valid job request. """
 
         if sys.platform == 'win32':
-            attachments = msg.Attachments
 
-            for attachment in attachments:
-                if attachment.FileName.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
+            # msg is a temp_folder_global_path toward a temperary storage
+            for attachment_global_path in os.listdir(msg):
+                if attachment_global_path.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
                     return True
 
             return False
@@ -196,6 +211,7 @@ class MailManager():
     def getMailBody(self, msg):
         """ Print mail body. """
         if sys.platform == 'win32':
+            msg = self.getMsgFromGlobalPath(msg)
             return msg.Body
         if sys.platform == 'linux':
             msg = email.message_from_bytes(msg[0][1])
@@ -212,24 +228,12 @@ class MailManager():
                 if msg.get_content_type() == 'text/html':
                     return msg.get_payload(decode=True)
 
-    # def printMailBodyFromPath(self, msg_file_path: str):
-    #     """ Print the content of an .msg file. """
-
-    #     if sys.platform == 'win32':
-    #         outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
-    #         msg = outlook.OpenSharedItem(msg_file_path)
-
-    #         print(msg.Body)
-
-    #     if sys.platform == 'linux':
-
-    #         with open(msg_file_path, 'rb') as f:
-    #             msg = BytesParser(policy=default).parse(f)
-
 
     def getEmailAddress(self, msg) -> str:
         """ Return the email adress. """
         if sys.platform == 'win32':
+            msg = self.getMsgFromGlobalPath(msg)
+
             if msg.Class==43:
                 if msg.SenderEmailType=='EX':
                     if msg.Sender.GetExchangeUser() is not None:
@@ -241,14 +245,21 @@ class MailManager():
 
         if sys.platform == 'linux':
             return email.message_from_bytes(msg[0][1]).get('From')
+        
+    def getMsgFromGlobalPath(self, temp_folder_global_path: str):
+        ''' Return Msg from global path to mail.msg. '''
 
-    def getMailGlobalPathFromFolder(self, job_folder_global_path: str):
+        msg_file_global_path = self.getMailGlobalPathFromFolder(temp_folder_global_path)
+        assert os.path.exists(msg_file_global_path), f'Could not find {msg_file_global_path}'
+        return self.outlook.OpenSharedItem(msg_file_global_path)
+
+    def getMailGlobalPathFromFolder(self, folder_global_path: str):
         ''' Return the global path toward a mail file in a folder. '''
 
         if sys.platform == 'win32':
-            msg_file_global_path = os.path.join(job_folder_global_path, 'mail.msg')
+            msg_file_global_path = os.path.join(folder_global_path, 'mail.msg')
         if sys.platform == 'linux':
-            msg_file_global_path = os.path.join(job_folder_global_path, 'mail.eml')
+            msg_file_global_path = os.path.join(folder_global_path, 'mail.eml')
 
         if os.path.exists(msg_file_global_path):
             return msg_file_global_path
@@ -259,8 +270,9 @@ class MailManager():
         ''' Return a list with attachment names. '''
 
         if sys.platform == 'win32':
-            return msg.Attachments
-        
+            assert os.path.exists(msg), f'could not find directory {msg}'
+            return [os.path.abspath(os.path.join(msg, file)) for file in os.listdir(msg) if not file.endswith('.msg')]
+            
         if sys.platform == 'linux':
            attachments = []
            for part in email.message_from_bytes(msg[0][1]).walk():
@@ -281,14 +293,15 @@ class MailManager():
     def getAttachmentFileName(self, attachment) -> str:
         ''' Return the attachment filename. '''
         if sys.platform == 'win32':
-            return attachment.FileName
+            return os.path.basename(attachment)
         if sys.platform == 'linux':
             return attachment.get_filename()
 
 
     def saveMail(self, msg, job_folder_global_path: str):
         ''' Save mail in a folder. '''
-        if sys.platform == 'win32':
+        if sys.platform == 'win32': 
+            msg = self.getMsgFromGlobalPath(msg)
             msg.saveAs(os.path.join(job_folder_global_path, 'mail.msg'))
 
         if sys.platform == 'linux':
@@ -299,7 +312,11 @@ class MailManager():
         ''' Save mail in a folder. '''
 
         if sys.platform == 'win32':
-            attachment.SaveAsFile(file_name_global_path)
+            print(f'the attachment name: {attachment}')
+
+            shutil.copy(attachment, file_name_global_path)
+
+            # attachment.SaveAsFile(file_name_global_path)
 
         if sys.platform == 'linux':
             with open(file_name_global_path, 'wb') as file:

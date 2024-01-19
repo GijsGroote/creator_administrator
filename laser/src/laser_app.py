@@ -18,8 +18,9 @@ from laser_qdialog import (
         LaserImportFromMailQDialog, LaserFilesSelectQDialog,
         LaserFolderSelectQDialog, LaserFileInfoQDialog)
 from src.qmessagebox import TimedMessage, WarningQMessageBox, ErrorQMessageBox
-from src.worker import MailWorker, Worker
+from src.worker import Worker
 from src.loading_dialog import LoadingQDialog
+from unidecode import unidecode
 
 from src.mail_manager import MailManager
 
@@ -28,9 +29,7 @@ class LaserMainWindow(MainWindow):
         ui_global_path = os.path.join(gv['UI_DIR_HOME'], 'laser_main_window.ui')
         super().__init__(ui_global_path, *args, **kwargs)
 
-        self.mail_manager = MailManager(gv)
         self.valid_msgs = []
-
         self.threadpool = gv['THREAD_POOL']
 
         # menu bar actions
@@ -45,15 +44,13 @@ class LaserMainWindow(MainWindow):
         self.loading_dialog.show()
 
         # create workers
-        get_mail_worker = MailWorker(self.getNewValidMails, self.mail_manager.marshalled_outlook)
-        # get_mail_worker.signals.finished.connect(self.loading_dialog.accept)
-        # get_mail_worker.signals.result.connect(self.openImportFromMailDialog)
+        get_mail_worker = Worker(self.getNewValidMails)
+        get_mail_worker.signals.finished.connect(self.loading_dialog.accept)
+        get_mail_worker.signals.result.connect(self.openImportFromMailDialog)
         self.valid_msgs = self.threadpool.start(get_mail_worker)
 
     def openImportFromMailDialog(self, valid_msgs):
         ''' open import from mail dialog. '''
-
-        print(f' the messages are here in openImportFromMailDialog {valid_msgs}')
 
         if len(valid_msgs) == 0:
             TimedMessage(self, text='No new mails')
@@ -126,13 +123,15 @@ class LaserMainWindow(MainWindow):
 
     def getNewValidMails(self):
         ''' Return new valid mails. '''
-        print('get net valid mails please')
 
         try:
-            msgs = self.mail_manager.getNewEmails()
+            msgs = MailManager(gv).getNewEmails()
+
+            for msg in msgs:
+                print(msg)
 
         except ConnectionError as e:
-                # printing stack trace 
+            
             
             print('Error?')
             # ErrorQMessageBox(self,
@@ -146,7 +145,7 @@ class LaserMainWindow(MainWindow):
             #         text=f'Error: {str(e)}')
             return
 
-        valid_msgs = [msg for msg in msgs if self.mail_manager.isMailAValidJobRequest(msg)]
+        valid_msgs = [msg for msg in msgs if MailManager(gv).isMailAValidJobRequest(msg)]
 
         if len(msgs) > len(valid_msgs):
             it_or_them = 'it' if len(msgs) - len(valid_msgs) == 1 else 'them'

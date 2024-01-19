@@ -36,3 +36,16 @@ Optionally add mail templates locations to the global variables.json
     // "RECEIVED_MAIL_TEMPLATE":  "C:\\path\\to\\mail\\template.html",
     // "DECLINED_MAIL_TEMPLATE":  "C:\\path\\to\\mail\\template.html",
     // "FINISHED_MAIL_TEMPLATE":  "C:\\path\\to\\mail\\template.html",
+
+    {
+    "REPO_DIR_HOME":  "C:\\Users\\gijsg\\creator-administrator",
+    "PYTHON_PATH": "C:Program Files\\Python311\\python.exe",
+    "OUTLOOK_PATH":  "C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE",
+    "ACCEPTED_EXTENSIONS": ".dxf, .dwg",
+    "ACCEPTED_MATERIALS": "pmma, wood",
+    "DAYS_TO_KEEP_JOBS": "5",
+    "ONLY_UNREAD_MAIL": "true",
+    "MOVE_MAILS_TO_VERWERKT_FOLDER": "false",
+    "MAIL_INBOX_NAME": "temp_inbox",
+    "PASSWORD":  ""
+}

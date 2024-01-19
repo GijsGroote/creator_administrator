@@ -5,7 +5,7 @@ from PyQt5.QtCore import *
 from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-import time
+
 
 from PyQt5.uic import loadUi
 
@@ -59,9 +59,6 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
             # msg = self.valid_msgs[self.msg_counter]
             self.sendConfirmationMail()
 
-
-            # self.sendConfirmationMail()
-
             if self.msg_counter+1 >= len(self.valid_msgs):
                 # done! close dialog
                 self.accept() 
@@ -78,8 +75,6 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         ''' Load content of mail into dialog. '''
 
         valid_msg = self.valid_msgs[self.msg_counter]
-
-        print(f'what can we do witht this? {type(valid_msg)}')
 
 
         self.temp_attachments = self.mail_manager.getAttachments(valid_msg)
@@ -148,7 +143,6 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
             if self.attachment_counter+1 >= len(self.temp_attachments):
                 self.createLaserJob()
-                print(f"fuck it is you, not good")
                 self.sendConfirmationMail()
 
                 if self.msg_counter+1 >= len(self.temp_attachments):
@@ -311,7 +305,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         for attachment_dict in self.temp_attachments_dict.values():
             self.mail_manager.saveAttachment(attachment_dict['attachment'], attachment_dict['file_global_path'])
 
-        TimedMessage(self, text=f'Laser job {self.temp_job_name} created')
+        # TimedMessage(self, text=f'Laser job {self.temp_job_name} created')
 
 class LaserFilesSelectQDialog(SelectQDialog):
     """ Select files dialog. """

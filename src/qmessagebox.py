@@ -1,6 +1,7 @@
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+from tab_widget import JobsQTabWidget
 
 class TimedMessage(QDialog):
     ''' Short message that can only be clicked away. 
@@ -26,7 +27,16 @@ class TimedMessage(QDialog):
         self.moveToTopRightCorner(parent)
 
         # let main window catch key press events
-        parent.jobsQTabWidget.grabKeyboard()
+        main_window_or_dialog = self.getMainWidget(parent)
+        jobs_qtab_widget = main_window_or_dialog.findChild(JobsQTabWidget, 'jobsQTabWidget')
+        if jobs_qtab_widget is None:
+            # main_window_or_dialog.grabKeyboard()
+            pass
+        else:
+            jobs_qtab_widget.grabKeyboard()
+
+        print('oke oke oke')
+        
 
     def moveToTopRightCorner(self, parent):
         parent_geometry = parent.geometry()
@@ -39,7 +49,13 @@ class TimedMessage(QDialog):
     def exit(self):
         self.deleteLater() 
         self.close()
+        
+    def getMainWidget(self, widget):
+        while widget.parent() is not None:
+            print(f'the main widget is now {widget.objectName()}')
+            widget = widget.parent()
 
+        return widget 
 
 class JobFinishedMessageBox(QMessageBox):
 

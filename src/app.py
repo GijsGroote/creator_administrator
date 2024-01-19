@@ -5,7 +5,6 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 
-from src.button import BackQPushButton
 
 class MainWindow(QMainWindow):
 
@@ -58,3 +57,4 @@ class MainWindow(QMainWindow):
             #         print(f"stupid {child.objectName()}")
             #     print(f"who you {self.jobsQTabWidget.currentWidget().findChild(QStackedWidget).currentWidget().objectName()}")
             #     print(self.jobsQTabWidget.currentWidget().findChild(QStackedWidget).currentWidget().findChild(BackQPushButton).objectName())
+
