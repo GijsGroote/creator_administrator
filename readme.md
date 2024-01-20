@@ -36,16 +36,22 @@ Optionally add mail templates locations to the global variables.json
     // "RECEIVED_MAIL_TEMPLATE":  "C:\\path\\to\\mail\\template.html",
     // "DECLINED_MAIL_TEMPLATE":  "C:\\path\\to\\mail\\template.html",
     // "FINISHED_MAIL_TEMPLATE":  "C:\\path\\to\\mail\\template.html",
-
-    {
-    "REPO_DIR_HOME":  "C:\\Users\\gijsg\\creator-administrator",
-    "PYTHON_PATH": "C:Program Files\\Python311\\python.exe",
-    "OUTLOOK_PATH":  "C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE",
+{
+    "REPO_DIR_HOME":  "/home/gijs/Documents/creator-administrator",
+    "PYTHON_PATH": "/usr/bin/python3",
+    "OUTLOOK_PATH":  "There is no Outlook on arch linux",
+    "IOBIT_UNLOCKER_PATH":  "There is no IOBIT_UNLOCKER on arch linux",
     "ACCEPTED_EXTENSIONS": ".dxf, .dwg",
-    "ACCEPTED_MATERIALS": "pmma, wood",
+    "ACCEPTED_MATERIALS": "pmma, hout",
     "DAYS_TO_KEEP_JOBS": "5",
-    "ONLY_UNREAD_MAIL": "true",
-    "MOVE_MAILS_TO_VERWERKT_FOLDER": "false",
+    "PASSWORD":  "",
+    "ONLY_UNREAD_MAIL": "false",
+    "MAIL_NAME": "Gijs Groote",
     "MAIL_INBOX_NAME": "temp_inbox",
-    "PASSWORD":  ""
+    "MAIL_ADRESS": "gijsgroote@hotmail.com",
+    "MAIL_PASSWORD": "Fa725AAhsad6ws",
+    "MOVE_MAILS_TO_VERWERKT_FOLDER": "false",
+    "DISPLAY_TEMP_MESSAGES": "true"
 }
+```
+

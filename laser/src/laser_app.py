@@ -6,9 +6,6 @@ from requests.exceptions import ConnectionError
 import time
 
 import traceback 
-
-
-
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -17,7 +14,7 @@ from src.app import MainWindow
 from laser_qdialog import (
         LaserImportFromMailQDialog, LaserFilesSelectQDialog,
         LaserFolderSelectQDialog, LaserFileInfoQDialog)
-from src.qmessagebox import TimedMessage, WarningQMessageBox, ErrorQMessageBox
+from src.qmessagebox import InfoQMessageBox, WarningQMessageBox, ErrorQMessageBox
 from src.worker import Worker
 from src.loading_dialog import LoadingQDialog
 from unidecode import unidecode
@@ -46,24 +43,26 @@ class LaserMainWindow(MainWindow):
 
         self.loading_dialog = LoadingQDialog(self, gv)
         self.loading_dialog.show()
-
-        # create workers
+        
         get_mail_worker = Worker(self.getNewValidMails)
         get_mail_worker.signals.finished.connect(self.loading_dialog.accept)
+        get_mail_worker.signals.error.connect(self.loading_dialog.accept)
+        get_mail_worker.signals.error.connect(self.handleMailError)
         get_mail_worker.signals.result.connect(self.openImportFromMailDialog)
         self.valid_msgs = self.threadpool.start(get_mail_worker)
 
     def openImportFromMailDialog(self, data):
         ''' open import from mail dialog. '''
 
-        valid_msgs, status = data
+        valid_msgs, warnings = data
 
-        if len(status) != 0:
-            for status_str in status:
-                WarningQMessageBox(self, text=status_str)
+        if len(warnings) != 0:
+            for warning in warnings:
+                WarningQMessageBox(gv, self, text=warning)
 
         if len(valid_msgs) == 0:
-            TimedMessage(self, text='No new valid job request in mail inbox')
+            InfoQMessageBox(parent=self, text='No new valid job request in mail inbox')
+
         else:
 
             dialog = LaserImportFromMailQDialog(self, valid_msgs)
@@ -74,6 +73,16 @@ class LaserMainWindow(MainWindow):
             qlist_widgets = self.findChildren(QListWidget)
             for list_widget in qlist_widgets:
                 list_widget.refresh()
+
+    def handleMailError(self, exc: Exception):
+        ''' Handle the mail error. '''
+        assert isinstance(exc, Exception), f'Expected type Exception, received type: {type(exc)}'
+
+        if isinstance(exc, ConnectionError):
+            ErrorQMessageBox(self,
+                    text=f'Error: {str(exc)}')
+        else:
+            ErrorQMessageBox(self, text=f'Error Occured: {str(exc)}')
 
     def selectFilesAction(self):
         ''' Open dialog to select multiple files. ''' 
@@ -109,7 +118,7 @@ class LaserMainWindow(MainWindow):
                     for item in os.listdir(subfolder_global_path):
                         item_global_path = os.path.join(subfolder_global_path, item)
                         if os.path.isdir(item_global_path):
-                            WarningQMessageBox(self, text=f'{subfolder_global_path} contains a folder '\
+                            WarningQMessageBox(gv, self, text=f'{subfolder_global_path} contains a folder '\
                                 f'{item_global_path} which is skipped' )
                                 
                             continue
@@ -122,7 +131,7 @@ class LaserMainWindow(MainWindow):
                         folders_global_paths_list.append(files_in_subfolder_global_paths)
                         jobs_names_list.append(project_name+'_'+os.path.basename(subfolder))
                     else:
-                        WarningQMessageBox(self, text=f'No laser file found in {subfolder_global_path}'\
+                        WarningQMessageBox(gv, self, text=f'No laser file found in {subfolder_global_path}'\
                                 f'skip this subfolder')
 
             LaserFileInfoQDialog(self, jobs_names_list, folders_global_paths_list).exec_()
@@ -134,25 +143,8 @@ class LaserMainWindow(MainWindow):
 
     def getNewValidMails(self):
         ''' Return new valid mails. '''
+        return MailManager(gv).getNewValidMails()
 
-        try:
-            return MailManager(gv).getNewValidMails()
-
-        except ConnectionError as e:
-            
-            print('Error?')
-            # ErrorQMessageBox(self,
-            #         text=f'Error getting mails becuase: {str(e)}')
-            return
-        except Exception as e:
-            print(f'Error: {str(e)}')
-            traceback.print_exc() 
-
-            # ErrorQMessageBox(self,
-            #         text=f'Error: {str(e)}')
-            return
-        
-    
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     laser_window = LaserMainWindow()

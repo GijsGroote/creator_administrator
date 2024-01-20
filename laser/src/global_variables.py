@@ -38,13 +38,20 @@ with open(global_variables_path, 'r') as global_variables_file:
     gv_data = json.load(global_variables_file)
     gv['REPO_DIR_HOME'] = gv_data['REPO_DIR_HOME']
     gv['PYTHON_PATH'] = gv_data['PYTHON_PATH']
-    gv['OUTLOOK_PATH'] = gv_data['OUTLOOK_PATH']
+    if 'OUTLOOK_PATH' in gv_data:
+        gv['OUTLOOK_PATH'] = gv_data['OUTLOOK_PATH']
+
     gv['ACCEPTED_EXTENSIONS'] = tuple(gv_data['ACCEPTED_EXTENSIONS'].split(', '))
     gv['ACCEPTED_MATERIALS'] = tuple(gv_data['ACCEPTED_MATERIALS'].split(', '))
-    gv['DAYS_TO_KEEP_JOBS'] = gv_data['DAYS_TO_KEEP_JOBS']
-    gv['ONLY_UNREAD_MAIL'] = gv_data['ONLY_UNREAD_MAIL']
-    
 
+    gv['DAYS_TO_KEEP_JOBS'] = int(gv_data['DAYS_TO_KEEP_JOBS'])
+
+    gv['ONLY_UNREAD_MAIL'] = True if gv_data['ONLY_UNREAD_MAIL'] == 'true' else False
+    gv['MOVE_MAILS_TO_VERWERKT_FOLDER'] = True if gv_data['MOVE_MAILS_TO_VERWERKT_FOLDER'] == 'true' else False
+    gv['DISPLAY_TEMP_MESSAGES'] = True if gv_data['DISPLAY_TEMP_MESSAGES'] == 'true' else False
+    gv['DISPLAY_WARNING_MESSAGES'] = True if gv_data['DISPLAY_WARNING_MESSAGES'] == 'true' else False
+
+    gv['PASSWORD'] = gv_data['PASSWORD']
 
     # TODO: these should be checked, because if MAIL_NAME is not in gv, errors
     if 'MAIL_NAME' in gv_data:
@@ -59,8 +66,6 @@ with open(global_variables_path, 'r') as global_variables_file:
     else:
         gv['MAIL_INBOX_NAME'] = 'Inbox'
 
-    gv['MOVE_MAILS_TO_VERWERKT_FOLDER'] = gv_data['MOVE_MAILS_TO_VERWERKT_FOLDER']
-    gv['PASSWORD'] = gv_data['PASSWORD']
 
     for mail_template in ['RECEIVED_MAIL_TEMPLATE',
                           'DECLINED_MAIL_TEMPLATE',

@@ -14,7 +14,7 @@ from global_variables import gv
 from src.qdialog import ImportFromMailQDialog, SelectQDialog
 
 from src.mail_manager import MailManager
-from src.qmessagebox import TimedMessage
+from src.qmessagebox import TimedMessage, ErrorQMessageBox
 
 from requests.exceptions import ConnectionError
 from laser_job_tracker import LaserJobTracker
@@ -29,7 +29,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         ui_global_path = os.path.join(gv['REPO_DIR_HOME'], 'laser/ui/import_mail_dialog.ui')
         super().__init__(parent, ui_global_path, *args, **kwargs)
 
-        self.mail_manager = MailManager(gv, parent)
+        self.mail_manager = MailManager(gv)
         self.valid_msgs = valid_msgs
  
         self.msg_counter = 0
@@ -190,6 +190,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
     def skipMail(self):
         ''' Skip mail and go to the next. '''
+        # TODO: mail should not go to verwerkt folder, move it back
         if self.msg_counter+1 >= len(self.valid_msgs):
             self.accept() 
         else:
@@ -255,7 +256,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         #             text=f"Confirmation mail send to {self.temp_job_name}",
         #             parent=self)
 
-        TimedMessage(self, f"This function is not yet implemented")
+        TimedMessage(gv, self, f"This function is not yet implemented")
 
 
 
@@ -271,7 +272,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
             self.mail_manager.moveEmailToVerwerktFolder(
                                       msg=self.valid_msgs[self.msg_counter])
         except ConnectionError as e:
-            TimedMessage(self, text=str(e))
+            ErrorQMessageBox(self, text=f'Error: {str(e)}')
             return
 
         # make workers

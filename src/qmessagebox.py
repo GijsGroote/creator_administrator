@@ -1,48 +1,37 @@
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-from tab_widget import JobsQTabWidget
 
-class TimedMessage(QDialog):
+class TimedMessage(QMessageBox):
     ''' Short message that can only be clicked away. 
     It should not interfere with the main application, it does that anyway...'''
 
-    def __init__(self, parent, text: str, loc='top'):
-        QDialog.__init__(self, parent)
+    def __init__(self, gv, parent, text: str, icon=QMessageBox.Information):
+        super().__init__(parent)
 
-        self.setModal(0)
-        self.setWindowTitle('')
-        label = QLabel(text, self)
-        layout = QVBoxLayout()
-        layout.addWidget(label)
-        self.setLayout(layout)
-        self.adjustSize()
-
-        self.timer = QTimer(self)
-        self.timer.setInterval(4000)
-        self.timer.start()
-        self.timer.timeout.connect(self.exit)
-
-        self.show()
-        if loc=='top':
-            self.moveToTopOfScreen()
-        elif loc=='topright':
-            self.moveToTopRightCorner(parent)
-        else: 
-            raise ValueError(f'Unknown location {loc}')
+        if gv['DISPLAY_TEMP_MESSAGES']:
+            # self.setModal(0)
+            self.setWindowTitle('')
+            self.setText(text)
+            # label = QLabel(text, self)
+            # layout = QVBoxLayout()
+            # layout.addWidget(label)
+            # self.setLayout(layout)
+            self.adjustSize()
+            self.setIcon(icon)
 
 
+            self.timer = QTimer(self)
+            self.timer.setInterval(4000)
+            self.timer.timeout.connect(self.exit)
+            self.timer.start()
+            self.exec_()
 
-        parent.grabKeyboard()
-        # # let main window catch key press events
-        # main_window_or_dialog = self.getMainWidget(parent)
-        # jobs_qtab_widget = main_window_or_dialog.findChild(JobsQTabWidget, 'jobsQTabWidget')
-        # if jobs_qtab_widget is None:
-        #     # main_window_or_dialog.grabKeyboard()
-        #     pass
-        # else:
-        #     jobs_qtab_widget.grabKeyboard()
 
+    def moveToTopRightOfScreen(self):
+        ''' Move widget to the top right of the screen. '''
+        x = QApplication.desktop().screenGeometry().width() - self.width()
+        self.move(x-100, 100)
         
     def moveToTopOfScreen(self):
         ''' Move widget to top of screen, horizontally centered. '''
@@ -90,15 +79,28 @@ class YesOrNoMessageBox(QMessageBox):
         self.setIcon(icon)
 
 
-class WarningQMessageBox(QMessageBox):
 
-    def __init__(self, parent, text=None, *args, **kwargs):
+class InfoQMessageBox(QMessageBox):
+
+    def __init__(self, parent, text, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         self.setText(text)
         self.addButton(QMessageBox.Ok)
-        self.setIcon(QMessageBox.Warning)
+        self.setIcon(QMessageBox.Information)
         self.exec_()
+
+
+class WarningQMessageBox(QMessageBox):
+
+    def __init__(self, gv, parent, text, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        if gv['DISPLAY_WARNING_MESSAGES']:
+            self.setText(text)
+            self.addButton(QMessageBox.Ok)
+            self.setIcon(QMessageBox.Warning)
+            self.exec_()
 
 
 class ErrorQMessageBox(QMessageBox):
@@ -109,3 +111,4 @@ class ErrorQMessageBox(QMessageBox):
         self.setText(text)
         self.addButton(QMessageBox.Ok)
         self.setIcon(QMessageBox.Critical)
+        self.exec_()

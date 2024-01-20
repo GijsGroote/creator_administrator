@@ -216,7 +216,7 @@ class LaserJobTracker(JobTracker):
         #     json.dump(tracker_dict, tracker_file, indent=4)
 
         self.makeBackup()
-        TimedMessage(self.parent_widget, text='System healthy :)')
+        TimedMessage(gv, self.parent_widget, text='System healthy :)')
 
 
     def getNumberOfJobsInQueue(self) -> int:

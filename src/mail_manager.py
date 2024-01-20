@@ -7,6 +7,7 @@ import os
 import sys
 import re
 import http.client as httplib
+from typing import Tuple
 
 if sys.platform == 'linux':
     import imaplib
@@ -78,16 +79,16 @@ class MailManager():
         self.imap_mail.logout()
 
 
-    def getNewValidMails(self) -> list:
+    def getNewValidMails(self) -> Tuple[list, list]:
         """ Return emails from Outlook inbox. """
         valid_msgs = []
         n_invalid_mails = 0
-        status = []
+        warnings = []
 
         if sys.platform == 'win32':
 
             if not self.isThereInternet():
-                status.append('No internet connection detected')
+                warnings.append('No internet connection detected')
 
             temp_folder_global_path = os.path.join(self.gv['DATA_DIR_HOME'], 'TEMP')
             if os.path.isdir(temp_folder_global_path):
@@ -121,7 +122,7 @@ class MailManager():
                 status, response = self.imap_mail.search(None, 'ALL')
 
             if status != 'OK':
-                return []
+                raise ValueError('Received status: {status} from mail server') 
 
             for mail_id in response[0].split():
                 status, msg_data = self.imap_mail.fetch(mail_id, "(RFC822)")
@@ -135,9 +136,9 @@ class MailManager():
 
         if n_invalid_mails > 0:
             it_or_them = 'it' if n_invalid_mails == 1 else 'them'
-            status.append(f'{n_invalid_mails} invalid mails detected (no or invalid attachments)\n Respond to {it_or_them} manually.')
+            warnings.append(f'{n_invalid_mails} invalid mails detected (no or invalid attachments)\n Respond to {it_or_them} manually.')
 
-        return valid_msgs, status
+        return valid_msgs, warnings
     
     def saveMsgAndAttachmentsInTempFolder(self, msg) -> str:
         ''' Save Outlook msg and attachments in a temperary folder. '''
