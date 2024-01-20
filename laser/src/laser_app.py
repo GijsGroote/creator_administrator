@@ -49,7 +49,7 @@ class LaserMainWindow(MainWindow):
         get_mail_worker.signals.error.connect(self.loading_dialog.accept)
         get_mail_worker.signals.error.connect(self.handleMailError)
         get_mail_worker.signals.result.connect(self.openImportFromMailDialog)
-        self.valid_msgs = self.threadpool.start(get_mail_worker)
+        self.threadpool.start(get_mail_worker)
 
     def openImportFromMailDialog(self, data):
         ''' open import from mail dialog. '''

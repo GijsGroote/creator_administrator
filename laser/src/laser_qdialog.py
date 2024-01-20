@@ -56,8 +56,10 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         if self.attachment_counter+1 >= len(self.temp_attachments):
             self.createLaserJob()
 
-            # msg = self.valid_msgs[self.msg_counter]
-            self.sendConfirmationMail()
+            send_mail_worker = Worker(self.sendConfirmationMail)
+            send_mail_worker.signals.finished.connect(self.confirmationMailSendMessage)
+            send_mail_worker.signals.error.connect(self.handleMailError)
+            self.threadpool.start(send_mail_worker)
 
             if self.msg_counter+1 >= len(self.valid_msgs):
                 # done! close dialog
@@ -261,33 +263,33 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
 
     def sendConfirmationMail(self):
-        ''' Send a confirmation mail on a new thread. ''' 
+        ''' Send a confirmation mail. ''' 
 
-        try:
-            self.mail_manager.replyToEmailFromFileUsingTemplate(
-                    msg_file_path=self.mail_manager.getMailGlobalPathFromFolder(self.temp_job_folder_global_path), 
-                    template_file_name="RECEIVED_MAIL_TEMPLATE",
-                    template_content={"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
-                    popup_reply=False)
-            self.mail_manager.moveEmailToVerwerktFolder(
-                                      msg=self.valid_msgs[self.msg_counter])
-        except ConnectionError as e:
-            ErrorQMessageBox(self, text=f'Error: {str(e)}')
-            return
+        self.mail_manager.replyToEmailFromFileUsingTemplate(
+                msg_file_path=self.mail_manager.getMailGlobalPathFromFolder(self.temp_job_folder_global_path), 
+                template_file_name="RECEIVED_MAIL_TEMPLATE",
+                template_content={"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
+                popup_reply=False)
+        self.mail_manager.moveEmailToVerwerktFolder(
+                                  msg=self.valid_msgs[self.msg_counter])
 
-        # make workers
-        # send_mail_worker = Worker(self.mail_manager.replyToEmailFromFileUsingTemplate,
-        #         msg_file_path=self.mail_manager.getMailGlobalPathFromFolder(self.temp_job_folder_global_path), 
-        #         template_file_name="RECEIVED_MAIL_TEMPLATE",
-        #         template_content={"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
-        #         popup_reply=False)
-        # move_mail_worker = Worker(self.mail_manager.moveEmailToVerwerktFolder,
-        #                           msg=self.valid_msgs[self.msg_counter])
+    def confirmationMailSendMessage(self):
+        ''' Display a message with: confimation mail send. '''
+        # job_name = data
+        TimedMessage(gv, parent=self, text=f'Confimation mail send')
 
-        # # start workers
-        # self.threadpool.start(send_mail_worker)
-        # self.threadpool.start(move_mail_worker)
-    
+    def handleMailError(self, exc):
+        ''' Handle mail error. '''
+
+        assert isinstance(exc, Exception), f'Expected type Exception, received type: {type(exc)}'
+
+        if isinstance(exc, ConnectionError):
+            ErrorQMessageBox(self,
+                    text=f'Error: {str(exc)}')
+        else:
+            ErrorQMessageBox(self, text=f'Error Occured: {str(exc)}')
+
+
     def createLaserJob(self):
         """ Create a laser job. """
         msg = self.valid_msgs[self.msg_counter]
