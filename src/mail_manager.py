@@ -30,31 +30,15 @@ elif sys.platform == 'win32':
 else:
     raise ValueError(f'This software does not work for platform: {sys.platform}')
 
+
 class MailManager():
 
     def __init__(self, gv: dict):
         self.gv = gv
 
         if sys.platform == 'win32':
-            # Initialize
-            
-            # coinit = pythoncom.CoInitialize()
-            
-            
-        
+
             self.outlook =  win32com.client.Dispatch("Outlook.Application").GetNamespace('MAPI')
-
-            # Create id
-            # self.marshalled_outlook = pythoncom.CoMarshalInterThreadInterfaceInStream(pythoncom.IID_IDispatch, self.outlook)
-
-            # print("Threaded LocationURL:", self.outlook)
-
-            # print("Threaded marshalled LocationURL:", self.marshalled_outlook)
-
-            # self.outlook = self.marshalled_outlook
-
-            # Pass the id to the new thread
-            # thread = threading.Thread(target=run_in_thread, kwargs={'xl_id': xl_id})
             
             try:
                 if gv['MAIL_INBOX_NAME'] == 'Inbox':
@@ -94,13 +78,16 @@ class MailManager():
         self.imap_mail.logout()
 
 
-    def getNewEmails(self) -> list:
+    def getNewValidMails(self) -> list:
         """ Return emails from Outlook inbox. """
-        msgs = []
-
-        # TODO: if mails have come but no internet connection,m what hten huh
+        valid_msgs = []
+        n_invalid_mails = 0
+        status = []
 
         if sys.platform == 'win32':
+
+            if not self.isThereInternet():
+                status.append('No internet connection detected')
 
             temp_folder_global_path = os.path.join(self.gv['DATA_DIR_HOME'], 'TEMP')
             if os.path.isdir(temp_folder_global_path):
@@ -108,21 +95,23 @@ class MailManager():
             os.mkdir(temp_folder_global_path)
 
             for message in self.inbox.Items:
-                if self.gv['ONLY_UNREAD_MAIL']:
-                    if message.UnRead:
-                        msgs.append(self.saveMsgAndAttachmentsInTempFolder(message))
+                if self.isMailAValidJobRequest(message):
+                    if self.gv['ONLY_UNREAD_MAIL']:
+                        if message.UnRead:
+                            valid_msgs.append(self.saveMsgAndAttachmentsInTempFolder(message))
 
+                    else:
+                        valid_msgs.append(self.saveMsgAndAttachmentsInTempFolder(message))
+
+                    message.UnRead = False
+                    message.Save()
                 else:
-                    msgs.append(self.saveMsgAndAttachmentsInTempFolder(message))
-
-                # TODO
-                # message.UnRead = False
-                # message.Save()
-
+                    n_invalid_mails += 1
+                
         if sys.platform == 'linux':
 
             if not self.isThereInternet():
-                raise ConnectionError('Not connected to the internet')
+                raise ConnectionError('No internet connection detected')
 
             self.imapLogin()
 
@@ -136,23 +125,27 @@ class MailManager():
 
             for mail_id in response[0].split():
                 status, msg_data = self.imap_mail.fetch(mail_id, "(RFC822)")
-                msgs.append(msg_data)
-
+                if self.isMailAValidJobRequest(msg_data):
+                    valid_msgs.append(msg_data)
+                else:
+                    n_invalid_mails += 1
 
             self.imapLogout()
 
 
-        return msgs
+        if n_invalid_mails > 0:
+            it_or_them = 'it' if n_invalid_mails == 1 else 'them'
+            status.append(f'{n_invalid_mails} invalid mails detected (no or invalid attachments)\n Respond to {it_or_them} manually.')
+
+        return valid_msgs, status
     
     def saveMsgAndAttachmentsInTempFolder(self, msg) -> str:
         ''' Save Outlook msg and attachments in a temperary folder. '''
         unique_mail_code = unidecode(self.getEmailAddress(msg)+'_'+str(msg.Size))
 
-        print(f'uniq mail code {unique_mail_code}')
         temp_folder_global_path = os.path.join(self.gv['DATA_DIR_HOME'], 'TEMP', unique_mail_code)
-        # create folder
-        
 
+        # create folder       
         os.mkdir(temp_folder_global_path)
         # save the msg file
         msg.saveAs(os.path.join(temp_folder_global_path, 'mail.msg'))
@@ -161,17 +154,14 @@ class MailManager():
         for attachment in msg.Attachments:
             attachment.SaveAsFile(os.path.join(temp_folder_global_path, unidecode(attachment.FileName)))
 
-        return temp_folder_global_path
-
-        # you probably have to move it to verwerkt here already      
+        return temp_folder_global_path     
 
 
     def moveEmailToVerwerktFolder(self, msg):
         """ Move email to verwerkt folder. """
         if sys.platform == 'win32':
             if self.gv['MOVE_MAILS_TO_VERWERKT_FOLDER']:
-                pass
-                # msg.Move(self.verwerkt_folder)
+                msg.Move(self.verwerkt_folder)
 
         if sys.platform == 'linux':
             if not self.isThereInternet():
@@ -196,9 +186,10 @@ class MailManager():
         if sys.platform == 'win32':
 
             # msg is a temp_folder_global_path toward a temperary storage
-            for attachment_global_path in os.listdir(msg):
-                if attachment_global_path.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
-                    return True
+            if msg.Attachments:
+                for attachment in msg.Attachments:
+                    if attachment.FileName.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
+                        return True
 
             return False
 

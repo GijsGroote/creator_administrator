@@ -48,7 +48,7 @@ class JobsQPushButton(QPushButton):
 
     def sendFinishedMail(self, gv: dict, job_name: str, job_folder_global_path: str):
         ''' send please come pick up your job mail. '''
-        mail_manager = MailManager(gv)
+        mail_manager = MailManager(gv, self.parent())
         msg_file_global_path = mail_manager.getMailGlobalPathFromFolder(job_folder_global_path)
 
         if msg_file_global_path is not None:
@@ -84,7 +84,7 @@ class JobsQPushButton(QPushButton):
 
     def sendDeclinedMail(self, gv: dict, job_name: str, job_folder_global_path: str):
         ''' popup the Declined mail. '''
-        mail_manager = MailManager(gv)
+        mail_manager = MailManager(gv, self)
 
         mail_manager.replyToEmailFromFileUsingTemplate(
                 mail_manager.getMailGlobalPathFromFolder(job_folder_global_path),

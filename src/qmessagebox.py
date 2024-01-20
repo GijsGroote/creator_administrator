@@ -90,9 +90,6 @@ class YesOrNoMessageBox(QMessageBox):
         self.setIcon(icon)
 
 
-
-
-
 class WarningQMessageBox(QMessageBox):
 
     def __init__(self, parent, text=None, *args, **kwargs):
@@ -101,6 +98,7 @@ class WarningQMessageBox(QMessageBox):
         self.setText(text)
         self.addButton(QMessageBox.Ok)
         self.setIcon(QMessageBox.Warning)
+        self.exec_()
 
 
 class ErrorQMessageBox(QMessageBox):

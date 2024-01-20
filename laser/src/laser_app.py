@@ -53,11 +53,17 @@ class LaserMainWindow(MainWindow):
         get_mail_worker.signals.result.connect(self.openImportFromMailDialog)
         self.valid_msgs = self.threadpool.start(get_mail_worker)
 
-    def openImportFromMailDialog(self, valid_msgs):
+    def openImportFromMailDialog(self, data):
         ''' open import from mail dialog. '''
 
+        valid_msgs, status = data
+
+        if len(status) != 0:
+            for status_str in status:
+                WarningQMessageBox(self, text=status_str)
+
         if len(valid_msgs) == 0:
-            TimedMessage(self, text='No new mails')
+            TimedMessage(self, text='No new valid job request in mail inbox')
         else:
 
             dialog = LaserImportFromMailQDialog(self, valid_msgs)
@@ -130,10 +136,9 @@ class LaserMainWindow(MainWindow):
         ''' Return new valid mails. '''
 
         try:
-            msgs = MailManager(gv).getNewEmails()
+            return MailManager(gv).getNewValidMails()
 
         except ConnectionError as e:
-            
             
             print('Error?')
             # ErrorQMessageBox(self,
@@ -146,20 +151,7 @@ class LaserMainWindow(MainWindow):
             # ErrorQMessageBox(self,
             #         text=f'Error: {str(e)}')
             return
-
-        valid_msgs = [msg for msg in msgs if MailManager(gv).isMailAValidJobRequest(msg)]
-
-        if len(msgs) > len(valid_msgs):
-            it_or_them = 'it' if len(msgs) - len(valid_msgs) == 1 else 'them'
-            
-            print(f'{len(msgs)-len(valid_msgs)} invalid messages '\
-                    f'detected, respond to {it_or_them} manually.')
-            # WarningQMessageBox(self,
-            #         text=f'{len(msgs)-len(valid_msgs)} invalid messages '\
-            #         f'detected, respond to {it_or_them} manually.')
-
-        print('hey4')
-        return valid_msgs
+        
     
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
