@@ -27,7 +27,6 @@ elif sys.platform == 'win32':
     from unidecode import unidecode
     import shutil
     import win32com.client
-    import pythoncom
 else:
     raise ValueError(f'This software does not work for platform: {sys.platform}')
 
@@ -160,21 +159,20 @@ class MailManager():
 
     def moveEmailToVerwerktFolder(self, msg):
         """ Move email to verwerkt folder. """
-        if sys.platform == 'win32':
-            if self.gv['MOVE_MAILS_TO_VERWERKT_FOLDER']:
-                msg.Move(self.verwerkt_folder)
+        if self.gv['MOVE_MAILS_TO_VERWERKT_FOLDER']:
+            if sys.platform == 'win32':
+                    msg.Move(self.verwerkt_folder)
 
-        if sys.platform == 'linux':
-            if not self.isThereInternet():
-                raise ConnectionError('Not connected to the internet')
+            if sys.platform == 'linux':
+                if not self.isThereInternet():
+                    raise ConnectionError('Not connected to the internet')
 
-            self.imapLogin()
+                self.imapLogin()
 
-            # Extract the mail UID using regular expression
-            match = re.search(rb'\b(\d+)\b', msg[0][0])
+                # Extract the mail UID using regular expression
+                match = re.search(rb'\b(\d+)\b', msg[0][0])
 
-            if match:
-                if self.gv['MOVE_MAILS_TO_VERWERKT_FOLDER']:
+                if match:
                     uid_msg_set = (match.group(1))
                     self.imap_mail.copy(uid_msg_set, 'Verwerkt')
                     self.imap_mail.store(uid_msg_set, '+FLAGS', r'(\Deleted)')
@@ -311,11 +309,7 @@ class MailManager():
         ''' Save mail in a folder. '''
 
         if sys.platform == 'win32':
-            print(f'the attachment name: {attachment}')
-
             shutil.copy(attachment, file_name_global_path)
-
-            # attachment.SaveAsFile(file_name_global_path)
 
         if sys.platform == 'linux':
             with open(file_name_global_path, 'wb') as file:
@@ -323,10 +317,10 @@ class MailManager():
 
 
     def replyToEmailFromFileUsingTemplate(self,
-                                                msg_file_path: str,
-                                                template_file_name: str,
-                                                template_content: dict,
-                                                popup_reply=True):
+                                        msg_file_path: str,
+                                        template_file_name: str,
+                                        template_content: dict,
+                                        popup_reply=True):
         """ Reply to .msg file using a template. """
         if not self.isThereInternet():
             raise ConnectionError('Not connected to the internet')
@@ -349,7 +343,6 @@ class MailManager():
             reply.HTMLBody = html_content
 
             if popup_reply:
-                print('Send the Outlook popup reply, it can be behind other windows')
                 reply.Display(True)
             else:
                 reply.Send()
@@ -403,7 +396,6 @@ class MailManager():
     def getSenderName(self, msg) -> str:
         ''' Return the name of the sender. '''
         return self.mailToName(self.getEmailAddress(msg))
-
 
     def isThereInternet(self) -> bool:
         conn = httplib.HTTPSConnection("8.8.8.8", timeout=5)

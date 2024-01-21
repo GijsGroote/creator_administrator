@@ -70,7 +70,7 @@ def move(source_dir_global: str, target_dir_global: str):
         except Exception as e:
             print(f"An error occurred: {e}")
 
-def delete(gv, item_global_path: str):
+def delete(item_global_path: str):
     """ Delete the file from the file system. """
     if os.path.exists(item_global_path):
         try:

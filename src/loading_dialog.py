@@ -7,11 +7,12 @@ from PyQt5 import uic
 
 class LoadingQDialog(QDialog):
 
-    def __init__(self, parent, gv: dict, *args, **kwargs):
+    def __init__(self, parent, gv: dict, text=None, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
-
         uic.loadUi(os.path.join(gv['REPO_DIR_HOME'], 'ui/loading_dialog.ui'), self)
+        if text is not None:
+            self.label.setText(text)
 
         self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.CustomizeWindowHint)
 

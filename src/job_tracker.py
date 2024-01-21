@@ -7,14 +7,16 @@ import shutil
 import os
 import abc
 import re
+from typing import Tuple
 from unidecode import unidecode
 from datetime import datetime
 from typing import List
+from PyQt5.QtWidgets import QWidget
 from src.qmessagebox import TimedMessage, YesOrNoMessageBox, InfoQMessageBox
 
 class JobTracker:
 
-    def __init__(self, gv: dict, parent_widget):
+    def __init__(self, gv: dict, parent_widget: QWidget):
         self.gv = gv
         self.parent_widget = parent_widget
         self.job_keys = ['job_name', 'dynamic_job_name', 'status',
@@ -23,14 +25,12 @@ class JobTracker:
         self.tracker_backup_file_path = gv['TRACKER_FILE_PATH'].replace("job_log.json",
                                         "job_log_backup.json")
 
-        self.checkTrackerFileHealth(parent_widget)
-
     @abc.abstractmethod
     def addJob(self, job_name: str, main_folder: str, files_dict: dict) -> dict:
         """ Add a job to the tracker. """
 
     @abc.abstractmethod
-    def checkHealth(self, parent_widget):
+    def checkHealth(self):
         """ Check and repair system. """
 
     def createTrackerFile(self):
@@ -46,7 +46,7 @@ class JobTracker:
 
         InfoQMessageBox(self.parent_widget, text='New job tracker file created') 
 
-    def checkTrackerFileHealth(self, parent_widget):
+    def checkTrackerFileHealth(self):
         # Create the tracker file if it doesn't exist
         if not os.path.exists(self.tracker_file_path):
             self.createTrackerFile()
@@ -150,3 +150,11 @@ class JobTracker:
                 return job_name + '_(1)'
             return job_name
         return job_name + '_(' + str(max_job_number + 1) + ')'
+    
+    def jobGlobalPathToTrackerJobDict(self, tracker_dict: dict, job_folder_global_path: str) -> dict:
+        """ If exists, return job name and data from tracker dictionary
+        corresponding to the print job with name print_job_folder_name. """
+        for job_key, job_dict in tracker_dict.items():
+            if job_folder_global_path == job_dict['job_folder_global_path']:
+                return job_key, job_dict
+        return None, None

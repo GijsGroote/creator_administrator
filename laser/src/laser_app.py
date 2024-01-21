@@ -30,11 +30,18 @@ class LaserMainWindow(MainWindow):
         self.valid_msgs = []
         self.threadpool = gv['THREAD_POOL']
 
-        self.job_tracker = LaserJobTracker(self)
-        self.job_tracker.checkHealth(self)
+        # call job tracker twice to enforce healthy job log
+        self.job_tracker = LaserJobTracker(parent_widget=self)
+        self.job_tracker.checkHealth()
+
+        # refresh all laser job tabs
+        qlist_widgets = self.findChildren(QListWidget)
+        for list_widget in qlist_widgets:
+            list_widget.refresh()
+
 
         # menu bar actions
-        self.importFromMailAction.triggered.connect(self.getValidMailsFromInbox)
+        self.importFromMailAction.triggered.connect(self.threadedGetValidMailsFromInbox)
         self.selectFilesAction.triggered.connect(self.openSelectFilesDialog)
         self.selectFoldersAction.triggered.connect(self.openSelectFolderDialog)
 
@@ -42,14 +49,13 @@ class LaserMainWindow(MainWindow):
         self.editSettingsAction.triggered.connect(self.openEditSettingsDialog)
         self.showDocumentationAction.triggered.connect(self.openDocumentationDialog)
 
-    def getValidMailsFromInbox(self):
+    def threadedGetValidMailsFromInbox(self):
         ''' Get mails from inbox.
 
         show loading screen on main thread, 
         get mails on a seperate thread
         remove loading screen and handle incoming mails.
         '''
-
 
         self.loading_dialog = LoadingQDialog(self, gv)
         self.loading_dialog.show()
@@ -74,7 +80,6 @@ class LaserMainWindow(MainWindow):
             InfoQMessageBox(parent=self, text='No new valid job request in mail inbox')
 
         else:
-
             dialog = LaserImportFromMailQDialog(self, valid_msgs)
             dialog.exec_()
 

@@ -7,6 +7,8 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 from src.mail_manager import MailManager
+from src.qmessagebox import InfoQMessageBox
+
 
 
 from src.qlist_widget import ContentQListWidget
@@ -21,10 +23,7 @@ class JobsQPushButton(QPushButton):
 
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
-        # self.parent = parent
 
-        # jobPage_2 annoyingly is not a child of QStackedWidget
-        # self.threadpool = QThreadPool()
 
 
     def refreshAllQListWidgets(self):
@@ -59,10 +58,10 @@ class JobsQPushButton(QPushButton):
                     template_content={},
                     popup_reply=False)
             
-            TimedMessage(self, f"Job Finished mail was sent to {job_name}")
+            TimedMessage(gv, parent=self, text=f"Job Finished mail was sent to {job_name}")
 
         else:
-            TimedMessage(self, f"No .msg file detected, no Pickup mail was sent to {job_name}")
+            TimedMessage(gv, parent=self, text=f"No .msg file detected, no Pickup mail was sent to {job_name}")
 
         # mail_manager = MailManager(gv)
         # msg_file_global_path = mail_manager.getMailGlobalPathFromFolder(job_folder_global_path)
@@ -82,17 +81,7 @@ class JobsQPushButton(QPushButton):
         #             text=f"No .msg file detected, no Pickup mail was sent to {job_name}",
         #             parent=self, icon=QMessageBox.Warning)
 
-    def sendDeclinedMail(self, gv: dict, job_name: str, job_folder_global_path: str):
-        ''' popup the Declined mail. '''
-        mail_manager = MailManager(gv)
-
-        mail_manager.replyToEmailFromFileUsingTemplate(
-                mail_manager.getMailGlobalPathFromFolder(job_folder_global_path),
-                'DECLINED_MAIL_TEMPLATE',
-                {},
-                popup_reply=True)
-
-
+ 
 class BackQPushButton(QPushButton):
 
     def __init__(self, parent, *args, **kwargs):

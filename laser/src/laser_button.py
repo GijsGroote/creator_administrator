@@ -12,7 +12,7 @@ from src.worker import Worker
 from laser_job_tracker import LaserJobTracker
 from src.button import JobsQPushButton
 from src.directory_functions import open_folder
-
+from src.loading_dialog import LoadingQDialog
 
 from convert import split_material_name
 from src.mail_manager import MailManager
@@ -20,9 +20,10 @@ from src.qdialog import SelectOptionsQDialog
 
 
 from src.directory_functions import copy
-from src.qmessagebox import TimedMessage, JobFinishedMessageBox, YesOrNoMessageBox
+from src.qmessagebox import TimedMessage, JobFinishedMessageBox, YesOrNoMessageBox, ErrorQMessageBox
 from laser_qlist_widget import MaterialContentQListWidget
 from requests.exceptions import ConnectionError
+
 
 class LaserKlaarQPushButton(JobsQPushButton):
 
@@ -92,9 +93,7 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
             if job_tracker.isJobDone(job_name):
                 # hey this material is done!
 
-
-                TimedMessage(self, f"Job finished mail send to {job_name}")
-
+                TimedMessage(gv, self, f"Job finished mail send to {job_name}")
 
                 job_tracker.updateJobStatus(job_name, 'VERWERKT')
                 job_folder_global_path = job_tracker.getJobFolderGlobalPathFromJobName(job_name)
@@ -118,6 +117,7 @@ class AfgekeurdQPushButton(JobsQPushButton):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.clicked.connect(self.on_click)
+        self.threadpool = gv['THREAD_POOL']
 
     def on_click(self):
         job_name = self.getCurrentItemName()
@@ -127,11 +127,41 @@ class AfgekeurdQPushButton(JobsQPushButton):
 
         job_folder_global_path = job_tracker.getJobFolderGlobalPathFromJobName(job_name)
 
-        try:
-            self.sendDeclinedMail(gv, job_name, job_folder_global_path)
-        except ConnectionError as e:
-            TimedMessage(self, text=str(e))
-            return
+        self.threadedSendDeclineMail(job_name, job_folder_global_path)
+        
+    def threadedSendDeclineMail(self, job_name, job_folder_global_path):
+        ''' Send decline mail on an other thread. '''
+
+        # TODO: dear lord write a function to find the top level parent
+        self.loading_dialog = LoadingQDialog(self.parent().parent().parent().parent().parent().parent(), gv, text='Send the Outlook popup reply, it can be behind other windows')
+        self.loading_dialog.show()
+     
+        send_mail_worker = Worker(self.sendDeclinedMail, gv=gv, job_folder_global_path=job_folder_global_path)
+        send_mail_worker.signals.finished.connect(self.loading_dialog.accept)
+        send_mail_worker.signals.error.connect(self.loading_dialog.accept)
+        send_mail_worker.signals.error.connect(self.handleMailError)
+        self.threadpool.start(send_mail_worker)
+
+    def sendDeclinedMail(self, gv: dict, job_folder_global_path: str):
+        ''' popup the Declined mail. '''
+        mail_manager = MailManager(gv)
+        mail_manager.replyToEmailFromFileUsingTemplate(
+                mail_manager.getMailGlobalPathFromFolder(job_folder_global_path),
+                'DECLINED_MAIL_TEMPLATE',
+                {},
+                popup_reply=True)
+        
+    def handleMailError(self, exc):
+        ''' Handle mail error. '''
+
+        assert isinstance(exc, Exception), f'Expected type Exception, received type: {type(exc)}'
+
+        if isinstance(exc, ConnectionError):
+            ErrorQMessageBox(self,
+                    text=f'Error: {str(exc)}')
+        else:
+            ErrorQMessageBox(self, text=f'Error Occured: {str(exc)}')
+
 
 class OptionsQPushButton(JobsQPushButton):
 
