@@ -34,12 +34,22 @@ class LaserMainWindow(MainWindow):
         self.job_tracker.checkHealth(self)
 
         # menu bar actions
-        self.importFromMailQAction.triggered.connect(self.importFromMailAction)
-        self.selectFilesQAction.triggered.connect(self.selectFilesAction)
-        self.selectFoldersQAction.triggered.connect(self.selectFoldersAction)
+        self.importFromMailAction.triggered.connect(self.getValidMailsFromInbox)
+        self.selectFilesAction.triggered.connect(self.openSelectFilesDialog)
+        self.selectFoldersAction.triggered.connect(self.openSelectFolderDialog)
 
 
-    def importFromMailAction(self):
+        self.editSettingsAction.triggered.connect(self.openEditSettingsDialog)
+        self.showDocumentationAction.triggered.connect(self.openDocumentationDialog)
+
+    def getValidMailsFromInbox(self):
+        ''' Get mails from inbox.
+
+        show loading screen on main thread, 
+        get mails on a seperate thread
+        remove loading screen and handle incoming mails.
+        '''
+
 
         self.loading_dialog = LoadingQDialog(self, gv)
         self.loading_dialog.show()
@@ -84,7 +94,7 @@ class LaserMainWindow(MainWindow):
         else:
             ErrorQMessageBox(self, text=f'Error Occured: {str(exc)}')
 
-    def selectFilesAction(self):
+    def openSelectFilesDialog(self):
         ''' Open dialog to select multiple files. ''' 
         dialog = LaserFilesSelectQDialog(self)
 
@@ -99,7 +109,7 @@ class LaserMainWindow(MainWindow):
         for list_widget in qlist_widgets:
             list_widget.refresh()
 
-    def selectFoldersAction(self):
+    def openSelectFolderDialog(self):
         ''' Open dialog to select folder with multiple subfolders. ''' 
         dialog = LaserFolderSelectQDialog(self)
 
@@ -144,6 +154,14 @@ class LaserMainWindow(MainWindow):
     def getNewValidMails(self):
         ''' Return new valid mails. '''
         return MailManager(gv).getNewValidMails()
+
+    def openEditSettingsDialog(self):
+        ''' Open dialog to edit the settings. '''
+        InfoQMessageBox(self, f'Edit the settings in the json file located at:\n {gv["TRACKER_FILE_PATH"]}')
+        
+    def openDocumentationDialog(self):
+        ''' Open dialog to edit the settings. '''
+        InfoQMessageBox(self, 'Documentation dialog not yet implemented')
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

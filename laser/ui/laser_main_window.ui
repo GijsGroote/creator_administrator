@@ -512,32 +512,31 @@
      <height>29</height>
     </rect>
    </property>
-   <widget class="QMenu" name="createJobsMenubar">
+   <widget class="QMenu" name="createJobsMenu">
     <property name="title">
      <string>Create Jobs</string>
     </property>
-    <addaction name="importFromMailQAction"/>
-    <addaction name="selectFilesQAction"/>
-    <addaction name="selectFoldersQAction"/>
+    <addaction name="importFromMailAction"/>
+    <addaction name="selectFilesAction"/>
+    <addaction name="selectFoldersAction"/>
    </widget>
    <widget class="QMenu" name="menuDocumentation">
     <property name="title">
      <string>Documentation</string>
     </property>
-    <addaction name="action3D_printers"/>
-    <addaction name="actionPMMA_Laser_cutter"/>
-    <addaction name="actionMetal_Laser_Cutter"/>
+    <addaction name="showDocumentationAction"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
      <string>Settings</string>
     </property>
+    <addaction name="editSettingsAction"/>
    </widget>
-   <addaction name="createJobsMenubar"/>
+   <addaction name="createJobsMenu"/>
    <addaction name="menuDocumentation"/>
    <addaction name="menuSettings"/>
   </widget>
-  <action name="importFromMailQAction">
+  <action name="importFromMailAction">
    <property name="checkable">
     <bool>false</bool>
    </property>
@@ -548,7 +547,7 @@
     <string>Ctrl+M</string>
    </property>
   </action>
-  <action name="selectFilesQAction">
+  <action name="selectFilesAction">
    <property name="text">
     <string>Select Files</string>
    </property>
@@ -556,9 +555,12 @@
     <string>Ctrl+I</string>
    </property>
   </action>
-  <action name="action3D_printers">
+  <action name="showDocumentationAction">
    <property name="text">
-    <string>3D printers</string>
+    <string>Show Docs</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
    </property>
   </action>
   <action name="actionPMMA_Laser_cutter">
@@ -571,9 +573,17 @@
     <string>Metal Laser Cutter</string>
    </property>
   </action>
-  <action name="selectFoldersQAction">
+  <action name="selectFoldersAction">
    <property name="text">
     <string>Select Folders</string>
+   </property>
+  </action>
+  <action name="editSettingsAction">
+   <property name="text">
+    <string>Edit Settings</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
  </widget>

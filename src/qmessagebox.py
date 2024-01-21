@@ -6,20 +6,14 @@ class TimedMessage(QMessageBox):
     ''' Short message that can only be clicked away. 
     It should not interfere with the main application, it does that anyway...'''
 
-    def __init__(self, gv, parent, text: str, icon=QMessageBox.Information):
+    def __init__(self, gv: dict, parent: QWidget, text: str, icon=QMessageBox.Information):
         super().__init__(parent)
 
+        # DISPLAY THE TIMER WOULD BE NICE
         if gv['DISPLAY_TEMP_MESSAGES']:
-            # self.setModal(0)
             self.setWindowTitle('')
             self.setText(text)
-            # label = QLabel(text, self)
-            # layout = QVBoxLayout()
-            # layout.addWidget(label)
-            # self.setLayout(layout)
-            self.adjustSize()
             self.setIcon(icon)
-
 
             self.timer = QTimer(self)
             self.timer.setInterval(4000)
@@ -59,7 +53,7 @@ class TimedMessage(QMessageBox):
 
 class JobFinishedMessageBox(QMessageBox):
 
-    def __init__(self, parent, text='setthis', icon=QMessageBox.Information, *args, **kwargs):
+    def __init__(self, parent, text, icon=QMessageBox.Information, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         self.setText(text)
@@ -69,20 +63,28 @@ class JobFinishedMessageBox(QMessageBox):
 
 class YesOrNoMessageBox(QMessageBox):
 
-    def __init__(self, parent, text='setthis', icon=QMessageBox.Question, *args, **kwargs):
+    def __init__(self, parent: QWidget, text: str, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         self.setText(text)
         self.addButton(QMessageBox.No)
         self.addButton(QMessageBox.Yes)
         self.setDefaultButton(QMessageBox.Yes)
-        self.setIcon(icon)
+        self.setIcon(QMessageBox.Question,)
+
+    def answer(self) -> bool:
+        ''' Return True for yes, False for no. '''
+
+        if self.exec_()==QMessageBox.Yes:
+            return True
+        return False
+
 
 
 
 class InfoQMessageBox(QMessageBox):
 
-    def __init__(self, parent, text, *args, **kwargs):
+    def __init__(self, parent: QWidget, text: str, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         self.setText(text)
@@ -93,7 +95,7 @@ class InfoQMessageBox(QMessageBox):
 
 class WarningQMessageBox(QMessageBox):
 
-    def __init__(self, gv, parent, text, *args, **kwargs):
+    def __init__(self, gv: dict, parent: QWidget, text: str, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         if gv['DISPLAY_WARNING_MESSAGES']:
@@ -102,10 +104,9 @@ class WarningQMessageBox(QMessageBox):
             self.setIcon(QMessageBox.Warning)
             self.exec_()
 
-
 class ErrorQMessageBox(QMessageBox):
 
-    def __init__(self, parent, text=None, *args, **kwargs):
+    def __init__(self, parent: QWidget, text: str, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         self.setText(text)

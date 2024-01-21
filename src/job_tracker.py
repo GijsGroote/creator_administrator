@@ -10,7 +10,7 @@ import re
 from unidecode import unidecode
 from datetime import datetime
 from typing import List
-from src.qmessagebox import TimedMessage, YesOrNoMessageBox
+from src.qmessagebox import TimedMessage, YesOrNoMessageBox, InfoQMessageBox
 
 class JobTracker:
 
@@ -36,31 +36,30 @@ class JobTracker:
     def createTrackerFile(self):
         """ Create the file that tracks jobs. """
         if os.path.exists(self.tracker_backup_file_path):
-            if YesOrNoMessageBox(text=f"Backup file detected at: {self.tracker_backup_file_path}, do you want to restore it (Y/n)?"):
+            if YesOrNoMessageBox(self.parent_widget, text=f"Backup file detected at: {self.tracker_backup_file_path}, do you want to restore it (Y/n)?").answer(): 
                 os.rename(self.tracker_backup_file_path, self.tracker_file_path)
-                print("Backup restored!")
+                InfoQMessageBox(self.parent_widget, "Backup restored!")
                 return
 
         with open(self.tracker_file_path, 'w') as tracker_file:
             json.dump(dict(), tracker_file, indent=4)
 
-        print(f"{self.tracker_file_path} created!\n")
+        InfoQMessageBox(self.parent_widget, text='New job tracker file created') 
 
     def checkTrackerFileHealth(self, parent_widget):
         # Create the tracker file if it doesn't exist
         if not os.path.exists(self.tracker_file_path):
             self.createTrackerFile()
-            TimedMessage(parent_widget, text='new job tracker file created') 
 
         try:
             with open(self.tracker_file_path, 'r') as tracker_file:
                 json.load(tracker_file)
         except Exception as e:
             if os.path.isfile(self.tracker_backup_file_path):
-                if YesOrNoMessageBox('Do you want to restore the backup tracker file (Y/n)?'):
+                if YesOrNoMessageBox(self.parent_widget, 'Do you want to restore the backup tracker file (Y/n)?'):
                     os.remove(self.tracker_file_path)
                     os.rename(self.tracker_backup_file_path, self.tracker_file_path)
-            elif yes_or_no('Do you want to create a new empty tracker file (Y/n)?'):
+            elif YesOrNoMessageBox(self.parent_widget, 'Do you want to create a new empty tracker file (Y/n)?'):
                 with open(self.tracker_file_path, 'w') as tracker_file:
                     json.dump({}, tracker_file, indent=4)
 
