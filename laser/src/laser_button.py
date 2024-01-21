@@ -7,8 +7,6 @@ from PyQt5.QtWidgets import *
 from global_variables import gv
 from src.worker import Worker
 
-
-
 from laser_job_tracker import LaserJobTracker
 from src.button import JobsQPushButton
 from src.directory_functions import open_folder
@@ -48,10 +46,6 @@ class LaserKlaarQPushButton(JobsQPushButton):
                           parent=self).exec_() == QMessageBox.Yes:
                 return
 
-
-
-
-            
 class MateriaalKlaarQPushButton(JobsQPushButton):
 
     def __init__(self, parent, *args, **kwargs):
@@ -103,7 +97,6 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
                 except ConnectionError as e:
                     TimedMessage(self, text=str(e))
                     return
-
 
                 JobFinishedMessageBox(text=f"Job {job_name} is finished, put it the Uitgifterek:\n"\
                         f"{job_tracker.getLaserFilesString(job_name)}",

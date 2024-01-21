@@ -60,11 +60,8 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
                 # done! close dialog
                 self.accept() 
             else:
-                
-                print('load mail content here now')
                 self.loadMailContent()
         else:
-            print('load attachmentContent')
             self.loadAttachmentContent()
 
 
@@ -101,7 +98,6 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         attachment_name = self.mail_manager.getAttachmentFileName(attachment)
 
         if attachment_name.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
-            print(f'loding attachemnt solid extnsion')
             self.attachmentProgressQLabel.setText(f'Attachment ({self.attachment_counter+1}/{len(self.temp_attachments)})')
             self.attachmentNameQLabel.setText(attachment_name)
 
@@ -133,7 +129,6 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
                 self.amountQLineEdit.setText('1')
 
         else:
-            print('not solid extensiosn loaded ')
             file_global_path = os.path.join(self.temp_job_folder_global_path, attachment_name)
             self.temp_attachments_dict[attachment_name] = {'attachment': attachment,
                                                      'file_global_path': file_global_path}
@@ -286,7 +281,6 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
                 template_file_name="RECEIVED_MAIL_TEMPLATE",
                 template_content=template_content,
                 popup_reply=False)
-        
         mail_manager.moveEmailToVerwerktFolder(msg=msg)
         return mail_manager.getEmailAddress(msg)
 
@@ -303,6 +297,8 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
             ErrorQMessageBox(self,
                     text=f'Error: {str(exc)}')
         else:
+            print(exc)
+            raise exc
             ErrorQMessageBox(self, text=f'Error Occured: {str(exc)}')
 
 
@@ -473,7 +469,6 @@ class LaserFileInfoQDialog(QDialog):
 
         file_global_path = self.temp_files_global_paths[self.file_counter]
         file_name = os.path.basename(file_global_path)
-        print(f"loading this file now {file_name}")
 
         if file_name.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
             self.fileProgressQLabel.setText(f'File({self.file_counter+1}/{len(self.temp_files_global_paths)})')
@@ -511,8 +506,6 @@ class LaserFileInfoQDialog(QDialog):
             self.temp_files_dict[file_name] = {'source_file_global_path': file_global_path,
                                              'target_file_global_path': self.temp_files_global_paths[self.file_counter]}
 
-            print(f"correct you txt file file {self.temp_files_dict[file_name]}")
-
             if self.file_counter+1 >= len(self.temp_files_global_paths):
                 self.createLaserJob()
 
@@ -544,7 +537,6 @@ class LaserFileInfoQDialog(QDialog):
 
 
         source_file_global_path = self.temp_files_global_paths[self.file_counter]
-        print(f"this is a  full path right {source_file_global_path}")
         file_name = os.path.basename(source_file_global_path)
 
 

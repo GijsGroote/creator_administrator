@@ -85,7 +85,6 @@ class MailManager():
         warnings = []
 
         if sys.platform == 'win32':
-
             if not self.isThereInternet():
                 warnings.append('No internet connection detected')
 
@@ -95,19 +94,18 @@ class MailManager():
             os.mkdir(temp_folder_global_path)
 
             for message in self.inbox.Items:
-                if self.isMailAValidJobRequest(message):
-                    if self.gv['ONLY_UNREAD_MAIL']:
-                        if message.UnRead:
-                            valid_msgs.append(self.saveMsgAndAttachmentsInTempFolder(message))
-
-                    else:
-                        valid_msgs.append(self.saveMsgAndAttachmentsInTempFolder(message))
-
-                    message.UnRead = False
-                    message.Save()
+                if self.gv['ONLY_UNREAD_MAIL']:
+                    if message.UnRead:
+                        if self.isMailAValidJobRequest(message): 
+                            valid_msgs.append(self.saveMsgAndAttachmentsInTempFolder(message))              
+                        else:
+                            n_invalid_mails += 1
                 else:
-                    n_invalid_mails += 1
-                
+                    if self.isMailAValidJobRequest(message):                           
+                            valid_msgs.append(self.saveMsgAndAttachmentsInTempFolder(message))
+                    else:
+                        n_invalid_mails += 1
+
         if sys.platform == 'linux':
 
             if not self.isThereInternet():
@@ -161,8 +159,12 @@ class MailManager():
         """ Move email to verwerkt folder. """
         if self.gv['MOVE_MAILS_TO_VERWERKT_FOLDER']:
             if sys.platform == 'win32':
-                    msg.Move(self.verwerkt_folder)
-
+                msg = self.getMsgFromGlobalPath(msg)
+                msg.UnRead = False
+                msg.Save()
+                msg.Move(self.verwerkt_folder)
+                msg.Delete()
+                
             if sys.platform == 'linux':
                 if not self.isThereInternet():
                     raise ConnectionError('Not connected to the internet')
@@ -177,7 +179,7 @@ class MailManager():
                     self.imap_mail.copy(uid_msg_set, 'Verwerkt')
                     self.imap_mail.store(uid_msg_set, '+FLAGS', r'(\Deleted)')
 
-            self.imapLogout()
+                self.imapLogout()
 
     def isMailAValidJobRequest(self, msg) -> bool:
         """ Check if the requirements are met for a valid job request. """
