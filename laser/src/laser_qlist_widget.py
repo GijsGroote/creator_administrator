@@ -83,15 +83,17 @@ class JobContentQListWidget(ContentQListWidget):
         self.current_item_name = job_name
 
         job_dict = LaserJobTracker(self).getJobDict(job_name)
-        self.parent().findChild(QLabel).setText(job_dict['dynamic_job_name'])
+        
+        if job_dict is not None:
+            self.parent().findChild(QLabel).setText(job_dict['dynamic_job_name'])
 
-        for file in os.listdir(job_dict['job_folder_global_path']):
+            for file in os.listdir(job_dict['job_folder_global_path']):
 
-            item = QListWidgetItem()
-            item.setText(file)
-            item.setData(1, os.path.join(
-                job_dict['job_folder_global_path'], file))
-            self.addItem(item)
+                item = QListWidgetItem()
+                item.setText(file)
+                item.setData(1, os.path.join(
+                    job_dict['job_folder_global_path'], file))
+                self.addItem(item)
 
 
 class MaterialOverviewQListWidget(OverviewQListWidget):
