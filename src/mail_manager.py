@@ -97,6 +97,8 @@ class MailManager():
                 if self.gv['ONLY_UNREAD_MAIL']:
                     if message.UnRead:
                         if self.isMailAValidJobRequest(message): 
+                            print(message.EntryID)
+                            print('that is the entry id mister howdy')
                             valid_msgs.append(self.saveMsgAndAttachmentsInTempFolder(message))              
                         else:
                             n_invalid_mails += 1
@@ -159,11 +161,14 @@ class MailManager():
         """ Move email to verwerkt folder. """
         if self.gv['MOVE_MAILS_TO_VERWERKT_FOLDER']:
             if sys.platform == 'win32':
-                msg = self.getMsgFromGlobalPath(msg)
-                msg.UnRead = False
-                msg.Save()
-                msg.Move(self.verwerkt_folder)
-                msg.Delete()
+                if isinstance(msg, str):
+                    msg = self.getMsgFromGlobalPath(msg)
+                
+                for message in self.inbox.Items:
+                    if msg.SenderEmailAddress == message.SenderEmailAddress and\
+                        str(msg.ReceivedTime) == str(message.ReceivedTime):
+                            message.UnRead = False
+                            message.Move(self.verwerkt_folder)               
                 
             if sys.platform == 'linux':
                 if not self.isThereInternet():
@@ -210,6 +215,7 @@ class MailManager():
             if isinstance(msg, str):
                 msg = self.getMsgFromGlobalPath(msg)
             return msg.Body
+        
         if sys.platform == 'linux':
             msg = email.message_from_bytes(msg[0][1])
 
@@ -244,6 +250,18 @@ class MailManager():
         if sys.platform == 'linux':
             return email.message_from_bytes(msg[0][1]).get('From')
         
+    def getSenderName(self, msg) -> str:
+        """ Return the senders name. """
+        if sys.platform == 'win32':
+            if isinstance(msg, str):
+                msg = self.getMsgFromGlobalPath(msg)         
+            
+            return str(msg.Sender)
+     
+        if sys.platform == 'linux':
+            raise ValueError('implement this to send the senders name')
+            return email.message_from_bytes(msg[0][1]).get('From')
+        
     def getMsgFromGlobalPath(self, temp_folder_global_path: str):
         ''' Return Msg from global path to mail.msg. '''
 
@@ -263,14 +281,14 @@ class MailManager():
             return msg_file_global_path
         else:
             return None
-
+    
     def getAttachments(self, msg) -> list:
         ''' Return a list with attachment names. '''
 
         if sys.platform == 'win32':
             assert os.path.exists(msg), f'could not find directory {msg}'
             return [os.path.abspath(os.path.join(msg, file)) for file in os.listdir(msg) if not file.endswith('.msg')]
-            
+        
         if sys.platform == 'linux':
            attachments = []
            for part in email.message_from_bytes(msg[0][1]).walk():
@@ -394,10 +412,6 @@ class MailManager():
             if '@' in mail_name:
                 return mail_name.split('@')[0]
         return mail_name
-
-    def getSenderName(self, msg) -> str:
-        ''' Return the name of the sender. '''
-        return self.mailToName(self.getEmailAddress(msg))
 
     def isThereInternet(self) -> bool:
         conn = httplib.HTTPSConnection("8.8.8.8", timeout=5)

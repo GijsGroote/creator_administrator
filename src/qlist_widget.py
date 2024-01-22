@@ -36,7 +36,16 @@ class OverviewQListWidget(QListWidget):
 
     def initialize(self, item_names: list):
         ''' Initialize with list of items. '''
+        if len(item_names) == 0:
 
+            self.parent().label = QLabel('No Jobs to Display', self.parent())
+            parent_geometry = self.parent().geometry()
+
+            self.parent().label.setGeometry(
+                parent_geometry.width()//2-100, 
+                parent_geometry.height()//2-25, 400, 50) 
+            self.parent().label.show()
+            
         for item_name in item_names:
 
             item = QListWidgetItem()

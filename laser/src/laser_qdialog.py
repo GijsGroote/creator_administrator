@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 from PyQt5 import *
 from PyQt5.QtCore import *
 from PyQt5 import QtWebEngineWidgets
@@ -69,13 +70,14 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         ''' Load content of mail into dialog. '''
 
         valid_msg = self.valid_msgs[self.msg_counter]
+
         self.temp_attachments = self.mail_manager.getAttachments(valid_msg)
+        sender_name = self.mail_manager.getSenderName(valid_msg)
+
 
         self.temp_laser_cut_files_dict = {}
         self.temp_attachments_dict = {}
 
-
-        sender_name = self.mail_manager.getSenderName(valid_msg)
         self.mailFromQLabel.setText(sender_name)
         self.mailProgressQLabel.setText(f'Mail ({self.msg_counter+1}/{len(self.valid_msgs)})')
 
@@ -282,6 +284,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
                 template_content=template_content,
                 popup_reply=False)
         mail_manager.moveEmailToVerwerktFolder(msg=msg)
+
         return mail_manager.getEmailAddress(msg)
 
     def confirmationMailSendMessage(self, data):
