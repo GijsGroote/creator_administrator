@@ -231,7 +231,7 @@ class OptionsQPushButton(JobsQPushButton):
 
         job_name = self.getCurrentItemName()
         laser_file_dict =  LaserJobTracker(self).getLaserFilesDict(job_name)
-        target_folder_global_path = os.path.abspath(r'C:\\Users\\PMMA laser\\Desktop\\Laser TODO')
+        target_folder_global_path = gv['LASER_TODO_DIR_HOME']
 
         for file_key, file_dict in laser_file_dict.items():
 

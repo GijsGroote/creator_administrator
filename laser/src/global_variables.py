@@ -41,6 +41,8 @@ with open(global_variables_path, 'r') as global_variables_file:
     if 'OUTLOOK_PATH' in gv_data:
         gv['OUTLOOK_PATH'] = gv_data['OUTLOOK_PATH']
 
+    gv['LASER_TODO_DIR_HOME'] = gv_data['LASER_TODO_DIR_HOME']
+
     gv['ACCEPTED_EXTENSIONS'] = tuple(gv_data['ACCEPTED_EXTENSIONS'].split(', '))
     gv['ACCEPTED_MATERIALS'] = tuple(gv_data['ACCEPTED_MATERIALS'].split(', '))
 

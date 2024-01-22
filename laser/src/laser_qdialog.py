@@ -619,5 +619,5 @@ class LaserFileInfoQDialog(QDialog):
         for file_dict in self.temp_files_dict.values():
             copy(file_dict['source_file_global_path'], file_dict['target_file_global_path'])
 
-        TimedMessage(self, text=f"Laser job {self.temp_job_name} created")
+        TimedMessage(gv, self, text=f"Laser job {self.temp_job_name} created")
 

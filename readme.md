@@ -17,6 +17,9 @@ Project started at the Technical University Delft workshop that manages 3D print
 # Dependencies:
 * PyQT5 (python -m pip install PyQt5)
 * PyQtWebEngine (python -m pip install PyQtWebEngine)
+* requests (python -m pip install requests)
+* unidecode (python -m pip install unidecode)
+* win32com (python -m pip install pypiwin32)
 
 
 
