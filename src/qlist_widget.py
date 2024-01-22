@@ -19,10 +19,12 @@ class OverviewQListWidget(QListWidget):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
+        print(f"  haha hahparent {parent.objectName()} parent() {self.parent().objectName()}")
         # shortcut on the Enter key
         QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.itemEnterPressed)
 
         self.itemDoubleClicked.connect(self.itemIsDoubleClicked)
+
 
     def refresh(self):
         ''' Refresh displayed items. '''
@@ -36,15 +38,14 @@ class OverviewQListWidget(QListWidget):
 
     def initialize(self, item_names: list):
         ''' Initialize with list of items. '''
+        self.addNoItemsLabel()
+
         if len(item_names) == 0:
-
-            self.parent().label = QLabel('No Jobs to Display', self.parent())
-            parent_geometry = self.parent().geometry()
-
-            self.parent().label.setGeometry(
-                parent_geometry.width()//2-100, 
-                parent_geometry.height()//2-25, 400, 50) 
-            self.parent().label.show()
+            print(f"show {self.objectName()}")
+            self.parent().no_items_label.show()
+        else:
+            print(f"hide {self.objectName()}")
+            self.parent().no_items_label.hide()
             
         for item_name in item_names:
 
@@ -57,6 +58,16 @@ class OverviewQListWidget(QListWidget):
             item.setData(1, item_data)
             item.setText(item_name)
             self.addItem(item)
+    def addNoItemsLabel(self):
+        ''' Add no_items_label if it is not yet present. '''
+        if not hasattr(self.parent(), 'no_items_label'):
+            self.parent().no_items_label = QLabel(text='No Jobs to Display',
+                                    parent=self.parent())
+            self.parent().no_items_label.setGeometry(
+                (self.parent().geometry().width()-self.parent().no_items_label.geometry().width())//2, 
+                (self.parent().geometry().height()-self.parent().no_items_label.geometry().width())//2,
+                300, 20) 
+
 
 
     def itemEnterPressed(self):
