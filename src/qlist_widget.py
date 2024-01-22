@@ -5,10 +5,6 @@ import re
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from PyQt5 import QtCore
-
-FullPathRole = Qt.UserRole + 1
-
 
 from src.directory_functions import open_file, open_folder
 
@@ -19,12 +15,10 @@ class OverviewQListWidget(QListWidget):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
-        print(f"  haha hahparent {parent.objectName()} parent() {self.parent().objectName()}")
         # shortcut on the Enter key
         QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.itemEnterPressed)
 
         self.itemDoubleClicked.connect(self.itemIsDoubleClicked)
-
 
     def refresh(self):
         ''' Refresh displayed items. '''
@@ -41,10 +35,8 @@ class OverviewQListWidget(QListWidget):
         self.addNoItemsLabel()
 
         if len(item_names) == 0:
-            print(f"show {self.objectName()}")
             self.parent().no_items_label.show()
         else:
-            print(f"hide {self.objectName()}")
             self.parent().no_items_label.hide()
             
         for item_name in item_names:
@@ -58,6 +50,7 @@ class OverviewQListWidget(QListWidget):
             item.setData(1, item_data)
             item.setText(item_name)
             self.addItem(item)
+
     def addNoItemsLabel(self):
         ''' Add no_items_label if it is not yet present. '''
         if not hasattr(self.parent(), 'no_items_label'):
@@ -67,8 +60,6 @@ class OverviewQListWidget(QListWidget):
                 (self.parent().geometry().width()-self.parent().no_items_label.geometry().width())//2, 
                 (self.parent().geometry().height()-self.parent().no_items_label.geometry().width())//2,
                 300, 20) 
-
-
 
     def itemEnterPressed(self):
         current_item = self.currentItem()
