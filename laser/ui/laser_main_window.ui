@@ -22,7 +22,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Creator Administrator</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="sizePolicy">

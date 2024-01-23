@@ -367,7 +367,7 @@ class LaserFileInfoQDialog(QDialog):
     def __init__(self, parent, job_name_list: list, files_global_paths_list: list, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
-        loadUi(os.path.join(gv['REPO_DIR_HOME'], 'laser/ui/job_details_dialog.ui'), self)
+        loadUi(os.path.join(gv['REPO_DIR_HOME'], 'laser/ui/enter_job_details_dialog.ui'), self)
 
         assert len(job_name_list) == len(files_global_paths_list),\
             f'length of job name list: {len(job_name_list)} should'\

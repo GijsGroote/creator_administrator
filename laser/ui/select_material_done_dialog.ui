@@ -6,12 +6,17 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>668</width>
-    <height>543</height>
+    <width>638</width>
+    <height>406</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <pointsize>14</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Select files that are done</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>

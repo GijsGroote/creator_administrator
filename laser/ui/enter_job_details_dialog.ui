@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>860</width>
+    <width>871</width>
     <height>325</height>
    </rect>
   </property>
@@ -22,7 +22,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Import Laser Jobs from Mail</string>
+   <string>Enter Job Details</string>
   </property>
   <property name="modal">
    <bool>true</bool>
