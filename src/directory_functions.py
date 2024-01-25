@@ -79,7 +79,7 @@ def delete(item_global_path: str):
             else:
                 os.remove(item_global_path)
         except Exception as e:
-            print(f"An error occurred: {e}")
+            print(f"An error occurred: {e}") # TODO: better to not print anything in a GUI based application
 
 # def does_job_name_exist(gv: dict, job_name: str) -> bool:
 #     """ Check if the job name exist, return boolean. """

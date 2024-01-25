@@ -143,9 +143,6 @@ class MaterialContentQListWidget(ContentQListWidget):
 
         for (dxf_name, dxf_global_path) in dxfs_names_and_global_paths:
 
-            # TODO: this is a temp solution
-            dxf_name = os.path.basename(dxf_global_path)+dxf_name
-
             item = QListWidgetItem()
             item.setText(dxf_name)
             item.setData(1, dxf_global_path)

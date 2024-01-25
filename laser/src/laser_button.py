@@ -11,6 +11,7 @@ from laser_job_tracker import LaserJobTracker
 from src.button import JobsQPushButton
 from src.directory_functions import open_folder
 from src.loading_dialog import LoadingQDialog
+from src.directory_functions import delete
 
 from convert import split_material_name
 from src.mail_manager import MailManager
@@ -265,10 +266,13 @@ class OptionsQPushButton(JobsQPushButton):
         laser_file_dict =  LaserJobTracker(self).getLaserFilesDict(job_name)
         target_folder_global_path = gv['LASER_TODO_DIR_HOME']
 
+        # clear the laser todo dir home first
+        for file in os.listdir(target_folder_global_path):
+            delete(os.path.join(target_folder_global_path, file))
+                   
         for file_key, file_dict in laser_file_dict.items():
 
             # TODO: you could copy all unwanted stuff better
-
             source_item_global_path = file_dict['file_global_path']
             target_item_global_path = os.path.join(target_folder_global_path,
                 file_dict['material']+"_"+file_dict['thickness']+'mm_'+file_dict['amount']+"x_"+file_key)
@@ -282,13 +286,17 @@ class OptionsQPushButton(JobsQPushButton):
 
         material_name = self.getCurrentItemName()
         
-        print(f"material_name {material_name}")
 
         material, thickness = split_material_name(material_name)
 
         dxfs_names_and_global_paths = LaserJobTracker(self).getDXFsAndPaths(material, thickness)
 
         target_folder_global_path = gv['LASER_TODO_DIR_HOME']
+
+        # clear the laser todo dir home first
+        for file in os.listdir(target_folder_global_path):
+            print( f'delet file {os.path.join(target_folder_global_path, file)}')
+            delete(os.path.join(target_folder_global_path, file))
 
         for file_name, file_global_path in dxfs_names_and_global_paths:
             copy(file_global_path, os.path.join(target_folder_global_path, file_name))
