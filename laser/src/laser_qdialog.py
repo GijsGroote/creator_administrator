@@ -394,7 +394,7 @@ class LaserFileInfoQDialog(QDialog):
         self.loadJobContent()
 
     def loadContent(self):
-        if self.file_counter+1 >= len(self.temp_files_global_paths):
+        if self.file_counter >= len(self.temp_files_global_paths):
             self.createLaserJob()
 
             if self.job_counter+1 >= len(self.job_name_list):
@@ -404,7 +404,6 @@ class LaserFileInfoQDialog(QDialog):
                 self.file_counter= 0
                 self.loadJobContent()
         else:
-            # self.attachment_counter += 1
             self.loadFileContent()
 
 
@@ -469,12 +468,11 @@ class LaserFileInfoQDialog(QDialog):
 
             if self.file_counter+1 >= len(self.temp_files_global_paths):
                 self.createLaserJob()
+                self.job_counter += 1
 
-                if self.job_counter+1 >= len(self.job_name_list):
-                    self.job_counter += 1
+                if self.job_counter >= len(self.job_name_list):
                     self.loadJobContent()
             else:
-                self.file_counter += 1
                 self.loadFileContent()
 
     def onMaterialComboboxChanged(self):
@@ -524,7 +522,6 @@ class LaserFileInfoQDialog(QDialog):
         if self.job_counter+1 >= len(self.job_name_list):
             self.accept() 
         else:
-
             self.job_counter += 1
             self.file_counter = 0
             self.loadJobContent()
