@@ -35,6 +35,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         self.msg_counter = 0
         self.attachment_counter = 0
         self.new_material_text = 'New Material'
+        self.new_materials_list = []
 
         self.threadpool = gv['THREAD_POOL']
 
@@ -110,9 +111,10 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
             self.thicknessQLineEdit.clear()
             self.amountQLineEdit.clear()
 
-            materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()))
+            materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()).union(self.new_materials_list))
             self.materialQComboBox.addItems(materials)
             self.materialQComboBox.addItem(self.new_material_text)
+
 
             # guess the material, thickness and amount
             for material in gv['ACCEPTED_MATERIALS']:
@@ -382,6 +384,8 @@ class LaserFileInfoQDialog(QDialog):
         self.temp_files_global_paths = files_global_paths_list[self.job_counter]
  
         self.new_material_text = 'New Material'
+        self.new_materials_list = []
+
         self.materialQComboBox.currentIndexChanged.connect(self.onMaterialComboboxChanged)
         self.skipPushButton.clicked.connect(self.skipJob)
         self.buttonBox.accepted.connect(self.collectFileInfo)
@@ -438,7 +442,7 @@ class LaserFileInfoQDialog(QDialog):
             self.thicknessQLineEdit.clear()
             self.amountQLineEdit.clear()
 
-            materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()))
+            materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()).union(self.new_materials_list))
             self.materialQComboBox.addItems(materials)
             self.materialQComboBox.addItem(self.new_material_text)
 
