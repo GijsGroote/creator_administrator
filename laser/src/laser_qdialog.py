@@ -19,7 +19,7 @@ from src.qmessagebox import TimedMessage, ErrorQMessageBox
 
 from requests.exceptions import ConnectionError
 from laser_job_tracker import LaserJobTracker
-from src.worker import Worker
+from src.worker import Worker, MailWorker
 from src.directory_functions import copy
 
 
@@ -231,14 +231,32 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         """ Create a laser job. """
         msg = self.valid_msgs[self.msg_counter]
 
-        send_mail_worker = Worker(self.sendConfirmationMail, gv=gv,
-                                    job_folder_global_path=self.temp_job_folder_global_path,
-                                    template_content={"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
-                                    msg=msg)
+        # Well does this work my love?
+
+        mail_worker = MailWorker(fn_name="SEND_CONFIRMATION_MAIL",
+                   parent_widget=self,
+                   gv=gv,
+                   job_folder_global_path=self.temp_job_folder_global_path,
+                   template_content={"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
+                   msg=msg)
+
+        mail_worker.sendConfirmationMail(success_message='Confirmation mail send to',
+                             error_message='No confirmation mail send',
+                             job_folder_global_path=self.temp_job_folder_global_path,
+                             template_content= {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
+                             msg=msg)
+        mail_worker.start()
+
+        
+
+        # send_mail_worker = Worker(self.sendConfirmationMail, gv=gv,
+        #                             job_folder_global_path=self.temp_job_folder_global_path,
+        #                             template_content={"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
+        #                             msg=msg)
             
-        send_mail_worker.signals.result.connect(self.confirmationMailSendMessage)
-        send_mail_worker.signals.error.connect(self.handleMailError)
-        self.threadpool.start(send_mail_worker)
+        # send_mail_worker.signals.result.connect(self.confirmationMailSendMessage)
+        # send_mail_worker.signals.error.connect(self.handleMailError)
+        # self.threadpool.start(send_mail_worker)
 
         
 
@@ -257,34 +275,35 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
         TimedMessage(gv, self, text=f'Laser job {self.temp_job_name} created')
 
-    def sendConfirmationMail(self, gv, job_folder_global_path, template_content, msg):
-        ''' Send a confirmation mail. '''
-        mail_manager = MailManager(gv) 
+    # def sendConfirmationMail(self, gv, job_folder_global_path, template_content, msg):
+        # ''' Send a confirmation mail. '''
+        # mail_manager = MailManager(gv) 
 
-        mail_manager.replyToEmailFromFileUsingTemplate(
-                msg_file_path=mail_manager.getMailGlobalPathFromFolder(job_folder_global_path), 
-                template_file_name="RECEIVED_MAIL_TEMPLATE",
-                template_content=template_content,
-                popup_reply=False)
+
+        # mail_manager.replyToEmailFromFileUsingTemplate(
+        #         msg_file_path=mail_manager.getMailGlobalPathFromFolder(job_folder_global_path), 
+        #         template_file_name="RECEIVED_MAIL_TEMPLATE",
+        #         template_content=template_content,
+        #         popup_reply=False)
         
-        mail_manager.moveEmailToVerwerktFolder(msg=msg)
+        # mail_manager.moveEmailToVerwerktFolder(msg=msg)
 
-        return mail_manager.getEmailAddress(msg)
+        # return mail_manager.getEmailAddress(msg)
 
-    def confirmationMailSendMessage(self, data):
-        ''' Display a message with: confimation mail send. '''
-        TimedMessage(gv, parent=self, text=f'Confimation mail send to {data}')
+    # def confirmationMailSendMessage(self, data):
+        # ''' Display a message with: confimation mail send. '''
+        # TimedMessage(gv, parent=self, text=f'Confimation mail send to {data}')
 
-    def handleMailError(self, exc: Exception):
-        ''' Handle mail error. '''
+    # def handleMailError(self, exc: Exception):
+    #     ''' Handle mail error. '''
 
-        assert isinstance(exc, Exception), f'Expected type Exception, received type: {type(exc)}'
+    #     assert isinstance(exc, Exception), f'Expected type Exception, received type: {type(exc)}'
 
-        if isinstance(exc, ConnectionError):
-            ErrorQMessageBox(self,
-                    text=f'Connection Error, No Confirmation mail send:\n{str(exc)}')
-        else:
-            ErrorQMessageBox(self, text=f'Error Occured, No Confirmation mail send:\n{str(exc)}')
+    #     if isinstance(exc, ConnectionError):
+    #         ErrorQMessageBox(self,
+    #                 text=f'Connection Error, No Confirmation mail send:\n{str(exc)}')
+    #     else:
+    #         ErrorQMessageBox(self, text=f'Error Occured, No Confirmation mail send:\n{str(exc)}')
 
 class LaserFilesSelectQDialog(SelectQDialog):
     """ Select files dialog. """
