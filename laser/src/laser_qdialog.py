@@ -115,12 +115,12 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
             self.materialQComboBox.addItems(materials)
             self.materialQComboBox.addItem(self.new_material_text)
 
-
             # guess the material, thickness and amount
-            for material in gv['ACCEPTED_MATERIALS']:
+            for material in materials:
                 if material.lower() in attachment_name.lower():
                     self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(material))
             match = re.search(r"\d+\.?\d*(?=mm)", attachment_name)
+
             if match:
                 self.thicknessQLineEdit.setText(match.group())
 
@@ -151,6 +151,8 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         material = self.materialQComboBox.currentText()
         if material == self.new_material_text:
             material = self.newMaterialQLineEdit.text()
+            self.new_materials_list.append(material)
+
         thickness = self.thicknessQLineEdit.text()
         amount = self.amountQLineEdit.text()
         
@@ -447,7 +449,7 @@ class LaserFileInfoQDialog(QDialog):
             self.materialQComboBox.addItem(self.new_material_text)
 
             # guess the material, thickness and amount
-            for material in gv['ACCEPTED_MATERIALS']:
+            for material in materials:
                 if material.lower() in file_name.lower():
                     self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(material))
             match = re.search(r"\d+\.?\d*(?=mm)", file_name)
@@ -488,6 +490,8 @@ class LaserFileInfoQDialog(QDialog):
         material = self.materialQComboBox.currentText()
         if material == self.new_material_text:
             material = self.newMaterialQLineEdit.text()
+            self.new_materials_list.append(material)
+            
         thickness = self.thicknessQLineEdit.text()
         amount = self.amountQLineEdit.text()
         
@@ -512,6 +516,7 @@ class LaserFileInfoQDialog(QDialog):
 
         self.temp_files_dict[file_name] = {'source_file_global_path': source_file_global_path,
                                              'target_file_global_path': target_file_global_path}
+        self.file_counter += 1
         self.loadContent()
 
     def skipJob(self):
