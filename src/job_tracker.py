@@ -117,7 +117,7 @@ class JobTracker:
         with open(self.tracker_file_path, 'r') as tracker_file:
             tracker_dict = json.load(tracker_file)
 
-        return len([job_key for job_key, job_value in tracker_dict.items() if job_value['status'] in status_list])-1
+        return len([job_key for job_key, job_value in tracker_dict.items() if job_value['status'] in status_list])
 
     def makeJobNameUnique(self, job_name: str) -> str:
         ''' Make the job name unique.
