@@ -170,7 +170,6 @@ class LaserMainWindow(MainWindow):
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    print('\n\n')
     laser_window = LaserMainWindow()
     laser_window.show()
     app.exec_()

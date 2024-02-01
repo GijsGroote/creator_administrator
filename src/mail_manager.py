@@ -200,6 +200,7 @@ class MailManager():
             attachments = self.getAttachments(msg)
             for attachment in attachments:
                 file_name = attachment.get_filename()        
+                print(f"attachment is clalled: {file_name}")
                 if bool(file_name):
                     if file_name.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
                         return True
@@ -256,8 +257,7 @@ class MailManager():
             return str(msg.Sender)
      
         if sys.platform == 'linux':
-            raise ValueError('implement this to send the senders name')
-            return email.message_from_bytes(msg[0][1]).get('From')
+            return self.mailToName(email.message_from_bytes(msg[0][1]).get('From'))
         
     def getMsgFromGlobalPath(self, temp_folder_global_path: str):
         ''' Return Msg from global path to mail.msg. '''
