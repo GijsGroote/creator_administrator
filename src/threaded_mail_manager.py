@@ -19,46 +19,52 @@ class ThreadedMailManager():
         self.gv=gv
         self.thread_pool = gv['THREAD_POOL']
         self.parent_widget = parent_widget
-        self.signals = WorkerSignals()
+        self.worker = None
 
-    def sendConfirmationMail(self,
-                                success_message: str,
-                                error_message: str,
-                                job_folder_global_path: str,
-                                template_content: dict,
-                                msg,
-                                *args,
-                                **kwargs):
-        """ Send a confirmation mail. """
+    def start(self):
+        '''
+        explain this
+        '''
+        if self.worker is None:
+            raise ValueError('self.worker is None')
+        self.thread_pool.start(self.worker)
+    
+    def setupConfirmationMailWorker(self,
+                            success_message: str,
+                            error_message: str,
+                            job_folder_global_path: str,
+                            template_content: dict,
+                            msg):
+        
         self.success_message = success_message
         self.error_message = error_message
         self.msg = msg
-        self.args = args
-        self.kwargs = kwargs
 
-        self.displaySuccessMessage()
+        self.worker = Worker(self.sendConfirmationMail,
+                             job_folder_global_path=job_folder_global_path,
+                             template_content=template_content,
+                             msg=msg)
 
+        self.worker.signals.finished.connect(self.displaySuccessMessage)
+        self.worker.signals.error.connect(self.handleMailError)
+
+
+    def sendConfirmationMail(self,
+                                job_folder_global_path: str,
+                                template_content: dict,
+                                msg):
+        """ Send a confirmation mail. """
         mail_manager = MailManager(self.gv)
 
-        msg_file_path = mail_manager.getMailGlobalPathFromFolder(job_folder_global_path)
-        
-        self.worker = Worker(mail_manager.replyToEmailFromFileUsingTemplate,
-                                msg_file_path=msg_file_path,
+        mail_manager.replyToEmailFromFileUsingTemplate(
+                                msg_file_path=mail_manager.getMailGlobalPathFromFolder(job_folder_global_path),
                                 template_file_name="RECEIVED_MAIL_TEMPLATE",
                                 template_content=template_content,
                                 popup_reply=False)
-
-        self.worker.signals.finished.connect(self.displaySuccessMessage)
-        self.worker.signals.result.connect(self.displaySuccessMessageData)
-        self.worker.signals.error.connect(self.handleMailError)
-
-        print('start woker')
-        self.thread_pool.start(self.worker)
-        print(f'sucecss message??')
+        mail_manager.moveEmailToVerwerktFolder(msg=msg)       
 
     def displaySuccessMessage(self):
         ''' Display a confirmation message to the user. '''
-        print(f'display success message please {self.success_message}')
         TimedMessage(self.gv, parent=self.parent_widget, text=self.success_message)
 
     def displaySuccessMessageData(self, data):

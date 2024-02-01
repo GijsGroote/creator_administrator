@@ -256,11 +256,13 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         threaded_mail_manager = ThreadedMailManager(parent_widget=self,
                                                     gv=gv)
         
-        threaded_mail_manager.sendConfirmationMail(success_message=f'Confirmation mail send to {sender_name}',
+        threaded_mail_manager.setupConfirmationMailWorker(success_message=f'Confirmation mail send to {sender_name}',
                              error_message=f'No confirmation mail send to {sender_name}',
                              job_folder_global_path=copy.copy(self.temp_job_folder_global_path),
                              template_content= {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
                              msg=msg)
+        
+        threaded_mail_manager.start()
         
         TimedMessage(gv, self, text=f'Laser job {self.temp_job_name} created')
 
