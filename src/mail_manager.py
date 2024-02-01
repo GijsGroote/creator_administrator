@@ -202,9 +202,7 @@ class MailManager():
             for attachment in attachments:
                 file_name = self.getAttachmentFileName(attachment)        
                 if bool(file_name):
-                    print(f"hmmmm {self.gv['ACCEPTED_EXTENSIONS']} {file_name}")
                     if file_name.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
-                        print(f"hmmmmmmmmm")
                         return True
 
             return False

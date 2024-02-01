@@ -1,9 +1,7 @@
-import sys
 from PyQt5 import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-import traceback
 from src.qmessagebox import InfoQMessageBox, WarningQMessageBox, ErrorQMessageBox, TimedMessage
 from src.worker import Worker, WorkerSignals
 from src.mail_manager import MailManager
