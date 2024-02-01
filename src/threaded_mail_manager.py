@@ -1,9 +1,7 @@
-import sys
 from PyQt5 import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-import traceback
 from src.qmessagebox import InfoQMessageBox, WarningQMessageBox, ErrorQMessageBox, TimedMessage
 from src.worker import Worker, WorkerSignals
 from src.mail_manager import MailManager
@@ -22,14 +20,12 @@ class ThreadedMailManager():
         self.worker = None
 
     def start(self):
-        '''
-        explain this
-        '''
+        ''' Start the mail related worker. '''
         if self.worker is None:
             raise ValueError('self.worker is None')
         self.thread_pool.start(self.worker)
     
-    def setupConfirmationMailWorker(self,
+    def setupReceivedMailWorker(self,
                             success_message: str,
                             error_message: str,
                             job_folder_global_path: str,
@@ -40,19 +36,17 @@ class ThreadedMailManager():
         self.error_message = error_message
         self.msg = msg
 
-        self.worker = Worker(self.sendConfirmationMail,
+        self.worker = Worker(self.sendReceivedMail,
                              job_folder_global_path=job_folder_global_path,
-                             template_content=template_content,
-                             msg=msg)
+                             template_content=template_content)
 
         self.worker.signals.finished.connect(self.displaySuccessMessage)
         self.worker.signals.error.connect(self.handleMailError)
 
 
-    def sendConfirmationMail(self,
+    def sendReceivedMail(self,
                                 job_folder_global_path: str,
-                                template_content: dict,
-                                msg):
+                                template_content: dict):
         """ Send a confirmation mail. """
         mail_manager = MailManager(self.gv)
 
@@ -61,15 +55,11 @@ class ThreadedMailManager():
                                 template_file_name="RECEIVED_MAIL_TEMPLATE",
                                 template_content=template_content,
                                 popup_reply=False)
-        mail_manager.moveEmailToVerwerktFolder(msg=msg)       
+
+        mail_manager.moveEmailToVerwerktFolder(msg=self.msg)       
 
     def displaySuccessMessage(self):
         ''' Display a confirmation message to the user. '''
-        TimedMessage(self.gv, parent=self.parent_widget, text=self.success_message)
-
-    def displaySuccessMessageData(self, data):
-        ''' Display a confirmation message to the user. '''
-        print(f'display {data} success message please {self.success_message}')
         TimedMessage(self.gv, parent=self.parent_widget, text=self.success_message)
 
     def handleMailError(self, exc: Exception):
@@ -79,6 +69,5 @@ class ThreadedMailManager():
         if isinstance(exc, ConnectionError):
             ErrorQMessageBox(self.parent_widget, text=f'Connection Error {self.error_message}: {str(exc)}')
         else:
-            raise exc
-            # ErrorQMessageBox(self.parent_widget, text=f'Error Occured: {str(exc)}')
+            ErrorQMessageBox(self.parent_widget, text=f'Error Occured: {str(exc)}')
 

@@ -81,7 +81,7 @@ with open(global_variables_path, 'r') as global_variables_file:
         else:
             gv[mail_template] = os.path.join(
                     gv['REPO_DIR_HOME'],
-                    'laser/email_templates', mail_template+'.html')
+                    'laser/email_templates', 'DEFAULT_'+mail_template+'.html')
 
 gv['GLOBAL_SRC_DIR'] = os.path.join(gv['REPO_DIR_HOME'], 'src')
 gv['LOCAL_SRC_DIR'] = os.path.join(gv['REPO_DIR_HOME'], 'laser/src')

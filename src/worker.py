@@ -1,10 +1,7 @@
-import sys
 from PyQt5 import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-import traceback
-from src.qmessagebox import InfoQMessageBox, WarningQMessageBox, ErrorQMessageBox, TimedMessage
 
 class Worker(QRunnable):
     '''
@@ -35,7 +32,6 @@ class Worker(QRunnable):
         '''
 
         try:
-            print(f'args kwargs {self.args} {self.kwargs}')
             data = self.function(*self.args, **self.kwargs)
             self.signals.result.emit(data)
             self.signals.finished.emit()

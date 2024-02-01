@@ -15,6 +15,7 @@ if sys.platform == 'linux':
     import smtplib
     import ssl
     import re
+    from email.header import decode_header
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
     from email.utils import parseaddr, formataddr 
@@ -199,7 +200,7 @@ class MailManager():
         if sys.platform == 'linux':
             attachments = self.getAttachments(msg)
             for attachment in attachments:
-                file_name = attachment.get_filename()        
+                file_name = self.getAttachmentFileName(attachment)        
                 if bool(file_name):
                     if file_name.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
                         return True
@@ -256,8 +257,7 @@ class MailManager():
             return str(msg.Sender)
      
         if sys.platform == 'linux':
-            raise ValueError('implement this to send the senders name')
-            return email.message_from_bytes(msg[0][1]).get('From')
+            return self.mailToName(email.message_from_bytes(msg[0][1]).get('From'))
         
     def getMsgFromGlobalPath(self, temp_folder_global_path: str):
         ''' Return Msg from global path to mail.msg. '''
@@ -290,17 +290,19 @@ class MailManager():
            attachments = []
            for part in email.message_from_bytes(msg[0][1]).walk():
 
-                # Check if the part is an attachment
-                if part.get_content_maintype() == 'multipart':
-                    continue
-                if part.get('Content-Disposition') is None:
-                    continue
+               if part.get_content_maintype() == 'multipart':
+                   continue
+               if part.get('Content-Disposition') is None:
+                   continue
 
-                if not part.get_filename():
-                    continue
-                else:
-                    attachments.append(part)
+               encoded_filename = part.get_filename()
 
+               if encoded_filename is None:
+                   continue
+
+               attachments.append(part)
+
+  
            return attachments
 
     def getAttachmentFileName(self, attachment) -> str:
@@ -308,8 +310,13 @@ class MailManager():
         if sys.platform == 'win32':
             return os.path.basename(attachment)
         if sys.platform == 'linux':
-            return attachment.get_filename()
+            encoded_filename = attachment.get_filename()
+            filename, encoding = decode_header(encoded_filename)[0]
 
+            if(encoding is None):
+                return filename
+            else:
+                return filename.decode(encoding)
 
     def saveMail(self, msg, job_folder_global_path: str):
         ''' Save mail in a folder. '''
@@ -365,9 +372,6 @@ class MailManager():
                 reply.Display(True)
             else:
                 reply.Send()
-
-            print('send a confirmatino mail now')
-
 
         if sys.platform == 'linux':
 

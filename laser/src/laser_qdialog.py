@@ -37,6 +37,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         self.msg_counter = 0
         self.attachment_counter = 0
         self.new_material_text = 'New Material'
+        self.new_materials_list = []
 
         self.threadpool = gv['THREAD_POOL']
 
@@ -112,15 +113,16 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
             self.thicknessQLineEdit.clear()
             self.amountQLineEdit.clear()
 
-            materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()))
+            materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()).union(self.new_materials_list))
             self.materialQComboBox.addItems(materials)
             self.materialQComboBox.addItem(self.new_material_text)
 
             # guess the material, thickness and amount
-            for material in gv['ACCEPTED_MATERIALS']:
+            for material in materials:
                 if material.lower() in attachment_name.lower():
                     self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(material))
             match = re.search(r"\d+\.?\d*(?=mm)", attachment_name)
+
             if match:
                 self.thicknessQLineEdit.setText(match.group())
 
@@ -151,6 +153,8 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         material = self.materialQComboBox.currentText()
         if material == self.new_material_text:
             material = self.newMaterialQLineEdit.text()
+            self.new_materials_list.append(material)
+
         thickness = self.thicknessQLineEdit.text()
         amount = self.amountQLineEdit.text()
         
@@ -256,7 +260,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         threaded_mail_manager = ThreadedMailManager(parent_widget=self,
                                                     gv=gv)
         
-        threaded_mail_manager.setupConfirmationMailWorker(success_message=f'Confirmation mail send to {sender_name}',
+        threaded_mail_manager.setupReceivedMailWorker(success_message=f'Confirmation mail send to {sender_name}',
                              error_message=f'No confirmation mail send to {sender_name}',
                              job_folder_global_path=copy.copy(self.temp_job_folder_global_path),
                              template_content= {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
@@ -265,50 +269,6 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         threaded_mail_manager.start()
         
         TimedMessage(gv, self, text=f'Laser job {self.temp_job_name} created')
-
-        
-
-        # send_mail_worker = Worker(self.sendConfirmationMail, gv=gv,
-        #                             job_folder_global_path=self.temp_job_folder_global_path,
-        #                             template_content={"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
-        #                             msg=msg)
-            
-        # send_mail_worker.signals.result.connect(self.confirmationMailSendMessage)
-        # send_mail_worker.signals.error.connect(self.handleMailError)
-        # self.threadpool.start(send_mail_worker)
-
-        
-
-
-    # def sendConfirmationMail(self, gv, job_folder_global_path, template_content, msg):
-        # ''' Send a confirmation mail. '''
-        # mail_manager = MailManager(gv) 
-
-
-        # mail_manager.replyToEmailFromFileUsingTemplate(
-        #         msg_file_path=mail_manager.getMailGlobalPathFromFolder(job_folder_global_path), 
-        #         template_file_name="RECEIVED_MAIL_TEMPLATE",
-        #         template_content=template_content,
-        #         popup_reply=False)
-        
-        # mail_manager.moveEmailToVerwerktFolder(msg=msg)
-
-        # return mail_manager.getEmailAddress(msg)
-
-    # def confirmationMailSendMessage(self, data):
-        # ''' Display a message with: confimation mail send. '''
-        # TimedMessage(gv, parent=self, text=f'Confimation mail send to {data}')
-
-    # def handleMailError(self, exc: Exception):
-    #     ''' Handle mail error. '''
-
-    #     assert isinstance(exc, Exception), f'Expected type Exception, received type: {type(exc)}'
-
-    #     if isinstance(exc, ConnectionError):
-    #         ErrorQMessageBox(self,
-    #                 text=f'Connection Error, No Confirmation mail send:\n{str(exc)}')
-    #     else:
-    #         ErrorQMessageBox(self, text=f'Error Occured, No Confirmation mail send:\n{str(exc)}')
 
 class LaserFilesSelectQDialog(SelectQDialog):
     """ Select files dialog. """
@@ -406,13 +366,15 @@ class LaserFileInfoQDialog(QDialog):
         self.temp_files_global_paths = files_global_paths_list[self.job_counter]
  
         self.new_material_text = 'New Material'
+        self.new_materials_list = []
+
         self.materialQComboBox.currentIndexChanged.connect(self.onMaterialComboboxChanged)
         self.skipPushButton.clicked.connect(self.skipJob)
         self.buttonBox.accepted.connect(self.collectFileInfo)
         self.loadJobContent()
 
     def loadContent(self):
-        if self.file_counter+1 >= len(self.temp_files_global_paths):
+        if self.file_counter >= len(self.temp_files_global_paths):
             self.createLaserJob()
 
             if self.job_counter+1 >= len(self.job_name_list):
@@ -422,7 +384,6 @@ class LaserFileInfoQDialog(QDialog):
                 self.file_counter= 0
                 self.loadJobContent()
         else:
-            # self.attachment_counter += 1
             self.loadFileContent()
 
 
@@ -462,12 +423,12 @@ class LaserFileInfoQDialog(QDialog):
             self.thicknessQLineEdit.clear()
             self.amountQLineEdit.clear()
 
-            materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()))
+            materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()).union(self.new_materials_list))
             self.materialQComboBox.addItems(materials)
             self.materialQComboBox.addItem(self.new_material_text)
 
             # guess the material, thickness and amount
-            for material in gv['ACCEPTED_MATERIALS']:
+            for material in materials:
                 if material.lower() in file_name.lower():
                     self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(material))
             match = re.search(r"\d+\.?\d*(?=mm)", file_name)
@@ -487,12 +448,11 @@ class LaserFileInfoQDialog(QDialog):
 
             if self.file_counter+1 >= len(self.temp_files_global_paths):
                 self.createLaserJob()
+                self.job_counter += 1
 
-                if self.job_counter+1 >= len(self.job_name_list):
-                    self.job_counter += 1
+                if self.job_counter >= len(self.job_name_list):
                     self.loadJobContent()
             else:
-                self.file_counter += 1
                 self.loadFileContent()
 
     def onMaterialComboboxChanged(self):
@@ -508,6 +468,8 @@ class LaserFileInfoQDialog(QDialog):
         material = self.materialQComboBox.currentText()
         if material == self.new_material_text:
             material = self.newMaterialQLineEdit.text()
+            self.new_materials_list.append(material)
+            
         thickness = self.thicknessQLineEdit.text()
         amount = self.amountQLineEdit.text()
         
@@ -532,6 +494,7 @@ class LaserFileInfoQDialog(QDialog):
 
         self.temp_files_dict[file_name] = {'source_file_global_path': source_file_global_path,
                                              'target_file_global_path': target_file_global_path}
+        self.file_counter += 1
         self.loadContent()
 
     def skipJob(self):
@@ -539,7 +502,6 @@ class LaserFileInfoQDialog(QDialog):
         if self.job_counter+1 >= len(self.job_name_list):
             self.accept() 
         else:
-
             self.job_counter += 1
             self.file_counter = 0
             self.loadJobContent()
