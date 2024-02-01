@@ -44,7 +44,7 @@ from typing import List
 #             copy(source_item, target_item)
 
 
-def copy(source_dir_global: str, target_dir_global: str):
+def copy_item(source_dir_global: str, target_dir_global: str):
     """ Copy directory and subdirectories recursively. """
 
     if os.path.exists(target_dir_global):

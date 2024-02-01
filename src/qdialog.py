@@ -7,8 +7,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence
 from PyQt5.uic import loadUi
 
-from global_variables import gv
-
+from global_variables import gv # TODO: what in the hell is this here?
 
 
 class ImportFromMailQDialog(QDialog):

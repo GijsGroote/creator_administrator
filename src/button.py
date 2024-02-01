@@ -20,10 +20,8 @@ class JobsQPushButton(QPushButton):
     ''' Parent class for all buttons that update job status
             such as laser klaar, gesliced. '''
 
-
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
-
 
 
     def refreshAllQListWidgets(self):

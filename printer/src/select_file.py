@@ -11,7 +11,7 @@ from tkinter import filedialog
 from global_variables import gv
 from job_tracker import JobTracker
 
-from src.directory_functions import copy
+from src.directory_functions import copy_item
 from src.create_batch_file import python_to_batch
 from src.cmd_farewell_handler import open_wachtrij_folder_cmd_farewell
 from src.talk_to_sa import password_please
@@ -42,7 +42,7 @@ def create_print_job(job_name: str, job_content_global_path: str):
     job_global_path = os.path.join(os.path.join(gv['JOBS_DIR_HOME'], 'WACHTRIJ', job_folder_name))
 
     os.mkdir(job_global_path)
-    copy(job_content_global_path, job_global_path)
+    copy_item(job_content_global_path, job_global_path)
 
 
     python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'),

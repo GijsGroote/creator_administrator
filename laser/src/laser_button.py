@@ -18,7 +18,7 @@ from src.mail_manager import MailManager
 from src.qdialog import SelectOptionsQDialog
 
 
-from src.directory_functions import copy
+from src.directory_functions import copy_item
 from src.qmessagebox import TimedMessage, JobFinishedMessageBox, YesOrNoMessageBox, ErrorQMessageBox, WarningQMessageBox
 from laser_qlist_widget import MaterialContentQListWidget
 from requests.exceptions import ConnectionError
@@ -277,7 +277,7 @@ class OptionsQPushButton(JobsQPushButton):
             target_item_global_path = os.path.join(target_folder_global_path,
                 file_dict['material']+"_"+file_dict['thickness']+'mm_'+file_dict['amount']+"x_"+file_key)
 
-            copy(source_item_global_path, target_item_global_path)
+            copy_item(source_item_global_path, target_item_global_path)
 
         open_folder(target_folder_global_path)
 

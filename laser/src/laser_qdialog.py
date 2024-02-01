@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import copy
 from PyQt5 import *
 from PyQt5.QtCore import *
 from PyQt5 import QtWebEngineWidgets
@@ -19,8 +20,9 @@ from src.qmessagebox import TimedMessage, ErrorQMessageBox
 
 from requests.exceptions import ConnectionError
 from laser_job_tracker import LaserJobTracker
-from src.worker import Worker, MailWorker
-from src.directory_functions import copy
+from src.worker import Worker
+from src.threaded_mail_manager import ThreadedMailManager
+from src.directory_functions import copy_item
 
 
 class LaserImportFromMailQDialog(ImportFromMailQDialog):
@@ -158,8 +160,13 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         attachment = self.temp_attachments[self.attachment_counter]
         attachment_name = self.mail_manager.getAttachmentFileName(attachment)
 
-        file_global_path = os.path.join(self.temp_job_folder_global_path,
-                                         material+'_'+thickness+'_'+amount+'x_'+attachment_name)
+        if material in attachment_name and\
+            thickness in attachment_name and\
+            amount in attachment_name:
+            file_global_path = os.path.join(self.temp_job_folder_global_path, attachment_name)
+        else:
+            file_global_path = os.path.join(self.temp_job_folder_global_path,
+                                         material+'_'+thickness+'mm_'+amount+'x_'+attachment_name)
 
         self.temp_laser_cut_files_dict[self.temp_job_name + '_' + attachment_name] = {
                             'file_name': attachment_name,
@@ -230,22 +237,32 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
     def threadedSendConfirmationMailAndCreateLaserJob(self):
         """ Create a laser job. """
         msg = self.valid_msgs[self.msg_counter]
+        
+        self.job_tracker.addJob(self.temp_job_name,
+                                 self.temp_job_folder_global_path,
+                                 self.temp_laser_cut_files_dict)
 
-        # Well does this work my love?
+        if not os.path.exists(self.temp_job_folder_global_path):
+            os.mkdir(self.temp_job_folder_global_path)
 
-        mail_worker = MailWorker(fn_name="SEND_CONFIRMATION_MAIL",
-                   parent_widget=self,
-                   gv=gv,
-                   job_folder_global_path=self.temp_job_folder_global_path,
-                   template_content={"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
-                   msg=msg)
+        self.mail_manager.saveMail(msg, self.temp_job_folder_global_path)
+        sender_name = self.mail_manager.getSenderName(msg)
 
-        mail_worker.sendConfirmationMail(success_message='Confirmation mail send to',
-                             error_message='No confirmation mail send',
-                             job_folder_global_path=self.temp_job_folder_global_path,
+        # save the attachments
+        for attachment_dict in self.temp_attachments_dict.values():
+            self.mail_manager.saveAttachment(attachment_dict['attachment'], attachment_dict['file_global_path'])
+
+
+        threaded_mail_manager = ThreadedMailManager(parent_widget=self,
+                                                    gv=gv)
+        
+        threaded_mail_manager.sendConfirmationMail(success_message=f'Confirmation mail send to {sender_name}',
+                             error_message=f'No confirmation mail send to {sender_name}',
+                             job_folder_global_path=copy.copy(self.temp_job_folder_global_path),
                              template_content= {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
                              msg=msg)
-        mail_worker.start()
+        
+        TimedMessage(gv, self, text=f'Laser job {self.temp_job_name} created')
 
         
 
@@ -260,20 +277,6 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
         
 
-        self.job_tracker.addJob(self.temp_job_name,
-                                 self.temp_job_folder_global_path,
-                                 self.temp_laser_cut_files_dict)
-
-        if not os.path.exists(self.temp_job_folder_global_path):
-            os.mkdir(self.temp_job_folder_global_path)
-
-        self.mail_manager.saveMail(msg, self.temp_job_folder_global_path)
-
-        # save the attachments
-        for attachment_dict in self.temp_attachments_dict.values():
-            self.mail_manager.saveAttachment(attachment_dict['attachment'], attachment_dict['file_global_path'])
-
-        TimedMessage(gv, self, text=f'Laser job {self.temp_job_name} created')
 
     # def sendConfirmationMail(self, gv, job_folder_global_path, template_content, msg):
         # ''' Send a confirmation mail. '''
@@ -588,7 +591,7 @@ class LaserFileInfoQDialog(QDialog):
 
         # save the attachments
         for file_dict in self.temp_files_dict.values():
-            copy(file_dict['source_file_global_path'], file_dict['target_file_global_path'])
+            copy_item(file_dict['source_file_global_path'], file_dict['target_file_global_path'])
 
         TimedMessage(gv, self, text=f"Laser job {self.temp_job_name} created")
 

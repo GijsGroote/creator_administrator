@@ -30,7 +30,6 @@ elif sys.platform == 'win32':
 else:
     raise ValueError(f'This software does not work for platform: {sys.platform}')
 
-
 class MailManager():
 
     def __init__(self, gv: dict):
@@ -97,8 +96,6 @@ class MailManager():
                 if self.gv['ONLY_UNREAD_MAIL']:
                     if message.UnRead:
                         if self.isMailAValidJobRequest(message): 
-                            print(message.EntryID)
-                            print('that is the entry id mister howdy')
                             valid_msgs.append(self.saveMsgAndAttachmentsInTempFolder(message))              
                         else:
                             n_invalid_mails += 1
@@ -346,6 +343,8 @@ class MailManager():
             raise ConnectionError('Not connected to the internet')
 
         if sys.platform == 'win32':
+            print(f'again, what it the file path? {msg_file_path}')
+
             msg = self.outlook.OpenSharedItem(msg_file_path)
 
             # load recipient_name in template
@@ -366,6 +365,9 @@ class MailManager():
                 reply.Display(True)
             else:
                 reply.Send()
+
+            print('send a confirmatino mail now')
+
 
         if sys.platform == 'linux':
 
