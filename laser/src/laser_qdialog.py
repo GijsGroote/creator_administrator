@@ -23,7 +23,7 @@ from laser_job_tracker import LaserJobTracker
 from src.worker import Worker
 from src.threaded_mail_manager import ThreadedMailManager
 from src.directory_functions import copy_item
-
+  
 
 class LaserImportFromMailQDialog(ImportFromMailQDialog):
 

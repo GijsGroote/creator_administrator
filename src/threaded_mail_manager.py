@@ -78,7 +78,7 @@ class ThreadedMailManager():
     def sendFinishedMail(self,
                         job_folder_global_path: str,
                         template_content: dict):
-        """ Send a confirmation mail. """
+        """ Send a job is finished mail. """
         
         # The MailManager object must be made in the scope of this function. 
         # otherwise Outlook raises an attribute error for an open share com object
@@ -139,5 +139,5 @@ class ThreadedMailManager():
         if isinstance(exc, ConnectionError):
             ErrorQMessageBox(self.parent_widget, text=f'Connection Error {self.error_message}: {str(exc)}')
         else:
-            ErrorQMessageBox(self.parent_widget, text=f'Error Occured: {str(exc)}')
+            ErrorQMessageBox(self.parent_widget, text=f'Error Occured {self.error_message}: {str(exc)}')
 

@@ -52,7 +52,7 @@ class SelectOptionsQDialog(QDialog):
         super().__init__(parent, *args, **kwargs)
 
         
-        loadUi(os.path.abspath(gv['UI_DIR_HOME'], 'select_material_done_dialog.ui'), self)
+        loadUi(os.path.join(gv['UI_DIR_HOME'], 'select_material_done_dialog.ui'), self)
 
         # QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.toggleSelection)
 
