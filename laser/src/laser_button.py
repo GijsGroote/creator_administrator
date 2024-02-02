@@ -276,6 +276,6 @@ class OptionsQPushButton(JobsQPushButton):
             delete(os.path.join(target_folder_global_path, file))
 
         for file_name, file_global_path in dxfs_names_and_global_paths:
-            copy(file_global_path, os.path.join(target_folder_global_path, file_name))
+            copy_item(file_global_path, os.path.join(target_folder_global_path, file_name))
 
         open_folder(target_folder_global_path)
