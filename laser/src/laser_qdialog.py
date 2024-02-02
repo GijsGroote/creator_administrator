@@ -162,24 +162,28 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
             return
 
         attachment = self.temp_attachments[self.attachment_counter]
-        attachment_name = self.mail_manager.getAttachmentFileName(attachment)
+        original_file_name = self.mail_manager.getAttachmentFileName(attachment)
 
-        if material in attachment_name and\
-            thickness in attachment_name and\
-            amount in attachment_name:
-            file_global_path = os.path.join(self.temp_job_folder_global_path, attachment_name)
+        attachment = self.temp_attachments[self.attachment_counter]
+        original_file_name = self.mail_manager.getAttachmentFileName(attachment)
+
+        if material in original_file_name and\
+            thickness in original_file_name and\
+            amount in original_file_name:
+            file_name= original_file_name
         else:
-            file_global_path = os.path.join(self.temp_job_folder_global_path,
-                                         material+'_'+thickness+'mm_'+amount+'x_'+attachment_name)
+            file_name = material+'_'+thickness+'mm_'+amount+'x_'+original_file_name
 
-        self.temp_laser_cut_files_dict[self.temp_job_name + '_' + attachment_name] = {
-                            'file_name': attachment_name,
+        file_global_path = os.path.join(self.temp_job_folder_global_path, file_name)
+    
+        self.temp_laser_cut_files_dict[self.temp_job_name + '_' + file_name] = {
+                            'file_name': file_name,
                             'file_global_path': file_global_path,
                             'material': material,
                             'thickness': thickness,
                             'amount': amount,
                             'done': False}
-        self.temp_attachments_dict[attachment_name] = {'attachment': attachment,
+        self.temp_attachments_dict[file_name] = {'attachment': attachment,
                                                      'file_global_path': file_global_path}
         self.attachment_counter += 1
         self.loadContent()
@@ -473,13 +477,17 @@ class LaserFileInfoQDialog(QDialog):
         if not self.validate(material, thickness, amount):
             return
 
-
         source_file_global_path = self.temp_files_global_paths[self.file_counter]
-        file_name = os.path.basename(source_file_global_path)
 
-
-        target_file_global_path = os.path.join(self.temp_job_folder_global_path,
-                                         material+'_'+thickness+'_'+amount+'x_'+file_name)
+        original_file_name = os.path.basename(source_file_global_path)
+        if material in original_file_name and\
+            thickness in original_file_name and\
+            amount in original_file_name:
+            file_name = original_file_name
+        else:
+            file_name = material+'_'+thickness+'mm_'+amount+'x_'+original_file_name
+        
+        target_file_global_path = os.path.join(self.temp_job_folder_global_path, file_name)
 
         self.temp_laser_cut_files_dict[self.temp_job_name + '_' + file_name] = {
                             'file_name': file_name,

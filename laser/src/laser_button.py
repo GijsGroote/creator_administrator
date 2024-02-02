@@ -225,8 +225,7 @@ class OptionsQPushButton(JobsQPushButton):
 
             # TODO: you could copy all unwanted stuff better
             source_item_global_path = file_dict['file_global_path']
-            target_item_global_path = os.path.join(target_folder_global_path,
-                file_dict['material']+"_"+file_dict['thickness']+'mm_'+file_dict['amount']+"x_"+file_key)
+            target_item_global_path = os.path.join(target_folder_global_path, file_key)
 
             copy_item(source_item_global_path, target_item_global_path)
 
