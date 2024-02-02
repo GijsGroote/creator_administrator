@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import *
 from src.qmessagebox import InfoQMessageBox, WarningQMessageBox, ErrorQMessageBox, TimedMessage
 from src.worker import Worker, WorkerSignals
 from src.mail_manager import MailManager
+from src.loading_dialog import LoadingQDialog
 
 
 class ThreadedMailManager():
@@ -88,6 +89,44 @@ class ThreadedMailManager():
                                 template_file_name="FINISHED_MAIL_TEMPLATE",
                                 template_content=template_content,
                                 popup_reply=False)
+        
+    def startDeclinedMailWorker(self,
+                            success_message: str,
+                            error_message: str,
+                            job_folder_global_path: str,
+                            template_content: dict):        
+        self.success_message = success_message
+        self.error_message = error_message
+
+        self.loading_dialog = LoadingQDialog(self.parent_widget.parent().parent().parent().parent().parent(), 
+                                             self.gv, 
+                                             text='Send the Outlook popup reply, it can be behind other windows')
+        
+        self.loading_dialog.show()
+        self.worker = Worker(self.sendDeclinedMail, 
+                             job_folder_global_path=job_folder_global_path,
+                             template_content={})
+        self.worker.signals.finished.connect(self.loading_dialog.accept)
+        self.worker.signals.finished.connect(self.displaySuccessMessage)
+        self.worker.signals.error.connect(self.loading_dialog.accept)
+        self.worker.signals.error.connect(self.handleMailError)
+        self.thread_pool.start(self.worker)
+
+
+    def sendDeclinedMail(self,
+                        job_folder_global_path: str,
+                        template_content: dict):
+        """ Send a declined mail. """
+        
+        # The MailManager object must be made in the scope of this function. 
+        # otherwise Outlook raises an attribute error for an open share com object
+        mail_manager = MailManager(self.gv)
+
+        mail_manager.replyToEmailFromFileUsingTemplate(
+                                msg_file_path=mail_manager.getMailGlobalPathFromFolder(job_folder_global_path),
+                                template_file_name="DECLINED_MAIL_TEMPLATE",
+                                template_content=template_content,
+                                popup_reply=True)
 
     def displaySuccessMessage(self):
         ''' Display a confirmation message to the user. '''

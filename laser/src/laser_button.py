@@ -10,7 +10,7 @@ from src.worker import Worker
 from laser_job_tracker import LaserJobTracker
 from src.button import JobsQPushButton
 from src.directory_functions import open_folder
-from src.loading_dialog import LoadingQDialog
+
 from src.directory_functions import delete
 
 from convert import split_material_name
@@ -131,42 +131,16 @@ class AfgekeurdQPushButton(JobsQPushButton):
 
         job_folder_global_path = job_tracker.getJobFolderGlobalPathFromJobName(job_name)
 
-        self.threadedSendDeclineMail(job_name, job_folder_global_path)
-        
-    def threadedSendDeclineMail(self, job_name, job_folder_global_path):
-        ''' Send decline mail on an other thread. '''
-
-        # TODO: dear lord write a function to find the top level parent
-        self.loading_dialog = LoadingQDialog(self.parent().parent().parent().parent().parent().parent(), gv, text='Send the Outlook popup reply, it can be behind other windows')
-        self.loading_dialog.show()
-     
-        send_mail_worker = Worker(self.sendDeclinedMail, gv=gv, job_folder_global_path=job_folder_global_path)
-        send_mail_worker.signals.finished.connect(self.loading_dialog.accept)
-        send_mail_worker.signals.error.connect(self.loading_dialog.accept)
-        send_mail_worker.signals.error.connect(self.handleMailError)
-        self.threadpool.start(send_mail_worker)
-
-    def sendDeclinedMail(self, gv: dict, job_folder_global_path: str):
-        ''' popup the Declined mail. '''
         mail_manager = MailManager(gv)
-        mail_manager.replyToEmailFromFileUsingTemplate(
-                mail_manager.getMailGlobalPathFromFolder(job_folder_global_path),
-                'DECLINED_MAIL_TEMPLATE',
-                {},
-                popup_reply=True)
+        sender_name = mail_manager.getSenderName(job_folder_global_path)
+
+        threaded_mail_manager = ThreadedMailManager(parent_widget=self,
+                                                        gv=gv)
+        threaded_mail_manager.startDeclinedMailWorker(success_message=f'Job declined mail send to {sender_name}',
+                                error_message=f'No job declined mail send to {sender_name}',
+                                job_folder_global_path=job_folder_global_path,
+                                template_content={})
         
-    def handleMailError(self, exc):
-        ''' Handle mail error. '''
-
-        assert isinstance(exc, Exception), f'Expected type Exception, received type: {type(exc)}'
-
-        if isinstance(exc, ConnectionError):
-            ErrorQMessageBox(self,
-                    text=f'Connection Error, No Job Declined mail send:\n{str(exc)}')
-        else:
-            ErrorQMessageBox(self, text=f'Error Occured, No Job Declined mail send:\n{str(exc)}')
-
-
 class OptionsQPushButton(JobsQPushButton):
 
     def __init__(self, parent, *args, **kwargs):
