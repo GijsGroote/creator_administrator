@@ -22,6 +22,7 @@ from src.directory_functions import copy_item
 from src.qmessagebox import TimedMessage, JobFinishedMessageBox, YesOrNoMessageBox, ErrorQMessageBox, WarningQMessageBox
 from laser_qlist_widget import MaterialContentQListWidget
 from requests.exceptions import ConnectionError
+from src.threaded_mail_manager import ThreadedMailManager
 
 
 class LaserKlaarQPushButton(JobsQPushButton):
@@ -35,50 +36,26 @@ class LaserKlaarQPushButton(JobsQPushButton):
         job_name = self.getCurrentItemName()
         
         job_folder_global_path = LaserJobTracker(self).getJobFolderGlobalPathFromJobName(job_name)
-        self.threadedSendFinishedMail(job_folder_global_path)
-
         LaserJobTracker(self).updateJobStatus(job_name, 'VERWERKT')
         self.refreshAllQListWidgets()
-
+        self.threadedSendFinishedMail(job_folder_global_path)
+        
     def threadedSendFinishedMail(self, job_folder_global_path):
         ''' Send job finished mail on an other thread. '''
 
         if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]):
             WarningQMessageBox(gv=gv, parent=self, text=f'No Job finished mail send because: No mail file found')
-            return
-
-        send_mail_worker = Worker(self.sendFinishedMail, gv=gv, job_folder_global_path=job_folder_global_path)
-        send_mail_worker.signals.result.connect(self.finishedMailSendMessage)
-        send_mail_worker.signals.error.connect(self.handleMailError)
-        self.threadpool.start(send_mail_worker)
-
-    def sendFinishedMail(self, gv: dict, job_folder_global_path: str):
-        ''' Send a job finished mail. '''
-
-        mail_manager = MailManager(gv)
-        mail_manager.replyToEmailFromFileUsingTemplate(
-                mail_manager.getMailGlobalPathFromFolder(job_folder_global_path),
-                'FINISHED_MAIL_TEMPLATE',
-                {},
-                popup_reply=False)
-        
-        return self.getCurrentItemName()   
-
-    def finishedMailSendMessage(self, data):
-        ''' Display a message with: finished mail send. '''
-        TimedMessage(gv, parent=self, text=f'Confimation mail send to {data}')
-
-    def handleMailError(self, exc: Exception):
-        ''' Handle mail error. '''
-
-        assert isinstance(exc, Exception), f'Expected type Exception, received type: {type(exc)}'
-
-        if isinstance(exc, ConnectionError):
-            ErrorQMessageBox(self,
-                    text=f'Connection Error, No Job Finished mail send:\n{str(exc)}')
         else:
-            ErrorQMessageBox(self, text=f'Error Occured, No Job Finished mail send:\n{str(exc)}')
-
+            mail_manager = MailManager(gv)
+            sender_name = mail_manager.getSenderName(job_folder_global_path)
+        
+            threaded_mail_manager = ThreadedMailManager(parent_widget=self,
+                                                        gv=gv)
+            
+            threaded_mail_manager.startFinishedMailWorker(success_message=f'Job finished mail send to {sender_name}',
+                                error_message=f'No job finished mail send to {sender_name}',
+                                job_folder_global_path=job_folder_global_path,
+                                template_content={})
 
 class MateriaalKlaarQPushButton(JobsQPushButton):
 

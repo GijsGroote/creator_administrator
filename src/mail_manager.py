@@ -350,8 +350,6 @@ class MailManager():
             raise ConnectionError('Not connected to the internet')
 
         if sys.platform == 'win32':
-            print(f'again, what it the file path? {msg_file_path}')
-
             msg = self.outlook.OpenSharedItem(msg_file_path)
 
             # load recipient_name in template

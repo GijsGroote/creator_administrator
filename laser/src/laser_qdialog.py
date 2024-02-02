@@ -54,7 +54,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
     def loadContent(self):
         if self.attachment_counter >= len(self.temp_attachments):
-            self.threadedSendConfirmationMailAndCreateLaserJob()
+            self.threadedSendReceivedMailAndCreateLaserJob()
             self.msg_counter += 1
             self.attachment_counter = 0
 
@@ -231,14 +231,13 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
         return True
 
-
     def sendUnclearMaterialDetailsMail(self):
         ''' Send a mail asking for the material, thickness and amount. '''
         # TODO: mail from a mail that is not yet downloaded. 
         TimedMessage(gv, self, f"This function is not yet implemented")
 
 
-    def threadedSendConfirmationMailAndCreateLaserJob(self):
+    def threadedSendReceivedMailAndCreateLaserJob(self):
         """ Create a laser job. """
         msg = self.valid_msgs[self.msg_counter]
         
@@ -260,14 +259,12 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         threaded_mail_manager = ThreadedMailManager(parent_widget=self,
                                                     gv=gv)
         
-        threaded_mail_manager.setupReceivedMailWorker(success_message=f'Confirmation mail send to {sender_name}',
-                             error_message=f'No confirmation mail send to {sender_name}',
+        threaded_mail_manager.startReceivedMailWorker(success_message=f'Job request receieved mail send to {sender_name}',
+                             error_message=f'No job request receieved mail send to {sender_name}',
                              job_folder_global_path=copy.copy(self.temp_job_folder_global_path),
                              template_content= {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
                              msg=msg)
-        
-        threaded_mail_manager.start()
-        
+                
         TimedMessage(gv, self, text=f'Laser job {self.temp_job_name} created')
 
 class LaserFilesSelectQDialog(SelectQDialog):

@@ -18,14 +18,8 @@ class ThreadedMailManager():
         self.thread_pool = gv['THREAD_POOL']
         self.parent_widget = parent_widget
         self.worker = None
-
-    def start(self):
-        ''' Start the mail related worker. '''
-        if self.worker is None:
-            raise ValueError('self.worker is None')
-        self.thread_pool.start(self.worker)
     
-    def setupReceivedMailWorker(self,
+    def startReceivedMailWorker(self,
                             success_message: str,
                             error_message: str,
                             job_folder_global_path: str,
@@ -43,12 +37,18 @@ class ThreadedMailManager():
         self.worker.signals.finished.connect(self.displaySuccessMessage)
         self.worker.signals.error.connect(self.handleMailError)
 
+        self.thread_pool.start(self.worker)
+
 
     def sendReceivedMail(self,
                                 job_folder_global_path: str,
                                 template_content: dict):
         """ Send a confirmation mail. """
+
+        # The MailManager object must be made in the scope of this function. 
+        # otherwise Outlook raises an attribute error for an open share com object
         mail_manager = MailManager(self.gv)
+        
 
         mail_manager.replyToEmailFromFileUsingTemplate(
                                 msg_file_path=mail_manager.getMailGlobalPathFromFolder(job_folder_global_path),
@@ -56,7 +56,38 @@ class ThreadedMailManager():
                                 template_content=template_content,
                                 popup_reply=False)
 
-        mail_manager.moveEmailToVerwerktFolder(msg=self.msg)       
+        mail_manager.moveEmailToVerwerktFolder(msg=self.msg)
+    
+    def startFinishedMailWorker(self,
+                            success_message: str,
+                            error_message: str,
+                            job_folder_global_path: str,
+                            template_content: dict):        
+        self.success_message = success_message
+        self.error_message = error_message
+
+        self.worker = Worker(self.sendFinishedMail,
+                             job_folder_global_path=job_folder_global_path,
+                             template_content=template_content)
+
+        self.worker.signals.finished.connect(self.displaySuccessMessage)
+        self.worker.signals.error.connect(self.handleMailError)
+        self.thread_pool.start(self.worker)
+
+    def sendFinishedMail(self,
+                        job_folder_global_path: str,
+                        template_content: dict):
+        """ Send a confirmation mail. """
+        
+        # The MailManager object must be made in the scope of this function. 
+        # otherwise Outlook raises an attribute error for an open share com object
+        mail_manager = MailManager(self.gv)
+
+        mail_manager.replyToEmailFromFileUsingTemplate(
+                                msg_file_path=mail_manager.getMailGlobalPathFromFolder(job_folder_global_path),
+                                template_file_name="FINISHED_MAIL_TEMPLATE",
+                                template_content=template_content,
+                                popup_reply=False)
 
     def displaySuccessMessage(self):
         ''' Display a confirmation message to the user. '''
