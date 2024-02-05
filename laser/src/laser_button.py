@@ -10,7 +10,7 @@ from src.worker import Worker
 from laser_job_tracker import LaserJobTracker
 from src.button import JobsQPushButton
 from src.directory_functions import open_folder
-from src.loading_dialog import LoadingQDialog
+
 from src.directory_functions import delete
 
 from convert import split_material_name
@@ -62,19 +62,13 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.clicked.connect(self.on_click)
-
-        self.threadpool = gv['THREAD_POOL']
-
+        self.job_tracker = LaserJobTracker(self)
  
     def on_click(self):
         material_name = self.getCurrentItemName()
         material, thickness = split_material_name(material_name)
 
-        job_tracker = LaserJobTracker(self)
-
-        # todo: not all is always done
-        dxfs_names_and_global_paths = job_tracker.getDXFsAndPaths(material, thickness)
-
+        dxfs_names_and_global_paths = self.job_tracker.getDXFsAndPaths(material, thickness)
         dialog = SelectOptionsQDialog(self, dxfs_names_and_global_paths)
 
         if dialog.exec_() == QDialog.Accepted:
@@ -89,32 +83,44 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
 
         for file_global_path in files_global_paths:
             # find job_name
-            job_name = job_tracker.fileGlobalPathToJobName(file_global_path)
+            job_name = self.job_tracker.fileGlobalPathToJobName(file_global_path)
 
             # material done, mark it done
-            job_tracker.markFileIsDone(job_name, file_global_path)
+            self.job_tracker.markFileIsDone(job_name, file_global_path)
 
             # if all is done, display message
-            if job_tracker.isJobDone(job_name):
+            if self.job_tracker.isJobDone(job_name):
                 # hey this material is done!
 
                 TimedMessage(gv, self, f"Job finished mail send to {job_name}")
 
-                job_tracker.updateJobStatus(job_name, 'VERWERKT')
-                job_folder_global_path = job_tracker.getJobFolderGlobalPathFromJobName(job_name)
+                self.job_tracker.updateJobStatus(job_name, 'VERWERKT')
+                job_folder_global_path = self.job_tracker.getJobFolderGlobalPathFromJobName(job_name)
 
-                try:
-                    self.sendFinishedMail(gv, job_name, job_folder_global_path)
-                except ConnectionError as e:
-                    TimedMessage(self, text=str(e))
-                    return
-
-                JobFinishedMessageBox(text=f"Job {job_name} is finished, put it the Uitgifterek:\n"\
-                        f"{job_tracker.getLaserFilesString(job_name)}",
-                            parent=self)
+                self.threadedSendFinishedMail(job_name, job_folder_global_path)
 
         self.refreshAllQListWidgets()
 
+    def threadedSendFinishedMail(self, job_name: str, job_folder_global_path: str):
+        ''' Send job finished mail on an other thread. '''
+
+        if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]):
+            WarningQMessageBox(gv=gv, parent=self, text=f'No Job finished mail send because: No mail file found')
+        else:
+            mail_manager = MailManager(gv)
+            sender_name = mail_manager.getSenderName(job_folder_global_path)
+        
+            threaded_mail_manager = ThreadedMailManager(parent_widget=self,
+                                                        gv=gv)
+            threaded_mail_manager.startFinishedMailWorker(
+                success_message=f"Job finished mail send to {sender_name}",
+                                error_message=f'No job finished mail send to {sender_name}',
+                                job_folder_global_path=job_folder_global_path,
+                                template_content={})
+            
+            JobFinishedMessageBox(parent=self.parent().parent().parent().parent().parent(), 
+                                  text=f"for {job_name}  put in the Uitgifterek:\n"\
+                        f"{self.job_tracker.getLaserFilesString(job_name)}")
 
 class AfgekeurdQPushButton(JobsQPushButton):
 
@@ -131,42 +137,16 @@ class AfgekeurdQPushButton(JobsQPushButton):
 
         job_folder_global_path = job_tracker.getJobFolderGlobalPathFromJobName(job_name)
 
-        self.threadedSendDeclineMail(job_name, job_folder_global_path)
-        
-    def threadedSendDeclineMail(self, job_name, job_folder_global_path):
-        ''' Send decline mail on an other thread. '''
-
-        # TODO: dear lord write a function to find the top level parent
-        self.loading_dialog = LoadingQDialog(self.parent().parent().parent().parent().parent().parent(), gv, text='Send the Outlook popup reply, it can be behind other windows')
-        self.loading_dialog.show()
-     
-        send_mail_worker = Worker(self.sendDeclinedMail, gv=gv, job_folder_global_path=job_folder_global_path)
-        send_mail_worker.signals.finished.connect(self.loading_dialog.accept)
-        send_mail_worker.signals.error.connect(self.loading_dialog.accept)
-        send_mail_worker.signals.error.connect(self.handleMailError)
-        self.threadpool.start(send_mail_worker)
-
-    def sendDeclinedMail(self, gv: dict, job_folder_global_path: str):
-        ''' popup the Declined mail. '''
         mail_manager = MailManager(gv)
-        mail_manager.replyToEmailFromFileUsingTemplate(
-                mail_manager.getMailGlobalPathFromFolder(job_folder_global_path),
-                'DECLINED_MAIL_TEMPLATE',
-                {},
-                popup_reply=True)
+        sender_name = mail_manager.getSenderName(job_folder_global_path)
+
+        threaded_mail_manager = ThreadedMailManager(parent_widget=self,
+                                                        gv=gv)
+        threaded_mail_manager.startDeclinedMailWorker(success_message=f'Job declined mail send to {sender_name}',
+                                error_message=f'No job declined mail send to {sender_name}',
+                                job_folder_global_path=job_folder_global_path,
+                                template_content={})
         
-    def handleMailError(self, exc):
-        ''' Handle mail error. '''
-
-        assert isinstance(exc, Exception), f'Expected type Exception, received type: {type(exc)}'
-
-        if isinstance(exc, ConnectionError):
-            ErrorQMessageBox(self,
-                    text=f'Connection Error, No Job Declined mail send:\n{str(exc)}')
-        else:
-            ErrorQMessageBox(self, text=f'Error Occured, No Job Declined mail send:\n{str(exc)}')
-
-
 class OptionsQPushButton(JobsQPushButton):
 
     def __init__(self, parent, *args, **kwargs):
@@ -210,13 +190,17 @@ class OptionsQPushButton(JobsQPushButton):
         self.setMenu(self.menu)
 
     def moveJobToWachtrij(self):
+        # TODO: moving a job to wachtrij also includes putting the laser files on not done (to display in material queue)
         self.moveJobTo('WACHTRIJ')
+        self.refreshAllQListWidgets()
 
     def moveJobToAfgekeurd(self):
         self.moveJobTo('AFGEKEURD')
+        self.refreshAllQListWidgets()
 
     def moveJobToVerwerkt(self):
         self.moveJobTo('VERWERKT')
+        self.refreshAllQListWidgets()
 
     def moveJobTo(self, new_status):
         job_name = self.getCurrentItemName()
@@ -248,12 +232,8 @@ class OptionsQPushButton(JobsQPushButton):
             delete(os.path.join(target_folder_global_path, file))
                    
         for file_key, file_dict in laser_file_dict.items():
-
-            # TODO: you could copy all unwanted stuff better
             source_item_global_path = file_dict['file_global_path']
-            target_item_global_path = os.path.join(target_folder_global_path,
-                file_dict['material']+"_"+file_dict['thickness']+'mm_'+file_dict['amount']+"x_"+file_key)
-
+            target_item_global_path = os.path.join(target_folder_global_path, file_key)
             copy_item(source_item_global_path, target_item_global_path)
 
         open_folder(target_folder_global_path)
@@ -262,12 +242,8 @@ class OptionsQPushButton(JobsQPushButton):
         ''' Copy the dxf files in wachtrij to a specified folder. '''
 
         material_name = self.getCurrentItemName()
-        
-
         material, thickness = split_material_name(material_name)
-
         dxfs_names_and_global_paths = LaserJobTracker(self).getDXFsAndPaths(material, thickness)
-
         target_folder_global_path = gv['LASER_TODO_DIR_HOME']
 
         # clear the laser todo dir home first
