@@ -39,22 +39,7 @@ Optionally add mail templates locations to the global variables.json
     // "RECEIVED_MAIL_TEMPLATE":  "C:\\path\\to\\mail\\template.html",
     // "DECLINED_MAIL_TEMPLATE":  "C:\\path\\to\\mail\\template.html",
     // "FINISHED_MAIL_TEMPLATE":  "C:\\path\\to\\mail\\template.html",
-{
-    "REPO_DIR_HOME":  "/home/gijs/Documents/creator-administrator",
-    "PYTHON_PATH": "/usr/bin/python3",
-    "OUTLOOK_PATH":  "There is no Outlook on arch linux",
-    "IOBIT_UNLOCKER_PATH":  "There is no IOBIT_UNLOCKER on arch linux",
-    "ACCEPTED_EXTENSIONS": ".dxf, .dwg",
-    "ACCEPTED_MATERIALS": "pmma, hout",
-    "DAYS_TO_KEEP_JOBS": "5",
-    "PASSWORD":  "",
-    "ONLY_UNREAD_MAIL": "false",
-    "MAIL_NAME": "Gijs Groote",
-    "MAIL_INBOX_NAME": "temp_inbox",
-    "MAIL_ADRESS": "gijsgroote@hotmail.com",
-    "MAIL_PASSWORD": "Fa725AAhsad6ws",
-    "MOVE_MAILS_TO_VERWERKT_FOLDER": "false",
-    "DISPLAY_TEMP_MESSAGES": "true"
-}
-```
+
+<a href="https://www.buymeacoffee.com/roniemartinez" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/gijsgroote)
