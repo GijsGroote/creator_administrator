@@ -2,9 +2,9 @@ import os
 import abc
 from typing import List
 import re
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt6.QtCore import *
+from PyQt6.QtGui import *
+from PyQt6.QtWidgets import *
 
 from src.directory_functions import open_file, open_folder
 
@@ -16,7 +16,7 @@ class OverviewQListWidget(QListWidget):
         super().__init__(parent, *args, **kwargs)
 
         # shortcut on the Enter key
-        QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.itemEnterPressed)
+        QShortcut(QKeySequence(Qt.Key.Key_Return), self).activated.connect(self.itemEnterPressed)
 
         self.itemDoubleClicked.connect(self.itemIsDoubleClicked)
 
@@ -87,7 +87,7 @@ class ContentQListWidget(QListWidget):
 
 
         # shortcut for the Enter button
-        QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.itemEnterPressed)
+        QShortcut(QKeySequence(Qt.Key.Key_Return), self).activated.connect(self.itemEnterPressed)
         self.itemDoubleClicked.connect(self.fileDoubleClicked)
 
         # self.setDragEnabled(True)
@@ -107,7 +107,7 @@ class ContentQListWidget(QListWidget):
 
     #     print(f"start dragging this {urlList}")
     #     drag.setMimeData(mime)
-    #     drag.exec_(actions)
+    #     drag.exec(actions)
 
     # def dropEvent(self, e):
     #     if e.mimeData().hasUrls():
@@ -138,7 +138,7 @@ class ContentQListWidget(QListWidget):
     #         drag.setMimeData(mime_data)
 
     #         # Start the drag operation
-    #         drag.exec_()
+    #         drag.exec()
 
 
     # def dragEnterEvent(self, event):

@@ -5,7 +5,7 @@ Global variables specific for the local machine managing the PMMA laser.
 import json
 import os
 import sys
-from PyQt5.QtCore import QThreadPool
+from PyQt6.QtCore import QThreadPool
 
 if sys.platform == 'linux':
     data_dir_home = os.path.join(os.path.expanduser('~'), '.creator-administrator')

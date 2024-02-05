@@ -1,14 +1,14 @@
 import sys
 import os
-from PyQt5 import QtWidgets
-from PyQt5 import QtCore
+from PyQt6 import QtWidgets
+from PyQt6 import QtCore
 from requests.exceptions import ConnectionError
 import time
 
 import traceback 
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from PyQt6.QtGui import *
+from PyQt6.QtWidgets import *
+from PyQt6.QtCore import *
 from global_variables import gv
 from src.app import MainWindow
 from laser_qdialog import (
@@ -81,7 +81,7 @@ class LaserMainWindow(MainWindow):
 
         else:
             dialog = LaserImportFromMailQDialog(self, valid_msgs)
-            dialog.exec_()
+            dialog.exec()
 
 
             # refresh all laser job tabs
@@ -103,11 +103,11 @@ class LaserMainWindow(MainWindow):
         ''' Open dialog to select multiple files. ''' 
         dialog = LaserFilesSelectQDialog(self)
 
-        if dialog.exec_() == QDialog.Accepted:
+        if dialog.exec() == 1:
             files_global_paths = dialog.selectFilesButton.files_global_paths
             job_name = dialog.projectNameQLineEdit.text()
 
-            LaserFileInfoQDialog(self, [job_name], [files_global_paths]).exec_()
+            LaserFileInfoQDialog(self, [job_name], [files_global_paths]).exec()
             
         # refresh all laser job tabs
         qlist_widgets = self.findChildren(QListWidget)
@@ -118,7 +118,7 @@ class LaserMainWindow(MainWindow):
         ''' Open dialog to select folder with multiple subfolders. ''' 
         dialog = LaserFolderSelectQDialog(self)
 
-        if dialog.exec_() == QDialog.Accepted:
+        if dialog.exec() == 1:
             folder_global_path = dialog.selectFolderButton.folder_global_path
             project_name = dialog.projectNameQLineEdit.text()
             folders_global_paths_list = []
@@ -149,7 +149,7 @@ class LaserMainWindow(MainWindow):
                         WarningQMessageBox(gv, self, text=f'No laser file found in {subfolder_global_path}'\
                                 f'skip this subfolder')
 
-            LaserFileInfoQDialog(self, jobs_names_list, folders_global_paths_list).exec_()
+            LaserFileInfoQDialog(self, jobs_names_list, folders_global_paths_list).exec()
         # refresh all laser job tabs
         qlist_widgets = self.findChildren(QListWidget)
         for list_widget in qlist_widgets:
@@ -172,4 +172,4 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     laser_window = LaserMainWindow()
     laser_window.show()
-    app.exec_()
+    app.exec()

@@ -25,7 +25,7 @@ class PrinterMainWindow(MainWindow):
     # def onActionSelectFileclicked(self):
     #     # dialog = PrinterSelectFileQDialog(self)
 
-    #     if dialog.exec_() == QDialog.Accepted:
+    #     if dialog.exec() == 1:
     #         folder_global_path = dialog.selectFolderButton.folder_global_path
     #         project_name = dialog.projectNameQLineEdit.text()
     #         print(f'the folder is {folder_global_path} and pj {project_name}')

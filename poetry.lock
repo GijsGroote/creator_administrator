@@ -196,6 +196,37 @@ files = [
 ]
 
 [[package]]
+name = "pyqt6-webengine"
+version = "6.6.0"
+description = "Python bindings for the Qt WebEngine framework"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "PyQt6_WebEngine-6.6.0-cp37-abi3-macosx_10_14_universal2.whl", hash = "sha256:cb7793f06525ca054fcc6039afd93e23b82228b880d0b1301ce635f7f3ed2edf"},
+    {file = "PyQt6_WebEngine-6.6.0-cp37-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:fded35fba636c4916fec84aa7c6840ad2e75d211462feb3e966f9545a59d56e6"},
+    {file = "PyQt6_WebEngine-6.6.0-cp37-abi3-win_amd64.whl", hash = "sha256:9d542738ed6e11c1978ce59035c07627def7c63eef0f59581d327f01209141bc"},
+    {file = "PyQt6_WebEngine-6.6.0.tar.gz", hash = "sha256:d50b984c3f85e409e692b156132721522d4e8cf9b6c25e0cf927eea2dfb39487"},
+]
+
+[package.dependencies]
+PyQt6 = ">=6.2.0"
+PyQt6-sip = ">=13.4,<14"
+PyQt6-WebEngine-Qt6 = ">=6.6.0"
+
+[[package]]
+name = "pyqt6-webengine-qt6"
+version = "6.6.1"
+description = "The subset of a Qt installation needed by PyQt6-WebEngine."
+optional = false
+python-versions = "*"
+files = [
+    {file = "PyQt6_WebEngine_Qt6-6.6.1-py3-none-macosx_10_14_x86_64.whl", hash = "sha256:4981e36adb15ea6c1508562128caf7d21c7e5c48039b60eabfb44adc00fd25d0"},
+    {file = "PyQt6_WebEngine_Qt6-6.6.1-py3-none-macosx_11_0_arm64.whl", hash = "sha256:185bd984a094d827d0a1abaf6a17247f87152c335dedbf2ecc4f838e6e2d7656"},
+    {file = "PyQt6_WebEngine_Qt6-6.6.1-py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:605e0f2168f95f9d0903239b28e42a6ba96a48427bda4dad44b192f5e64d63a9"},
+    {file = "PyQt6_WebEngine_Qt6-6.6.1-py3-none-win_amd64.whl", hash = "sha256:43c75191822823e86164aa5f4299d3a4092af061c27d29b28e75134cfd7b2673"},
+]
+
+[[package]]
 name = "pywin32"
 version = "306"
 description = "Python for Window Extensions"
@@ -270,4 +301,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "36258d61af0ff6233701ad12a1be0acdde90f1c4c20729070730870e6f3ea35c"
+content-hash = "f953619603b991e25bcab4724306f0365caa7609fb98a40b3b9b189bf0dd6cc5"

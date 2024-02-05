@@ -1,8 +1,8 @@
 import glob
 import os
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt6.QtCore import *
+from PyQt6.QtGui import *
+from PyQt6.QtWidgets import *
 
 from global_variables import gv
 from src.worker import Worker
@@ -77,7 +77,7 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
 
         dialog = SelectOptionsQDialog(self, dxfs_names_and_global_paths)
 
-        if dialog.exec_() == QDialog.Accepted:
+        if dialog.exec() == 1:
 
             files_names = []
             files_global_paths = []

@@ -2,9 +2,9 @@ import os
 import abc
 from typing import List, Tuple
 import re
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QKeySequence
-from PyQt5.QtWidgets import *
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QKeySequence
+from PyQt6.QtWidgets import *
 
 from src.directory_functions import open_file, open_folder
 from convert import split_material_name
