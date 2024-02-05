@@ -2,14 +2,14 @@ import os
 import re
 import sys
 import copy
-from PyQt5 import *
-from PyQt5.QtCore import *
-from PyQt5 import QtWebEngineWidgets
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt6 import *
+from PyQt6.QtCore import *
+from PyQt6 import QtWebEngineWidgets
+from PyQt6.QtGui import *
+from PyQt6.QtWidgets import *
 
 
-from PyQt5.uic import loadUi
+from PyQt6.uic import loadUi
 
 import datetime
 from global_variables import gv
@@ -324,19 +324,19 @@ class LaserFolderSelectQDialog(SelectQDialog):
         if self.passwordQLineEdit.text() != gv['PASSWORD']:
             dlg = QMessageBox(self)
             dlg.setText('Password Incorrect')
-            dlg.exec_()
+            dlg.exec()
             return
 
         if self.selectFolderButton.folder_global_path is None:
             dlg = QMessageBox(self)
             dlg.setText('Select a Folder')
-            dlg.exec_()
+            dlg.exec()
             return
 
         if len(self.projectNameQLineEdit.text()) == 0:
             dlg = QMessageBox(self)
             dlg.setText('Provide a Project Name')
-            dlg.exec_()
+            dlg.exec()
             return
 
         self.accept()

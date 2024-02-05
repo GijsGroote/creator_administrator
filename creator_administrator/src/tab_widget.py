@@ -1,8 +1,9 @@
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QTabWidget, QShortcut, QListWidget, QStackedWidget
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QTabWidget, QListWidget, QStackedWidget
+from PyQt6.QtGui import QShortcut
 
-from PyQt5.QtGui import QKeySequence
+from PyQt6.QtGui import QKeySequence
 
 # from laser_qlist_widget import JobsOverviewQListWidget
 
@@ -13,10 +14,10 @@ class JobsQTabWidget(QTabWidget):
         super().__init__(parent, *args, **kwargs)
 
         # # shortcuts on arrow keys
-        QShortcut(QKeySequence(Qt.Key_Left), self).activated.connect(self.toLeftTab)
-        QShortcut(QKeySequence(Qt.Key_Right), self).activated.connect(self.toRightTab)
-        QShortcut(QKeySequence(Qt.Key_Up), self).activated.connect(self.toPreviousRow)
-        QShortcut(QKeySequence(Qt.Key_Down), self).activated.connect(self.toNextRow)
+        QShortcut(QKeySequence(Qt.Key.Key_Left), self).activated.connect(self.toLeftTab)
+        QShortcut(QKeySequence(Qt.Key.Key_Right), self).activated.connect(self.toRightTab)
+        QShortcut(QKeySequence(Qt.Key.Key_Up), self).activated.connect(self.toPreviousRow)
+        QShortcut(QKeySequence(Qt.Key.Key_Down), self).activated.connect(self.toNextRow)
 
         # # shortcuts on VIM motions
         QShortcut(QKeySequence('h'), self).activated.connect(self.toLeftTab)

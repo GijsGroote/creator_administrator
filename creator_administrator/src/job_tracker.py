@@ -11,7 +11,7 @@ from typing import Tuple
 from unidecode import unidecode
 from datetime import datetime
 from typing import List
-from PyQt5.QtWidgets import QWidget
+from PyQt6.QtWidgets import QWidget
 from src.qmessagebox import TimedMessage, YesOrNoMessageBox, InfoQMessageBox
 
 class JobTracker:

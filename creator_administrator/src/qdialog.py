@@ -1,11 +1,12 @@
 import os
 from functools import partial
-from PyQt5 import uic
-from PyQt5.QtWidgets import *
+from PyQt6 import uic
+from PyQt6.QtWidgets import *
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QKeySequence
-from PyQt5.uic import loadUi
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QKeySequence, QShortcut
+
+from PyQt6.uic import loadUi
 
 from global_variables import gv # TODO: what in the hell is this here?
 
@@ -18,7 +19,7 @@ class ImportFromMailQDialog(QDialog):
         loadUi(ui_global_path, self)
         
         # shortcut on Esc button
-        QShortcut(QKeySequence(Qt.Key_Escape), self).activated.connect(self.closeDialog)
+        QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.closeDialog)
 
     def closeDialog(self):
         ''' Close the dialog, press cancel. '''
@@ -33,7 +34,7 @@ class SelectQDialog(QDialog):
         self.passwordQLineEdit.textChanged.connect(partial(self.check_password, gv=gv))
 
         # shortcut on Esc button
-        QShortcut(QKeySequence(Qt.Key_Escape), self).activated.connect(self.closeDialog)
+        QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.closeDialog)
 
     def check_password(self, gv: dict):
         if self.passwordQLineEdit.text() == gv['PASSWORD']:

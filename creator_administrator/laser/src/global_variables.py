@@ -5,7 +5,7 @@ Global variables specific for the local machine managing the PMMA laser.
 import json
 import os
 import sys
-from PyQt5.QtCore import QThreadPool
+from PyQt6.QtCore import QThreadPool
 
 if sys.platform == 'linux':
     data_dir_home = os.path.join(os.path.expanduser('~'), '.creator-administrator')
@@ -93,6 +93,6 @@ sys.path.append(gv['GLOBAL_SRC_DIR'])
 sys.path.append(gv['LOCAL_SRC_DIR'])
 sys.path.append(gv['UI_DIR_HOME'])
 
-gv['FIGURES_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'], r'figures')
+gv['FIGURES_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'], 'figures')
 
 gv['THREAD_POOL'] = QThreadPool() # the one and only threadpool

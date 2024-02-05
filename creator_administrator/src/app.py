@@ -1,10 +1,9 @@
 import os
-from PyQt5 import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5 import uic
-
+from PyQt6 import *
+from PyQt6.QtCore import *
+from PyQt6.QtGui import *
+from PyQt6.QtWidgets import *
+from PyQt6 import uic
 
 class MainWindow(QMainWindow):
 
@@ -29,7 +28,7 @@ class MainWindow(QMainWindow):
 
         # close application on 'q' press
         if isinstance(event, QKeyEvent):
-            if event.key() == Qt.Key_Q:
+            if event.key() == Qt.Key.Key_Q:
                 self.close()
 
         # Move around using arrows or vim style
@@ -47,7 +46,7 @@ class MainWindow(QMainWindow):
         #         self.jobsQTabWidget.toNextRow()
 
             # shortcut on Enter key
-            if event.key() == Qt.Key_Return:
+            if event.key() == Qt.Key.Key_Return:
                 # go through GUI structure to call the itemEnterPressed function the currenlty displayed item
                 self.jobsQTabWidget.currentWidget().findChild(QStackedWidget).currentWidget().findChild(QListWidget).itemEnterPressed()
             # shortcut on Esc button

@@ -1,10 +1,10 @@
 import os
 
-from PyQt5 import *
-from PyQt5.QtCore import *
-from PyQt5 import QtWebEngineWidgets
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt6 import *
+from PyQt6.QtCore import *
+from PyQt6 import QtWebEngineWidgets
+from PyQt6.QtGui import *
+from PyQt6.QtWidgets import *
 
 from src.mail_manager import MailManager
 from src.qmessagebox import InfoQMessageBox
@@ -87,7 +87,7 @@ class BackQPushButton(QPushButton):
         self.clicked.connect(self.on_click)
  
         # shortcut on Esc button
-        QShortcut(QKeySequence(Qt.Key_Escape), self).activated.connect(self.on_click)
+        QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.on_click)
 
     def on_click(self):
         self.parent().parent().setCurrentIndex(0) 
@@ -132,7 +132,7 @@ class SelectFolderQPushButton(QPushButton):
         self.folder_global_path = QFileDialog.getExistingDirectory(self,
             'Select Folder',
             os.path.expanduser('~'),
-            QFileDialog.ShowDirsOnly)
+            QFileDialog.Option.ShowDirsOnly)
 
         folder_name_short = self.folder_global_path
 

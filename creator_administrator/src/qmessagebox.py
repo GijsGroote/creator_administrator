@@ -1,12 +1,12 @@
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from PyQt6.QtGui import *
+from PyQt6.QtWidgets import *
+from PyQt6.QtCore import *
 
 class TimedMessage(QMessageBox):
     ''' Short message that can only be clicked away. 
     It should not interfere with the main application, it does that anyway...'''
 
-    def __init__(self, gv: dict, parent: QWidget, text: str, icon=QMessageBox.Information):
+    def __init__(self, gv: dict, parent: QWidget, text: str, icon=QMessageBox.Icon.Information):
         super().__init__(parent)
 
         # DISPLAY THE TIMER WOULD BE NICE
@@ -19,7 +19,7 @@ class TimedMessage(QMessageBox):
             self.timer.setInterval(4000)
             self.timer.timeout.connect(self.exit)
             self.timer.start()
-            self.exec_()
+            self.exec()
 
 
     def moveToTopRightOfScreen(self):
@@ -53,13 +53,13 @@ class TimedMessage(QMessageBox):
 
 class JobFinishedMessageBox(QMessageBox):
 
-    def __init__(self, parent, text, icon=QMessageBox.Information, *args, **kwargs):
+    def __init__(self, parent, text, icon=QMessageBox.Icon.Information, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         self.setText(text)
-        self.addButton(QMessageBox.Ok)
+        self.addButton(QMessageBox.StandardButton.Ok)
         self.setIcon(icon)
-        self.exec_()
+        self.exec()
 
 class YesOrNoMessageBox(QMessageBox):
 
@@ -67,17 +67,17 @@ class YesOrNoMessageBox(QMessageBox):
         super().__init__(parent, *args, **kwargs)
 
         self.setText(text)
-        self.addButton(QMessageBox.No)
-        self.addButton(QMessageBox.Yes)
-        self.setDefaultButton(QMessageBox.Yes)
-        self.setIcon(QMessageBox.Question)
-        self.button(QMessageBox.Yes).setText(no_button_tex)
-        self.button(QMessageBox.Yes).setText(yes_button_text)
+        self.addButton(QMessageBox.StandardButton.No)
+        self.addButton(QMessageBox.StandardButton.Yes)
+        self.setDefaultButton(QMessageBox.StandardButton.Yes)
+        self.setIcon(QMessageBox.Icon.Question)
+        self.button(QMessageBox.StandardButton.Yes).setText(no_button_tex)
+        self.button(QMessageBox.StandardButton.Yes).setText(yes_button_text)
 
     def answer(self) -> bool:
         ''' Return True for yes, False for no. '''
 
-        if self.exec_()==QMessageBox.Yes:
+        if self.exec()==QMessageBox.Yes:
             return True
         return False
 
@@ -90,9 +90,9 @@ class InfoQMessageBox(QMessageBox):
         super().__init__(parent, *args, **kwargs)
 
         self.setText(text)
-        self.addButton(QMessageBox.Ok)
-        self.setIcon(QMessageBox.Information)
-        self.exec_()
+        self.addButton(QMessageBox.StandardButton.Ok)
+        self.setIcon(QMessageBox.Icon.Information)
+        self.exec()
 
 
 class WarningQMessageBox(QMessageBox):
@@ -102,9 +102,9 @@ class WarningQMessageBox(QMessageBox):
 
         if gv['DISPLAY_WARNING_MESSAGES']:
             self.setText(text)
-            self.addButton(QMessageBox.Ok)
-            self.setIcon(QMessageBox.Warning)
-            self.exec_()
+            self.addButton(QMessageBox.StandardButton.Ok)
+            self.setIcon(QMessageBox.Icon.Warning)
+            self.exec()
 
 class ErrorQMessageBox(QMessageBox):
 
@@ -112,6 +112,6 @@ class ErrorQMessageBox(QMessageBox):
         super().__init__(parent, *args, **kwargs)
 
         self.setText(text)
-        self.addButton(QMessageBox.Ok)
-        self.setIcon(QMessageBox.Critical)
-        self.exec_()
+        self.addButton(QMessageBox.StandardButton.Ok)
+        self.setIcon(QMessageBox.Icon.Critical)
+        self.exec()
