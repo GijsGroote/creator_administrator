@@ -12,7 +12,10 @@ PyQt6 = "^6.6.1"
 PyQt6-WebEngine = "^6.6.0"
 requests = "^2.31.0"
 Unidecode = "^1.3.8"
-pypiwin32 = "^223"
+pypiwin32 = {version="^223", optional=true}
+
+[tool.poetry.extras]
+win32 = ["pypiwin32"]
 
 
 [build-system]
