@@ -1,3 +1,9 @@
+build/
+build/*
+
+dist/
+dist/*
+
 # ignore python temp files
 **/__pycache__/
 __pycache__/

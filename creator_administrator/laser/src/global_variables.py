@@ -7,6 +7,14 @@ import os
 import sys
 from PyQt6.QtCore import QThreadPool
 
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 if sys.platform == 'linux':
     data_dir_home = os.path.join(os.path.expanduser('~'), '.creator-administrator')
 elif sys.platform == 'win32':
@@ -75,13 +83,13 @@ with open(global_variables_path, 'r') as global_variables_file:
 
         if mail_template in gv_data:
             if os.path.exists(gv_data[mail_template]):
-                gv[mail_template] = gv_data[mail_template]
+                gv[mail_template] = resource_path(gv_data[mail_template])
             else:
                 raise FileNotFoundError(f'could not find file: {gv_data[mail_template]}')
         else:
-            gv[mail_template] = os.path.join(
+            gv[mail_template] = resource_path(os.path.join(
                     gv['REPO_DIR_HOME'],
-                    'laser/email_templates', 'DEFAULT_'+mail_template+'.html')
+                    'laser/email_templates', 'DEFAULT_'+mail_template+'.html'))
 
 gv['GLOBAL_SRC_DIR'] = os.path.join(gv['REPO_DIR_HOME'], 'src')
 gv['LOCAL_SRC_DIR'] = os.path.join(gv['REPO_DIR_HOME'], 'laser/src')
@@ -96,3 +104,5 @@ sys.path.append(gv['UI_DIR_HOME'])
 gv['FIGURES_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'], 'figures')
 
 gv['THREAD_POOL'] = QThreadPool() # the one and only threadpool
+
+

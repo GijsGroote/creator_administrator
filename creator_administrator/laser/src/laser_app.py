@@ -22,6 +22,12 @@ from laser_job_tracker import LaserJobTracker
 
 from src.mail_manager import MailManager
 
+# ensure that win32com is imported after creating an executable with pyinstaller
+
+# for now comment/uncomment it
+from win32com import client
+
+
 class LaserMainWindow(MainWindow):
     def __init__(self, *args, **kwargs):
         ui_global_path = os.path.join(gv['UI_DIR_HOME'], 'laser_main_window.ui')

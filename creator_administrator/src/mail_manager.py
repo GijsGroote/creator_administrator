@@ -27,7 +27,7 @@ if sys.platform == 'linux':
 elif sys.platform == 'win32':
     from unidecode import unidecode
     import shutil
-    import win32com.client
+    from win32com import client
 else:
     raise ValueError(f'This software does not work for platform: {sys.platform}')
 
@@ -38,7 +38,8 @@ class MailManager():
 
         if sys.platform == 'win32':
 
-            self.outlook =  win32com.client.Dispatch("Outlook.Application").GetNamespace('MAPI')
+            self.outlook =  client.Dispatch("Outlook.Application").GetNamespace('MAPI')
+            
             
             try:
                 if gv['MAIL_INBOX_NAME'] == 'Inbox':

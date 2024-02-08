@@ -1,4 +1,4 @@
-import os
+import sys
 from PyQt6 import *
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
@@ -10,18 +10,6 @@ class MainWindow(QMainWindow):
     def __init__(self, ui_global_path, *args, **kwargs):
         super().__init__(*args, **kwargs)
         uic.loadUi(ui_global_path, self)
-
-
-        # job_name = 'haha'
-
-        # message_worker = Worker(TimedQMessageBox,
-        #                         text=f"Job finished mail send to {job_name}",
-        #                         parent=self)
-        # self.threadpool.start(message_worker)
-
-        # TODO: save height and widtt and position when closing, use that when opening
-        # desktop_center = QApplication.desktop().availableGeometry().center()
-        # self.move(desktop_center.x() - int(self.width()*0.5), desktop_center.y() - int(self.height()*0.5))
 
     def keyPressEvent(self, event):
         ''' Handle shortcuts on main window. '''
