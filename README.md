@@ -14,6 +14,8 @@ Do you look for an organized workflow to make all these requests?
 
 Project started at the Technical University Delft workshop that manages 3D printers and laser cutting machines.
 
+# Dowload CreatorAdministratorSetup.exe [here](https://drive.google.com/file/d/1_5OytNTOnGSAo_ZM_xb2fqT0FVzfVWez/view?usp=sharing)
+
 # Dependencies:
 * PyQT5 (python -m pip install PyQt5)
 * PyQtWebEngine (python -m pip install PyQtWebEngine)
