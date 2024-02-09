@@ -520,21 +520,25 @@
     <addaction name="selectFilesAction"/>
     <addaction name="selectFoldersAction"/>
    </widget>
-   <widget class="QMenu" name="menuDocumentation">
-    <property name="title">
-     <string>Documentation</string>
-    </property>
-    <addaction name="showDocumentationAction"/>
-   </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
      <string>Settings</string>
     </property>
     <addaction name="editSettingsAction"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="showLaserDocumentationAction"/>
+    <addaction name="show3DPrintDocumentationAction"/>
+    <addaction name="actionReport_a_Bug"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout"/>
+   </widget>
    <addaction name="createJobsMenu"/>
-   <addaction name="menuDocumentation"/>
    <addaction name="menuSettings"/>
+   <addaction name="menuHelp"/>
   </widget>
   <action name="importFromMailAction">
    <property name="checkable">
@@ -584,6 +588,26 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="showLaserDocumentationAction">
+   <property name="text">
+    <string>Laser Documentation</string>
+   </property>
+  </action>
+  <action name="show3DPrintDocumentationAction">
+   <property name="text">
+    <string>3D printer Documentation</string>
+   </property>
+  </action>
+  <action name="actionReport_a_Bug">
+   <property name="text">
+    <string>Report a Bug</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About Creator Administrator</string>
    </property>
   </action>
  </widget>
