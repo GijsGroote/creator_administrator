@@ -43,7 +43,7 @@
              <string>Accepted Materials</string>
             </property>
             <property name="buddy">
-             <cstring>accepetedMaterialsLineEdit</cstring>
+             <cstring>acceptedMaterialsLineEdit</cstring>
             </property>
            </widget>
           </item>
@@ -88,7 +88,7 @@
            </spacer>
           </item>
           <item row="2" column="2">
-           <widget class="QLineEdit" name="accepetedMaterialsLineEdit">
+           <widget class="QLineEdit" name="acceptedMaterialsLineEdit">
             <property name="text">
              <string> ACCEPTED_MATERIALS </string>
             </property>
@@ -97,7 +97,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="label_5">
             <property name="whatsThis">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of days before a job and associated files are deleted.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;This will only delete jobs from the Verwerkt or Afgekeurd folder. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of days before a job and associated files are deleted.&lt;/p&gt;&lt;p&gt;This will only delete jobs from the Verwerkt or Afgekeurd folder. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
              <string>Days to Store Jobs</string>
@@ -381,16 +381,6 @@
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Data Directory</string>
-            </property>
-            <property name="buddy">
-             <cstring>selectDataDirectoryButton</cstring>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_3">
             <property name="text">
@@ -398,30 +388,6 @@
             </property>
             <property name="buddy">
              <cstring>selectTodoDirectoryButton</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="SelectFolderQPushButton" name="selectDataDirectoryButton">
-            <property name="font">
-             <font>
-              <pointsize>14</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Select &lt;DATA_DIRECTORY&gt;</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="SelectFolderQPushButton" name="selectTodoDirectoryButton">
-            <property name="font">
-             <font>
-              <pointsize>14</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Select &lt;TODO_DIRECTORY&gt;</string>
             </property>
            </widget>
           </item>
@@ -451,6 +417,40 @@
             </property>
            </spacer>
           </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Data Directory</string>
+            </property>
+            <property name="buddy">
+             <cstring>selectDataDirectoryButton</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="SelectFolderQPushButton" name="selectDataDirectoryButton">
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Select &lt;DATA_DIRECTORY&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="SelectFolderQPushButton" name="selectTodoDirectoryButton">
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Select &lt;TODO_DIRECTORY&gt;</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
         <item>
@@ -464,7 +464,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QDialogButtonBox" name="buttonBox_2">
+      <widget class="QDialogButtonBox" name="buttonBox">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -492,7 +492,7 @@
  <tabstops>
   <tabstop>daysToKeepJobsLineEdit</tabstop>
   <tabstop>acceptedExtentionsLineEdit</tabstop>
-  <tabstop>accepetedMaterialsLineEdit</tabstop>
+  <tabstop>acceptedMaterialsLineEdit</tabstop>
   <tabstop>darkModeCheckBox</tabstop>
   <tabstop>dispTempMessageCheckBox</tabstop>
   <tabstop>dispWarnMessageCheckBox</tabstop>
@@ -503,5 +503,22 @@
   <tabstop>selectTodoDirectoryButton</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>Dialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>294</x>
+     <y>837</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>294</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

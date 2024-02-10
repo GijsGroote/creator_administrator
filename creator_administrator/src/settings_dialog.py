@@ -4,6 +4,7 @@ from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from PyQt6 import uic
+from src.qmessagebox import TimedMessage, WarningQMessageBox
 
 
 class SettingsQDialog(QDialog):
@@ -12,6 +13,8 @@ class SettingsQDialog(QDialog):
         super().__init__(parent, *args, **kwargs)
 
         uic.loadUi(ui_global_path, self)
+        self.gv = gv
+        self.buttonBox.accepted.connect(self.applySettings)
         
         self.daysToKeepJobsLineEdit.setText(str(gv['DAYS_TO_KEEP_JOBS']))
         self.daysToKeepJobsLineEdit.textChanged.connect(partial(self.checkInt, self.daysToKeepJobsLineEdit))
@@ -20,9 +23,9 @@ class SettingsQDialog(QDialog):
         self.acceptedExtentionsLineEdit.textChanged.connect(
                 partial(self.checkExtensionsTuple, self.acceptedExtentionsLineEdit))
 
-        self.accepetedMaterialsLineEdit.setText(str(gv['ACCEPTED_MATERIALS'])[1:-1].replace("'", ''))
-        self.accepetedMaterialsLineEdit.textChanged.connect(
-                partial(self.checkMaterialTuple, self.accepetedMaterialsLineEdit))
+        self.acceptedMaterialsLineEdit.setText(str(gv['ACCEPTED_MATERIALS'])[1:-1].replace("'", ''))
+        self.acceptedMaterialsLineEdit.textChanged.connect(
+                partial(self.checkMaterialTuple, self.acceptedMaterialsLineEdit))
 
         if gv['DARK_MODE']:
             self.darkModeCheckBox.setChecked(True)
@@ -42,6 +45,55 @@ class SettingsQDialog(QDialog):
         self.selectOutlookEXEsButton.setText(self.shortenFolderName(gv['OUTLOOK_PATH']))
         self.selectDataDirectoryButton.setText(self.shortenFolderName(gv['DATA_DIR_HOME']))
         self.selectTodoDirectoryButton.setText(self.shortenFolderName(gv['TODO_DIR_HOME']))
+
+    def applySettings(self):
+        ''' Save Settigns accepted function. '''
+        print(f"first checking validation please")
+        if self.validate():
+            print(f"save teh settings")
+        else:
+            TimedMessage(self, self.gv, 'soemthing is worg')
+
+    def validate(self) -> bool:
+        ''' Validate all input forms. '''
+
+        if not self.checkInt(self.daysToKeepJobsLineEdit.text()):
+            WarningQMessageBox(self.gv, self,
+                       f'Days to Store Jobs is not an number but {self.daysToKeepJobsLineEdit.text()}')
+
+        if int(self.daysToKeepJobsLineEdit.text()) < 0:
+            WarningQMessageBox(self.gv, self,
+                       f'Days to Store Jobs is not an positive number but {self.daysToKeepJobsLineEdit.text()}')
+
+        if self.checkExtensionsTuple(self.acceptedExtentionsLineEdit):
+            WarningQMessageBox(self.gv, self,
+                       f'Accepted Extensions could not be convered to a list of extensions')
+
+        if self.checkMaterialTuple(self.acceptedMaterialsLineEdit):
+            WarningQMessageBox(self.gv, self,
+                       f'Accepted Materials could not be convered to a list of materials')
+
+
+        if not os.path.exists(self.selectOutlookEXEsButton.text()):
+            WarningQMessageBox(self.gv, self, f'Outlook Path {self.selectOutlookEXEsButton.text()} does not exist')
+        if not self.selectOutlookEXEsButton.text().lower().endwith('.exe'):
+            WarningQMessageBox(self.gv, self, f'Executable {self.selectOutlookEXEsButton.text()} is not an .exe file')
+
+        if not os.path.exists(self.selectDataDirectoryButton.text()):
+            WarningQMessageBox(self.gv, self, f'Data Directory Path {self.selectDataDirectoryButton.text()} does not exist')
+        if not os.path.isdir(self.selectDataDirectoryButton.text()):
+            WarningQMessageBox(self.gv, self, f'Data Directory {self.selectDataDirectoryButton.text()} is not a directory')
+
+
+        os.path.exists(self.selectTodoDirectoryButton.text())
+
+
+        return True
+
+
+
+
+         
 
     def shortenFolderName(self, path) -> str:
         ''' Return a short folder name. '''

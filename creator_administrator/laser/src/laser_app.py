@@ -155,8 +155,11 @@ class LaserMainWindow(MainWindow):
 
     def openEditSettingsDialog(self):
         ''' Open dialog to edit the settings. '''
-        if LaserSettingsQDialog(self, gv).exec() == 1:
+        settings_dialog = LaserSettingsQDialog(self, gv) 
+        if settings_dialog.exec():
             InfoQMessageBox(self, f'Settings Saved')
+        else:
+            InfoQMessageBox(self, f'Settings ??')
 
     def refreshAllWidgets(self):
         ''' Refresh the widgets. '''
