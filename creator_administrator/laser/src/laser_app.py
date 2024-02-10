@@ -11,16 +11,16 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from global_variables import gv
 from src.app import MainWindow
-from laser_qdialog import (
-        LaserImportFromMailQDialog, LaserFilesSelectQDialog,
-        LaserFolderSelectQDialog, LaserFileInfoQDialog)
 from src.qmessagebox import InfoQMessageBox, WarningQMessageBox, ErrorQMessageBox
 from src.worker import Worker
 from src.loading_dialog import LoadingQDialog
+from src.mail_manager import MailManager
 from unidecode import unidecode
 from laser_job_tracker import LaserJobTracker
-
-from src.mail_manager import MailManager
+from laser_settings_dialog import LaserSettingsQDialog
+from laser_qdialog import (
+        LaserImportFromMailQDialog, LaserFilesSelectQDialog,
+        LaserFolderSelectQDialog, LaserFileInfoQDialog)
 
 # ensure that win32com is imported after creating an executable with pyinstaller
 
@@ -40,10 +40,7 @@ class LaserMainWindow(MainWindow):
         self.job_tracker = LaserJobTracker(parent_widget=self)
         self.job_tracker.checkHealth()
 
-        # refresh all laser job tabs
-        qlist_widgets = self.findChildren(QListWidget)
-        for list_widget in qlist_widgets:
-            list_widget.refresh()
+        self.refreshAllWidgets()
 
 
         # menu bar actions
@@ -53,7 +50,6 @@ class LaserMainWindow(MainWindow):
 
 
         self.editSettingsAction.triggered.connect(self.openEditSettingsDialog)
-        self.showDocumentationAction.triggered.connect(self.openDocumentationDialog)
 
     def threadedGetValidMailsFromInbox(self):
         ''' Get mails from inbox.
@@ -89,11 +85,7 @@ class LaserMainWindow(MainWindow):
             dialog = LaserImportFromMailQDialog(self, valid_msgs)
             dialog.exec()
 
-
-            # refresh all laser job tabs
-            qlist_widgets = self.findChildren(QListWidget)
-            for list_widget in qlist_widgets:
-                list_widget.refresh()
+        self.refreshAllWidgets()
 
     def handleMailError(self, exc: Exception):
         ''' Handle the mail error. '''
@@ -115,10 +107,7 @@ class LaserMainWindow(MainWindow):
 
             LaserFileInfoQDialog(self, [job_name], [files_global_paths]).exec()
             
-        # refresh all laser job tabs
-        qlist_widgets = self.findChildren(QListWidget)
-        for list_widget in qlist_widgets:
-            list_widget.refresh()
+        self.refreshAllWidgets()
 
     def openSelectFolderDialog(self):
         ''' Open dialog to select folder with multiple subfolders. ''' 
@@ -156,10 +145,8 @@ class LaserMainWindow(MainWindow):
                                 f'skip this subfolder')
 
             LaserFileInfoQDialog(self, jobs_names_list, folders_global_paths_list).exec()
-        # refresh all laser job tabs
-        qlist_widgets = self.findChildren(QListWidget)
-        for list_widget in qlist_widgets:
-            list_widget.refresh()
+
+        self.refreshAllWidgets()
 
 
     def getNewValidMails(self):
@@ -168,11 +155,18 @@ class LaserMainWindow(MainWindow):
 
     def openEditSettingsDialog(self):
         ''' Open dialog to edit the settings. '''
-        InfoQMessageBox(self, f'Edit the settings in the json file located at:\n {gv["TRACKER_FILE_PATH"]}')
+        if LaserSettingsQDialog(self, gv).exec() == 1:
+            InfoQMessageBox(self, f'Settings Saved')
+
+    def refreshAllWidgets(self):
+        ''' Refresh the widgets. '''
+        # refresh all laser job tabs
+        qlist_widgets = self.findChildren(QListWidget)
+        for list_widget in qlist_widgets:
+            list_widget.refresh()
+
+
         
-    def openDocumentationDialog(self):
-        ''' Open dialog to edit the settings. '''
-        InfoQMessageBox(self, 'Documentation dialog not yet implemented')
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

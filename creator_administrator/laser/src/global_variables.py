@@ -49,12 +49,13 @@ with open(global_variables_path, 'r') as global_variables_file:
     if 'OUTLOOK_PATH' in gv_data:
         gv['OUTLOOK_PATH'] = gv_data['OUTLOOK_PATH']
 
-    gv['LASER_TODO_DIR_HOME'] = gv_data['LASER_TODO_DIR_HOME']
+    gv['TODO_DIR_HOME'] = gv_data['TODO_DIR_HOME']
 
     gv['ACCEPTED_EXTENSIONS'] = tuple(gv_data['ACCEPTED_EXTENSIONS'].split(', '))
     gv['ACCEPTED_MATERIALS'] = tuple(gv_data['ACCEPTED_MATERIALS'].split(', '))
 
     gv['DAYS_TO_KEEP_JOBS'] = int(gv_data['DAYS_TO_KEEP_JOBS'])
+    gv['DARK_MODE'] = True if gv_data['DARK_MODE'] == 'true' else False
 
     gv['ONLY_UNREAD_MAIL'] = True if gv_data['ONLY_UNREAD_MAIL'] == 'true' else False
     gv['MOVE_MAILS_TO_VERWERKT_FOLDER'] = True if gv_data['MOVE_MAILS_TO_VERWERKT_FOLDER'] == 'true' else False
