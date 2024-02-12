@@ -12,7 +12,7 @@ Do you look for an organized workflow to make all these requests?
 * Automatically send customizable emails
 * Prevent cluttering the computer with .stl, .dxf, .3mf all over the file system
 
-# Dowload CreatorAdministratorSetup.exe [here](https://drive.google.com/file/d/1Q2OOQqJxku8uEWdtYNfZ2NODa9KrmbU6/view?usp=drive_link)
+# Dowload CreatorAdministratorSetup.exe [here](https://drive.google.com/file/d/1DN80p93zQOEkRLQCH77ly5dgi4AibXns/view?usp=drive_link)
 
 # Dependencies:
 * PyQT5 (python -m pip install PyQt5)
