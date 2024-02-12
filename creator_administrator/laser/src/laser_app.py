@@ -118,7 +118,6 @@ class LaserMainWindow(MainWindow):
             project_name = dialog.projectNameQLineEdit.text()
             folders_global_paths_list = []
             jobs_names_list = []
-
             for subfolder in os.listdir(folder_global_path):
                 subfolder_global_path = os.path.join(folder_global_path, subfolder)
 
@@ -155,11 +154,9 @@ class LaserMainWindow(MainWindow):
 
     def openEditSettingsDialog(self):
         ''' Open dialog to edit the settings. '''
-        settings_dialog = LaserSettingsQDialog(self, gv) 
-        if settings_dialog.exec():
-            InfoQMessageBox(self, f'Settings Saved')
-        else:
-            InfoQMessageBox(self, f'Settings ??')
+        if LaserSettingsQDialog(self, gv).exec() == 1:
+            # restart application
+            print(f"restart")
 
     def refreshAllWidgets(self):
         ''' Refresh the widgets. '''
@@ -167,9 +164,6 @@ class LaserMainWindow(MainWindow):
         qlist_widgets = self.findChildren(QListWidget)
         for list_widget in qlist_widgets:
             list_widget.refresh()
-
-
-        
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

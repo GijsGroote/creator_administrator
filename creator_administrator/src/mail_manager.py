@@ -258,14 +258,28 @@ class MailManager():
             return str(msg.Sender)
      
         if sys.platform == 'linux':
-            return self.mailToName(email.message_from_bytes(msg[0][1]).get('From'))
+            if isinstance(msg, str):
+                eml_file_global_path = self.getMailGlobalPathFromFolder(msg)
+                with open(eml_file_global_path, 'rb') as file:
+                    msg = email.message_from_binary_file(file, policy=default)
+            else:
+                msg = email.message_from_bytes(msg[0][1])
+
+            return self.mailToName(msg.get('From'))
+
         
     def getMsgFromGlobalPath(self, temp_folder_global_path: str):
         ''' Return Msg from global path to mail.msg. '''
 
         msg_file_global_path = self.getMailGlobalPathFromFolder(temp_folder_global_path)
         assert os.path.exists(msg_file_global_path), f'Could not find {msg_file_global_path}'
-        return self.outlook.OpenSharedItem(msg_file_global_path)
+        if sys.platform == 'win32':
+            return self.outlook.OpenSharedItem(msg_file_global_path)
+        if sys.platform == 'linux':
+            with open(msg_file_global_path, 'rb') as file:
+                msg = file
+
+            return msg
 
     def getMailGlobalPathFromFolder(self, folder_global_path: str):
         ''' Return the global path toward a mail file in a folder. '''
@@ -354,7 +368,7 @@ class MailManager():
             msg = self.outlook.OpenSharedItem(msg_file_path)
 
             # load recipient_name in template
-            template_content["{recipient_name}"] = msg.Sender
+            template_content["{sender_name}"] = msg.Sender
 
 
             with open(self.gv[template_file_name], "r") as file:
@@ -380,7 +394,7 @@ class MailManager():
                 original_sender_mail = parseaddr(original_sender_mail_long)[1]
 
             # load template content into html template
-            template_content['{recipient_name}'] = self.mailToName(str(original_sender_mail_long))
+            template_content['{sender_name}'] = self.mailToName(str(original_sender_mail_long))
             with open(self.gv[template_file_name], "r") as file:
                 html_content = file.read()
 

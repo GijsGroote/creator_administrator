@@ -25,29 +25,40 @@ else:
 if not os.path.exists(data_dir_home):
     os.mkdir(data_dir_home)
     
-global_variables_path = os.path.join(data_dir_home, 'laser_global_variables.json')
+settings_file_path = os.path.join(data_dir_home, 'laser_settings.json')
 jobs_dir_home = os.path.join(data_dir_home, 'laser_jobs')
 tracker_file_path = os.path.join(data_dir_home, 'laser_job_log.json')
 
-if not os.path.exists(global_variables_path):
-    with open(global_variables_path, 'w') as gv_file:
-        json.dump(dict(), gv_file, indent=4)
+# TODO: move this to setup file
+if not os.path.exists(settings_file_path):
+    with open(settings_file_path, 'w') as settings_file:
+        json.dump(dict(), settings_file, indent=4)
 
 if not os.path.exists(jobs_dir_home):
     os.mkdir(jobs_dir_home)
     
 # Global Variables (gv)
-gv = {'DATA_DIR_HOME': data_dir_home,
+gv = {'SETTINGS_FILE_PATH': settings_file_path,
+      'DATA_DIR_HOME': data_dir_home,
       'JOBS_DIR_HOME': jobs_dir_home,
       'TRACKER_FILE_PATH': tracker_file_path}
 
 # TODO: if this is not all in the file, do a setup wizard please
-with open(global_variables_path, 'r') as global_variables_file:
-    gv_data = json.load(global_variables_file)
+with open(settings_file_path, 'r') as settings_file:
+    gv_data = json.load(settings_file)
     gv['REPO_DIR_HOME'] = gv_data['REPO_DIR_HOME']
-    gv['PYTHON_PATH'] = gv_data['PYTHON_PATH']
     if 'OUTLOOK_PATH' in gv_data:
         gv['OUTLOOK_PATH'] = gv_data['OUTLOOK_PATH']
+
+    elif 'MAIL_NAME' in gv_data and\
+        'MAIL_ADRESS' in gv_data and\
+        'MAIL_PASSWORD' in gv_data:
+
+        gv['MAIL_NAME'] = gv_data['MAIL_NAME']
+        gv['MAIL_ADRESS'] = gv_data['MAIL_ADRESS']
+        gv['MAIL_PASSWORD'] = gv_data['MAIL_PASSWORD']
+    else:
+        raise ValueError('Specify mail details for Outlook or credentials')
 
     gv['TODO_DIR_HOME'] = gv_data['TODO_DIR_HOME']
 
@@ -56,6 +67,8 @@ with open(global_variables_path, 'r') as global_variables_file:
 
     gv['DAYS_TO_KEEP_JOBS'] = int(gv_data['DAYS_TO_KEEP_JOBS'])
     gv['DARK_MODE'] = True if gv_data['DARK_MODE'] == 'true' else False
+    gv['THEME_COLOR_HEX'] = gv_data['THEME_COLOR_HEX']
+
 
     gv['ONLY_UNREAD_MAIL'] = True if gv_data['ONLY_UNREAD_MAIL'] == 'true' else False
     gv['MOVE_MAILS_TO_VERWERKT_FOLDER'] = True if gv_data['MOVE_MAILS_TO_VERWERKT_FOLDER'] == 'true' else False
@@ -64,13 +77,6 @@ with open(global_variables_path, 'r') as global_variables_file:
 
     gv['PASSWORD'] = gv_data['PASSWORD']
 
-    # TODO: these should be checked, because if MAIL_NAME is not in gv, errors
-    if 'MAIL_NAME' in gv_data:
-        gv['MAIL_NAME'] = gv_data['MAIL_NAME']
-    if 'MAIL_ADRESS' in gv_data:
-        gv['MAIL_ADRESS'] = gv_data['MAIL_ADRESS']
-    if 'MAIL_PASSWORD' in gv_data:
-        gv['MAIL_PASSWORD'] = gv_data['MAIL_PASSWORD']
 
     if 'MAIL_INBOX_NAME' in gv_data:
         gv['MAIL_INBOX_NAME'] = gv_data['MAIL_INBOX_NAME']
@@ -91,6 +97,10 @@ with open(global_variables_path, 'r') as global_variables_file:
             gv[mail_template] = resource_path(os.path.join(
                     gv['REPO_DIR_HOME'],
                     'laser/email_templates', 'DEFAULT_'+mail_template+'.html'))
+
+
+    gv['GOOD_COLOR_RGBA'] = 'rgba(0, 255, 0, 0.4)'
+    gv['BAD_COLOR_RGBA'] = 'rgba(255, 0, 0, 0.4)'
 
 gv['GLOBAL_SRC_DIR'] = os.path.join(gv['REPO_DIR_HOME'], 'src')
 gv['LOCAL_SRC_DIR'] = os.path.join(gv['REPO_DIR_HOME'], 'laser/src')

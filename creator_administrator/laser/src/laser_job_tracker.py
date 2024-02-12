@@ -177,7 +177,6 @@ class LaserJobTracker(JobTracker):
             json.dump(tracker_dict, tracker_file, indent=4)
 
         self.makeBackup()
-        TimedMessage(gv, self.parent_widget, text='System healthy :)')
 
     def IsJobDictAndFileSystemInSync(self, job_dict, job_folder_global_path):
         ''' Check if all files are in both the tracker and the file system. '''

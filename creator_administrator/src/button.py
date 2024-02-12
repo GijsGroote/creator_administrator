@@ -115,9 +115,32 @@ class SelectFilesQPushButton(QPushButton):
             selected_files_str += f'{os.path.basename(file_global_path)}, '
         selected_files_str = selected_files_str[:-2]
 
-        if len(self.files_global_paths) > 0:
-            self.parent().filesGlobalPathsQLabel.setText(selected_files_str)
-            self.parent().filesGlobalPathsQLabel.show()
+        files_global_path_label = self.parent().findChild(QLabel, 'filesGlobalPathQLabel')
+
+        if len(self.files_global_paths) > 0 and files_global_path_label is not None:
+            files_global_path_label.setText(selected_files_str)
+            files_global_path_label.show()
+
+class SelectFileQPushButton(QPushButton):
+    ''' Select a single file from file system. '''
+
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.clicked.connect(self.on_click)
+        self.file_global_path = None
+
+    def on_click(self):
+      # Get list of selected file paths
+
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            'Select File',
+            os.path.expanduser('~'),
+            'All Files (*)')
+
+        self.setText(str(file_path))# TODO: shorten this path
+        self.file_global_path = file_path
+
 
 
 class SelectFolderQPushButton(QPushButton):

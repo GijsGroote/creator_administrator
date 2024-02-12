@@ -6,12 +6,17 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>590</width>
-    <height>861</height>
+    <width>734</width>
+    <height>890</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <pointsize>13</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Settings</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_3">
    <item>
@@ -39,6 +44,9 @@
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="label_14">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;List of commonly used Accepted Materials abbriviations. When the material abbriviation is in the Accepted Materials list it is automatically detected from the laser cut file name.&lt;/p&gt;&lt;p&gt;Fill in the list of Accepted Materials as &amp;quot;material abbriviation&amp;quot; seperated by comma's, example:&lt;/p&gt;&lt;p&gt;material1, material2, material3&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="text">
              <string>Accepted Materials</string>
             </property>
@@ -96,8 +104,11 @@
           </item>
           <item row="0" column="0">
            <widget class="QLabel" name="label_5">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of days before a job and associated files are deleted.&lt;/p&gt;&lt;p&gt;Jobs will only be deleted from the Verwerkt or Afgekeurd folder. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="whatsThis">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of days before a job and associated files are deleted.&lt;/p&gt;&lt;p&gt;This will only delete jobs from the Verwerkt or Afgekeurd folder. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string/>
             </property>
             <property name="text">
              <string>Days to Store Jobs</string>
@@ -109,6 +120,9 @@
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_16">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;Accepted file extensions for a laser job. A job must contain one file with an accepted extension. Fill in as .extension seperated by comma's, example:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;.extension1, .extension2, .extension3&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="text">
              <string>Accepted Extensions</string>
             </property>
@@ -130,8 +144,15 @@
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="1" column="1">
-           <spacer name="horizontalSpacer">
+          <item row="0" column="2">
+           <widget class="QCheckBox" name="darkModeCheckBox">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <spacer name="horizontalSpacer_2">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -153,29 +174,15 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="2">
-           <widget class="QCheckBox" name="darkModeCheckBox">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
+          <item row="2" column="0">
            <widget class="QLabel" name="label_11">
             <property name="text">
              <string>Theme Color</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="2">
-           <widget class="QLabel" name="label_25">
-            <property name="text">
-             <string> HEXColorPlease </string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <spacer name="horizontalSpacer_2">
+          <item row="2" column="1">
+           <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -186,6 +193,13 @@
              </size>
             </property>
            </spacer>
+          </item>
+          <item row="2" column="2">
+           <widget class="QLineEdit" name="themeColorLineEdit">
+            <property name="text">
+             <string>THEME_COLOR_HEX</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -215,6 +229,9 @@
           </item>
           <item row="0" column="0">
            <widget class="QLabel" name="label_7">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Temporarily Messages inform you what is happened in the background, such as &amp;quot;Confirmation Mail Sent to ...&amp;quot; or &amp;quot;Job Finished Mail send to ...&amp;quot; or &amp;quot;Settings Saved&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="text">
              <string>Display Temporarily Messages</string>
             </property>
@@ -232,6 +249,9 @@
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_8">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Warning Messages warn you about something, such as &amp;quot;No job finished mail send to ...&amp;quot; or &amp;quot;4 invalid mails detected, Respond to them manually.&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="text">
              <string>Display Warning Messages</string>
             </property>
@@ -273,22 +293,36 @@
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
          <layout class="QGridLayout" name="gridLayout_4">
-          <item row="1" column="2">
-           <widget class="QCheckBox" name="onlyUnreadMailCheckBox">
-            <property name="text">
-             <string/>
+          <item row="1" column="1">
+           <spacer name="horizontalSpacer_8">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
             </property>
-           </widget>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
-          <item row="2" column="2">
-           <widget class="QCheckBox" name="moveMailToVerwerktCheckBox">
+          <item row="0" column="2">
+           <widget class="SelectFileQPushButton" name="selectOutlookEXEsButton">
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
             <property name="text">
-             <string/>
+             <string> Select &lt;OUTLOOK.EXE&gt; </string>
             </property>
            </widget>
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="label_4">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatically move a mail to the &amp;quot;Verwerkt&amp;quot; folder when the  content has been dowloaded.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Recommended to be selected.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="text">
              <string>Move Mail to Verwerkt Folder</string>
             </property>
@@ -297,23 +331,23 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_6">
-            <property name="text">
-             <string>Only download unread mail</string>
-            </property>
-            <property name="buddy">
-             <cstring>onlyUnreadMailCheckBox</cstring>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="0">
            <widget class="QLabel" name="label_2">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Path toward Outlook executable which is mostly located at:&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;C:\Program Files(x86)\Microsoft Office\root\Office16\OUTLOOK.EXE&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="text">
-             <string>Outlook executable path</string>
+             <string>Outlook Executable Path</string>
             </property>
             <property name="buddy">
              <cstring>selectOutlookEXEsButton</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QCheckBox" name="onlyUnreadMailCheckBox">
+            <property name="text">
+             <string/>
             </property>
            </widget>
           </item>
@@ -330,33 +364,28 @@
             </property>
            </spacer>
           </item>
-          <item row="0" column="2">
-           <widget class="SelectFilesQPushButton" name="selectOutlookEXEsButton">
-            <property name="font">
-             <font>
-              <pointsize>14</pointsize>
-             </font>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_6">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Only process unread mails in the inbox (checked).&lt;/p&gt;&lt;p&gt;If not selected, handle every mail in inbox (not checked).&lt;/p&gt;&lt;p&gt;Recommended to &lt;span style=&quot; text-decoration: underline;&quot;&gt;not&lt;/span&gt; be checked.&lt;/p&gt;&lt;p&gt;Caution: This program assumes that you move/delete mails from the inbox when you've dealt with them, so your inbox has few (less than 20) mails in it. If you have many old mails still in the default inbox, Creator Administrator will try to process them all, it may then be better to only process unread mail.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
-             <string> Select &lt;OUTLOOK_EXECUTABLE&gt; </string>
+             <string>Only Process Unread Mail</string>
+            </property>
+            <property name="buddy">
+             <cstring>onlyUnreadMailCheckBox</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QCheckBox" name="moveMailToVerwerktCheckBox">
+            <property name="text">
+             <string/>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
            <spacer name="horizontalSpacer_9">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="1" column="1">
-           <spacer name="horizontalSpacer_8">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -374,6 +403,185 @@
       </widget>
      </item>
      <item>
+      <widget class="QGroupBox" name="groupBox_6">
+       <property name="title">
+        <string>Custom Mail Templates</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_9">
+            <property name="toolTip">
+             <string>Mail send when a job request has been downloaded from the mail inbox.
+
+Inside this mail template:
+{sender_name} will be replaced with the senders name. 
+{jobs_in_queue} will be replaced with the number of jobs in the WACHTRIJ.</string>
+            </property>
+            <property name="text">
+             <string>Received Job Request</string>
+            </property>
+            <property name="buddy">
+             <cstring>selectReceivedTemplateButton</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <spacer name="horizontalSpacer_13">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>433</width>
+              <height>26</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="2">
+           <widget class="SelectFileQPushButton" name="selectReceivedTemplateButton">
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string> Select &lt;template.html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_18">
+            <property name="toolTip">
+             <string>Mail used when a job request is unclear, such as material, material thickness or amount is not specified.
+
+The mail pops up and can be modified before it is send.
+
+Inside this mail template:
+{sender_name} will be replaced with the senders name. </string>
+            </property>
+            <property name="text">
+             <string>Job Request Unclear</string>
+            </property>
+            <property name="buddy">
+             <cstring>selectUnclearTemplateButton</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <spacer name="horizontalSpacer_14">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>433</width>
+              <height>26</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="2">
+           <widget class="SelectFileQPushButton" name="selectUnclearTemplateButton">
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string> Select &lt;template.html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_13">
+            <property name="toolTip">
+             <string>Mail send when a laser job is finished and can be picked up.
+
+Inside this mail template:
+{sender_name} will be replaced with the senders name. </string>
+            </property>
+            <property name="text">
+             <string>Job Finished</string>
+            </property>
+            <property name="buddy">
+             <cstring>selectFinishedTemplateButton</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <spacer name="horizontalSpacer_15">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>433</width>
+              <height>26</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="2" column="2">
+           <widget class="SelectFileQPushButton" name="selectFinishedTemplateButton">
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string> Select &lt;template.html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_15">
+            <property name="toolTip">
+             <string>Mail used when a print job is declined. 
+
+The mail pops up and can be modified before it is send.
+
+Inside this mail template:
+{sender_name} will be replaced with the senders name. </string>
+            </property>
+            <property name="text">
+             <string>Job Declined</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <spacer name="horizontalSpacer_16">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>433</width>
+              <height>26</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="3" column="2">
+           <widget class="SelectFileQPushButton" name="selectDeclinedTemplateButton">
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string> Select &lt;template.html&gt;</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
       <widget class="QGroupBox" name="groupBox_2">
        <property name="title">
         <string>Directory Configuration</string>
@@ -383,6 +591,9 @@
          <layout class="QGridLayout" name="gridLayout_2">
           <item row="1" column="0">
            <widget class="QLabel" name="label_3">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Location to store laser files to easily import into laser cut software.&lt;/p&gt;&lt;p&gt;Recommended location: Folder on the Desktop for easy access.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="text">
              <string>Laser Todo Directory </string>
             </property>
@@ -419,6 +630,9 @@
           </item>
           <item row="0" column="0">
            <widget class="QLabel" name="label">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Location to store laser jobs data.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="text">
              <string>Data Directory</string>
             </property>
@@ -484,7 +698,7 @@
    <header>button.h</header>
   </customwidget>
   <customwidget>
-   <class>SelectFilesQPushButton</class>
+   <class>SelectFileQPushButton</class>
    <extends>QPushButton</extends>
    <header>button.h</header>
   </customwidget>
@@ -494,6 +708,7 @@
   <tabstop>acceptedExtentionsLineEdit</tabstop>
   <tabstop>acceptedMaterialsLineEdit</tabstop>
   <tabstop>darkModeCheckBox</tabstop>
+  <tabstop>themeColorLineEdit</tabstop>
   <tabstop>dispTempMessageCheckBox</tabstop>
   <tabstop>dispWarnMessageCheckBox</tabstop>
   <tabstop>selectOutlookEXEsButton</tabstop>

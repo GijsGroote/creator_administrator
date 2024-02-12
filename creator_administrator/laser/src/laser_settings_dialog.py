@@ -11,3 +11,6 @@ class LaserSettingsQDialog(SettingsQDialog):
         super().__init__(parent, ui_global_path, gv, *args, **kwargs)
 
 
+    # TODO: add settings specific for the lasers here
+
+
