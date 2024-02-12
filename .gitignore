@@ -5,6 +5,13 @@ dist/
 dist/*
 *.spec
 
+# ignore inno setup files
+*.iss
+
+# ignore executables
+*.exe
+
+
 # ignore python temp files
 **/__pycache__/
 __pycache__/

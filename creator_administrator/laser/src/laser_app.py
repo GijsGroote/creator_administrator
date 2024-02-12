@@ -25,7 +25,7 @@ from laser_qdialog import (
 # ensure that win32com is imported after creating an executable with pyinstaller
 
 # for now comment/uncomment it
-# from win32com import client
+from win32com import client
 
 
 class LaserMainWindow(MainWindow):
