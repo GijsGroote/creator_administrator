@@ -145,8 +145,13 @@ class SettingsQDialog(QDialog):
         settings_dict['ACCEPTED_MATERIALS'] =  self.acceptedMaterialsLineEdit.text()
         settings_dict['DAYS_TO_KEEP_JOBS'] = self.daysToKeepJobsLineEdit.text() 
         settings_dict['THEME_COLOR_HEX'] = self.themeColorLineEdit.text()
-        settings_dict['DATA_DIR_HOME'] = self.selectDataDirectoryButton.folder_global_path.replace('/', '\\')
-        settings_dict['TODO_DIR_HOME'] = self.selectTodoDirectoryButton.folder_global_path.replace('/', '\\')
+
+        if sys.platform == 'win32':
+            settings_dict['DATA_DIR_HOME'] = self.selectDataDirectoryButton.folder_global_path.replace('/', '\\')
+            settings_dict['TODO_DIR_HOME'] = self.selectTodoDirectoryButton.folder_global_path.replace('/', '\\')
+        else:
+            settings_dict['DATA_DIR_HOME'] = self.selectDataDirectoryButton.folder_global_path
+            settings_dict['TODO_DIR_HOME'] = self.selectTodoDirectoryButton.folder_global_path
 
         for checkbox_name, widget in [('DISPLAY_WARNING_MESSAGES', self.dispWarnMessageCheckBox), 
                                      ('DISPLAY_TEMP_MESSAGES', self.dispTempMessageCheckBox), 
@@ -160,7 +165,11 @@ class SettingsQDialog(QDialog):
                                              ('FINISHED_MAIL_TEMPLATE', self.selectFinishedTemplateButton), 
                                              ('DECLINED_MAIL_TEMPLATE', self.selectDeclinedTemplateButton)]:
             if widget_button.file_global_path is not None:
-                settings_dict[template_name] = widget_button.file_global_path.replace('/', '\\')
+                if sys.platform == 'win32':
+                    settings_dict[template_name] = widget_button.file_global_path.replace('/', '\\')
+                else:
+                    settings_dict[template_name] = widget_button.file_global_path
+
 
         with open(self.gv['SETTINGS_FILE_PATH'], 'w') as settings_file:
             json.dump(settings_dict, settings_file, indent=4)
