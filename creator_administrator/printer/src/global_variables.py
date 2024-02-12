@@ -41,7 +41,6 @@ gv = {'IWS_COMPUTER': IWS_COMPUTER,
 with open(global_variables_path, 'r') as global_variables_file:
     gv_data = json.load(global_variables_file)
     gv['REPO_DIR_HOME'] = gv_data['REPO_DIR_HOME']
-    gv['OUTLOOK_PATH'] = gv_data['OUTLOOK_PATH']
     gv['ACCEPTED_EXTENSIONS'] = tuple(gv_data['ACCEPTED_EXTENSIONS'].split(', '))
     gv['DAYS_TO_KEEP_JOBS'] = gv_data['DAYS_TO_KEEP_JOBS']
     gv['PASSWORD'] = gv_data['PASSWORD']

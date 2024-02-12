@@ -61,25 +61,7 @@ class JobsQPushButton(QPushButton):
         else:
             TimedMessage(gv, parent=self, text=f"No .msg file detected, no Pickup mail was sent to {job_name}")
 
-        # mail_manager = MailManager(gv)
-        # msg_file_global_path = mail_manager.getMailGlobalPathFromFolder(job_folder_global_path)
-
-        # if msg_file_global_path is not None:
-        #     # send finished mail on a seperate thread
-        #     send_mail_worker = Worker(mail_manager.replyToEmailFromFileUsingTemplate,
-        #             msg_file_path=msg_file_global_path,
-        #             template_file_name="FINISHED_MAIL_TEMPLATE",
-        #             template_content={},
-        #             popup_reply=False)
-
-        #     self.threadpool.start(send_mail_worker)
-
-        # else:
-        #     TimedQMessageBox(
-        #             text=f"No .msg file detected, no Pickup mail was sent to {job_name}",
-        #             parent=self, icon=QMessageBox.Warning)
-
- 
+    
 class BackQPushButton(QPushButton):
 
     def __init__(self, parent, *args, **kwargs):

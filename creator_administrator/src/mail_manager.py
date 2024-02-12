@@ -28,6 +28,7 @@ elif sys.platform == 'win32':
     from unidecode import unidecode
     import shutil
     from win32com import client
+    from src.directory_functions import copy_item, delete_directory_content
 else:
     raise ValueError(f'This software does not work for platform: {sys.platform}')
 
@@ -90,9 +91,7 @@ class MailManager():
                 warnings.append('No internet connection detected')
 
             temp_folder_global_path = os.path.join(self.gv['DATA_DIR_HOME'], 'TEMP')
-            if os.path.isdir(temp_folder_global_path):
-                shutil.rmtree(temp_folder_global_path)
-            os.mkdir(temp_folder_global_path)
+            delete_directory_content(temp_folder_global_path)
 
             for message in self.inbox.Items:
                 if self.gv['ONLY_UNREAD_MAIL']:
@@ -365,15 +364,22 @@ class MailManager():
             raise ConnectionError('Not connected to the internet')
 
         if sys.platform == 'win32':
-            msg = self.outlook.OpenSharedItem(msg_file_path)
+            # copy to TEMP folder to prevent permission errors
+            temp_dir_global_path = os.path.join(self.gv['DATA_DIR_HOME'], 'TEMP')
+            # delete_directory_content(temp_dir_global_path)
+            temp_msg_file_name = 'mail.msg'
+            i = 0
+            while os.path.exists(os.path.join(temp_dir_global_path, temp_msg_file_name)):
+                temp_msg_file_name = 'mail_'+str(i)+'.msg'
+            temp_msg_file_path = os.path.join(temp_dir_global_path, temp_msg_file_name)
+            copy_item(msg_file_path, temp_msg_file_path)
+            msg = self.outlook.OpenSharedItem(temp_msg_file_path)
 
             # load recipient_name in template
             template_content["{sender_name}"] = msg.Sender
 
-
             with open(self.gv[template_file_name], "r") as file:
                 html_content = file.read()
-
 
             for key, value in template_content.items():
                 html_content = html_content.replace(key, str(value))

@@ -1,5 +1,7 @@
 # Email templates
 
+TODO: this needs an update here
+
 ## three default mail templates are provided:
 all templates contain {recipient_name}, the sender or recipient is inserted in the mail template. 
 * declined.html

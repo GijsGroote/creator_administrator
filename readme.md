@@ -28,7 +28,6 @@ Do you look for an organized workflow to make all these requests?
 {
     "REPO_DIR_HOME":  "C:\\Users\\gijsg\\creator-administrator",
     "PYTHON_PATH": "C:Program Files\\Python311\\python.exe",
-    "OUTLOOK_PATH":  "C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE",
     "ACCEPTED_EXTENSIONS": ".dxf, .txt",
     "ACCEPTED_MATERIALS": "pmma, wood",
     "DAYS_TO_KEEP_JOBS": "5",
@@ -39,6 +38,19 @@ Optionally add mail templates locations to the global variables.json
     // "RECEIVED_MAIL_TEMPLATE":  "C:\\path\\to\\mail\\template.html",
     // "DECLINED_MAIL_TEMPLATE":  "C:\\path\\to\\mail\\template.html",
     // "FINISHED_MAIL_TEMPLATE":  "C:\\path\\to\\mail\\template.html",
+
+# Errors:
+Outlook Has a known error which look like this:
+ "We can't open 'C:\\Users\\..\\mail.msg'. It's possible the file is already open, or you don't have permission to open it. To check your permissions, right-click the file folder, then click Properties.
+its possible the file is already open, or you dont have permission to open it error in outlook 
+
+If you encounter this: turn off the add-ins in Outlook:
+    In Outlook, go to the File tab
+    Select Options
+    Select Add-Ins on the left
+    Near the bottom of the window, you'll see a Manage option; set it to COM Add-Ins and click Go
+    De-select all of the add-ins and click OK
+    Restart Outlook
 
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/gijsgroote)

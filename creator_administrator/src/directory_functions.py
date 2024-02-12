@@ -46,6 +46,10 @@ def delete(item_global_path: str):
         except Exception as e:
             print(f"An error occurred: {e}") # TODO: better to not print anything in a GUI based application
 
+def delete_directory_content(folder_global_path: str):
+        ''' Delete all contents of a folder. '''
+        for item in os.listdir(folder_global_path):
+            delete(os.path.join(folder_global_path, item))
 
 def open_file(file_global_path: str):
     ''' Open a folder in the default file explorer. '''

@@ -8,7 +8,6 @@ from PyQt6 import QtWebEngineWidgets
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 
-
 from PyQt6.uic import loadUi
 
 import datetime
@@ -73,16 +72,15 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         valid_msg = self.valid_msgs[self.msg_counter]
 
         self.temp_attachments = self.mail_manager.getAttachments(valid_msg)
-        sender_name = self.mail_manager.getSenderName(valid_msg)
-
+        self.temp_sender_name = self.mail_manager.getSenderName(valid_msg)
 
         self.temp_laser_cut_files_dict = {}
         self.temp_attachments_dict = {}
 
-        self.mailFromQLabel.setText(sender_name)
+        self.mailFromQLabel.setText(self.temp_sender_name)
         self.mailProgressQLabel.setText(f'Mail ({self.msg_counter+1}/{len(self.valid_msgs)})')
 
-        self.temp_job_name = self.job_tracker.makeJobNameUnique(sender_name)
+        self.temp_job_name = self.job_tracker.makeJobNameUnique(self.temp_sender_name)
         self.temp_job_folder_name = str(datetime.date.today().strftime('%d-%m'))+'_'+self.temp_job_name
         self.temp_job_folder_global_path = os.path.join(os.path.join(gv['JOBS_DIR_HOME'], self.temp_job_folder_name))
 
@@ -246,28 +244,25 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         msg = self.valid_msgs[self.msg_counter]
         
         self.job_tracker.addJob(self.temp_job_name,
-                                 self.temp_job_folder_global_path,
-                                 self.temp_laser_cut_files_dict)
+                                self.temp_sender_name,
+                                self.temp_job_folder_global_path,
+                                self.temp_laser_cut_files_dict)
 
         if not os.path.exists(self.temp_job_folder_global_path):
             os.mkdir(self.temp_job_folder_global_path)
 
         self.mail_manager.saveMail(msg, self.temp_job_folder_global_path)
-        sender_name = self.mail_manager.getSenderName(msg)
 
         # save the attachments
         for attachment_dict in self.temp_attachments_dict.values():
             self.mail_manager.saveAttachment(attachment_dict['attachment'], attachment_dict['file_global_path'])
-
-
-        threaded_mail_manager = ThreadedMailManager(parent_widget=self,
-                                                    gv=gv)
         
-        threaded_mail_manager.startReceivedMailWorker(success_message=f'Job request receieved mail send to {sender_name}',
-                             error_message=f'No job request receieved mail send to {sender_name}',
-                             job_folder_global_path=copy.copy(self.temp_job_folder_global_path),
-                             template_content= {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
-                             msg=msg)
+        ThreadedMailManager(parent_widget=self, gv=gv).startReceivedMailWorker(
+                success_message=f'Job request receieved mail send to {self.temp_sender_name}',
+                error_message=f'No job request receieved mail send to {self.temp_sender_name}',
+                job_folder_global_path=copy.copy(self.temp_job_folder_global_path),
+                template_content= {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
+                msg=msg)
                 
         TimedMessage(gv, self, text=f'Laser job {self.temp_job_name} created')
 
@@ -347,7 +342,6 @@ class LaserFileInfoQDialog(QDialog):
     files_global_paths_list: nested lists with global paths for every file in the job.  
 
     '''
-
 
     def __init__(self, parent, job_name_list: list, files_global_paths_list: list, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
@@ -552,8 +546,9 @@ class LaserFileInfoQDialog(QDialog):
         """ Create a laser job. """
 
         self.job_tracker.addJob(self.temp_job_name,
-                                 self.temp_job_folder_global_path,
-                                 self.temp_laser_cut_files_dict)
+                                'No Sender Name',
+                                self.temp_job_folder_global_path,
+                                self.temp_laser_cut_files_dict)
 
         if not os.path.exists(self.temp_job_folder_global_path):
             os.mkdir(self.temp_job_folder_global_path)

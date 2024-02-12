@@ -4,7 +4,6 @@
     "TRACKER_FILE_PATH":  "C:\\Users\\gijsg\\.ssh\\pmma_laser_job_log.json",
     "PYTHON_PATH": "C:\\Program Files\\Python312\\python.exe",
     "IOBIT_UNLOCKER_PATH": "C:\\Program Files (x86)\\IObit\\IObit Unlocker\\IObitUnlocker.exe",    
-    "OUTLOOK_PATH":  "C:\\Program Files (x86)\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE",
     "PASSWORD":  "PMMA LASER",
     "received_mail_template":  "C:\\Users\\gijsg\\laserhok-workflow\\3d-printers\\implementation\\email_templatestemplate.html"
 }

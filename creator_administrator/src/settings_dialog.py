@@ -53,10 +53,6 @@ class SettingsQDialog(QDialog):
         if gv['MOVE_MAILS_TO_VERWERKT_FOLDER']:
             self.moveMailToVerwerktCheckBox.setChecked(True)
 
-        self.selectOutlookEXEsButton.setText(shorten_folder_name(gv['OUTLOOK_PATH'], 45))
-        self.selectOutlookEXEsButton.file_global_path = gv['OUTLOOK_PATH']
-        self.selectOutlookEXEsButton.clicked.connect(partial(self.checkOutlookPathIsEXE, self.selectOutlookEXEsButton))
-
         for template_name, widget_button in [('RECEIVED_MAIL_TEMPLATE', self.selectReceivedTemplateButton), 
                                              ('UNCLEAR_MAIL_TEMPLATE', self.selectUnclearTemplateButton), 
                                              ('FINISHED_MAIL_TEMPLATE', self.selectFinishedTemplateButton), 
@@ -103,19 +99,13 @@ class SettingsQDialog(QDialog):
             if check:
                 WarningQMessageBox(self.gv, self, warning_string)
                 return False
-
+            
         check_and_warnings = [
             (int(self.daysToKeepJobsLineEdit.text()) < 0,
             f'Days to Store Jobs is not an positive number but {self.daysToKeepJobsLineEdit.text()}'),
 
             (not self.checkHex(self.themeColorLineEdit),
             f'Theme color {self.themeColorLineEdit.text()} is not a HEX color code'),
-
-            (not (os.path.exists(self.selectOutlookEXEsButton.file_global_path) or sys.platform=='linux'),
-            f'Outlook Path {self.selectOutlookEXEsButton.file_global_path} does not exist'),
-
-            (not (self.checkOutlookPathIsEXE(self.selectOutlookEXEsButton)),
-            f'{self.selectOutlookEXEsButton.file_global_path} is not an executable'),
 
             (not self.checkIsDirectory(self.selectDataDirectoryButton),
             f'Data Directory {self.selectDataDirectoryButton.folder_global_path} is not a directory'),
@@ -155,7 +145,6 @@ class SettingsQDialog(QDialog):
         settings_dict['ACCEPTED_MATERIALS'] =  self.acceptedMaterialsLineEdit.text()
         settings_dict['DAYS_TO_KEEP_JOBS'] = self.daysToKeepJobsLineEdit.text() 
         settings_dict['THEME_COLOR_HEX'] = self.themeColorLineEdit.text()
-        settings_dict['OUTLOOK_PATH'] = self.selectOutlookEXEsButton.file_global_path
         settings_dict['DATA_DIR_HOME'] = self.selectDataDirectoryButton.folder_global_path
         settings_dict['TODO_DIR_HOME'] = self.selectTodoDirectoryButton.folder_global_path
 
@@ -176,8 +165,6 @@ class SettingsQDialog(QDialog):
         with open(self.gv['SETTINGS_FILE_PATH'], 'w') as settings_file:
             json.dump(settings_dict, settings_file, indent=4)
 
-
-
     def checkInt(self, widget: QWidget) -> bool:
         try:
             int(widget.text())
@@ -187,7 +174,6 @@ class SettingsQDialog(QDialog):
         except:
             widget.setStyleSheet(f'background-color: {self.gv["BAD_COLOR_RGBA"]};')
             return False
-
 
     def checkHex(self, widget: QWidget) -> bool:
 
@@ -233,13 +219,6 @@ class SettingsQDialog(QDialog):
         widget.setStyleSheet(f'background-color: {self.gv["GOOD_COLOR_RGBA"]};')
         return True
 
-    def checkOutlookPathIsEXE(self, widget: QWidget) -> bool:
-        if not (widget.file_global_path.lower().endswith('.exe') or sys.platform=='linux'):
-            widget.setStyleSheet(f'background-color: {self.gv["BAD_COLOR_RGBA"]};')
-            return False
-
-        widget.setStyleSheet(f'background-color: {self.gv["GOOD_COLOR_RGBA"]};')
-        return True
 
     def checkHTML(self, widget: QWidget) -> bool:
         if not widget.file_global_path.lower().endswith('.html'):

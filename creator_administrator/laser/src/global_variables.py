@@ -47,19 +47,15 @@ gv = {'SETTINGS_FILE_PATH': settings_file_path,
 with open(settings_file_path, 'r') as settings_file:
     gv_data = json.load(settings_file)
     gv['REPO_DIR_HOME'] = gv_data['REPO_DIR_HOME']
-    if 'OUTLOOK_PATH' in gv_data:
-        gv['OUTLOOK_PATH'] = gv_data['OUTLOOK_PATH']
 
-    elif 'MAIL_NAME' in gv_data and\
+    if 'MAIL_NAME' in gv_data and\
         'MAIL_ADRESS' in gv_data and\
         'MAIL_PASSWORD' in gv_data:
 
         gv['MAIL_NAME'] = gv_data['MAIL_NAME']
         gv['MAIL_ADRESS'] = gv_data['MAIL_ADRESS']
         gv['MAIL_PASSWORD'] = gv_data['MAIL_PASSWORD']
-    else:
-        raise ValueError('Specify mail details for Outlook or credentials')
-
+    
     gv['TODO_DIR_HOME'] = gv_data['TODO_DIR_HOME']
 
     gv['ACCEPTED_EXTENSIONS'] = tuple(gv_data['ACCEPTED_EXTENSIONS'].split(', '))

@@ -77,7 +77,7 @@ class YesOrNoMessageBox(QMessageBox):
     def answer(self) -> bool:
         ''' Return True for yes, False for no. '''
 
-        if self.exec()==QMessageBox.Yes:
+        if self.exec()==QMessageBox.StandardButton.Yes:
             return True
         return False
 

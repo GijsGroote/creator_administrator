@@ -58,8 +58,8 @@ class SelectOptionsQDialog(QDialog):
         # QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.toggleSelection)
 
         # shortcuts on arrow keys
-        QShortcut(QKeySequence(Qt.Key_Up), self).activated.connect(self.toPreviousRow)
-        QShortcut(QKeySequence(Qt.Key_Down), self).activated.connect(self.toNextRow)
+        QShortcut(QKeySequence(Qt.Key.Key_Up), self).activated.connect(self.toPreviousRow)
+        QShortcut(QKeySequence(Qt.Key.Key_Down), self).activated.connect(self.toNextRow)
 
         # shortcuts on VIM motions
         QShortcut(QKeySequence('k'), self).activated.connect(self.toPreviousRow)

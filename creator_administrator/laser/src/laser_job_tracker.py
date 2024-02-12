@@ -36,7 +36,7 @@ class LaserJobTracker(JobTracker):
 
         self.job_keys.append(['laserfiles'])
 
-    def addJob(self, job_name: str, job_folder_global_path: str, files_dict: dict, status='WACHTRIJ') -> dict:
+    def addJob(self, job_name: str, sender_name, job_folder_global_path: str, files_dict: dict, status='WACHTRIJ') -> dict:
         """ Add a job to the tracker. """
 
         with open(self.tracker_file_path, 'r') as tracker_file:
@@ -45,6 +45,7 @@ class LaserJobTracker(JobTracker):
         job_name = self.makeJobNameUnique(job_name)
 
         add_job_dict = {'job_name': job_name,
+                        'sender_name': sender_name,
                         'job_folder_global_path': job_folder_global_path,
                         'dynamic_job_name': str(datetime.now().strftime("%d-%m"))+'_'+job_name,
                         'status': status,
@@ -306,4 +307,9 @@ class LaserJobTracker(JobTracker):
             return_string += f'{file_dict["file_name"]}\n'
 
         return return_string
+
+    def jobNameToSenderName(self, job_name: str):
+        ''' Return Sender name from job name. '''
+        with open(self.tracker_file_path, 'r') as tracker_file:
+            return json.load(tracker_file)[job_name]['sender_name']
 
