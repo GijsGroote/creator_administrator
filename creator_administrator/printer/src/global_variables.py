@@ -10,8 +10,8 @@ import sys
 IWS_COMPUTER = False
 
 iws_data_dir_home = r'C:\Users\IWS\.ssh\printer_global_variables.json'
-gijs_windows_data_dir_home = r'C:\Users\gijsg\AppData\creator-administrator'
-gijs_linux_data_dir_home = r'/home/gijs/.creator-administrator'
+gijs_windows_data_dir_home = r'C:\Users\gijsg\AppData\creator_administrator'
+gijs_linux_data_dir_home = r'/home/gijs/.creator_administrator'
 
 if os.path.exists(iws_data_dir_home):
     IWS_COMPUTER = True

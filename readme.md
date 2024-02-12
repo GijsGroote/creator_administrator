@@ -26,7 +26,7 @@ Do you look for an organized workflow to make all these requests?
 # global_variables.json template:
 ```json 
 {
-    "REPO_DIR_HOME":  "C:\\Users\\gijsg\\creator-administrator",
+    "REPO_DIR_HOME":  "C:\\Users\\gijsg\\creator_administrator",
     "PYTHON_PATH": "C:Program Files\\Python311\\python.exe",
     "ACCEPTED_EXTENSIONS": ".dxf, .txt",
     "ACCEPTED_MATERIALS": "pmma, wood",

@@ -16,9 +16,9 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 if sys.platform == 'linux':
-    data_dir_home = os.path.join(os.path.expanduser('~'), '.creator-administrator')
+    data_dir_home = os.path.join(os.path.expanduser('~'), '.creator_administrator')
 elif sys.platform == 'win32':
-    data_dir_home = os.path.join(os.getenv('LOCALAPPDATA'), 'creator-administrator')
+    data_dir_home = os.path.join(os.getenv('LOCALAPPDATA'), 'Creator Administrator')
 else: 
     raise ValueError(f'This software does not work for platform: {sys.platform}')
 
