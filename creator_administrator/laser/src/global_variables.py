@@ -100,13 +100,15 @@ with open(settings_file_path, 'r') as settings_file:
 
 gv['GLOBAL_SRC_DIR'] = os.path.join(gv['REPO_DIR_HOME'], 'src')
 gv['LOCAL_SRC_DIR'] = os.path.join(gv['REPO_DIR_HOME'], 'laser/src')
-gv['UI_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'], 'laser/ui')
+gv['GLOBAL_UI_DIR'] = os.path.join(gv['REPO_DIR_HOME'], 'ui')
+gv['LOCAL_UI_DIR'] = os.path.join(gv['REPO_DIR_HOME'], 'laser/ui')
 
 # import functions from src
 sys.path.append(gv['REPO_DIR_HOME'])
 sys.path.append(gv['GLOBAL_SRC_DIR'])
 sys.path.append(gv['LOCAL_SRC_DIR'])
-sys.path.append(gv['UI_DIR_HOME'])
+sys.path.append(gv['GLOBAL_UI_DIR'])
+sys.path.append(gv['LOCAL_UI_DIR'])
 
 gv['FIGURES_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'], 'figures')
 

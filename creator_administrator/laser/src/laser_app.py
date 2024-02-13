@@ -1,5 +1,6 @@
 import sys
 import os
+from functools import partial
 from PyQt6 import QtWidgets
 from PyQt6 import QtCore
 from requests.exceptions import ConnectionError
@@ -23,12 +24,12 @@ from laser_qdialog import (
         LaserFolderSelectQDialog, LaserFileInfoQDialog)
 
 # ensure that win32com is imported after creating an executable with pyinstaller
-from win32com import client
+# from win32com import client
 
 class LaserMainWindow(MainWindow):
     def __init__(self, *args, **kwargs):
-        ui_global_path = os.path.join(gv['UI_DIR_HOME'], 'laser_main_window.ui')
-        super().__init__(ui_global_path, *args, **kwargs)
+        ui_global_path = os.path.join(gv['LOCAL_UI_DIR'], 'laser_main_window.ui')
+        super().__init__(ui_global_path, gv, *args, **kwargs)
 
         self.valid_msgs = []
         self.threadpool = gv['THREAD_POOL']
@@ -47,6 +48,10 @@ class LaserMainWindow(MainWindow):
 
 
         self.editSettingsAction.triggered.connect(self.openEditSettingsDialog)
+
+
+
+
 
     def threadedGetValidMailsFromInbox(self):
         ''' Get mails from inbox.
@@ -154,6 +159,7 @@ class LaserMainWindow(MainWindow):
         if LaserSettingsQDialog(self, gv).exec() == 1:
             # restart application
             print(f"restart")
+
 
     def refreshAllWidgets(self):
         ''' Refresh the widgets. '''

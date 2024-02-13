@@ -530,9 +530,8 @@
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="showLaserDocumentationAction"/>
-    <addaction name="show3DPrintDocumentationAction"/>
-    <addaction name="actionReport_a_Bug"/>
+    <addaction name="openDocumentationAction"/>
+    <addaction name="reportaBugAction"/>
     <addaction name="separator"/>
     <addaction name="actionAbout"/>
    </widget>
@@ -590,9 +589,9 @@
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="showLaserDocumentationAction">
+  <action name="openDocumentationAction">
    <property name="text">
-    <string>Laser Documentation</string>
+    <string>Open Documentation</string>
    </property>
   </action>
   <action name="show3DPrintDocumentationAction">
@@ -600,7 +599,7 @@
     <string>3D printer Documentation</string>
    </property>
   </action>
-  <action name="actionReport_a_Bug">
+  <action name="reportaBugAction">
    <property name="text">
     <string>Report a Bug</string>
    </property>

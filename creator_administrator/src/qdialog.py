@@ -1,5 +1,5 @@
 import os
-from functools import partial
+import pkg_resources
 from PyQt6 import uic
 from PyQt6.QtWidgets import *
 
@@ -95,4 +95,19 @@ class SelectOptionsQDialog(QDialog):
         else:
             opt_ql_widget.setCurrentRow(opt_ql_widget.currentRow()-1)
 
+class AboutDialog(QDialog):
+    """ Import from mail dialog. """
+    def __init__(self, parent: QWidget, gv: dict, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        loadUi(os.path.join(gv['GLOBAL_UI_DIR'], 'about_widget.ui') , self)
+
+        self.versionLabel.setText(pkg_resources.get_distribution('creator_administrator').version)
+
+        # shortcut on Esc button
+        QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.closeDialog)
+
+    def closeDialog(self):
+        ''' Close the dialog, press cancel. '''
+        self.close()
 
