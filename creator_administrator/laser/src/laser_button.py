@@ -154,12 +154,12 @@ class OptionsQPushButton(JobsQPushButton):
             self.menu.addAction('Copy Files to ..', self.copyMaterialWachtrijFilesTo)
 
         elif self.object_name == 'verwerktOptionsQPushButton':
-            self.menu.addAction('Copy Laser Files to ..', self.copyLaserFilesTo)
+            self.menu.addAction('Copy Laser Files to TODO folder', self.copyLaserFilesTo)
             self.menu.addAction('Move to Wachtrij', self.moveJobToWachtrij)
             self.menu.addAction('Move to Afgekeurd', self.moveJobToAfgekeurd)
 
         elif self.object_name == 'afgekeurdOptionsQPushButton':
-            self.menu.addAction('Copy Laser Files to ..', self.copyLaserFilesTo)
+            self.menu.addAction('Copy Laser Files to TODO folder', self.copyLaserFilesTo)
             self.menu.addAction('Move to Wachtrij', self.moveJobToWachtrij)
             self.menu.addAction('Move to Verwerkt', self.moveJobToVerwerkt)
 
@@ -213,7 +213,7 @@ class OptionsQPushButton(JobsQPushButton):
             target_item_global_path = os.path.join(target_folder_global_path, file_key)
             copy_item(source_item_global_path, target_item_global_path)
 
-        open_folder(target_folder_global_path)
+        # open_folder(target_folder_global_path)
 
     def copyMaterialWachtrijFilesTo(self):
         ''' Copy the dxf files in wachtrij to a specified folder. '''
@@ -228,4 +228,4 @@ class OptionsQPushButton(JobsQPushButton):
         for file_name, file_global_path in dxfs_names_and_global_paths:
             copy_item(file_global_path, os.path.join(target_folder_global_path, file_name))
 
-        open_folder(target_folder_global_path)
+        # open_folder(target_folder_global_path)
