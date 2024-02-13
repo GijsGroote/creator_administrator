@@ -365,15 +365,17 @@ class MailManager():
 
         if sys.platform == 'win32':
             # copy to TEMP folder to prevent permission errors
-            temp_dir_global_path = os.path.join(self.gv['DATA_DIR_HOME'], 'TEMP')
-            # delete_directory_content(temp_dir_global_path)
-            temp_msg_file_name = 'mail.msg'
-            i = 0
-            while os.path.exists(os.path.join(temp_dir_global_path, temp_msg_file_name)):
-                temp_msg_file_name = 'mail_'+str(i)+'.msg'
-            temp_msg_file_path = os.path.join(temp_dir_global_path, temp_msg_file_name)
-            copy_item(msg_file_path, temp_msg_file_path)
-            msg = self.outlook.OpenSharedItem(temp_msg_file_path)
+            # temp_dir_global_path = os.path.join(self.gv['DATA_DIR_HOME'], 'TEMP')
+            # # delete_directory_content(temp_dir_global_path)
+            # temp_msg_file_name = 'mail.msg'
+            # i = 0
+            # while os.path.exists(os.path.join(temp_dir_global_path, temp_msg_file_name)):
+            #     temp_msg_file_name = 'mail_'+str(i)+'.msg'
+            # temp_msg_file_path = os.path.join(temp_dir_global_path, temp_msg_file_name)
+            # copy_item(msg_file_path, temp_msg_file_path)
+            # msg = self.outlook.OpenSharedItem(temp_msg_file_path)
+            msg = self.outlook.OpenSharedItem(msg_file_path)
+
 
             # load recipient_name in template
             template_content["{sender_name}"] = msg.Sender

@@ -54,3 +54,26 @@ If you encounter this: turn off the add-ins in Outlook:
 
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/gijsgroote)
+
+
+{
+    "REPO_DIR_HOME": "C:\\Users\\TU Delft Metal 1520\\creator_administrator\\creator_administrator",
+    "TODO_DIR_HOME": "C:\\Users\\TU Delft Metal 1520\\Desktop\\Laser TODO",
+    "PYTHON_PATH": "C:\\Users\\TU Delft Metal 1520\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+    "OUTLOOK_PATH": "C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE",
+    "ACCEPTED_EXTENSIONS": ".dxf, .dwg, .zip",
+    "ACCEPTED_MATERIALS": "staal, aluminium, rvs",
+    "DAYS_TO_KEEP_JOBS": "10",
+    "PASSWORD": "LASER",
+    "ONLY_UNREAD_MAIL": "false",
+    "MAIL_NAME": "IWS",
+    "MOVE_MAILS_TO_VERWERKT_FOLDER": "true",
+    "DISPLAY_TEMP_MESSAGES": "true",
+    "DISPLAY_WARNING_MESSAGES": "true",
+    "DARK_MODE": "false",
+    "THEME_COLOR_HEX": "#eb4034",
+    "DATA_DIR_HOME": "C:\\Users\\TU Delft Metal 1520\\AppData\\Local\\Creator Administrator",
+    "RECEIVED_MAIL_TEMPLATE": "C:\\Users\\TU Delft Metal 1520\\creator_administrator\\creator_administrator\\laser\\email_templates\\IWS_METAL_LASER_RECEIVED_MAIL_TEMPLATE.html",
+    "FINISHED_MAIL_TEMPLATE": "C:\\Users\\TU Delft Metal 1520\\creator_administrator\\creator_administrator\\laser\\email_templates\\DEFAULT_FINISHED_MAIL_TEMPLATE.html",
+    "DECLINED_MAIL_TEMPLATE": "C:\\Users\\TU Delft Metal 1520\\creator_administrator\\creator_administrator\\laser\\email_templates\\DEFAULT_DECLINED_MAIL_TEMPLATE.html"
+}

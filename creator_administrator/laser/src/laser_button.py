@@ -221,7 +221,7 @@ class OptionsQPushButton(JobsQPushButton):
         material_name = self.getCurrentItemName()
         material, thickness = split_material_name(material_name)
         dxfs_names_and_global_paths = LaserJobTracker(self).getDXFsAndPaths(material, thickness)
-        target_folder_global_path = gv['LASER_TODO_DIR_HOME']
+        target_folder_global_path = gv['TODO_DIR_HOME']
 
         delete_directory_content(target_folder_global_path)
 
