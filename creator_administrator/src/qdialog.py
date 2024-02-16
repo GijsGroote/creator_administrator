@@ -1,5 +1,6 @@
 import os
 import pkg_resources
+import webbrowser
 from PyQt6 import uic
 from PyQt6.QtWidgets import *
 
@@ -103,9 +104,13 @@ class AboutDialog(QDialog):
         loadUi(os.path.join(gv['GLOBAL_UI_DIR'], 'about_widget.ui') , self)
 
         self.versionLabel.setText(pkg_resources.get_distribution('creator_administrator').version)
+        # self.githubLabel.mousePressEvent = webbrowser.open('https://github.com/GijsGroote/creator_administrator/')
 
         # shortcut on Esc button
         QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.closeDialog)
+
+    def openGithubInBrowser(self):
+        ''' Open Github in browser. '''
 
     def closeDialog(self):
         ''' Close the dialog, press cancel. '''

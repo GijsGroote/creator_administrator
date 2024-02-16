@@ -102,7 +102,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="jobsListPage_2">
              <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -176,7 +176,7 @@
                   <item>
                    <widget class="BackQPushButton" name="backPushButton_2">
                     <property name="toolTip">
-                     <string extracomment="Shortcut: Esc"/>
+                     <string extracomment="Shortcut: Esc">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Esc&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                     </property>
                     <property name="text">
                      <string>Back</string>
@@ -185,6 +185,9 @@
                   </item>
                   <item>
                    <widget class="LaserKlaarQPushButton" name="pushButton_3">
+                    <property name="toolTip">
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Ctrl+k&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    </property>
                     <property name="text">
                      <string>Laser Klaar</string>
                     </property>
@@ -197,9 +200,6 @@
                    <widget class="AfgekeurdQPushButton" name="pushButton_4">
                     <property name="text">
                      <string>Afgekeurd</string>
-                    </property>
-                    <property name="shortcut">
-                     <string>Ctrl+S</string>
                     </property>
                    </widget>
                   </item>
@@ -233,7 +233,7 @@
         <item>
          <widget class="QStackedWidget" name="wachtrijMateriaalQStackedWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="jobsListPage_3">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -292,6 +292,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_7">
               <item>
                <widget class="BackQPushButton" name="backPushButton_3">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Esc&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
                 <property name="text">
                  <string>Back</string>
                 </property>
@@ -327,7 +330,7 @@
         <item>
          <widget class="QStackedWidget" name="verwerktQStackedWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="jobsListPage_4">
            <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -384,6 +387,9 @@
                <layout class="QHBoxLayout" name="horizontalLayout_8">
                 <item>
                  <widget class="BackQPushButton" name="backPushButton_4">
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Esc&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
                   <property name="text">
                    <string>Back</string>
                   </property>
@@ -420,7 +426,7 @@
         <item>
          <widget class="QStackedWidget" name="afgekeurdQStackedWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="jobsListPage_5">
            <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -477,6 +483,9 @@
                <layout class="QHBoxLayout" name="horizontalLayout_9">
                 <item>
                  <widget class="BackQPushButton" name="backPushButton_5">
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Esc&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
                   <property name="text">
                    <string>Back</string>
                   </property>

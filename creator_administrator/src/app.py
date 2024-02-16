@@ -18,8 +18,9 @@ class MainWindow(QMainWindow):
 
         self.gv = gv
 
-        self.openDocumentationAction.triggered.connect(partial(self.openWebPage, 'https://github.com/GijsGroote/creator_administrator/tree/main/creator_administrator/doc'))
-        self.reportaBugAction.triggered.connect(partial(self.openWebPage, 'https://github.com/GijsGroote/creator_administrator/issues'))
+        self.openDocumentationAction.triggered.connect(partial(webbrowser.open, 'https://github.com/GijsGroote/creator_administrator/tree/main/creator_administrator/doc'))
+
+        self.reportaBugAction.triggered.connect(partial(webbrowser.open, 'https://github.com/GijsGroote/creator_administrator/issues'))
         self.actionAbout.triggered.connect(self.openAboutDialog)
 
 
@@ -40,9 +41,3 @@ class MainWindow(QMainWindow):
     def openAboutDialog(self):
         ''' Open About Dialog. '''
         AboutDialog(self, self.gv).exec()
-
-    def openWebPage(self, url: str):
-        ''' Open web page in default browser. '''
-        webbrowser.open(url)
-
-

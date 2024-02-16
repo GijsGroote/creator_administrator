@@ -9,8 +9,6 @@ from PyQt6.QtWidgets import *
 from src.mail_manager import MailManager
 from src.qmessagebox import InfoQMessageBox
 
-
-
 from src.qlist_widget import ContentQListWidget
 from laser_qlist_widget import JobContentQListWidget, OverviewQListWidget
 

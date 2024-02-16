@@ -143,23 +143,27 @@ class OptionsQPushButton(JobsQPushButton):
     def storeObjectNameInit(self):
         ''' store the object name and initialize. '''
         self.object_name = self.objectName()
+        copy_todo_action = self.menu.addAction('Copy Files to TODO folder', self.copyLaserFilesTo)
+        copy_todo_action.setToolTip('Shortcut: Ctrl+T')
+        QShortcut(QKeySequence('Ctrl+T'), self).activated.connect(self.copyLaserFilesTo)
+        self.menu.setToolTipsVisible(True)
+
+
 
         if self.object_name == 'allJobsOptionsQPushButton':
             self.menu.addAction('Move to Wachtrij', self.moveJobToWachtrij)
                         
         elif self.object_name == 'wachtrijOptionsQPushButton':
-            self.menu.addAction('Copy Files to ..', self.copyLaserFilesTo)
+            pass
 
         elif self.object_name == 'wachtrijMateriaalOptionsQPushButton':
-            self.menu.addAction('Copy Files to ..', self.copyMaterialWachtrijFilesTo)
+            pass
 
         elif self.object_name == 'verwerktOptionsQPushButton':
-            self.menu.addAction('Copy Laser Files to TODO folder', self.copyLaserFilesTo)
             self.menu.addAction('Move to Wachtrij', self.moveJobToWachtrij)
             self.menu.addAction('Move to Afgekeurd', self.moveJobToAfgekeurd)
 
         elif self.object_name == 'afgekeurdOptionsQPushButton':
-            self.menu.addAction('Copy Laser Files to TODO folder', self.copyLaserFilesTo)
             self.menu.addAction('Move to Wachtrij', self.moveJobToWachtrij)
             self.menu.addAction('Move to Verwerkt', self.moveJobToVerwerkt)
 
