@@ -19,7 +19,17 @@ class ThreadedMailManager():
         self.thread_pool = gv['THREAD_POOL']
         self.parent_widget = parent_widget
         self.worker = None
-    
+
+    ''' below this point functions: Start <mail_type> MailWorker.
+
+        The following mail types exist:
+        - Recieved, informing the sender that the request was succesfully receieved
+        - Unclear, asking the sender for more information because the request is unclear
+        - Finished, asking the sender to pick up the request
+        - Declined, informing the sender that his request is declinded
+
+    These MailWorker functions use the send <mail_type> Mail functions
+    '''
     def startReceivedMailWorker(self,
                             success_message: str,
                             error_message: str,
@@ -41,24 +51,23 @@ class ThreadedMailManager():
         self.thread_pool.start(self.worker)
 
 
-    def sendReceivedMail(self,
-                                job_folder_global_path: str,
-                                template_content: dict):
-        """ Send a confirmation mail. """
+    def startUnclearMailWorker(self,
+                            success_message: str,
+                            error_message: str,
+                            job_folder_global_path: str,
+                            template_content: dict):        
 
-        # The MailManager object must be made in the scope of this function. 
-        # otherwise Outlook raises an attribute error for an open share com object
-        mail_manager = MailManager(self.gv)
-        
+        self.success_message = success_message
+        self.error_message = error_message
 
-        mail_manager.replyToEmailFromFileUsingTemplate(
-                                msg_file_path=mail_manager.getMailGlobalPathFromFolder(job_folder_global_path),
-                                template_file_name="RECEIVED_MAIL_TEMPLATE",
-                                template_content=template_content,
-                                popup_reply=False)
+        self.worker = Worker(self.sendUnclearMail,
+                             job_folder_global_path=job_folder_global_path,
+                             template_content=template_content)
 
-        mail_manager.moveEmailToVerwerktFolder(msg=self.msg)
-    
+        self.worker.signals.finished.connect(self.displaySuccessMessage)
+        self.worker.signals.error.connect(self.handleMailError)
+        self.thread_pool.start(self.worker)
+
     def startFinishedMailWorker(self,
                             success_message: str,
                             error_message: str,
@@ -75,21 +84,6 @@ class ThreadedMailManager():
         self.worker.signals.error.connect(self.handleMailError)
         self.thread_pool.start(self.worker)
 
-    def sendFinishedMail(self,
-                        job_folder_global_path: str,
-                        template_content: dict):
-        """ Send a job is finished mail. """
-        
-        # The MailManager object must be made in the scope of this function. 
-        # otherwise Outlook raises an attribute error for an open share com object
-        mail_manager = MailManager(self.gv)
-
-        mail_manager.replyToEmailFromFileUsingTemplate(
-                                msg_file_path=mail_manager.getMailGlobalPathFromFolder(job_folder_global_path),
-                                template_file_name="FINISHED_MAIL_TEMPLATE",
-                                template_content=template_content,
-                                popup_reply=False)
-        
     def startDeclinedMailWorker(self,
                             success_message: str,
                             error_message: str,
@@ -112,6 +106,53 @@ class ThreadedMailManager():
         self.worker.signals.error.connect(self.handleMailError)
         self.thread_pool.start(self.worker)
 
+    def sendReceivedMail(self,
+                        job_folder_global_path: str,
+                        template_content: dict):
+        """ Send a confirmation mail. """
+
+        # The MailManager object must be made in the scope of this function. 
+        # otherwise Outlook raises an attribute error for an open share com object
+        mail_manager = MailManager(self.gv)
+        
+
+        mail_manager.replyToEmailFromFileUsingTemplate(
+                                msg_file_path=mail_manager.getMailGlobalPathFromFolder(job_folder_global_path),
+                                template_file_name="RECEIVED_MAIL_TEMPLATE",
+                                template_content=template_content,
+                                popup_reply=False)
+
+        mail_manager.moveEmailToVerwerktFolder(msg=self.msg)
+
+    def sendUnclearMail(self,
+                        job_folder_global_path: str,
+                        template_content: dict):
+
+        # The MailManager object must be made in the scope of this function. 
+        # otherwise Outlook raises an attribute error for an open share com object
+        mail_manager = MailManager(self.gv)
+
+        mail_manager.replyToEmailFromFileUsingTemplate(
+                                msg_file_path=mail_manager.getMailGlobalPathFromFolder(job_folder_global_path),
+                                template_file_name="UNCLEAR_MAIL_TEMPLATE",
+                                template_content=template_content,
+                                popup_reply=False)
+
+    def sendFinishedMail(self,
+                        job_folder_global_path: str,
+                        template_content: dict):
+        """ Send a job is finished mail. """
+        
+        # The MailManager object must be made in the scope of this function. 
+        # otherwise Outlook raises an attribute error for an open share com object
+        mail_manager = MailManager(self.gv)
+
+        mail_manager.replyToEmailFromFileUsingTemplate(
+                                msg_file_path=mail_manager.getMailGlobalPathFromFolder(job_folder_global_path),
+                                template_file_name="FINISHED_MAIL_TEMPLATE",
+                                template_content=template_content,
+                                popup_reply=False)
+        
 
     def sendDeclinedMail(self,
                         job_folder_global_path: str,

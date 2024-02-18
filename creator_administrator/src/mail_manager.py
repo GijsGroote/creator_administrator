@@ -374,7 +374,10 @@ class MailManager():
             # temp_msg_file_path = os.path.join(temp_dir_global_path, temp_msg_file_name)
             # copy_item(msg_file_path, temp_msg_file_path)
             # msg = self.outlook.OpenSharedItem(temp_msg_file_path)
+
+            print(f"msg is of type: {type(msg)}")
             msg = self.outlook.OpenSharedItem(msg_file_path)
+            print(f"msg is of type: {type(msg)}")
 
 
             # load recipient_name in template
@@ -396,13 +399,16 @@ class MailManager():
 
         if sys.platform == 'linux':
 
+            # assume msg_file_path is a path toward the .eml file
             with open(msg_file_path, 'rb') as file:
                 msg = email.message_from_binary_file(file, policy=default)
-                original_sender_mail_long = msg.get('From')
-                original_sender_mail = parseaddr(original_sender_mail_long)[1]
+
+            original_sender_mail_long = msg.get('From')
+            original_sender_mail = parseaddr(original_sender_mail_long)[1]
+            sender_name = self.mailToName(str(original_sender_mail_long))
 
             # load template content into html template
-            template_content['{sender_name}'] = self.mailToName(str(original_sender_mail_long))
+            template_content['{sender_name}'] =  sender_name
             with open(self.gv[template_file_name], "r") as file:
                 html_content = file.read()
 

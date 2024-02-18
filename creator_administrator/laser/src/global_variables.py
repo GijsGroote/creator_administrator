@@ -82,7 +82,8 @@ with open(settings_file_path, 'r') as settings_file:
 
     for mail_template in ['RECEIVED_MAIL_TEMPLATE',
                           'DECLINED_MAIL_TEMPLATE',
-                          'FINISHED_MAIL_TEMPLATE']:
+                          'FINISHED_MAIL_TEMPLATE',
+                          'UNCLEAR_MAIL_TEMPLATE']:
 
         if mail_template in gv_data:
             if os.path.exists(gv_data[mail_template]):

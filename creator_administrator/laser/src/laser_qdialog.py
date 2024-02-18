@@ -45,7 +45,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         self.materialQComboBox.currentIndexChanged.connect(self.onMaterialComboboxChanged)
 
         self.skipPushButton.clicked.connect(self.skipMail)
-        self.sendUnclearMailPushButton.clicked.connect(self.sendUnclearMaterialDetailsMail)
+        self.sendUnclearMailPushButton.clicked.connect(self.sendUnclearRequestMailJob)
         self.buttonBox.accepted.connect(self.collectAttachmentInfo)
 
         self.loadMailContent()
@@ -188,7 +188,6 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
     def skipMail(self):
         ''' Skip mail and go to the next. '''
-        # TODO: mail should not go to verwerkt folder, move it back
         if self.msg_counter+1 >= len(self.valid_msgs):
             self.accept() 
         else:
@@ -233,11 +232,23 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
         return True
 
-    def sendUnclearMaterialDetailsMail(self):
+    def sendUnclearRequestMailJob(self):
         ''' Send a mail asking for the material, thickness and amount. '''
-        # TODO: mail from a mail that is not yet downloaded. 
-        TimedMessage(gv, self, f"This function is not yet implemented")
 
+        # save mail in TEMP folder
+        msg = self.valid_msgs[self.msg_counter]
+        if not os.path.exists(self.temp_job_folder_global_path):
+            os.mkdir(self.temp_job_folder_global_path)
+
+        self.mail_manager.saveMail(msg, self.temp_job_folder_global_path)
+
+        ThreadedMailManager(parent_widget=self, gv=gv).startUnclearMailWorker(
+                success_message=f'Unclear request mail send to {self.temp_sender_name}',
+                error_message=f'No unclear request mail was send to {self.temp_sender_name}',
+                job_folder_global_path=copy.copy(self.temp_job_folder_global_path),
+                template_content= {})
+                
+        self.skipMail()
 
     def threadedSendReceivedMailAndCreateLaserJob(self):
         """ Create a laser job. """
