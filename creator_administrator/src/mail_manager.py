@@ -375,10 +375,7 @@ class MailManager():
             # copy_item(msg_file_path, temp_msg_file_path)
             # msg = self.outlook.OpenSharedItem(temp_msg_file_path)
 
-            print(f"msg is of type: {type(msg)}")
             msg = self.outlook.OpenSharedItem(msg_file_path)
-            print(f"msg is of type: {type(msg)}")
-
 
             # load recipient_name in template
             template_content["{sender_name}"] = msg.Sender
