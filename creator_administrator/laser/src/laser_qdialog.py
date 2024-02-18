@@ -237,7 +237,8 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
         # save mail in TEMP folder
         msg = self.valid_msgs[self.msg_counter]
-        self.temp_job_folder_global_path =  os.path.join(gv['DATA_DIR_HOME'], 'TEMP', self.temp_job_name)
+        self.temp_job_folder_global_path = os.path.join(gv['DATA_DIR_HOME'], 'TEMP', self.temp_job_name)
+
         if not os.path.exists(self.temp_job_folder_global_path):
             os.mkdir(self.temp_job_folder_global_path)
 

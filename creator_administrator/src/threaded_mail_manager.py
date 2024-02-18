@@ -14,7 +14,7 @@ class ThreadedMailManager():
     as sending mail, retrieving mail, or moving mail to a seperate folder. 
     '''
 
-    def __init__(self, parent_widget, gv:dict):
+    def __init__(self, parent_widget, gv: dict):
         self.gv=gv
         self.thread_pool = gv['THREAD_POOL']
         self.parent_widget = parent_widget
@@ -30,6 +30,8 @@ class ThreadedMailManager():
 
     These MailWorker functions use the send <mail_type> Mail functions
     '''
+
+    # TODO: many mails here could be a single function + additional arguement
     def startReceivedMailWorker(self,
                             success_message: str,
                             error_message: str,
@@ -37,19 +39,30 @@ class ThreadedMailManager():
                             template_content: dict,
                             msg):
         
-        self.success_message = success_message
-        self.error_message = error_message
-        self.msg = msg
+            self.success_message = success_message
+            self.error_message = error_message
+            self.msg = msg
 
-        self.worker = Worker(self.sendReceivedMail,
-                             job_folder_global_path=job_folder_global_path,
-                             template_content=template_content)
+            if self.gv['SEND_MAILS_ON_SEPERATE_THREAD']: 
 
-        self.worker.signals.finished.connect(self.displaySuccessMessage)
-        self.worker.signals.error.connect(self.handleMailError)
+                self.worker = Worker(self.sendReceivedMail,
+                                     job_folder_global_path=job_folder_global_path,
+                                     template_content=template_content)
 
-        self.thread_pool.start(self.worker)
+                self.worker.signals.finished.connect(self.displaySuccessMessage)
+                self.worker.signals.error.connect(self.handleMailError)
 
+                self.thread_pool.start(self.worker)
+
+            else:
+
+                try:
+                    self.sendReceivedMail(job_folder_global_path=job_folder_global_path,
+                                      template_content=template_content)
+                    self.displaySuccessMessage()
+
+                except Exception as exc:
+                    self.handleMailError(exc)
 
     def startUnclearMailWorker(self,
                             success_message: str,
@@ -60,13 +73,18 @@ class ThreadedMailManager():
         self.success_message = success_message
         self.error_message = error_message
 
-        self.worker = Worker(self.sendUnclearMail,
-                             job_folder_global_path=job_folder_global_path,
-                             template_content=template_content)
+        if True: 
+            self.sendUnclearMail(job_folder_global_path=job_folder_global_path,
+                                  template_content=template_content)
 
-        self.worker.signals.finished.connect(self.displaySuccessMessage)
-        self.worker.signals.error.connect(self.handleMailError)
-        self.thread_pool.start(self.worker)
+        else:
+            self.worker = Worker(self.sendUnclearMail,
+                                 job_folder_global_path=job_folder_global_path,
+                                 template_content=template_content)
+
+            self.worker.signals.finished.connect(self.displaySuccessMessage)
+            self.worker.signals.error.connect(self.handleMailError)
+            self.thread_pool.start(self.worker)
 
     def startFinishedMailWorker(self,
                             success_message: str,

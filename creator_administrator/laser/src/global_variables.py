@@ -36,6 +36,11 @@ if not os.path.exists(settings_file_path):
 
 if not os.path.exists(jobs_dir_home):
     os.mkdir(jobs_dir_home)
+
+temp_dir_home = os.path.join(data_dir_home, 'TEMP')
+if not os.path.exists(temp_dir_home):
+    os.mkdir(temp_dir_home)
+
     
 # Global Variables (gv)
 gv = {'SETTINGS_FILE_PATH': settings_file_path,
@@ -96,8 +101,10 @@ with open(settings_file_path, 'r') as settings_file:
                     'laser/email_templates', 'DEFAULT_'+mail_template+'.html'))
 
 
-    gv['GOOD_COLOR_RGBA'] = 'rgba(0, 255, 0, 0.4)'
-    gv['BAD_COLOR_RGBA'] = 'rgba(255, 0, 0, 0.4)'
+gv['GOOD_COLOR_RGBA'] = 'rgba(0, 255, 0, 0.4)'
+gv['BAD_COLOR_RGBA'] = 'rgba(255, 0, 0, 0.4)'
+
+gv['SEND_MAILS_ON_SEPERATE_THREAD'] = False
 
 gv['GLOBAL_SRC_DIR'] = os.path.join(gv['REPO_DIR_HOME'], 'src')
 gv['LOCAL_SRC_DIR'] = os.path.join(gv['REPO_DIR_HOME'], 'laser/src')

@@ -214,7 +214,7 @@
      <item>
       <widget class="QPushButton" name="sendUnclearMailPushButton">
        <property name="text">
-        <string>Send material, thickness or amount unclear Mail</string>
+        <string>Send Unclear Request Mail</string>
        </property>
       </widget>
      </item>
