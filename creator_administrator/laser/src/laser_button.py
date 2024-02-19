@@ -207,19 +207,29 @@ class OptionsQPushButton(JobsQPushButton):
     
     def copyLaserFilesTo(self):
         '''Copy the laser files from a job to a specified folder. '''
-
-        job_name = self.getCurrentItemName()
-        laser_file_dict =  LaserJobTracker(self).getLaserFilesDict(job_name)
-        target_folder_global_path = gv['TODO_DIR_HOME']
+        print(self.parent().objectName())
+        print(self.parent().parent().objectName())
 
         delete_directory_content(target_folder_global_path)
-                   
-        for file_key, file_dict in laser_file_dict.items():
-            source_item_global_path = file_dict['file_global_path']
-            target_item_global_path = os.path.join(target_folder_global_path, file_key)
-            copy_item(source_item_global_path, target_item_global_path)
+        target_folder_global_path = gv['TODO_DIR_HOME']
 
-        # open_folder(target_folder_global_path)
+        if self.parent().parent().objectName == 'wachtrijMateriaalQStackedWidget':
+            material_name = self.getCurrentItemName()
+            material, thickness = split_material_name(material_name)
+            dxfs_names_and_global_paths = LaserJobTracker(self).getDXFsAndPaths(material, thickness)
+
+            for file_name, file_global_path in dxfs_names_and_global_paths:
+                copy_item(file_global_path, os.path.join(target_folder_global_path, file_name))
+        else:
+            job_name = self.getCurrentItemName()
+            laser_file_dict =  LaserJobTracker(self).getLaserFilesDict(job_name)
+                       
+            for file_key, file_dict in laser_file_dict.items():
+                source_item_global_path = file_dict['file_global_path']
+                target_item_global_path = os.path.join(target_folder_global_path, file_key)
+                copy_item(source_item_global_path, target_item_global_path)
+
+        TimedMessage(gv=gv, parent=self, text='Copied Files to TODO folder')
 
     def copyMaterialWachtrijFilesTo(self):
         ''' Copy the dxf files in wachtrij to a specified folder. '''
@@ -234,4 +244,4 @@ class OptionsQPushButton(JobsQPushButton):
         for file_name, file_global_path in dxfs_names_and_global_paths:
             copy_item(file_global_path, os.path.join(target_folder_global_path, file_name))
 
-        # open_folder(target_folder_global_path)
+        TimedMessage(gv=gv, parent=self, text='Copied Files to TODO folder')
