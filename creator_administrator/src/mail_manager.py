@@ -163,6 +163,11 @@ class MailManager():
     def moveEmailToVerwerktFolder(self, mail_item):
         """ Move email to verwerkt folder. """
 
+        # TODO: make this work without using mailitemToMAILFIle
+        
+        print(f'type is  {type(mail_item)}')
+
+
         if self.gv['MOVE_MAILS_TO_VERWERKT_FOLDER']:
             if sys.platform == 'win32':
                 if isinstance(mail_item, str):
