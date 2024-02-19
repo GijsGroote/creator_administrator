@@ -44,10 +44,11 @@ class LaserKlaarQPushButton(JobsQPushButton):
         if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]):
             WarningQMessageBox(gv=gv, parent=self, text=f'No Job finished mail send because: No mail file found')
         else:
-            ThreadedMailManager(parent_widget=self, gv=gv).startFinishedMailWorker(
+            ThreadedMailManager(parent_widget=self, gv=gv).startMailWorker(
                 success_message=f'Job finished mail send to {sender_name}',
                 error_message=f'No job finished mail send to {sender_name}',
-                job_folder_global_path=job_folder_global_path,
+                mail_type='FINISHED',
+                mail_item=job_folder_global_path,
                 template_content={})
 
 class MateriaalKlaarQPushButton(JobsQPushButton):
@@ -91,10 +92,11 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
                 if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]):
                     WarningQMessageBox(gv=gv, parent=self, text=f'No Job finished mail send because: No mail file found')
                 else:
-                    ThreadedMailManager(parent_widget=self, gv=gv).startFinishedMailWorker(
+                    ThreadedMailManager(parent_widget=self, gv=gv).startMailWorker(
                             success_message=f"Job finished mail send to {sender_name}",
                             error_message=f'No job finished mail send to {sender_name}',
-                            job_folder_global_path=job_folder_global_path,
+                            mail_type='FINISHED',
+                            mail_item=job_folder_global_path,
                             template_content={})
 
         self.refreshAllQListWidgets()
@@ -123,7 +125,7 @@ class AfgekeurdQPushButton(JobsQPushButton):
             ThreadedMailManager(parent_widget=self, gv=gv).startDeclinedMailWorker(
                 success_message=f'Job declined mail send to {sender_name}',
                 error_message=f'No job declined mail send to {sender_name}',
-                job_folder_global_path=job_folder_global_path,
+                mail_item=job_folder_global_path,
                 template_content={})
         
 class OptionsQPushButton(JobsQPushButton):

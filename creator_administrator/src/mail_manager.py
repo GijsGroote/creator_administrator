@@ -1,6 +1,9 @@
 """
 
 Handle mail functionality.
+
+mail_item: openen .msg file or .eml file, or a string (directory path, dir containing .msg or .eml, or full path toward .msg or .eml)
+
 """
 
 import os
@@ -155,12 +158,13 @@ class MailManager():
         return temp_folder_global_path     
 
 
-    def moveEmailToVerwerktFolder(self, msg):
+    def moveEmailToVerwerktFolder(self, mail_item):
         """ Move email to verwerkt folder. """
+
         if self.gv['MOVE_MAILS_TO_VERWERKT_FOLDER']:
             if sys.platform == 'win32':
-                if isinstance(msg, str):
-                    msg = self.getMsgFromGlobalPath(msg)
+                if isinstance(mail_item, str):
+                    msg = self.mailItemToMailFile(mail_item)
                 
                 for message in self.inbox.Items:
                     if msg.SenderEmailAddress == message.SenderEmailAddress and\
@@ -173,9 +177,10 @@ class MailManager():
                     raise ConnectionError('Not connected to the internet')
 
                 self.imapLogin()
+                eml = self.mailItemToMailFile(mail_item)
 
                 # Extract the mail UID using regular expression
-                match = re.search(rb'\b(\d+)\b', msg[0][0])
+                match = re.search(rb'\b(\d+)\b', eml[0][0])
 
                 if match:
                     uid_msg_set = (match.group(1))
@@ -207,34 +212,35 @@ class MailManager():
 
             return False
 
-    def getMailBody(self, msg):
+    def getMailBody(self, mail_item):
         """ Print mail body. """
+        
+        mail_file = self.mailItemToMailFile(mail_item)
+
+
         if sys.platform == 'win32':
-            if isinstance(msg, str):
-                msg = self.getMsgFromGlobalPath(msg)
-            return msg.Body
+            return mail_file.Body
         
         if sys.platform == 'linux':
-            msg = email.message_from_bytes(msg[0][1])
 
             # Check if the email is multipart
-            if msg.is_multipart():
-                for part in msg.walk():
+            if mail_file.is_multipart():
+                for part in mail_file.walk():
                     # Check each part for HTML content
                     if part.get_content_type() == 'text/html':
                         return part.get_payload(decode=True)
 
             else:
                 # For non-multipart emails, check if the content type is HTML
-                if msg.get_content_type() == 'text/html':
-                    return msg.get_payload(decode=True)
+                if mail_file.get_content_type() == 'text/html':
+                    return mail_file.get_payload(decode=True)
 
 
     def getEmailAddress(self, msg) -> str:
         """ Return the email adress. """
         if sys.platform == 'win32':
             if isinstance(msg, str):
-                msg = self.getMsgFromGlobalPath(msg)
+                msg = self.mailItemToMailFile(msg)
 
             if msg.Class==43:
                 if msg.SenderEmailType=='EX':
@@ -252,7 +258,7 @@ class MailManager():
         """ Return the senders name. """
         if sys.platform == 'win32':
             if isinstance(msg, str):
-                msg = self.getMsgFromGlobalPath(msg)         
+                msg = self.mailItemToMailFile(msg)         
             
             return str(msg.Sender)
      
@@ -266,30 +272,45 @@ class MailManager():
 
             return self.mailToName(msg.get('From'))
 
-        
-    def getMsgFromGlobalPath(self, temp_folder_global_path: str):
+        mailItemToMailFile
+    def mailItemToMailFile(self, mail_item):
         ''' Return Msg from global path to mail.msg. '''
 
-        msg_file_global_path = self.getMailGlobalPathFromFolder(temp_folder_global_path)
-        assert os.path.exists(msg_file_global_path), f'Could not find {msg_file_global_path}'
+        if isinstance(mail_item, str):
+            mail_file_global_path = self.getMailGlobalPathFromFolder(mail_item)
+
         if sys.platform == 'win32':
-            return self.outlook.OpenSharedItem(msg_file_global_path)
+            # if isinstance(mail_item, TODO: MCROSOFTFIEL):
+            return self.outlook.OpenSharedItem(mail_file_global_path)
+
         if sys.platform == 'linux':
-            with open(msg_file_global_path, 'rb') as file:
-                msg = file
+            if isinstance(mail_item, email.message.Message):
+                return mail_item
+            elif isinstance(mail_item, list):
+                return email.message_from_bytes(mail_item[0][1])
 
-            return msg
+            with open(mail_file_global_path, 'rb') as file:
+                return email.message_from_binary_file(file, policy=default)
 
-    def getMailGlobalPathFromFolder(self, folder_global_path: str):
+        raise ValueError('Could not parse mail_item of type {type(mail_item)} to a mail_file')
+
+
+    def getMailGlobalPathFromFolder(self, folder_global_path: str) -> str:
         ''' Return the global path toward a mail file in a folder. '''
 
         if sys.platform == 'win32':
-            msg_file_global_path = os.path.join(folder_global_path, 'mail.msg')
+            if folder_global_path.endswith('mail.msg'):
+                mail_file_global_path = folder_global_path
+            else:
+                mail_file_global_path = os.path.join(folder_global_path, 'mail.msg')
         if sys.platform == 'linux':
-            msg_file_global_path = os.path.join(folder_global_path, 'mail.eml')
+            if folder_global_path.endswith('mail.eml'):
+                mail_file_global_path = folder_global_path
+            else:
+                mail_file_global_path = os.path.join(folder_global_path, 'mail.eml')
 
-        if os.path.exists(msg_file_global_path):
-            return msg_file_global_path
+        if os.path.exists(mail_file_global_path):
+            return mail_file_global_path
         else:
             return None
     
@@ -336,7 +357,7 @@ class MailManager():
         ''' Save mail in a folder. '''
         if sys.platform == 'win32': 
             if isinstance(msg, str):
-                msg = self.getMsgFromGlobalPath(msg)
+                msg = self.mailItemToMailFile(msg)
             msg.saveAs(os.path.join(job_folder_global_path, 'mail.msg'))
 
         if sys.platform == 'linux':
@@ -355,7 +376,7 @@ class MailManager():
 
 
     def replyToEmailFromFileUsingTemplate(self,
-                                        msg_file_path: str,
+                    mail_item, # mail file, path toward folder containing mail file or mail file global path
                                         template_file_name: str,
                                         template_content: dict,
                                         popup_reply=True):
@@ -374,8 +395,10 @@ class MailManager():
             # temp_msg_file_path = os.path.join(temp_dir_global_path, temp_msg_file_name)
             # copy_item(msg_file_path, temp_msg_file_path)
             # msg = self.outlook.OpenSharedItem(temp_msg_file_path)
-
-            msg = self.outlook.OpenSharedItem(msg_file_path)
+            if isinstance(mail_item, str):
+                msg = self.mailItemToMailFile(msg)
+            else:
+                msg = mail_item
 
             # load recipient_name in template
             template_content["{sender_name}"] = msg.Sender
@@ -397,10 +420,12 @@ class MailManager():
         if sys.platform == 'linux':
 
             # assume msg_file_path is a path toward the .eml file
-            with open(msg_file_path, 'rb') as file:
-                msg = email.message_from_binary_file(file, policy=default)
+            if isinstance(mail_item, str):
+                eml = self.mailItemToMailFile(mail_item)
+            else:
+                eml = mail_item
 
-            original_sender_mail_long = msg.get('From')
+            original_sender_mail_long = eml.get('From')
             original_sender_mail = parseaddr(original_sender_mail_long)[1]
             sender_name = self.mailToName(str(original_sender_mail_long))
 
@@ -413,12 +438,12 @@ class MailManager():
                 html_content = html_content.replace(key, str(value))
 
             # Create the reply messageI
-            reply_msg = MIMEMultipart("alternative")
-            reply_msg["Subject"] = "Re: " + msg.get("Subject", "")
-            reply_msg["From"] = formataddr((self.gv['MAIL_NAME'], self.gv['MAIL_ADRESS']))
-            reply_msg["To"] = original_sender_mail
-            reply_msg["In-Reply-To"] = msg.get('Message-ID')
-            reply_msg.attach(MIMEText(html_content, "html"))
+            reply_mail = MIMEMultipart("alternative")
+            reply_mail["Subject"] = "Re: " + eml.get("Subject", "")
+            reply_mail["From"] = formataddr((self.gv['MAIL_NAME'], self.gv['MAIL_ADRESS']))
+            reply_mail["To"] = original_sender_mail
+            reply_mail["In-Reply-To"] = eml.get('Message-ID')
+            reply_mail.attach(MIMEText(html_content, "html"))
 
             context = ssl.create_default_context()
 
@@ -426,7 +451,7 @@ class MailManager():
             with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
                 server.starttls(context=context)
                 server.login(self.gv['MAIL_ADRESS'], self.gv['MAIL_PASSWORD'])
-                server.send_message(msg)
+                server.send_message(reply_mail)
 
     def mailToName(self, mail_name: str) -> str:
         """ Convert mail in form first_name last_name <mail@adres.com> to a more friendly name. """

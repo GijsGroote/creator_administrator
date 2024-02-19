@@ -244,10 +244,11 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
         self.mail_manager.saveMail(msg, self.temp_job_folder_global_path)
 
-        ThreadedMailManager(parent_widget=self, gv=gv).startUnclearMailWorker(
+        ThreadedMailManager(parent_widget=self, gv=gv).startMailWorker(
                 success_message=f'Unclear request mail send to {self.temp_sender_name}',
                 error_message=f'No unclear request mail was send to {self.temp_sender_name}',
-                job_folder_global_path=copy.copy(self.temp_job_folder_global_path),
+                mail_type='UNCLEAR',
+                mail_item=copy.copy(self.temp_job_folder_global_path),
                 template_content= {})
                 
         self.skipMail()
@@ -270,12 +271,13 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         for attachment_dict in self.temp_attachments_dict.values():
             self.mail_manager.saveAttachment(attachment_dict['attachment'], attachment_dict['file_global_path'])
         
-        ThreadedMailManager(parent_widget=self, gv=gv).startReceivedMailWorker(
+        ThreadedMailManager(parent_widget=self, gv=gv).startMailWorker(
                 success_message=f'Job request receieved mail send to {self.temp_sender_name}',
                 error_message=f'No job request receieved mail send to {self.temp_sender_name}',
-                job_folder_global_path=copy.copy(self.temp_job_folder_global_path),
-                template_content= {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
-                msg=msg)
+                mail_type='RECEIVED',
+                # mail_item=msg,
+                mail_item=copy.copy(self.temp_job_folder_global_path),
+                template_content= {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()})
                 
         TimedMessage(gv, self, text=f'Laser job {self.temp_job_name} created')
 

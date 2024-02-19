@@ -53,6 +53,9 @@ class SettingsQDialog(QDialog):
         if gv['MOVE_MAILS_TO_VERWERKT_FOLDER']:
             self.moveMailToVerwerktCheckBox.setChecked(True)
 
+        if gv['SEND_MAILS_ON_SEPERATE_THREAD']:
+            self.sendMailThreadedCheckBox.setChecked(True)
+
         for template_name, widget_button in [('RECEIVED_MAIL_TEMPLATE', self.selectReceivedTemplateButton), 
                                              ('UNCLEAR_MAIL_TEMPLATE', self.selectUnclearTemplateButton), 
                                              ('FINISHED_MAIL_TEMPLATE', self.selectFinishedTemplateButton), 
@@ -157,7 +160,9 @@ class SettingsQDialog(QDialog):
                                      ('DISPLAY_TEMP_MESSAGES', self.dispTempMessageCheckBox), 
                                      ('ONLY_UNREAD_MAIL', self.onlyUnreadMailCheckBox), 
                                      ('MOVE_MAILS_TO_VERWERKT_FOLDER', self.moveMailToVerwerktCheckBox), 
+                                     ('SEND_MAILS_ON_SEPERATE_THREAD', self.sendMailThreadedCheckBox),
                                      ('DARK_MODE', self.darkModeCheckBox)]:
+
             settings_dict[checkbox_name] =  'true' if widget.isChecked() else 'false'
 
         for template_name, widget_button in [('RECEIVED_MAIL_TEMPLATE', self.selectReceivedTemplateButton), 

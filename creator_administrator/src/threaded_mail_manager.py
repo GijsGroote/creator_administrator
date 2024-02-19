@@ -31,82 +31,127 @@ class ThreadedMailManager():
     These MailWorker functions use the send <mail_type> Mail functions
     '''
 
-    # TODO: many mails here could be a single function + additional arguement
-    def startReceivedMailWorker(self,
-                            success_message: str,
-                            error_message: str,
-                            job_folder_global_path: str,
-                            template_content: dict,
-                            msg):
-        
-            self.success_message = success_message
-            self.error_message = error_message
-            self.msg = msg
-
-            if self.gv['SEND_MAILS_ON_SEPERATE_THREAD']: 
-
-                self.worker = Worker(self.sendReceivedMail,
-                                     job_folder_global_path=job_folder_global_path,
-                                     template_content=template_content)
-
-                self.worker.signals.finished.connect(self.displaySuccessMessage)
-                self.worker.signals.error.connect(self.handleMailError)
-
-                self.thread_pool.start(self.worker)
-
-            else:
-
-                try:
-                    self.sendReceivedMail(job_folder_global_path=job_folder_global_path,
-                                      template_content=template_content)
-                    self.displaySuccessMessage()
-
-                except Exception as exc:
-                    self.handleMailError(exc)
-
-    def startUnclearMailWorker(self,
-                            success_message: str,
-                            error_message: str,
-                            job_folder_global_path: str,
-                            template_content: dict):        
+    def startMailWorker(self,
+                        success_message: str,
+                        error_message: str,
+                        mail_type: str,
+                        mail_item,
+                        template_content: dict):
 
         self.success_message = success_message
         self.error_message = error_message
 
-        if True: 
-            self.sendUnclearMail(job_folder_global_path=job_folder_global_path,
-                                  template_content=template_content)
-
+        if mail_type == 'RECEIVED':
+            mail_function = self.sendReceivedMail
+        elif mail_type == 'UNCLEAR':
+            mail_function = self.sendUnclearMail
+        elif mail_type == 'FINISHED':
+            mail_function = self.sendFinishedMail
+        elif mail_type == 'DECLINED':
+            mail_function = self.sendDeclinedMail
         else:
-            self.worker = Worker(self.sendUnclearMail,
-                                 job_folder_global_path=job_folder_global_path,
+            raise ValueError(f'unknown mail_type: {mail_type}')
+
+
+        if self.gv['SEND_MAILS_ON_SEPERATE_THREAD']: 
+
+            self.worker = Worker(mail_function,
+                                 mail_item=mail_item,
                                  template_content=template_content)
 
             self.worker.signals.finished.connect(self.displaySuccessMessage)
             self.worker.signals.error.connect(self.handleMailError)
+
             self.thread_pool.start(self.worker)
 
-    def startFinishedMailWorker(self,
-                            success_message: str,
-                            error_message: str,
-                            job_folder_global_path: str,
-                            template_content: dict):        
-        self.success_message = success_message
-        self.error_message = error_message
+        else:
+            try:
+                mail_function(mail_item=mail_item,
+                          template_content=template_content)
+                self.displaySuccessMessage()
 
-        self.worker = Worker(self.sendFinishedMail,
-                             job_folder_global_path=job_folder_global_path,
-                             template_content=template_content)
+            except Exception as exc:
+                self.handleMailError(exc)
 
-        self.worker.signals.finished.connect(self.displaySuccessMessage)
-        self.worker.signals.error.connect(self.handleMailError)
-        self.thread_pool.start(self.worker)
+
+    # TODO: many mails here could be a single function + additional arguement
+    # def startReceivedMailWorker(self,
+    #                         success_message: str,
+    #                         error_message: str,
+    #                         job_folder_global_path: str,
+    #                         template_content: dict,
+    #                         msg):
+        
+    #         self.success_message = success_message
+    #         self.error_message = error_message
+    #         self.msg = msg
+
+    #         if self.gv['SEND_MAILS_ON_SEPERATE_THREAD']: 
+
+    #             self.worker = Worker(self.sendReceivedMail,
+    #                                  job_folder_global_path=job_folder_global_path,
+    #                                  template_content=template_content)
+
+    #             self.worker.signals.finished.connect(self.displaySuccessMessage)
+    #             self.worker.signals.error.connect(self.handleMailError)
+
+    #             self.thread_pool.start(self.worker)
+
+    #         else:
+
+    #             try:
+    #                 self.sendReceivedMail(job_folder_global_path=job_folder_global_path,
+    #                                   template_content=template_content)
+    #                 self.displaySuccessMessage()
+
+    #             except Exception as exc:
+    #                 self.handleMailError(exc)
+
+    # def startUnclearMailWorker(self,
+    #                         success_message: str,
+    #                         error_message: str,
+    #                         job_folder_global_path: str,
+    #                         template_content: dict):        
+
+    #     self.success_message = success_message
+    #     self.error_message = error_message
+
+    #     if self.gv['SEND_MAILS_ON_SEPERATE_THREAD']: 
+    #         self.worker = Worker(self.sendUnclearMail,
+    #                              job_folder_global_path=job_folder_global_path,
+    #                              template_content=template_content)
+
+    #         self.worker.signals.finished.connect(self.displaySuccessMessage)
+    #         self.worker.signals.error.connect(self.handleMailError)
+    #         self.thread_pool.start(self.worker)
+
+    #     else:
+    #         self.sendUnclearMail(job_folder_global_path=job_folder_global_path,
+    #                               template_content=template_content)
+
+    # def startFinishedMailWorker(self,
+    #                         success_message: str,
+    #                         error_message: str,
+    #                         job_folder_global_path: str,
+    #                         template_content: dict):        
+    #     self.success_message = success_message
+    #     self.error_message = error_message
+
+    #     self.worker = Worker(self.sendFinishedMail,
+    #                          job_folder_global_path=job_folder_global_path,
+    #                          template_content=template_content)
+
+    #     self.worker.signals.finished.connect(self.displaySuccessMessage)
+    #     self.worker.signals.error.connect(self.handleMailError)
+    #     self.thread_pool.start(self.worker)
 
     def startDeclinedMailWorker(self,
                             success_message: str,
                             error_message: str,
-                            job_folder_global_path: str,
+                            mail_item: str,
                             template_content: dict):        
+
+        # TODO: make this threaded or not threaded.
         self.success_message = success_message
         self.error_message = error_message
 
@@ -116,8 +161,9 @@ class ThreadedMailManager():
         
         self.loading_dialog.show()
         self.worker = Worker(self.sendDeclinedMail, 
-                             job_folder_global_path=job_folder_global_path,
+                             mail_item=mail_item,
                              template_content={})
+
         self.worker.signals.finished.connect(self.loading_dialog.accept)
         self.worker.signals.finished.connect(self.displaySuccessMessage)
         self.worker.signals.error.connect(self.loading_dialog.accept)
@@ -125,64 +171,56 @@ class ThreadedMailManager():
         self.thread_pool.start(self.worker)
 
     def sendReceivedMail(self,
-                        job_folder_global_path: str,
+                        mail_item,
                         template_content: dict):
         """ Send a confirmation mail. """
 
         # The MailManager object must be made in the scope of this function. 
         # otherwise Outlook raises an attribute error for an open share com object
         mail_manager = MailManager(self.gv)
-        
-
         mail_manager.replyToEmailFromFileUsingTemplate(
-                                msg_file_path=mail_manager.getMailGlobalPathFromFolder(job_folder_global_path),
+                                mail_item=mail_item,
                                 template_file_name="RECEIVED_MAIL_TEMPLATE",
                                 template_content=template_content,
                                 popup_reply=False)
 
-        mail_manager.moveEmailToVerwerktFolder(msg=self.msg)
+        mail_manager.moveEmailToVerwerktFolder(mail_item=mail_item)
 
     def sendUnclearMail(self,
-                        job_folder_global_path: str,
+                        mail_item,
                         template_content: dict):
 
         # The MailManager object must be made in the scope of this function. 
         # otherwise Outlook raises an attribute error for an open share com object
-        mail_manager = MailManager(self.gv)
-
-        mail_manager.replyToEmailFromFileUsingTemplate(
-                                msg_file_path=mail_manager.getMailGlobalPathFromFolder(job_folder_global_path),
+        MailManager(self.gv).replyToEmailFromFileUsingTemplate(
+                                mail_item=mail_item,
                                 template_file_name="UNCLEAR_MAIL_TEMPLATE",
                                 template_content=template_content,
                                 popup_reply=False)
 
     def sendFinishedMail(self,
-                        job_folder_global_path: str,
+                        mail_item: str,
                         template_content: dict):
         """ Send a job is finished mail. """
         
         # The MailManager object must be made in the scope of this function. 
         # otherwise Outlook raises an attribute error for an open share com object
-        mail_manager = MailManager(self.gv)
-
-        mail_manager.replyToEmailFromFileUsingTemplate(
-                                msg_file_path=mail_manager.getMailGlobalPathFromFolder(job_folder_global_path),
+        MailManager(self.gv).replyToEmailFromFileUsingTemplate(
+                                mail_item=mail_item,
                                 template_file_name="FINISHED_MAIL_TEMPLATE",
                                 template_content=template_content,
                                 popup_reply=False)
         
 
     def sendDeclinedMail(self,
-                        job_folder_global_path: str,
+                        mail_item,
                         template_content: dict):
         """ Send a declined mail. """
         
         # The MailManager object must be made in the scope of this function. 
         # otherwise Outlook raises an attribute error for an open share com object
-        mail_manager = MailManager(self.gv)
-
-        mail_manager.replyToEmailFromFileUsingTemplate(
-                                msg_file_path=mail_manager.getMailGlobalPathFromFolder(job_folder_global_path),
+        MailManager(self.gv).replyToEmailFromFileUsingTemplate(
+                                mail_item=mail_item,
                                 template_file_name="DECLINED_MAIL_TEMPLATE",
                                 template_content=template_content,
                                 popup_reply=True)
