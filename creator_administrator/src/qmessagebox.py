@@ -1,26 +1,35 @@
+import time
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 
 class TimedMessage(QMessageBox):
-    ''' Short message that can only be clicked away. 
-    It should not interfere with the main application, it does that anyway...'''
+    ''' Short message that can only be clicked away. '''
 
     def __init__(self, gv: dict, parent: QWidget, text: str, icon=QMessageBox.Icon.Information):
         super().__init__(parent)
 
-        # DISPLAY THE TIMER WOULD BE NICE
+        # DISPLAY THE TIMER WOULD BE NICE, then this should be a QWidget
         if gv['DISPLAY_TEMP_MESSAGES']:
             self.setWindowTitle('')
             self.setText(text)
             self.setIcon(icon)
 
+            # self.progress = QProgressBar(self)
+            # self.progress.setGeometry(200, 80, 250, 20)
+            # self.btn = QPushButton('Download', self)
+            # self.btn.clicked.connect(self.download)
+
+            self.setStandardButtons(QMessageBox.StandardButton.NoButton)
+            QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.exit)
+            QShortcut(QKeySequence(Qt.Key.Key_Enter), self).activated.connect(self.doNothing)
+
+            time_to_close = 4000
             self.timer = QTimer(self)
-            self.timer.setInterval(4000)
+            self.timer.setInterval(time_to_close)
             self.timer.timeout.connect(self.exit)
             self.timer.start()
             self.exec()
-
 
     def moveToTopRightOfScreen(self):
         ''' Move widget to the top right of the screen. '''
@@ -43,6 +52,10 @@ class TimedMessage(QMessageBox):
     def exit(self):
         self.deleteLater() 
         self.close()
+
+    def doNothing(self):
+        ''' Literally do nothing. '''
+        pass
         
     def getMainWidget(self, widget):
         while widget.parent() is not None:

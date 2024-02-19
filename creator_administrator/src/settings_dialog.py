@@ -81,7 +81,7 @@ class SettingsQDialog(QDialog):
             TimedMessage(self.gv, self, 'Settings saved, Restarting Creator Administrator.')
             self.close()
             self.parent().close()
-            subprocess.call("python " + f'"{os.path.join(self.gv['REPO_DIR_HOME'], 'laser/src/laser_app.py')}"', shell=True)
+            subprocess.call("python " + '"'+f'{os.path.join(self.gv["REPO_DIR_HOME"], "laser/src/laser_app.py")}'+'"', shell=True)
 
 
     def validateAll(self) -> bool:

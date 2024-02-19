@@ -12,7 +12,7 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from global_variables import gv
 from src.app import MainWindow
-from src.qmessagebox import InfoQMessageBox, WarningQMessageBox, ErrorQMessageBox
+from src.qmessagebox import InfoQMessageBox, WarningQMessageBox, ErrorQMessageBox, TimedMessage
 from src.worker import Worker
 from src.loading_dialog import LoadingQDialog
 from src.mail_manager import MailManager
@@ -50,6 +50,12 @@ class LaserMainWindow(MainWindow):
         self.editSettingsAction.triggered.connect(self.openEditSettingsDialog)
 
 
+        QShortcut(QKeySequence("Ctrl+H"), self).activated.connect(self.showTimedMessage)
+
+    def showTimedMessage(self):
+        print(f"shwo times messages boyo")
+
+        TimedMessage(gv, self, text='Laser job {self.temp_job_name} created')
 
 
 

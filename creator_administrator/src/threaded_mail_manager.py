@@ -6,6 +6,7 @@ from src.qmessagebox import InfoQMessageBox, WarningQMessageBox, ErrorQMessageBo
 from src.worker import Worker, WorkerSignals
 from src.mail_manager import MailManager
 from src.loading_dialog import LoadingQDialog
+from src.job_tracker import JobTracker
 
 
 class ThreadedMailManager():
@@ -36,10 +37,14 @@ class ThreadedMailManager():
                         error_message: str,
                         mail_type: str,
                         mail_item,
-                        template_content: dict):
+                        template_content: dict,
+                        sender_mail_adress=None,
+                        sender_mail_receive_time=None):
 
         self.success_message = success_message
         self.error_message = error_message
+        self.sender_mail_adress = sender_mail_adress
+        self.sender_mail_receive_time = sender_mail_receive_time
 
         if mail_type == 'RECEIVED':
             mail_function = self.sendReceivedMail
@@ -184,7 +189,11 @@ class ThreadedMailManager():
                                 template_content=template_content,
                                 popup_reply=False)
 
-        mail_manager.moveEmailToVerwerktFolder(mail_item=mail_item)
+        job_tracker = JobTracker(self.gv, self.parent_widget)
+
+
+        mail_manager.moveEmailToVerwerktFolder(sender_mail_adress=self.sender_mail_adress,
+                                               sender_mail_receive_time=self.sender_mail_receive_time)
 
         
 

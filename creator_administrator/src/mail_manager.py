@@ -160,22 +160,23 @@ class MailManager():
         return temp_folder_global_path     
 
 
-    def moveEmailToVerwerktFolder(self, mail_item):
+    def moveEmailToVerwerktFolder(self,
+                                  mail_item=None,
+                                  sender_mail_adress=None,
+                                  sender_mail_receive_time=None):
         """ Move email to verwerkt folder. """
-
-        # TODO: make this work without using mailitemToMAILFIle
-        
-        print(f'type is  {type(mail_item)}')
-
 
         if self.gv['MOVE_MAILS_TO_VERWERKT_FOLDER']:
             if sys.platform == 'win32':
-                if isinstance(mail_item, str):
-                    msg = self.mailItemToMailFile(mail_item)
+                # if isinstance(mail_item, str):
+                #     msg = self.mailItemToMailFile(mail_item)
+                assert sender_mail_adress is not None, 'sender_mail_adress is None'
+                assert sender_mail_receive_time is not None, 'sender_mail_receive_time is None'
                 
                 for message in self.inbox.Items:
-                    if msg.SenderEmailAddress == message.SenderEmailAddress and\
-                        str(msg.ReceivedTime) == str(message.ReceivedTime):
+                    if sender_mail_adress == message.SenderEmailAddress and\
+                        sender_mail_receive_time == str(message.ReceivedTime):
+                            print(f"found the mail to move from {sender_mail_adress}")
                             message.UnRead = False
                             message.Move(self.verwerkt_folder)               
                 
@@ -261,11 +262,19 @@ class MailManager():
         if sys.platform == 'linux':
             return email.message_from_bytes(msg[0][1]).get('From')
         
+    def getSenderMailReceiveTime(self, mail_file) -> str:
+        ''' Return the time a mail was received. '''
+        if sys.platform == 'win32':
+            msg = self.mailItemToMailFile(msg)         
+            return msg.ReceivedTime
+        if sys.platform == 'linux':
+            raise ValueError('this function is not yet implemented')
+
+
     def getSenderName(self, msg) -> str:
         """ Return the senders name. """
         if sys.platform == 'win32':
-            if isinstance(msg, str):
-                msg = self.mailItemToMailFile(msg)         
+            msg = self.mailItemToMailFile(msg)         
             
             return str(msg.Sender)
      

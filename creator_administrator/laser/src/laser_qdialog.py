@@ -256,16 +256,22 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
     def threadedSendReceivedMailAndCreateLaserJob(self):
         """ Create a laser job. """
         msg = self.valid_msgs[self.msg_counter]
-        
+        sender_mail_adress = self.mail_manager.getEmailAddress(msg)
+        sender_mail_receive_time = self.mail_manager.getSenderMailReceiveTime(msg)
+
         self.job_tracker.addJob(self.temp_job_name,
                                 self.temp_sender_name,
                                 self.temp_job_folder_global_path,
-                                self.temp_laser_cut_files_dict)
+                                self.temp_laser_cut_files_dict,
+                                sender_mail_adress=sender_mail_adress,
+                                sender_mail_receive_time=sender_mail_receive_time)
 
         if not os.path.exists(self.temp_job_folder_global_path):
             os.mkdir(self.temp_job_folder_global_path)
 
         self.mail_manager.saveMail(msg, self.temp_job_folder_global_path)
+
+        print(f"is it the mail adres?? {sender_mail_adress} and time? {str(sender_mail_receive_time)}")
 
         # save the attachments
         for attachment_dict in self.temp_attachments_dict.values():
@@ -275,9 +281,10 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
                 success_message=f'Job request receieved mail send to {self.temp_sender_name}',
                 error_message=f'No job request receieved mail send to {self.temp_sender_name}',
                 mail_type='RECEIVED',
-                # mail_item=msg,
                 mail_item=copy.copy(self.temp_job_folder_global_path),
-                template_content= {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()})
+                template_content= {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
+                sender_mail_adress=msg.SenderEmailAddress,
+                sender_mail_receive_time=str(msg.ReceivedTime))
                 
         TimedMessage(gv, self, text=f'Laser job {self.temp_job_name} created')
 

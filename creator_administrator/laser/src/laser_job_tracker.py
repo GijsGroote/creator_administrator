@@ -36,7 +36,14 @@ class LaserJobTracker(JobTracker):
 
         self.job_keys.append(['laserfiles'])
 
-    def addJob(self, job_name: str, sender_name, job_folder_global_path: str, files_dict: dict, status='WACHTRIJ') -> dict:
+    def addJob(self,
+               job_name: str,
+               sender_name,
+               job_folder_global_path: str,
+               files_dict: dict,
+               sender_mail_adress=None,
+               sender_mail_receive_time=None,
+               status='WACHTRIJ') -> dict:
         """ Add a job to the tracker. """
 
         with open(self.tracker_file_path, 'r') as tracker_file:
@@ -50,8 +57,12 @@ class LaserJobTracker(JobTracker):
                         'dynamic_job_name': str(datetime.now().strftime("%d-%m"))+'_'+job_name,
                         'status': status,
                         'created_on_date': str(datetime.now().strftime("%d-%m-%Y")),
-                        'laser_files': files_dict
-                        }
+                        'laser_files': files_dict}
+
+        if sender_mail_adress is not None:
+            add_job_dict['sender_mail_adress'] = sender_mail_adress
+        if sender_mail_receive_time is not None:
+            add_job_dict['sender_mail_receive_time'] = sender_mail_receive_time
 
         tracker_dict[job_name] = add_job_dict
 
