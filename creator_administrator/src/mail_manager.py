@@ -104,7 +104,9 @@ class MailManager():
                         else:
                             n_invalid_mails += 1
                 else:
-                    if self.isMailAValidJobRequest(message):                           
+                    if self.isMailAValidJobRequest(message):    
+                            
+                       
                             valid_msgs.append(self.saveMsgAndAttachmentsInTempFolder(message))
                     else:
                         n_invalid_mails += 1
@@ -280,7 +282,8 @@ class MailManager():
             mail_file_global_path = self.getMailGlobalPathFromFolder(mail_item)
 
         if sys.platform == 'win32':
-            # if isinstance(mail_item, TODO: MCROSOFTFIEL):
+            if isinstance(mail_item, client.CDispatch):
+                return mail_item
             return self.outlook.OpenSharedItem(mail_file_global_path)
 
         if sys.platform == 'linux':
@@ -395,11 +398,9 @@ class MailManager():
             # temp_msg_file_path = os.path.join(temp_dir_global_path, temp_msg_file_name)
             # copy_item(msg_file_path, temp_msg_file_path)
             # msg = self.outlook.OpenSharedItem(temp_msg_file_path)
-            if isinstance(mail_item, str):
-                msg = self.mailItemToMailFile(msg)
-            else:
-                msg = mail_item
-
+            
+            msg = self.mailItemToMailFile(mail_item)
+            
             # load recipient_name in template
             template_content["{sender_name}"] = msg.Sender
 

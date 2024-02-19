@@ -232,7 +232,7 @@ class ThreadedMailManager():
     def handleMailError(self, exc: Exception):
         ''' Handle the mail Error. '''
         assert isinstance(exc, Exception), f'Expected type Exception, received type: {type(exc)}'
-
+        
         if isinstance(exc, ConnectionError):
             ErrorQMessageBox(self.parent_widget, text=f'Connection Error {self.error_message}: {str(exc)}')
         else:
