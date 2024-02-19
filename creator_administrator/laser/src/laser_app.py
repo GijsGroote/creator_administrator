@@ -156,9 +156,8 @@ class LaserMainWindow(MainWindow):
 
     def openEditSettingsDialog(self):
         ''' Open dialog to edit the settings. '''
-        if LaserSettingsQDialog(self, gv).exec() == 1:
-            # restart application
-            print(f"restart")
+        LaserSettingsQDialog(self, gv).exec()
+
 
 
     def refreshAllWidgets(self):
