@@ -26,7 +26,10 @@ class JobTracker:
                                         "job_log_backup.json")
 
     @abc.abstractmethod
-    def addJob(self, job_name: str, main_folder: str, files_dict: dict) -> dict:
+    def addJob(self,
+               job_name: str,
+               main_folder: str,
+               files_dict: dict) -> dict:
         """ Add a job to the tracker. """
 
     @abc.abstractmethod
