@@ -49,7 +49,7 @@ class LaserMainWindow(MainWindow):
 
         self.editSettingsAction.triggered.connect(self.openEditSettingsDialog)
 
-
+        # Delete this and showTimedMessage as well
         QShortcut(QKeySequence("Ctrl+H"), self).activated.connect(self.showTimedMessage)
 
     def showTimedMessage(self):

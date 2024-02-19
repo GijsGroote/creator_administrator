@@ -96,6 +96,8 @@ class MailManager():
             temp_folder_global_path = os.path.join(self.gv['DATA_DIR_HOME'], 'TEMP')
             delete_directory_content(temp_folder_global_path)
 
+
+
             for message in self.inbox.Items:
                 if self.gv['ONLY_UNREAD_MAIL']:
                     if message.UnRead:
@@ -265,8 +267,9 @@ class MailManager():
     def getSenderMailReceiveTime(self, mail_file) -> str:
         ''' Return the time a mail was received. '''
         if sys.platform == 'win32':
-            msg = self.mailItemToMailFile(msg)         
-            return msg.ReceivedTime
+            msg = self.mailItemToMailFile(mail_file)       
+            print(str(msg.ReceivedTime))  
+            return str(msg.ReceivedTime)
         if sys.platform == 'linux':
             raise ValueError('this function is not yet implemented')
 
@@ -373,8 +376,7 @@ class MailManager():
     def saveMail(self, msg, job_folder_global_path: str):
         ''' Save mail in a folder. '''
         if sys.platform == 'win32': 
-            if isinstance(msg, str):
-                msg = self.mailItemToMailFile(msg)
+            msg = self.mailItemToMailFile(msg)
             msg.saveAs(os.path.join(job_folder_global_path, 'mail.msg'))
 
         if sys.platform == 'linux':
