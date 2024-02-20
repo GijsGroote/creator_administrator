@@ -821,7 +821,7 @@ Inside this mail template:
          </widget>
         </item>
         <item row="2" column="2">
-         <widget class="QCheckBox" name="dispTempMessageCheckBox_2">
+         <widget class="QCheckBox" name="emptyTodoDirCheckBox">
           <property name="font">
            <font>
             <pointsize>11</pointsize>
