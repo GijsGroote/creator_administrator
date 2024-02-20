@@ -74,6 +74,7 @@ with open(settings_file_path, 'r') as settings_file:
     gv['ONLY_UNREAD_MAIL'] = True if gv_data['ONLY_UNREAD_MAIL'] == 'true' else False
     gv['MOVE_MAILS_TO_VERWERKT_FOLDER'] = True if gv_data['MOVE_MAILS_TO_VERWERKT_FOLDER'] == 'true' else False
     gv['SEND_MAILS_ON_SEPERATE_THREAD'] =  True if gv_data['SEND_MAILS_ON_SEPERATE_THREAD'] == 'true' else False
+    gv['EMPTY_TODO_DIR_BEFORE_EXPORT'] =  True if gv_data['EMPTY_TODO_DIR_BEFORE_EXPORT'] == 'true' else False
     gv['DISPLAY_TEMP_MESSAGES'] = True if gv_data['DISPLAY_TEMP_MESSAGES'] == 'true' else False
     gv['DISPLAY_WARNING_MESSAGES'] = True if gv_data['DISPLAY_WARNING_MESSAGES'] == 'true' else False
 

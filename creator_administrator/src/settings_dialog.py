@@ -56,6 +56,9 @@ class SettingsQDialog(QDialog):
         if gv['SEND_MAILS_ON_SEPERATE_THREAD']:
             self.sendMailThreadedCheckBox.setChecked(True)
 
+        if gv['EMPTY_TODO_DIR_BEFORE_EXPORT']:
+            self.emptyTodoDirCheckBox.setChecked(True)
+
         for template_name, widget_button in [('RECEIVED_MAIL_TEMPLATE', self.selectReceivedTemplateButton), 
                                              ('UNCLEAR_MAIL_TEMPLATE', self.selectUnclearTemplateButton), 
                                              ('FINISHED_MAIL_TEMPLATE', self.selectFinishedTemplateButton), 
@@ -161,6 +164,7 @@ class SettingsQDialog(QDialog):
                                      ('ONLY_UNREAD_MAIL', self.onlyUnreadMailCheckBox), 
                                      ('MOVE_MAILS_TO_VERWERKT_FOLDER', self.moveMailToVerwerktCheckBox), 
                                      ('SEND_MAILS_ON_SEPERATE_THREAD', self.sendMailThreadedCheckBox),
+                                     ('EMPTY_TODO_DIR_BEFORE_EXPORT', self.emptyTodoDirCheckBox),
                                      ('DARK_MODE', self.darkModeCheckBox)]:
 
             settings_dict[checkbox_name] =  'true' if widget.isChecked() else 'false'
