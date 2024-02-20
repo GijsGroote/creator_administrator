@@ -207,13 +207,11 @@ class OptionsQPushButton(JobsQPushButton):
     
     def copyLaserFilesTo(self):
         '''Copy the laser files from a job to a specified folder. '''
-        print(self.parent().objectName())
-        print(self.parent().parent().objectName())
 
-        delete_directory_content(target_folder_global_path)
         target_folder_global_path = gv['TODO_DIR_HOME']
+        delete_directory_content(target_folder_global_path)
 
-        if self.parent().parent().objectName == 'wachtrijMateriaalQStackedWidget':
+        if self.parent().parent().objectName() == 'wachtrijMateriaalQStackedWidget':
             material_name = self.getCurrentItemName()
             material, thickness = split_material_name(material_name)
             dxfs_names_and_global_paths = LaserJobTracker(self).getDXFsAndPaths(material, thickness)
