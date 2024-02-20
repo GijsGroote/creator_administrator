@@ -60,9 +60,9 @@ class LaserJobTracker(JobTracker):
                         'laser_files': files_dict}
 
         if sender_mail_adress is not None:
-            add_job_dict['sender_mail_adress'] = sender_mail_adress
+            add_job_dict['sender_mail_adress'] = str(sender_mail_adress)
         if sender_mail_receive_time is not None:
-            add_job_dict['sender_mail_receive_time'] = sender_mail_receive_time
+            add_job_dict['sender_mail_receive_time'] = str(sender_mail_receive_time)
 
         tracker_dict[job_name] = add_job_dict
 

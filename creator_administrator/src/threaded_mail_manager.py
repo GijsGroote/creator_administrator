@@ -195,7 +195,6 @@ class ThreadedMailManager():
         mail_manager.moveEmailToVerwerktFolder(sender_mail_adress=self.sender_mail_adress,
                                                sender_mail_receive_time=self.sender_mail_receive_time)
 
-        
 
     def sendUnclearMail(self,
                         mail_item,
@@ -203,11 +202,14 @@ class ThreadedMailManager():
 
         # The MailManager object must be made in the scope of this function. 
         # otherwise Outlook raises an attribute error for an open share com object
-        MailManager(self.gv).replyToEmailFromFileUsingTemplate(
+        mail_manager = MailManager(self.gv)
+        mail_manager.replyToEmailFromFileUsingTemplate(
                                 mail_item=mail_item,
                                 template_file_name="UNCLEAR_MAIL_TEMPLATE",
                                 template_content=template_content,
                                 popup_reply=False)
+        mail_manager.moveEmailToVerwerktFolder(sender_mail_adress=self.sender_mail_adress,
+                                               sender_mail_receive_time=self.sender_mail_receive_time)
 
     def sendFinishedMail(self,
                         mail_item: str,

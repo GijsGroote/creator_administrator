@@ -23,14 +23,11 @@ class MainWindow(QMainWindow):
         self.reportaBugAction.triggered.connect(partial(webbrowser.open, 'https://github.com/GijsGroote/creator_administrator/issues'))
         self.actionAbout.triggered.connect(self.openAboutDialog)
 
+        QShortcut(QKeySequence('Ctrl+Q'), self).activated.connect(self.close)
+    
 
     def keyPressEvent(self, event):
         ''' Handle shortcuts on main window. '''
-
-        # close application on 'q' press
-        if isinstance(event, QKeyEvent):
-            if event.key() == Qt.Key.Key_Q:
-                self.close()
 
         # go through GUI structure to call the itemEnterPressed
         # function the currenlty displayed item

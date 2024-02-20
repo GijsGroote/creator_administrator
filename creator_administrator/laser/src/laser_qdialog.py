@@ -235,22 +235,17 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
     def sendUnclearRequestMailJob(self):
         ''' Send a mail asking for the material, thickness and amount. '''
 
-        # save mail in TEMP folder
         msg = self.valid_msgs[self.msg_counter]
-        self.temp_job_folder_global_path = os.path.join(gv['DATA_DIR_HOME'], 'TEMP', self.temp_job_name)
-
-        if not os.path.exists(self.temp_job_folder_global_path):
-            os.mkdir(self.temp_job_folder_global_path)
-
-        self.mail_manager.saveMail(msg, self.temp_job_folder_global_path)
 
         ThreadedMailManager(parent_widget=self, gv=gv).startMailWorker(
                 success_message=f'Unclear request mail send to {self.temp_sender_name}',
                 error_message=f'No unclear request mail was send to {self.temp_sender_name}',
                 mail_type='UNCLEAR',
-                mail_item=copy.copy(self.temp_job_folder_global_path),
-                template_content= {})
-                
+                mail_item=msg,
+                template_content= {},
+                sender_mail_adress=self.mail_manager.getEmailAddress(msg),
+                sender_mail_receive_time=self.mail_manager.getSenderMailReceiveTime(msg))
+        
         self.skipMail()
 
     def threadedSendReceivedMailAndCreateLaserJob(self):
@@ -271,8 +266,6 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
         self.mail_manager.saveMail(msg, self.temp_job_folder_global_path)
 
-        print(f"is it the mail adres?? {sender_mail_adress} and time? {str(sender_mail_receive_time)}")
-
         # save the attachments
         for attachment_dict in self.temp_attachments_dict.values():
             self.mail_manager.saveAttachment(attachment_dict['attachment'], attachment_dict['file_global_path'])
@@ -281,10 +274,11 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
                 success_message=f'Job request receieved mail send to {self.temp_sender_name}',
                 error_message=f'No job request receieved mail send to {self.temp_sender_name}',
                 mail_type='RECEIVED',
-                mail_item=copy.copy(self.temp_job_folder_global_path),
+                # mail_item=copy.copy(self.temp_job_folder_global_path),
+                mail_item=msg,
                 template_content= {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
-                sender_mail_adress=msg.SenderEmailAddress,
-                sender_mail_receive_time=str(msg.ReceivedTime))
+                sender_mail_adress=sender_mail_adress,
+                sender_mail_receive_time=sender_mail_receive_time)
                 
         TimedMessage(gv, self, text=f'Laser job {self.temp_job_name} created')
 
