@@ -2,11 +2,12 @@ import os
 import abc
 from typing import List, Tuple
 import re
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QKeySequence
+from PyQt6.QtCore import *
+from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 
 from src.directory_functions import open_file, open_folder
+from global_variables import gv
 from convert import split_material_name
 
 
@@ -93,6 +94,14 @@ class JobContentQListWidget(ContentQListWidget):
                 item.setText(file)
                 item.setData(1, os.path.join(
                     job_dict['job_folder_global_path'], file))
+                
+                # check if it is a laser file 
+                for laser_file_dict in [val for key,val in job_dict['laser_files'].items() if file in key]:
+                    if laser_file_dict['done']:
+                        item.setBackground(QColor(gv["GOOD_COLOR_HEX"]))
+                    else:
+                        item.setBackground(QColor(gv["BAD_COLOR_HEX"]))
+
                 self.addItem(item)
 
 
@@ -139,12 +148,18 @@ class MaterialContentQListWidget(ContentQListWidget):
 
         material, thickness = split_material_name(material_name)
 
-        dxfs_names_and_global_paths = LaserJobTracker(self).getDXFsAndPaths(material, thickness)
+        laser_file_info_list = LaserJobTracker(
+                self).getLaserFilesWithMaterialThicknessInfo(material, thickness)
 
-        for (dxf_name, dxf_global_path) in dxfs_names_and_global_paths:
+        for (dxf_name, dxf_global_path, done) in laser_file_info_list:
 
             item = QListWidgetItem()
             item.setText(dxf_name)
             item.setData(1, dxf_global_path)
+            if done:
+                item.setBackground(QColor(gv["GOOD_COLOR_HEX"]))
+            else:
+                item.setBackground(QColor(gv["BAD_COLOR_HEX"]))
+
             self.addItem(item)
 

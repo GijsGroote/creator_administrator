@@ -103,6 +103,8 @@ with open(settings_file_path, 'r') as settings_file:
                     'laser/email_templates', 'DEFAULT_'+mail_template+'.html'))
 
 
+gv['GOOD_COLOR_HEX'] = '#7fc97f'
+gv['BAD_COLOR_HEX'] = '#add8e5'
 gv['GOOD_COLOR_RGBA'] = 'rgba(0, 255, 0, 0.4)'
 gv['BAD_COLOR_RGBA'] = 'rgba(255, 0, 0, 0.4)'
 

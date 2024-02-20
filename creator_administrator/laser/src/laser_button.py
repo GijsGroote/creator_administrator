@@ -136,8 +136,12 @@ class OptionsQPushButton(JobsQPushButton):
         self.menu = QMenu()
 
         self.object_name = self.objectName()
-        self.menu.addAction('Open in File Explorer', self.openInFileExplorer)
-        self.menu.addAction('Delete Job', self.deleteJob)
+
+
+        copy_todo_action = self.menu.addAction('Copy Files to TODO folder', self.copyLaserFilesTo)
+        copy_todo_action.setToolTip('Shortcut: Ctrl+T')
+        QShortcut(QKeySequence('Ctrl+T'), self).activated.connect(self.copyLaserFilesTo)
+        self.menu.setToolTipsVisible(True)
 
         # initialize  
         self.objectNameChanged.connect(self.storeObjectNameInit)
@@ -145,18 +149,16 @@ class OptionsQPushButton(JobsQPushButton):
     def storeObjectNameInit(self):
         ''' store the object name and initialize. '''
         self.object_name = self.objectName()
-        copy_todo_action = self.menu.addAction('Copy Files to TODO folder', self.copyLaserFilesTo)
-        copy_todo_action.setToolTip('Shortcut: Ctrl+T')
-        QShortcut(QKeySequence('Ctrl+T'), self).activated.connect(self.copyLaserFilesTo)
-        self.menu.setToolTipsVisible(True)
-
 
 
         if self.object_name == 'allJobsOptionsQPushButton':
             self.menu.addAction('Move to Wachtrij', self.moveJobToWachtrij)
+            self.menu.addAction('Open in File Explorer', self.openInFileExplorer)
+            self.menu.addAction('Delete Job', self.deleteJob)
                         
         elif self.object_name == 'wachtrijOptionsQPushButton':
-            pass
+            self.menu.addAction('Open in File Explorer', self.openInFileExplorer)
+            self.menu.addAction('Delete Job', self.deleteJob)
 
         elif self.object_name == 'wachtrijMateriaalOptionsQPushButton':
             pass
@@ -164,10 +166,15 @@ class OptionsQPushButton(JobsQPushButton):
         elif self.object_name == 'verwerktOptionsQPushButton':
             self.menu.addAction('Move to Wachtrij', self.moveJobToWachtrij)
             self.menu.addAction('Move to Afgekeurd', self.moveJobToAfgekeurd)
+            self.menu.addAction('Open in File Explorer', self.openInFileExplorer)
+            self.menu.addAction('Delete Job', self.deleteJob)
+
 
         elif self.object_name == 'afgekeurdOptionsQPushButton':
             self.menu.addAction('Move to Wachtrij', self.moveJobToWachtrij)
             self.menu.addAction('Move to Verwerkt', self.moveJobToVerwerkt)
+            self.menu.addAction('Open in File Explorer', self.openInFileExplorer)
+            self.menu.addAction('Delete Job', self.deleteJob)
 
         else:
             raise ValueError(f'could not identify {self.object_name}')
@@ -193,7 +200,8 @@ class OptionsQPushButton(JobsQPushButton):
         self.refreshAllQListWidgets()
 
     def openInFileExplorer(self):
-        job_folder_global_path = self.getJobFolderGlobalPath()
+        job_folder_global_path = LaserJobTracker(self).getJobDict(
+                self.getCurrentItemName())['job_folder_global_path']
         open_folder(job_folder_global_path)
 
     def deleteJob(self):
@@ -201,10 +209,6 @@ class OptionsQPushButton(JobsQPushButton):
         LaserJobTracker(self).deleteJob(job_name)
         self.refreshAllQListWidgets()
 
-    def getJobFolderGlobalPath(self):
-        job_name = self.getCurrentItemName()
-        return LaserJobTracker(self).getJobDict(job_name)['job_folder_global_path']
-    
     def copyLaserFilesTo(self):
         '''Copy the laser files from a job to a specified folder. '''
 
@@ -227,21 +231,5 @@ class OptionsQPushButton(JobsQPushButton):
                 source_item_global_path = file_dict['file_global_path']
                 target_item_global_path = os.path.join(target_folder_global_path, file_key)
                 copy_item(source_item_global_path, target_item_global_path)
-
-        TimedMessage(gv=gv, parent=self, text='Copied Files to TODO folder')
-
-    def copyMaterialWachtrijFilesTo(self):
-        ''' Copy the dxf files in wachtrij to a specified folder. '''
-
-        material_name = self.getCurrentItemName()
-        material, thickness = split_material_name(material_name)
-        dxfs_names_and_global_paths = LaserJobTracker(self).getDXFsAndPaths(material, thickness)
-        target_folder_global_path = gv['TODO_DIR_HOME']
-
-        if gv['EMPTY_TODO_DIR_BEFORE_EXPORT']:
-            delete_directory_content(target_folder_global_path)
-
-        for file_name, file_global_path in dxfs_names_and_global_paths:
-            copy_item(file_global_path, os.path.join(target_folder_global_path, file_name))
 
         TimedMessage(gv=gv, parent=self, text='Copied Files to TODO folder')
