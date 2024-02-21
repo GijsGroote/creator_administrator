@@ -9,6 +9,7 @@ mail_item: openen .msg file or .eml file, or a string (directory path, dir conta
 import os
 import sys
 import re
+import time
 import http.client as httplib
 from typing import Tuple
 
@@ -44,7 +45,6 @@ class MailManager():
 
             self.outlook =  client.Dispatch("Outlook.Application").GetNamespace('MAPI')
             
-            
             try:
                 if gv['MAIL_INBOX_NAME'] == 'Inbox':
                     self.inbox = self.outlook.GetDefaultFolder(6)
@@ -52,9 +52,9 @@ class MailManager():
                     account_name = self.outlook.Session.Accounts.Item(1).DeliveryStore.DisplayName
                     self.inbox = self.outlook.Folders[account_name].Folders[gv['MAIL_INBOX_NAME']]
 
-            except Exception as e:
-                print(f"Error accessing inbox: {e}")
-
+            except Exception as exc:
+                raise exc
+            
             try:
                 self.verwerkt_folder = self.inbox.Parent.Folders.Item("Verwerkt")
             except:
@@ -95,8 +95,6 @@ class MailManager():
 
             temp_folder_global_path = os.path.join(self.gv['DATA_DIR_HOME'], 'TEMP')
             delete_directory_content(temp_folder_global_path)
-
-
 
             for message in self.inbox.Items:
                 if self.gv['ONLY_UNREAD_MAIL']:
@@ -146,12 +144,14 @@ class MailManager():
     
     def saveMsgAndAttachmentsInTempFolder(self, msg) -> str:
         ''' Save Outlook msg and attachments in a temperary folder. '''
-        unique_mail_code = unidecode(self.getEmailAddress(msg)+'_'+str(msg.Size))
+        unique_mail_code = unidecode(self.getEmailAddress(msg)+'_'+str(msg.Size))+'_'+str(time.time())
 
         temp_folder_global_path = os.path.join(self.gv['DATA_DIR_HOME'], 'TEMP', unique_mail_code)
 
-        # create folder       
+        assert not os.path.exists(temp_folder_global_path), f'{temp_folder_global_path} should not yet exist'
+
         os.mkdir(temp_folder_global_path)
+
         # save the msg file
         msg.saveAs(os.path.join(temp_folder_global_path, 'mail.msg'))
 
@@ -178,7 +178,6 @@ class MailManager():
                 for message in self.inbox.Items:
                     if sender_mail_adress == message.SenderEmailAddress and\
                         sender_mail_receive_time == str(message.ReceivedTime):
-                            print(f"found the mail to move from {sender_mail_adress}")
                             message.UnRead = False
                             message.Move(self.verwerkt_folder)               
                 
@@ -223,10 +222,9 @@ class MailManager():
             return False
 
     def getMailBody(self, mail_item):
-        """ Print mail body. """
+        """ Return mail body. """
         
         mail_file = self.mailItemToMailFile(mail_item)
-
 
         if sys.platform == 'win32':
             return mail_file.Body
@@ -268,7 +266,6 @@ class MailManager():
         ''' Return the time a mail was received. '''
         if sys.platform == 'win32':
             msg = self.mailItemToMailFile(mail_file)       
-            print(str(msg.ReceivedTime))  
             return str(msg.ReceivedTime)
         if sys.platform == 'linux':
             raise ValueError('this function is not yet implemented')

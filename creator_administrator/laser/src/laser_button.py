@@ -62,7 +62,7 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
         material_name = self.getCurrentItemName()
         material, thickness = split_material_name(material_name)
 
-        laser_files_info_list = self.job_tracker.getLaserFilesWithMaterialThicknessI(material, thickness)
+        laser_files_info_list = self.job_tracker.getLaserFilesWithMaterialThicknessInfo(material, thickness)
 
         dialog = SelectOptionsQDialog(self, laser_files_info_list)
 
@@ -126,8 +126,7 @@ class AfgekeurdQPushButton(JobsQPushButton):
             ThreadedMailManager(parent_widget=self, gv=gv).startDeclinedMailWorker(
                 success_message=f'Job declined mail send to {sender_name}',
                 error_message=f'No job declined mail send to {sender_name}',
-                mail_item=job_folder_global_path,
-                template_content={})
+                mail_item=job_folder_global_path)
         
 class OptionsQPushButton(JobsQPushButton):
 

@@ -288,6 +288,7 @@ class LaserFilesSelectQDialog(SelectQDialog):
         ui_global_path = os.path.join(gv['REPO_DIR_HOME'], 'laser/ui/select_files_dialog.ui')
         super().__init__(parent, ui_global_path, *args, **kwargs)
         self.filesGlobalPathsQLabel.hide()
+        
 
         self.buttonBox.accepted.connect(self.validate)
 
@@ -367,6 +368,7 @@ class LaserFileInfoQDialog(QDialog):
         assert len(job_name_list) == len(files_global_paths_list),\
             f'length of job name list: {len(job_name_list)} should'\
             f'be equal to the files_global_path_list: {len(files_global_paths_list)}'
+                   
 
         self.job_tracker = LaserJobTracker(self)
         self.job_counter = 0

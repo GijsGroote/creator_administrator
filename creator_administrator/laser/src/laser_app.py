@@ -22,6 +22,7 @@ from laser_settings_dialog import LaserSettingsQDialog
 from laser_qdialog import (
         LaserImportFromMailQDialog, LaserFilesSelectQDialog,
         LaserFolderSelectQDialog, LaserFileInfoQDialog)
+from src.threaded_mail_manager import ThreadedMailManager
 
 # ensure that win32com is imported after creating an executable with pyinstaller
 # from win32com import client
@@ -40,9 +41,11 @@ class LaserMainWindow(MainWindow):
 
         self.refreshAllWidgets()
 
+        
+
 
         # menu bar actions
-        self.importFromMailAction.triggered.connect(self.threadedGetValidMailsFromInbox)
+        self.importFromMailAction.triggered.connect(self.handleNewValidMails)
         self.selectFilesAction.triggered.connect(self.openSelectFilesDialog)
         self.selectFoldersAction.triggered.connect(self.openSelectFolderDialog)
 
@@ -56,54 +59,15 @@ class LaserMainWindow(MainWindow):
     #     print(f"shwo times messages boyo")
 
     #     TimedMessage(gv, self, text='Laser job {self.temp_job_name} created')
-
-
-
-    def threadedGetValidMailsFromInbox(self):
-        ''' Get mails from inbox.
-
-        show loading screen on main thread, 
-        get mails on a seperate thread
-        remove loading screen and handle incoming mails.
-        '''
-
-        self.loading_dialog = LoadingQDialog(self, gv)
-        self.loading_dialog.show()
         
-        get_mail_worker = Worker(self.getNewValidMails)
-        get_mail_worker.signals.finished.connect(self.loading_dialog.accept)
-        get_mail_worker.signals.error.connect(self.loading_dialog.accept)
-        get_mail_worker.signals.error.connect(self.handleMailError)
-        get_mail_worker.signals.result.connect(self.openImportFromMailDialog)
-        self.threadpool.start(get_mail_worker)
 
-    def openImportFromMailDialog(self, data):
-        ''' open import from mail dialog. '''
+    def handleNewValidMails(self):
+        ''' Handle the new mails in the inbox. '''
+        
+        self.threaded_mail_manager = ThreadedMailManager(self, gv, dialog=LaserImportFromMailQDialog)
+        # getValidmails gets mail and triggers openImportFromMailDialog
+        self.threaded_mail_manager.getValidMailsFromInbox()
 
-        valid_msgs, warnings = data
-
-        if len(warnings) != 0:
-            for warning in warnings:
-                WarningQMessageBox(gv, self, text=warning)
-
-        if len(valid_msgs) == 0:
-            InfoQMessageBox(parent=self, text='No new valid job request in mail inbox')
-
-        else:
-            dialog = LaserImportFromMailQDialog(self, valid_msgs)
-            dialog.exec()
-
-        self.refreshAllWidgets()
-
-    def handleMailError(self, exc: Exception):
-        ''' Handle the mail error. '''
-        assert isinstance(exc, Exception), f'Expected type Exception, received type: {type(exc)}'
-
-        if isinstance(exc, ConnectionError):
-            ErrorQMessageBox(self,
-                    text=f'Error: {str(exc)}')
-        else:
-            ErrorQMessageBox(self, text=f'Error Occured: {str(exc)}')
 
     def openSelectFilesDialog(self):
         ''' Open dialog to select multiple files. ''' 
@@ -113,7 +77,8 @@ class LaserMainWindow(MainWindow):
             files_global_paths = dialog.selectFilesButton.files_global_paths
             job_name = dialog.projectNameQLineEdit.text()
 
-            LaserFileInfoQDialog(self, [job_name], [files_global_paths]).exec()
+            if len(files_global_paths) > 0:
+                LaserFileInfoQDialog(self, [job_name], [files_global_paths]).exec()
             
         self.refreshAllWidgets()
 
@@ -132,39 +97,37 @@ class LaserMainWindow(MainWindow):
                 if os.path.isdir(subfolder_global_path):
                     files_in_subfolder_global_paths = []
                     subfolder_contains_laser_file = False
-                    for item in os.listdir(subfolder_global_path):
-                        item_global_path = os.path.join(subfolder_global_path, item)
-                        if os.path.isdir(item_global_path):
-                            WarningQMessageBox(gv, self, text=f'{subfolder_global_path} contains a folder '\
-                                f'{item_global_path} which is skipped' )
-                                
-                            continue
 
-                        if item_global_path.endswith(gv['ACCEPTED_EXTENSIONS']):
-                            files_in_subfolder_global_paths.append(item_global_path)
-                            subfolder_contains_laser_file = True
+                    try:
+                        for item in os.listdir(subfolder_global_path):
+                            item_global_path = os.path.join(subfolder_global_path, item)
+                            if os.path.isdir(item_global_path):
+                                WarningQMessageBox(gv, self, text=f'{subfolder_global_path} contains a folder '\
+                                    f'{item_global_path} which is skipped' )
+                                    
+                                continue
 
-                    if subfolder_contains_laser_file:
-                        folders_global_paths_list.append(files_in_subfolder_global_paths)
-                        jobs_names_list.append(project_name+'_'+os.path.basename(subfolder))
-                    else:
-                        WarningQMessageBox(gv, self, text=f'No laser file found in {subfolder_global_path}'\
-                                f'skip this subfolder')
+                            if item_global_path.endswith(gv['ACCEPTED_EXTENSIONS']):
+                                files_in_subfolder_global_paths.append(item_global_path)
+                                subfolder_contains_laser_file = True
 
-            LaserFileInfoQDialog(self, jobs_names_list, folders_global_paths_list).exec()
+                        if subfolder_contains_laser_file:
+                            folders_global_paths_list.append(files_in_subfolder_global_paths)
+                            jobs_names_list.append(project_name+'_'+os.path.basename(subfolder))
+                        else:
+                            WarningQMessageBox(gv, self, text=f'No laser file found in {subfolder_global_path}'\
+                                    f' skip this subfolder')
+                    except Exception as exc:
+                        ErrorQMessageBox(self, text=f'An Error Occured: {str(exc)}')
+            
+            if len(jobs_names_list) > 0:
+                LaserFileInfoQDialog(self, jobs_names_list, folders_global_paths_list).exec()
 
         self.refreshAllWidgets()
-
-
-    def getNewValidMails(self):
-        ''' Return new valid mails. '''
-        return MailManager(gv).getNewValidMails()
 
     def openEditSettingsDialog(self):
         ''' Open dialog to edit the settings. '''
         LaserSettingsQDialog(self, gv).exec()
-
-
 
     def refreshAllWidgets(self):
         ''' Refresh the widgets. '''

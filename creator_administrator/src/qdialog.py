@@ -4,6 +4,8 @@ import webbrowser
 from functools import partial
 from PyQt6 import uic
 from PyQt6.QtWidgets import *
+from PyQt6.QtCore import *
+from PyQt6.QtGui import *
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QKeySequence, QShortcut
@@ -67,7 +69,7 @@ class SelectOptionsQDialog(QDialog):
         QShortcut(QKeySequence('k'), self).activated.connect(self.toPreviousRow)
         QShortcut(QKeySequence('j'), self).activated.connect(self.toNextRow)
 
-        for (option, option_data) in options:
+        for (option, option_data, _) in options:
 
             item = QListWidgetItem()
             item.setData(1, option_data)

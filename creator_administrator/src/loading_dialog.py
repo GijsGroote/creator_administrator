@@ -13,6 +13,9 @@ class LoadingQDialog(QDialog):
         uic.loadUi(os.path.join(gv['REPO_DIR_HOME'], 'ui/loading_dialog.ui'), self)
         if text is not None:
             self.label.setText(text)
+            self.label.setFont(QFont('Cantarell', 14))
+            
+        
 
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.CustomizeWindowHint)
 

@@ -9,17 +9,70 @@ from src.loading_dialog import LoadingQDialog
 from src.job_tracker import JobTracker
 
 
+
 class ThreadedMailManager():
     ''' 
     Worker specific for threaded mail operations such 
     as sending mail, retrieving mail, or moving mail to a seperate folder. 
     '''
 
-    def __init__(self, parent_widget, gv: dict):
+    def __init__(self, parent_widget, gv: dict, dialog=None):
         self.gv=gv
         self.thread_pool = gv['THREAD_POOL']
         self.parent_widget = parent_widget
+        self.dialog = dialog # dialog to open with data retrieved on another thread
         self.worker = None
+
+
+
+    def getValidMailsFromInbox(self):
+        ''' Get mails from inbox.
+
+        show loading screen on main thread, 
+        get mails on a seperate thread
+        remove loading screen and handle incoming mails.
+        '''
+        self.success_message = None
+        self.error_message = ''
+
+        self.loading_dialog = LoadingQDialog(self.parent_widget, self.gv)
+        self.loading_dialog.show()
+        
+        get_mail_worker = Worker(self.getNewMails)
+        get_mail_worker.signals.finished.connect(self.loading_dialog.accept)
+        get_mail_worker.signals.error.connect(self.loading_dialog.accept)
+        get_mail_worker.signals.error.connect(self.handleMailError)
+        get_mail_worker.signals.result.connect(self.openImportFromMailDialog)
+        self.thread_pool.start(get_mail_worker)
+
+    def getNewMails(self):
+        return MailManager(self.gv).getNewValidMails()
+    
+    def openImportFromMailDialog(self, data):
+        ''' open import from mail dialog. '''
+
+        valid_msgs, warnings = data
+
+        if len(warnings) != 0:
+            for warning in warnings:
+                WarningQMessageBox(self.gv, self.parent_widget, text=warning)
+
+        if len(valid_msgs) == 0:
+            InfoQMessageBox(parent=self.parent_widget, text='No new valid job request in mail inbox')
+
+        else:
+            self.dialog(self.parent_widget, valid_msgs).exec()
+            
+
+    def handleMailError(self, exc: Exception):
+        ''' Handle the mail error. '''
+        assert isinstance(exc, Exception), f'Expected type Exception, received type: {type(exc)}'
+
+        if isinstance(exc, ConnectionError):
+            ErrorQMessageBox(self,
+                    text=f'Error: {str(exc)}')
+        else:
+            ErrorQMessageBox(self, text=f'Error Occured: {str(exc)}')
 
     ''' below this point functions: Start <mail_type> MailWorker.
 
@@ -167,13 +220,12 @@ class ThreadedMailManager():
 
     def displaySuccessMessage(self):
         ''' Display a confirmation message to the user. '''
-        TimedMessage(self.gv, parent=self.parent_widget, text=self.success_message)
+        if self.success_message is not None:
+            TimedMessage(self.gv, parent=self.parent_widget, text=self.success_message)
 
     def handleMailError(self, exc: Exception):
         ''' Handle the mail Error. '''
         assert isinstance(exc, Exception), f'Expected type Exception, received type: {type(exc)}'
-
-        raise exc
         
         if isinstance(exc, ConnectionError):
             ErrorQMessageBox(self.parent_widget, text=f'Connection Error {self.error_message}: {str(exc)}')
