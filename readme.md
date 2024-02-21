@@ -70,7 +70,7 @@ If you encounter this: turn off the add-ins in Outlook:
     "MOVE_MAILS_TO_VERWERKT_FOLDER": "true",
     "DISPLAY_TEMP_MESSAGES": "true",
     "DISPLAY_WARNING_MESSAGES": "true",
-    "DARK_MODE": "false",
+    "DARK_THEME": "false",
     "THEME_COLOR_HEX": "#eb4034",
     "DATA_DIR_HOME": "C:\\Users\\TU Delft Metal 1520\\AppData\\Local\\Creator Administrator",
     "RECEIVED_MAIL_TEMPLATE": "C:\\Users\\TU Delft Metal 1520\\creator_administrator\\creator_administrator\\laser\\email_templates\\IWS_METAL_LASER_RECEIVED_MAIL_TEMPLATE.html",

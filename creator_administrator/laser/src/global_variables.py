@@ -67,7 +67,7 @@ with open(settings_file_path, 'r') as settings_file:
     gv['ACCEPTED_MATERIALS'] = tuple(gv_data['ACCEPTED_MATERIALS'].split(', '))
 
     gv['DAYS_TO_KEEP_JOBS'] = int(gv_data['DAYS_TO_KEEP_JOBS'])
-    gv['DARK_MODE'] = True if gv_data['DARK_MODE'] == 'true' else False
+    gv['DARK_THEME'] = True if gv_data['DARK_THEME'] == 'true' else False
     gv['THEME_COLOR_HEX'] = gv_data['THEME_COLOR_HEX']
 
 
@@ -102,11 +102,17 @@ with open(settings_file_path, 'r') as settings_file:
                     gv['REPO_DIR_HOME'],
                     'laser/email_templates', 'DEFAULT_'+mail_template+'.html'))
 
-
-gv['GOOD_COLOR_HEX'] = '#7fc97f'
-gv['BAD_COLOR_HEX'] = '#add8e5'
-gv['GOOD_COLOR_RGBA'] = 'rgba(0, 255, 0, 0.4)'
-gv['BAD_COLOR_RGBA'] = 'rgba(255, 0, 0, 0.4)'
+if gv['DARK_THEME']:
+    gv['GOOD_COLOR_HEX'] = '#3F643F'
+    gv['BAD_COLOR_HEX'] = '#165a72'
+    gv['GOOD_COLOR_RGBA'] = 'rgba(0, 255, 0, 0.6)'
+    gv['BAD_COLOR_RGBA'] = 'rgba(255, 0, 0, 0.6)'
+else: 
+    # light theme 
+    gv['GOOD_COLOR_HEX'] = '#7fc97f'
+    gv['BAD_COLOR_HEX'] = '#add8e5'
+    gv['GOOD_COLOR_RGBA'] = 'rgba(0, 255, 0, 0.4)'
+    gv['BAD_COLOR_RGBA'] = 'rgba(255, 0, 0, 0.4)'
 
 
 gv['GLOBAL_SRC_DIR'] = os.path.join(gv['REPO_DIR_HOME'], 'src')

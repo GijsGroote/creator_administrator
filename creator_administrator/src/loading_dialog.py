@@ -21,4 +21,4 @@ class LoadingQDialog(QDialog):
         self.setFixedSize(3*parent_geometry.width()//4, 3*parent_geometry.height()//4)
 
         self.move(parent.width()//2 - self.width()//2, parent.height()//2 - self.height()//2)
-        self.setStyleSheet("background-color: rgba(0, 255, 0, 0.4);")
+        self.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')

@@ -62,8 +62,9 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
         material_name = self.getCurrentItemName()
         material, thickness = split_material_name(material_name)
 
-        dxfs_names_and_global_paths = self.job_tracker.getDXFsAndPaths(material, thickness)
-        dialog = SelectOptionsQDialog(self, dxfs_names_and_global_paths)
+        laser_files_info_list = self.job_tracker.getLaserFilesWithMaterialThicknessI(material, thickness)
+
+        dialog = SelectOptionsQDialog(self, laser_files_info_list)
 
         if dialog.exec() == 1:
             files_names = []
@@ -219,9 +220,10 @@ class OptionsQPushButton(JobsQPushButton):
         if self.parent().parent().objectName() == 'wachtrijMateriaalQStackedWidget':
             material_name = self.getCurrentItemName()
             material, thickness = split_material_name(material_name)
-            dxfs_names_and_global_paths = LaserJobTracker(self).getDXFsAndPaths(material, thickness)
+            laser_files_info_list = LaserJobTracker(
+                    self).getLaserFilesWithMaterialThicknessInfo(material, thickness)
 
-            for file_name, file_global_path in dxfs_names_and_global_paths:
+            for file_name, file_global_path, _ in laser_files_info_list:
                 copy_item(file_global_path, os.path.join(target_folder_global_path, file_name))
         else:
             job_name = self.getCurrentItemName()

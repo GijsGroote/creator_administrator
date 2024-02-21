@@ -50,6 +50,7 @@ class OverviewQListWidget(QListWidget):
             item.setData(1, item_data)
             item.setText(item_name)
             self.addItem(item)
+            item.setFont(QFont('Cantarell', 14))
 
     def addNoItemsLabel(self):
         ''' Add no_items_label if it is not yet present. '''

@@ -50,12 +50,12 @@ class LaserMainWindow(MainWindow):
         self.editSettingsAction.triggered.connect(self.openEditSettingsDialog)
 
         # Delete this and showTimedMessage as well
-        QShortcut(QKeySequence("Ctrl+H"), self).activated.connect(self.showTimedMessage)
+        # QShortcut(QKeySequence("Ctrl+H"), self).activated.connect(self.showTimedMessage)
 
-    def showTimedMessage(self):
-        print(f"shwo times messages boyo")
+    # def showTimedMessage(self):
+    #     print(f"shwo times messages boyo")
 
-        TimedMessage(gv, self, text='Laser job {self.temp_job_name} created')
+    #     TimedMessage(gv, self, text='Laser job {self.temp_job_name} created')
 
 
 

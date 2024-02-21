@@ -94,13 +94,15 @@ class JobContentQListWidget(ContentQListWidget):
                 item.setText(file)
                 item.setData(1, os.path.join(
                     job_dict['job_folder_global_path'], file))
+                item.setFont(QFont('Cantarell', 14))
                 
                 # check if it is a laser file 
-                for laser_file_dict in [val for key,val in job_dict['laser_files'].items() if file in key]:
-                    if laser_file_dict['done']:
-                        item.setBackground(QColor(gv["GOOD_COLOR_HEX"]))
-                    else:
-                        item.setBackground(QColor(gv["BAD_COLOR_HEX"]))
+                # for laser_file_dict in [val for key,val in job_dict['laser_files'].items() if file in key]:
+                    # TODO: add symbol to indicate if it is done
+                    # if laser_file_dict['done']:
+                    #     item.setBackground(QColor(gv["GOOD_COLOR_HEX"]))
+                    # else:
+                    #     item.setBackground(QColor(gv["BAD_COLOR_HEX"]))
 
                 self.addItem(item)
 
@@ -130,7 +132,6 @@ class MaterialOverviewQListWidget(OverviewQListWidget):
                 'wachtrijMateriaalQStackedWidget')
 
         stacked_widget.findChild(MaterialContentQListWidget).loadContent(material_name)
-
         # show materialPage in stackedWidget 
         stacked_widget.setCurrentIndex(1)
 
@@ -152,14 +153,15 @@ class MaterialContentQListWidget(ContentQListWidget):
                 self).getLaserFilesWithMaterialThicknessInfo(material, thickness)
 
         for (dxf_name, dxf_global_path, done) in laser_file_info_list:
-
             item = QListWidgetItem()
+            item.setFont(QFont('Cantarell', 14))
             item.setText(dxf_name)
             item.setData(1, dxf_global_path)
-            if done:
-                item.setBackground(QColor(gv["GOOD_COLOR_HEX"]))
-            else:
-                item.setBackground(QColor(gv["BAD_COLOR_HEX"]))
+            # TODO do with symbol/smiley
+            # if done:
+            #     item.setBackground(QColor(gv["GOOD_COLOR_HEX"]))
+            # else:
+            #     item.setBackground(QColor(gv["BAD_COLOR_HEX"]))
 
             self.addItem(item)
 

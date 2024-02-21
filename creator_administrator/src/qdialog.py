@@ -1,6 +1,7 @@
 import os
 import pkg_resources
 import webbrowser
+from functools import partial
 from PyQt6 import uic
 from PyQt6.QtWidgets import *
 
@@ -71,14 +72,8 @@ class SelectOptionsQDialog(QDialog):
             item = QListWidgetItem()
             item.setData(1, option_data)
             item.setText(option)
+            item.setFont(QFont('Cantarell', 14))
             self.optionsQListWidget.addItem(item)
-
-    # def toggleSelection(self):
-    #     current_item = self.optionsQListWidget.currentItem()
-        
-    #     if current_item is None:
-    #         print('yeah that is noen')
-    #     self.optionsQListWidget.itemClicked(current_item)
 
     def toNextRow(self):
         opt_ql_widget = self.optionsQListWidget

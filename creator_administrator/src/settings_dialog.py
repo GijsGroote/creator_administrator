@@ -33,13 +33,9 @@ class SettingsQDialog(QDialog):
         self.acceptedMaterialsLineEdit.textChanged.connect(
                 partial(self.checkMaterialTuple, self.acceptedMaterialsLineEdit))
 
-        if gv['DARK_MODE']:
+        if gv['DARK_THEME']:
             self.darkModeCheckBox.setChecked(True)
 
-        self.themeColorLineEdit.setText(gv['THEME_COLOR_HEX'])
-        self.themeColorLineEdit.setStyleSheet(f'background-color: {gv["THEME_COLOR_HEX"]};')
-
-        self.themeColorLineEdit.textChanged.connect(partial(self.checkHex, self.themeColorLineEdit))
 
         if gv['DISPLAY_TEMP_MESSAGES']:
             self.dispTempMessageCheckBox.setChecked(True)
@@ -110,9 +106,6 @@ class SettingsQDialog(QDialog):
             (int(self.daysToKeepJobsLineEdit.text()) < 0,
             f'Days to Store Jobs is not an positive number but {self.daysToKeepJobsLineEdit.text()}'),
 
-            (not self.checkHex(self.themeColorLineEdit),
-            f'Theme color {self.themeColorLineEdit.text()} is not a HEX color code'),
-
             (not self.checkIsDirectory(self.selectDataDirectoryButton),
             f'Data Directory {self.selectDataDirectoryButton.folder_global_path} is not a directory'),
 
@@ -150,7 +143,6 @@ class SettingsQDialog(QDialog):
         settings_dict['ACCEPTED_EXTENSIONS'] = self.acceptedExtentionsLineEdit.text()
         settings_dict['ACCEPTED_MATERIALS'] =  self.acceptedMaterialsLineEdit.text()
         settings_dict['DAYS_TO_KEEP_JOBS'] = self.daysToKeepJobsLineEdit.text() 
-        settings_dict['THEME_COLOR_HEX'] = self.themeColorLineEdit.text()
 
         if sys.platform == 'win32':
             settings_dict['DATA_DIR_HOME'] = self.selectDataDirectoryButton.folder_global_path.replace('/', '\\')
@@ -165,7 +157,7 @@ class SettingsQDialog(QDialog):
                                      ('MOVE_MAILS_TO_VERWERKT_FOLDER', self.moveMailToVerwerktCheckBox), 
                                      ('SEND_MAILS_ON_SEPERATE_THREAD', self.sendMailThreadedCheckBox),
                                      ('EMPTY_TODO_DIR_BEFORE_EXPORT', self.emptyTodoDirCheckBox),
-                                     ('DARK_MODE', self.darkModeCheckBox)]:
+                                     ('DARK_THEME', self.darkModeCheckBox)]:
 
             settings_dict[checkbox_name] =  'true' if widget.isChecked() else 'false'
 

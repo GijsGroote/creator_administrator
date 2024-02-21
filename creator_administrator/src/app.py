@@ -1,4 +1,5 @@
 import sys
+import qdarktheme
 import webbrowser
 from functools import partial
 from PyQt6 import *
@@ -15,8 +16,10 @@ class MainWindow(QMainWindow):
     def __init__(self, ui_global_path: str, gv: dict, *args, **kwargs):
         super().__init__(*args, **kwargs)
         uic.loadUi(ui_global_path, self)
-
+        if gv['DARK_THEME']:
+            qdarktheme.setup_theme()
         self.gv = gv
+
 
         self.openDocumentationAction.triggered.connect(partial(webbrowser.open, 'https://github.com/GijsGroote/creator_administrator/tree/main/creator_administrator/doc'))
 
