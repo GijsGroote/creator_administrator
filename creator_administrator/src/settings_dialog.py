@@ -185,18 +185,6 @@ class SettingsQDialog(QDialog):
             widget.setStyleSheet(f'background-color: {self.gv["BAD_COLOR_RGBA"]};')
             return False
 
-    def checkHex(self, widget: QWidget) -> bool:
-
-        match = re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', widget.text())
-
-        if match:                      
-            widget.setStyleSheet(f'background-color: {widget.text()};')
-            return True
-
-        else:
-            widget.setStyleSheet(f'background-color: {self.gv["BAD_COLOR_RGBA"]};')
-            return False
-
     def checkExtensionsTuple(self, widget: QWidget) -> bool:
         try:
             tuple(widget.text().split(', '))

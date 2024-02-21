@@ -19,6 +19,7 @@ class ImportFromMailQDialog(QDialog):
     """ Import from mail dialog. """
     def __init__(self, parent, ui_global_path, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
+        self.gv=gv# This should be an arguement of init!!
 
         loadUi(ui_global_path, self)
         
@@ -42,9 +43,10 @@ class SelectQDialog(QDialog):
 
     def check_password(self, gv: dict):
         if self.passwordQLineEdit.text() == gv['PASSWORD']:
-            self.passwordQLineEdit.setStyleSheet("background-color: rgba(0, 255, 0, 0.4);")
+            self.passwordQLineEdit.setStyleSheet(f'background_color: {self.gv["GOOD_COLOR_RGBA"]};')
         else:
-            self.passwordQLineEdit.setStyleSheet("background-color: rgba(255, 0, 0, 0.4);")
+            self.passwordQLineEdit.setStyleSheet(f'background-color: {self.gv["BAD_COLOR_RGBA"]};')
+
 
     def closeDialog(self):
         ''' Close the dialog, press cancel. '''
@@ -101,13 +103,20 @@ class AboutDialog(QDialog):
         loadUi(os.path.join(gv['GLOBAL_UI_DIR'], 'about_widget.ui') , self)
 
         self.versionLabel.setText(pkg_resources.get_distribution('creator_administrator').version)
-        # self.githubLabel.mousePressEvent = webbrowser.open('https://github.com/GijsGroote/creator_administrator/')
+        self.githubSiteLabel.mousePressEvent = self.openGithubInBrowser
+
+        if gv['DARK_THEME']:
+            self.githubSiteLabel.setStyleSheet("QLabel { color : aqua; }");
+        else:
+            self.githubSiteLabel.setStyleSheet("QLabel { color : blue; }");
+
 
         # shortcut on Esc button
         QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.closeDialog)
 
-    def openGithubInBrowser(self):
+    def openGithubInBrowser(self, event):
         ''' Open Github in browser. '''
+        webbrowser.open('https://github.com/GijsGroote/creator_administrator/')
 
     def closeDialog(self):
         ''' Close the dialog, press cancel. '''

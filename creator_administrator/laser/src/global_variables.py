@@ -105,8 +105,8 @@ with open(settings_file_path, 'r') as settings_file:
 if gv['DARK_THEME']:
     gv['GOOD_COLOR_HEX'] = '#3F643F'
     gv['BAD_COLOR_HEX'] = '#165a72'
-    gv['GOOD_COLOR_RGBA'] = 'rgba(0, 255, 0, 0.6)'
-    gv['BAD_COLOR_RGBA'] = 'rgba(255, 0, 0, 0.6)'
+    gv['GOOD_COLOR_RGBA'] = 'rgba(0, 255, 0, 0.7)'
+    gv['BAD_COLOR_RGBA'] = 'rgba(255, 0, 0, 0.7)'
 else: 
     # light theme 
     gv['GOOD_COLOR_HEX'] = '#7fc97f'
