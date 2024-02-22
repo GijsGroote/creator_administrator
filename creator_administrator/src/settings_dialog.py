@@ -36,7 +36,6 @@ class SettingsQDialog(QDialog):
         if gv['DARK_THEME']:
             self.darkModeCheckBox.setChecked(True)
 
-
         if gv['DISPLAY_TEMP_MESSAGES']:
             self.dispTempMessageCheckBox.setChecked(True)
 
@@ -60,6 +59,7 @@ class SettingsQDialog(QDialog):
                                              ('FINISHED_MAIL_TEMPLATE', self.selectFinishedTemplateButton), 
                                              ('DECLINED_MAIL_TEMPLATE', self.selectDeclinedTemplateButton)]:
             if template_name in gv:
+                widget_button.setStartingDirectory(os.path.dirname(gv[template_name]))
                 widget_button.setText(shorten_folder_name(gv[template_name], 45))
                 widget_button.file_global_path = gv[template_name]
             widget_button.clicked.connect(partial(self.checkHTML, widget_button))
@@ -67,6 +67,7 @@ class SettingsQDialog(QDialog):
         
         for folder_name, widget_button in [('DATA_DIR_HOME', self.selectDataDirectoryButton), 
                                            ('TODO_DIR_HOME', self.selectTodoDirectoryButton)]:
+            widget_button.setStartingDirectory(gv[folder_name])
             widget_button.setText(shorten_folder_name(gv[folder_name], 45))
             widget_button.folder_global_path = gv[folder_name]
             widget_button.clicked.connect(partial(self.checkIsDirectory, widget_button))
