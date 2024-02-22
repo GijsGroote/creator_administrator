@@ -76,16 +76,16 @@ class JobFinishedMessageBox(QMessageBox):
 
 class YesOrNoMessageBox(QMessageBox):
 
-    def __init__(self, parent: QWidget, text: str, yes_button_text='Yes', no_button_tex='No', *args, **kwargs):
+    def __init__(self, parent: QWidget, text: str, yes_button_text='Yes', no_button_text='No', *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         self.setText(text)
-        self.addButton(QMessageBox.StandardButton.No)
         self.addButton(QMessageBox.StandardButton.Yes)
+        self.addButton(QMessageBox.StandardButton.No)
         self.setDefaultButton(QMessageBox.StandardButton.Yes)
         self.setIcon(QMessageBox.Icon.Question)
-        self.button(QMessageBox.StandardButton.Yes).setText(no_button_tex)
         self.button(QMessageBox.StandardButton.Yes).setText(yes_button_text)
+        self.button(QMessageBox.StandardButton.No).setText(no_button_text)
 
     def answer(self) -> bool:
         ''' Return True for yes, False for no. '''

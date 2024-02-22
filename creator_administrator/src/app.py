@@ -26,6 +26,10 @@ class MainWindow(QMainWindow):
         self.reportaBugAction.triggered.connect(partial(webbrowser.open, 'https://github.com/GijsGroote/creator_administrator/issues'))
         self.actionAbout.triggered.connect(self.openAboutDialog)
 
+
+        # shortcut to close the application
+        QShortcut(QKeySequence("Ctrl+Q"), self).activated.connect(self.close)
+
     
 
     def keyPressEvent(self, event):

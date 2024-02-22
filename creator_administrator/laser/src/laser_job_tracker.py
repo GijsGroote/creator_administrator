@@ -17,10 +17,12 @@ from datetime import datetime
 
 from global_variables import gv
 
+
 from src.directory_functions import delete
 
 from src.job_tracker import JobTracker
-from src.qmessagebox import TimedMessage, YesOrNoMessageBox
+from src.qmessagebox import TimedMessage, YesOrNoMessageBox, WarningQMessageBox
+
 
 class LaserJobTracker(JobTracker):
     """
@@ -144,9 +146,14 @@ class LaserJobTracker(JobTracker):
             tracker_dict = json.load(tracker_file)
 
         # remove old jobs
+        n_old_jobs = 0
         for job_key, job_dict in tracker_dict.items():
             if self.isJobOld(job_dict['created_on_date']) and job_dict['status'] != 'WACHTRIJ':
+                n_old_jobs += 1
                 self.deleteJob(job_key)
+
+        if n_old_jobs > 0:
+            TimedMessage(gv=gv, parent=self.parent_widget, text=f'removed {str(n_old_jobs)} old jobs')
 
         # get job info from file system
         jobs_global_paths = [os.path.join(jobs_folder_global_path, job_folder) for job_folder in os.listdir(jobs_folder_global_path) 
@@ -155,6 +162,16 @@ class LaserJobTracker(JobTracker):
         # keep track of the jobs checked
         jobs_checked = {job_name: False for job_name in tracker_dict.keys()}
 
+
+        ''' In the upcoming for loop, loop through jobs on file system
+
+            1: for a job on file system, check if all data is also in the tracker file
+            *: If out-of-sync -> modify tracker file (or delete all) based on files on file system and user input
+
+            2: for a job in tracker file, check if data is also on the file system
+            *: If out-of-sync -> modify tracker file (or delete all) based on files on file system and user input
+
+        '''
         for job_global_path in jobs_global_paths:
             # actual_job_main_folder = os.path.basename(os.path.dirname(actual_job_global_path))
 
@@ -163,18 +180,26 @@ class LaserJobTracker(JobTracker):
 
             
             if job_dict is None:
-                yes_or_no = YesOrNoMessageBox(parent=self.parent_widget, text=f'SYNCHRONIZE ISSUES! Job Tracker and jobs on File System are out of sync!\n'\
-                                              f'what do you want to do with {job_global_path}?', yes_button_text='Add to  job tracker', no_button_tex='Remove from file system')
+                yes_or_no = YesOrNoMessageBox(parent=self.parent_widget, text=f'SYNCHRONIZE ISSUES!\nJob Tracker and jobs on File System are out of sync!\n\n'\
+                        f'what do you want to do with:\n {job_global_path}?', yes_button_text='Add to Job Tracker', no_button_text='Remove from File System')
 
                 if yes_or_no.answer():
+                    # TODO: get all info about laser files!
+                    job_dict = {'job_name': 'temp_ob_name',
+                                'laser_files': {},
+                                'status': 'WACHTRIJ',
+                                'dynamic_job_name': 'haha'}
+
                     # TODO: find the material details from the .dxf files first please
                     # add this file to the to tracker
                     print('TODO: add job to tracker')
                     pass
+                    TimedMessage(gv=gv, parent=self.parent_widget, text=f'Added {job_dict["job_name"]} to Tracker')
 
                 else:
                     # remove that directory
                     delete(job_global_path)
+                    TimedMessage(gv=gv, parent=self.parent_widget, text=f'removed folder {job_global_path}')
                     continue
 
             if not self.IsJobDictAndFileSystemInSync(job_dict, job_global_path):
@@ -208,22 +233,67 @@ class LaserJobTracker(JobTracker):
         ''' Sychronize job dict based on file system. '''
         valid_file_names = [file_name for file_name in os.listdir(job_folder_global_path) if file_name.lower().endswith(gv['ACCEPTED_EXTENSIONS'])]
 
+        # Find files on file system, that are not in tracker
+        new_files_list = []
+        for file in valid_file_names:
+            if not any([os.path.basename(laser_file_dict['file_global_path'])==file for laser_file_dict in job_dict['laser_files'].values()]):
+                new_files_list.append(os.path.join(job_folder_global_path, file))
+
+        # add/delete new files
+        if len(new_files_list) > 0:
+
+            if len(new_files_list)==1:
+                file_str = 'File'
+                is_are_str = 'is'
+            else:
+                file_str = 'Files'
+                is_are_str = 'are'
+
+            yes_or_no_text = f'New {file_str} detected for Job {job_dict["job_name"]}:\n'
+            for file in new_files_list:
+                yes_or_no_text += f'{os.path.basename(file)}\n'
+
+            yes_or_no_text += f'\nWhat do you want with these {file_str}?'
+
+            yes_or_no = YesOrNoMessageBox(parent=self.parent_widget, text=yes_or_no_text, yes_button_text='Add to Job Tracker', no_button_text='Remove from File System')
+            if yes_or_no:
+
+
+                # TODO: get info about this and that
+                # LaserFileInfoQDialog(self.parent_widget, [job_dict['job_name']], new_files_list).exec()
+                TimedMessage(gv=gv, parent=self.parent_widget, text=f'Updated laser files for job: {job_dict["job_name"]} in Job Tracker')
+
+            else:
+                for file in new_files_list:
+                    delete(os.path.join(job_folder_global_path, file))
+                TimedMessage(gv=gv, parent=self.parent_widget, text=f'Removed {len(new_files_list)} {file_str} from File System')
+
+
         # delete file from job dict if it is not on the file system
         remove_keys = []
         for key, file_dict in job_dict['laser_files'].items():
             if not os.path.basename(file_dict['file_global_path']) in valid_file_names:
-                print(f'could not find tracker file name on file system, detete it')
                 remove_keys.append(key)
+
+        if len(remove_keys) > 0:
+            if len(remove_keys)==1:
+                file_str = 'File'
+                is_are_str = 'is'
+            else:
+                file_str = 'Files'
+                is_are_str = 'are'
+
+            warning_text = f'{file_str} missing from file system for job: {job_dict["job_name"]}.\n\nThe {file_str}:\n'
+            for key in remove_keys:
+                warning_text += f'{key}\n'
+
+
+            warning_text += f'\n{is_are_str} removed from the Job Tracker.'
+            WarningQMessageBox(gv=gv, parent=self.parent_widget, text=warning_text)
 
         for key in remove_keys:
             job_dict['laser_files'].pop(key)
         
-        # add files that are on the file system and not in the tracker job dict
-        for file in valid_file_names:
-            if not any([os.path.basename(laser_file_dict['file_global_path'])==file for laser_file_dict in job_dict['laser_files'].values()]):
-                print(f'could not find file with name: {file} add it to tracker')
-                # TODO: add this file to files
-
         return job_dict
 
 
