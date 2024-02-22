@@ -5,19 +5,25 @@ Laser Job tracker, tracking laser jobs.
 import json
 import shutil
 import os
+import re
 import sys
 import subprocess
+from datetime import datetime
 
 
 import glob
 import sys
 
 from typing import Tuple
-from datetime import datetime
 
 from global_variables import gv
 
+from PyQt6 import *
+from PyQt6.QtCore import *
+from PyQt6.QtGui import *
+from PyQt6.QtWidgets import *
 
+from PyQt6.uic import loadUi
 from src.directory_functions import delete
 
 from src.job_tracker import JobTracker
@@ -180,8 +186,11 @@ class LaserJobTracker(JobTracker):
 
             
             if job_dict is None:
-                yes_or_no = YesOrNoMessageBox(parent=self.parent_widget, text=f'SYNCHRONIZE ISSUES!\nJob Tracker and jobs on File System are out of sync!\n\n'\
-                        f'what do you want to do with:\n {job_global_path}?', yes_button_text='Add to Job Tracker', no_button_text='Remove from File System')
+                yes_or_no = YesOrNoMessageBox(parent=self.parent_widget, 
+                                      text=f'SYNCHRONIZE ISSUES!\nJob Tracker and jobs on File System are out of sync!\n\n'\
+                                            f'what do you want to do with:\n {job_global_path}?',
+                                              yes_button_text='Add to Job Tracker',
+                                              no_button_text='Remove from File System')
 
                 if yes_or_no.answer():
                     # TODO: get all info about laser files!
@@ -255,13 +264,25 @@ class LaserJobTracker(JobTracker):
 
             yes_or_no_text += f'\nWhat do you want with these {file_str}?'
 
-            yes_or_no = YesOrNoMessageBox(parent=self.parent_widget, text=yes_or_no_text, yes_button_text='Add to Job Tracker', no_button_text='Remove from File System')
-            if yes_or_no:
-
+            yes_or_no = YesOrNoMessageBox(parent=self.parent_widget,
+                                          text=yes_or_no_text,
+                                          yes_button_text='Add to Job Tracker',
+                                          no_button_text='Remove from File System')
+            if yes_or_no.answer():
 
                 # TODO: get info about this and that
-                # LaserFileInfoQDialog(self.parent_widget, [job_dict['job_name']], new_files_list).exec()
-                TimedMessage(gv=gv, parent=self.parent_widget, text=f'Updated laser files for job: {job_dict["job_name"]} in Job Tracker')
+                file_info_dialog = LaserTrackerFileInfoQDialog(self.parent_widget,
+                                                [job_dict['job_name']],
+                                                [new_files_list],
+                                                job_dict_list=[job_dict])
+                if file_info_dialog.exec() == 1:
+                    new_laser_file_dict = file_info_dialog.return_dict_list[0]
+
+                    for key, value in new_laser_file_dict.items():
+                       job_dict['laser_files'][key] = value
+                    TimedMessage(gv=gv, parent=self.parent_widget, text=f'Updated laser files for job: {job_dict["job_name"]} in Job Tracker')
+                else:
+                    TimedMessage(gv=gv, parent=self.parent_widget, text='Some Error Occured, Job Tracker file and File System still not in Sync')
 
             else:
                 for file in new_files_list:
@@ -295,7 +316,6 @@ class LaserJobTracker(JobTracker):
             job_dict['laser_files'].pop(key)
         
         return job_dict
-
 
     def getNumberOfJobsInQueue(self) -> int:
         ''' Return the number of jobs with status WACHTRIJ. '''
@@ -393,4 +413,233 @@ class LaserJobTracker(JobTracker):
         ''' Return Sender name from job name. '''
         with open(self.tracker_file_path, 'r') as tracker_file:
             return json.load(tracker_file)[job_name]['sender_name']
+
+
+
+class LaserTrackerFileInfoQDialog(QDialog):
+    ''' Ask for file laser file details (material, thickness, amount) and create laser jobs.
+    job_name: List with job names
+    files_global_paths_list: nested lists with global paths for every file in the job.  
+
+    '''
+
+    def __init__(self, parent,
+                 job_name_list: list,
+                 files_global_paths_list: list,
+                 job_dict_list=None,
+                 *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        loadUi(os.path.join(gv['REPO_DIR_HOME'], 'laser/ui/enter_job_details_dialog.ui'), self)
+
+        assert len(job_name_list) == len(files_global_paths_list),\
+            f'length of job name list: {len(job_name_list)} should'\
+            f'be equal to the files_global_path_list: {len(files_global_paths_list)}'
+
+        if job_dict_list is not None:
+            assert len(job_name_list) == len(job_dict_list),\
+                f'length of job name list: {len(job_name_list)} should'\
+                f'be equal to the job_dict_list: {len(job_dict_list)}'
+                   
+        self.job_tracker = LaserJobTracker(self)
+        self.job_counter = 0
+        self.file_counter = 0
+        self.job_name_list = job_name_list
+        self.files_global_paths_list = files_global_paths_list
+        self.job_dict_list = job_dict_list
+        self.return_dict_list = []
+
+        self.temp_files_global_paths = files_global_paths_list[self.job_counter]
+ 
+        self.new_material_text = 'New Material'
+        self.new_materials_list = []
+
+        self.materialQComboBox.currentIndexChanged.connect(self.onMaterialComboboxChanged)
+        self.skipPushButton.clicked.connect(self.skipJob)
+        self.buttonBox.accepted.connect(self.collectFileInfo)
+        self.loadJobContent()
+
+    def loadContent(self):
+        if self.file_counter >= len(self.temp_files_global_paths):
+            self.storeLaserJobDict()
+
+            if self.job_counter+1 >= len(self.job_name_list):
+                self.accept()
+            else:
+                self.job_counter += 1
+                self.file_counter= 0
+                self.loadJobContent()
+        else:
+            self.loadFileContent()
+
+
+    def loadJobContent(self):
+        ''' Load content of mail into dialog. '''
+
+        if self.job_dict_list is not None:
+            print(f" so this can be foudn {self.job_dict_list[self.job_counter]}\n\n")
+            print(f"but ht not {self.job_dict_list[self.job_counter]['job_folder_global_path']}")
+            self.temp_job_name = self.job_dict_list[self.job_counter]['job_name']
+            self.temp_job_folder_name = os.path.basename(os.path.abspath(self.job_dict_list[self.job_counter]['job_folder_global_path']))
+            self.temp_job_folder_global_path = self.job_dict_list[self.job_counter]['job_folder_global_path']
+        else:
+            self.temp_job_name = self.job_tracker.makeJobNameUnique(self.job_name_list[self.job_counter])
+            self.temp_job_folder_name = str(datetime.today().strftime('%d-%m'))+'_'+self.temp_job_name
+            self.temp_job_folder_global_path = os.path.join(os.path.join(gv['JOBS_DIR_HOME'], self.temp_job_folder_name))
+
+        self.temp_files_global_paths = self.files_global_paths_list[self.job_counter]
+        self.temp_laser_cut_files_dict = {}
+
+
+        print(f"tmp jb name {self.temp_job_name}")
+        self.jobNameQLabel.setText(self.temp_job_name)
+        self.jobProgressQLabel.setText(f'Job ({self.job_counter+1}/{len(self.job_name_list)})')
+
+
+        self.loadFileContent()
+
+
+    def loadFileContent(self):
+        ''' Load content of attachment into dialog. '''
+
+        file_global_path = self.temp_files_global_paths[self.file_counter]
+        file_name = os.path.basename(file_global_path)
+        print(f"fielname is {file_name} {file_global_path}")
+
+        if file_name.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
+            self.fileProgressQLabel.setText(f'File({self.file_counter+1}/{len(self.temp_files_global_paths)})')
+            self.fileNameQLabel.setText(file_name)
+
+            # initially hide option for new material 
+            self.newMaterialQLabel.setHidden(True)
+            self.newMaterialQLineEdit.setHidden(True)
+
+            self.materialQComboBox.clear()
+            self.newMaterialQLineEdit.clear()
+            self.thicknessQLineEdit.clear()
+            self.amountQLineEdit.clear()
+
+            materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()).union(self.new_materials_list))
+            self.materialQComboBox.addItems(materials)
+            self.materialQComboBox.addItem(self.new_material_text)
+
+            # guess the material, thickness and amount
+            for material in materials:
+                if material.lower() in file_name.lower():
+                    self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(material))
+            match = re.search(r"\d+\.?\d*(?=mm)", file_name)
+            if match:
+                self.thicknessQLineEdit.setText(match.group())
+
+            match = re.search(r"\d+\.?\d*(?=x_)", file_name)
+            if match:
+                self.amountQLineEdit.setText(match.group())
+            else:
+                self.amountQLineEdit.setText('1')
+
+        else:
+            file_global_path = os.path.join(self.temp_job_folder_global_path, file_name)
+
+            if self.file_counter+1 >= len(self.temp_files_global_paths):
+                self.storeLaserJobDict()
+                self.job_counter += 1
+
+                if self.job_counter >= len(self.job_name_list):
+                    self.loadJobContent()
+            else:
+                self.loadFileContent()
+
+    def onMaterialComboboxChanged(self):
+        if self.materialQComboBox.currentText() == self.new_material_text:
+            self.newMaterialQLabel.setHidden(False)
+            self.newMaterialQLineEdit.setHidden(False)
+        else:
+            self.newMaterialQLabel.setHidden(True)
+            self.newMaterialQLineEdit.setHidden(True)
+        
+    def collectFileInfo(self):
+        ''' Collect material, thickness and amount info. '''
+        material = self.materialQComboBox.currentText()
+        if material == self.new_material_text:
+            material = self.newMaterialQLineEdit.text()
+            self.new_materials_list.append(material)
+            
+        thickness = self.thicknessQLineEdit.text()
+        amount = self.amountQLineEdit.text()
+        
+        if not self.validate(material, thickness, amount):
+            return
+
+        source_file_global_path = self.temp_files_global_paths[self.file_counter]
+
+        original_file_name = os.path.basename(source_file_global_path)
+        if material in original_file_name and\
+            thickness in original_file_name and\
+            amount in original_file_name:
+            file_name = original_file_name
+        else:
+            file_name = material+'_'+thickness+'mm_'+amount+'x_'+original_file_name
+        
+        target_file_global_path = os.path.join(self.temp_job_folder_global_path, file_name)
+
+        self.temp_laser_cut_files_dict[self.temp_job_name + '_' + file_name] = {
+                            'file_name': file_name,
+                            'file_global_path': target_file_global_path,
+                            'material': material,
+                            'thickness': thickness,
+                            'amount': amount,
+                            'done': False}
+
+        self.file_counter += 1
+        self.loadContent()
+
+    def skipJob(self):
+        ''' Skip job and go to the next. '''
+        if self.job_counter+1 >= len(self.job_name_list):
+            self.accept() 
+        else:
+            self.job_counter += 1
+            self.file_counter = 0
+            self.loadJobContent()
+
+    def validate(self, material: str, thickness: str, amount: str) -> bool:
+        for (thing, value) in [('material', material), ('thickness', thickness), ('amount', amount)]:
+            if value == "":
+                dlg = QMessageBox(self)
+                dlg.setText(f'Fill in {thing}')
+                dlg.exec()
+                return False
+
+        try:
+            thickness_float = float(thickness)
+        except Exception:
+            dlg = QMessageBox(self)
+            dlg.setText(f'Thickness should be a positive number, not {thickness}')
+            dlg.exec()
+            return False
+        if thickness_float <=0:
+            dlg = QMessageBox(self)
+            dlg.setText(f'Thickness should be a positive number, not {thickness}')
+            dlg.exec()
+            return False
+
+        try:
+            amount_int = int(amount)
+        except Exception:
+            dlg = QMessageBox(self)
+            dlg.setText(f'Amount should be a positive interger, not: {amount}')
+            dlg.exec()
+            return False
+
+        if amount_int <= 0:
+            dlg = QMessageBox(self)
+            dlg.setText(f'Amount should be a positive interger, not: {amount}')
+            dlg.exec()
+            return False
+
+        return True
+
+    def storeLaserJobDict(self):
+        """ Store laser job dict. """
+        self.return_dict_list.append(self.temp_laser_cut_files_dict)
 

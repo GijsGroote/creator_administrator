@@ -22,7 +22,7 @@ if sys.platform == 'linux':
     from email.header import decode_header
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
-    from email.utils import parseaddr, formataddr 
+    from email.utils import parseaddr, formataddr, parsedate_to_datetime
     from email.parser import BytesParser
     from email.policy import default
 
@@ -268,8 +268,7 @@ class MailManager():
             msg = self.mailItemToMailFile(mail_file)       
             return str(msg.ReceivedTime)
         if sys.platform == 'linux':
-            raise ValueError('this function is not yet implemented')
-
+            return parsedate_to_datetime(email.message_from_bytes(mail_file[0][1])['date'])
 
     def getSenderName(self, msg) -> str:
         """ Return the senders name. """
