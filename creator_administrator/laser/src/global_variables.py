@@ -1,5 +1,5 @@
 """
-Global variables specific for the local machine managing the PMMA laser.
+Global variables / Settings specific for the computer managing the laser machine.
 """
 
 import json
@@ -33,7 +33,6 @@ for temp_dir in os.listdir(temp_dir_home):
 
     except Exception as exc:
         print(str(exc))
-
     
 settings_file_path = os.path.join(data_dir_home, 'laser_settings.json')
 
@@ -41,7 +40,13 @@ settings_file_path = os.path.join(data_dir_home, 'laser_settings.json')
 if not os.path.exists(settings_file_path):
 
     this_file_path = os.path.dirname(os.path.realpath(__file__))
-    repo_folder_name = 'creator_administrator/creator_administrator' 
+    if sys.platform == 'win32':
+        repo_folder_name = 'creator_administrator\creator_administrator'
+    elif sys.platform == 'linux':
+        repo_folder_name = 'creator_administrator/creator_administrator'
+    else:
+        raise ValueError(f'Software not intended for platform {sys.platform}')
+    
     if repo_folder_name in this_file_path:
         root, _ = this_file_path.split(repo_folder_name)
         repo_dir_home = os.path.join(root, repo_folder_name)
