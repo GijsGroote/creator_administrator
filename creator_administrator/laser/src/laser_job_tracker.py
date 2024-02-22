@@ -216,7 +216,6 @@ class LaserJobTracker(JobTracker):
                 remove_keys.append(key)
 
         for key in remove_keys:
-            print(f'remove the key {key}')
             job_dict['laser_files'].pop(key)
         
         # add files that are on the file system and not in the tracker job dict

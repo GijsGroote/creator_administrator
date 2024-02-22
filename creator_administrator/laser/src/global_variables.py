@@ -5,15 +5,8 @@ Global variables specific for the local machine managing the PMMA laser.
 import json
 import os
 import sys
+import shutil
 from PyQt6.QtCore import QThreadPool
-
-def resource_path(relative_path):
-    try:
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-
-    return os.path.join(base_path, relative_path)
 
 if sys.platform == 'linux':
     data_dir_home = os.path.join(os.path.expanduser('~'), '.creator_administrator')
@@ -24,15 +17,9 @@ else:
 
 if not os.path.exists(data_dir_home):
     os.mkdir(data_dir_home)
-    
-settings_file_path = os.path.join(data_dir_home, 'laser_settings.json')
+
 jobs_dir_home = os.path.join(data_dir_home, 'laser_jobs')
 tracker_file_path = os.path.join(data_dir_home, 'laser_job_log.json')
-
-# TODO: move this to setup file
-if not os.path.exists(settings_file_path):
-    with open(settings_file_path, 'w') as settings_file:
-        json.dump(dict(), settings_file, indent=4)
 
 if not os.path.exists(jobs_dir_home):
     os.mkdir(jobs_dir_home)
@@ -40,6 +27,63 @@ if not os.path.exists(jobs_dir_home):
 temp_dir_home = os.path.join(data_dir_home, 'TEMP')
 if not os.path.exists(temp_dir_home):
     os.mkdir(temp_dir_home)
+for temp_dir in os.listdir(temp_dir_home):
+    try:
+        shutil.rmtree(os.path.join(temp_dir_home, temp_dir))
+
+    except Exception as exc:
+        print(str(exc))
+
+    
+settings_file_path = os.path.join(data_dir_home, 'laser_settings.json')
+
+# Create default settings file 
+if not os.path.exists(settings_file_path):
+
+    this_file_path = os.path.dirname(os.path.realpath(__file__))
+    repo_folder_name = 'creator_administrator/creator_administrator' 
+    if repo_folder_name in this_file_path:
+        root, _ = this_file_path.split(repo_folder_name)
+        repo_dir_home = os.path.join(root, repo_folder_name)
+    else:
+        raise ValueError(f'could not find folder {repo_folder_name}')
+
+    desktop_dir_home = os.path.join(os.path.expanduser('~'), 'Desktop')
+    if os.path.exists(desktop_dir_home):
+        todo_dir_home = os.path.join(desktop_dir_home, 'Laser TODO')
+    else:
+        raise ValueError('Could not find users Desktop directory')
+
+    default_settings_dict = {
+        "REPO_DIR_HOME": repo_dir_home,
+        "TODO_DIR_HOME": todo_dir_home,
+        "DATA_DIR_HOME": data_dir_home,
+        "ACCEPTED_EXTENSIONS": ".dxf, .dwg",
+        "ACCEPTED_MATERIALS": "steel, alu",
+        "DAYS_TO_KEEP_JOBS": "15",
+        "PASSWORD": "",
+        "DARK_THEME": "true",
+        "DISPLAY_TEMP_MESSAGES": "true",
+        "DISPLAY_WARNING_MESSAGES": "true",
+        "EMPTY_TODO_DIR_BEFORE_EXPORT": "true",
+        "ONLY_UNREAD_MAIL": "false",
+        "MOVE_MAILS_TO_VERWERKT_FOLDER": "true",
+        "SEND_MAILS_ON_SEPERATE_THREAD": "false",
+        "RECEIVED_MAIL_TEMPLATE": os.path.join(repo_dir_home, "laser/email_templates/DEFAULT_RECEIVED_MAIL_TEMPLATE.html"),
+        "UNCLEAR_MAIL_TEMPLATE": os.path.join(repo_dir_home, "laser/email_templates/DEFAULT_UNCLEAR_MAIL_TEMPLATE.html"),
+        "FINISHED_MAIL_TEMPLATE": os.path.join(repo_dir_home, "laser/email_templates/DEFAULT_FINISHED_MAIL_TEMPLATE.html"),
+        "DECLINED_MAIL_TEMPLATE": os.path.join(repo_dir_home, "laser/email_templates/DEFAULT_DECLINED_MAIL_TEMPLATE.html")
+    }
+
+    if sys.platform == 'linux':
+        default_settings_dict["MAIL_NAME"] = "Fill in Your Name"
+        default_settings_dict["MAIL_INBOX_NAME"] = "Inbox"
+        default_settings_dict["MAIL_ADRESS"] = "Fill in Your Mail Adress"
+
+        default_settings_dict["MAIL_PASSWORD"]= "Fill in Your Mail Password"
+
+    with open(os.path.join(data_dir_home, 'laser_settings.json'), 'w') as settings_file:
+        json.dump(default_settings_dict, settings_file, indent=4)
 
     
 # Global Variables (gv)
@@ -48,7 +92,7 @@ gv = {'SETTINGS_FILE_PATH': settings_file_path,
       'JOBS_DIR_HOME': jobs_dir_home,
       'TRACKER_FILE_PATH': tracker_file_path}
 
-# TODO: if this is not all in the file, do a setup wizard please
+# Load settings into global variables (gv)
 with open(settings_file_path, 'r') as settings_file:
     gv_data = json.load(settings_file)
     gv['REPO_DIR_HOME'] = gv_data['REPO_DIR_HOME']
@@ -68,7 +112,6 @@ with open(settings_file_path, 'r') as settings_file:
 
     gv['DAYS_TO_KEEP_JOBS'] = int(gv_data['DAYS_TO_KEEP_JOBS'])
     gv['DARK_THEME'] = True if gv_data['DARK_THEME'] == 'true' else False
-    gv['THEME_COLOR_HEX'] = gv_data['THEME_COLOR_HEX']
 
 
     gv['ONLY_UNREAD_MAIL'] = True if gv_data['ONLY_UNREAD_MAIL'] == 'true' else False
@@ -94,13 +137,16 @@ with open(settings_file_path, 'r') as settings_file:
 
         if mail_template in gv_data:
             if os.path.exists(gv_data[mail_template]):
-                gv[mail_template] = resource_path(gv_data[mail_template])
+                gv[mail_template] = gv_data[mail_template]
             else:
                 raise FileNotFoundError(f'could not find file: {gv_data[mail_template]}')
         else:
-            gv[mail_template] = resource_path(os.path.join(
+            gv[mail_template] = os.path.join(
                     gv['REPO_DIR_HOME'],
-                    'laser/email_templates', 'DEFAULT_'+mail_template+'.html'))
+                    'laser/email_templates', 'DEFAULT_'+mail_template+'.html')
+
+if not os.path.exists(gv["TODO_DIR_HOME"]):
+    os.mkdir(gv["TODO_DIR_HOME"])
 
 if gv['DARK_THEME']:
     gv['GOOD_COLOR_HEX'] = '#3F643F'

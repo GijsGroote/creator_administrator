@@ -41,6 +41,8 @@ class LaserMainWindow(MainWindow):
 
         self.refreshAllWidgets()
 
+
+
         
 
 
@@ -50,7 +52,10 @@ class LaserMainWindow(MainWindow):
         self.selectFoldersAction.triggered.connect(self.openSelectFolderDialog)
 
 
+        self.menuSettings.setToolTipsVisible(True)
         self.editSettingsAction.triggered.connect(self.openEditSettingsDialog)
+        self.checkHealthAction.triggered.connect(self.checkHealth)
+
 
         # Delete this and showTimedMessage as well
         # QShortcut(QKeySequence("Ctrl+H"), self).activated.connect(self.showTimedMessage)
@@ -128,6 +133,11 @@ class LaserMainWindow(MainWindow):
     def openEditSettingsDialog(self):
         ''' Open dialog to edit the settings. '''
         LaserSettingsQDialog(self, gv).exec()
+
+    def checkHealth(self):
+        ''' Check health with tracker file. '''
+        LaserJobTracker(self).checkHealth()
+        TimedMessage(gv=gv, parent=self, text='System Healthy ;)')
 
     def refreshAllWidgets(self):
         ''' Refresh the widgets. '''

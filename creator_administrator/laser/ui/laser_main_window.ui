@@ -534,6 +534,7 @@
      <string>Settings</string>
     </property>
     <addaction name="editSettingsAction"/>
+    <addaction name="checkHealthAction"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -594,6 +595,9 @@
    <property name="text">
     <string>Edit Settings</string>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open dialog to change the settings.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
   </action>
   <action name="openDocumentationAction">
    <property name="text">
@@ -613,6 +617,14 @@
   <action name="actionAbout">
    <property name="text">
     <string>About Creator Administrator</string>
+   </property>
+  </action>
+  <action name="checkHealthAction">
+   <property name="text">
+    <string>Check Health</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compares jobs on file system with jobs in tracker file.&lt;/p&gt;&lt;p&gt;Synchronizes/Repair if they  if they are out of sync.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </action>
  </widget>
