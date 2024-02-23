@@ -23,8 +23,6 @@ class ThreadedMailManager():
         self.dialog = dialog # dialog to open with data retrieved on another thread
         self.worker = None
 
-
-
     def getValidMailsFromInbox(self):
         ''' Get mails from inbox.
 
@@ -40,6 +38,7 @@ class ThreadedMailManager():
         
         get_mail_worker = Worker(self.getNewMails)
         get_mail_worker.signals.finished.connect(self.loading_dialog.accept)
+
         get_mail_worker.signals.error.connect(self.loading_dialog.accept)
         get_mail_worker.signals.error.connect(self.handleMailError)
         get_mail_worker.signals.result.connect(self.openImportFromMailDialog)
@@ -62,6 +61,8 @@ class ThreadedMailManager():
 
         else:
             self.dialog(self.parent_widget, valid_msgs).exec()
+            self.parent_widget.refreshAllWidgets()
+
             
 
     def handleMailError(self, exc: Exception):

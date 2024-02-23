@@ -42,10 +42,6 @@ class LaserMainWindow(MainWindow):
         self.refreshAllWidgets()
 
 
-
-        
-
-
         # menu bar actions
         self.importFromMailAction.triggered.connect(self.handleNewValidMails)
         self.selectFilesAction.triggered.connect(self.openSelectFilesDialog)
@@ -72,6 +68,7 @@ class LaserMainWindow(MainWindow):
         self.threaded_mail_manager = ThreadedMailManager(self, gv, dialog=LaserImportFromMailQDialog)
         # getValidmails gets mail and triggers openImportFromMailDialog
         self.threaded_mail_manager.getValidMailsFromInbox()
+        
 
 
     def openSelectFilesDialog(self):
