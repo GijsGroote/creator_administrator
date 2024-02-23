@@ -175,8 +175,8 @@ class MailManager():
                 assert sender_mail_adress is not None, 'sender_mail_adress is None'
                 assert sender_mail_receive_time is not None, 'sender_mail_receive_time is None'
                 
-                for message in self.inbox.Items:
-                    if sender_mail_adress == message.SenderEmailAddress and\
+                for message in self.inbox.Items:                   
+                    if sender_mail_adress == self.getEmailAddress(message) and\
                         sender_mail_receive_time == str(message.ReceivedTime):
                             message.UnRead = False
                             message.Move(self.verwerkt_folder)               

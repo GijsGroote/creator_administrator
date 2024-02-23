@@ -173,9 +173,9 @@ class ThreadedMailManager():
         job_tracker = JobTracker(self.gv, self.parent_widget)
 
 
-        mail_manager.moveEmailToVerwerktFolder(sender_mail_adress=self.sender_mail_adress,
+        mail_manager.moveEmailToVerwerktFolder(mail_item=mail_item,
+                                               sender_mail_adress=self.sender_mail_adress,
                                                sender_mail_receive_time=self.sender_mail_receive_time)
-
 
     def sendUnclearMail(self,
                         mail_item,
@@ -189,7 +189,8 @@ class ThreadedMailManager():
                                 template_file_name="UNCLEAR_MAIL_TEMPLATE",
                                 template_content=template_content,
                                 popup_reply=False)
-        mail_manager.moveEmailToVerwerktFolder(sender_mail_adress=self.sender_mail_adress,
+        mail_manager.moveEmailToVerwerktFolder(mail_item=mail_item,
+                                               sender_mail_adress=self.sender_mail_adress,
                                                sender_mail_receive_time=self.sender_mail_receive_time)
 
     def sendFinishedMail(self,
@@ -227,7 +228,7 @@ class ThreadedMailManager():
     def handleMailError(self, exc: Exception):
         ''' Handle the mail Error. '''
         assert isinstance(exc, Exception), f'Expected type Exception, received type: {type(exc)}'
-        
+       
         if isinstance(exc, ConnectionError):
             ErrorQMessageBox(self.parent_widget, text=f'Connection Error {self.error_message}: {str(exc)}')
         else:
