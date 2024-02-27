@@ -186,10 +186,10 @@ class MailManager():
                     raise ConnectionError('Not connected to the internet')
 
                 self.imapLogin()
-                eml = self.mailItemToMailFile(mail_item)
+                assert isinstance(mail_item, list), f'mail_item should be of type list and is of type {type(mail_item)}'
 
                 # Extract the mail UID using regular expression
-                match = re.search(rb'\b(\d+)\b', eml[0][0])
+                match = re.search(rb'\b(\d+)\b', mail_item[0][0])
 
                 if match:
                     uid_msg_set = (match.group(1))
@@ -247,8 +247,7 @@ class MailManager():
     def getEmailAddress(self, msg) -> str:
         """ Return the email adress. """
         if sys.platform == 'win32':
-            if isinstance(msg, str):
-                msg = self.mailItemToMailFile(msg)
+            msg = self.mailItemToMailFile(msg)
 
             if msg.Class==43:
                 if msg.SenderEmailType=='EX':
@@ -287,7 +286,6 @@ class MailManager():
 
             return self.mailToName(msg.get('From'))
 
-        mailItemToMailFile
     def mailItemToMailFile(self, mail_item):
         ''' Return Msg from global path to mail.msg. '''
 
@@ -302,6 +300,7 @@ class MailManager():
         if sys.platform == 'linux':
             if isinstance(mail_item, email.message.Message):
                 return mail_item
+
             elif isinstance(mail_item, list):
                 return email.message_from_bytes(mail_item[0][1])
 
@@ -432,11 +431,8 @@ class MailManager():
 
         if sys.platform == 'linux':
 
-            # assume msg_file_path is a path toward the .eml file
-            if isinstance(mail_item, str):
-                eml = self.mailItemToMailFile(mail_item)
-            else:
-                eml = mail_item
+            eml = self.mailItemToMailFile(mail_item)
+
 
             original_sender_mail_long = eml.get('From')
             original_sender_mail = parseaddr(original_sender_mail_long)[1]
