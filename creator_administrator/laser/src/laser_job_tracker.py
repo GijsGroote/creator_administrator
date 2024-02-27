@@ -3,18 +3,12 @@ Laser Job tracker, tracking laser jobs.
 """
 
 import json
-import shutil
 import os
 import re
-import sys
-import subprocess
 from datetime import datetime
 
 
-import glob
-import sys
 
-from typing import Tuple
 
 from global_variables import gv
 
@@ -217,7 +211,6 @@ class LaserJobTracker(JobTracker):
                     # TODO: find the material details from the .dxf files first please
                     # add this file to the to tracker
                     print('TODO: add job to tracker')
-                    pass
                     TimedMessage(gv=gv, parent=self.parent_widget, text=f'Added {job_dict["job_name"]} to Tracker')
 
                 else:

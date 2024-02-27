@@ -7,12 +7,12 @@ import shutil
 import os
 import abc
 import re
-from typing import Tuple
-from unidecode import unidecode
 from datetime import datetime
-from typing import List
+from unidecode import unidecode
+
 from PyQt6.QtWidgets import QWidget
-from src.qmessagebox import TimedMessage, YesOrNoMessageBox, InfoQMessageBox
+
+from src.qmessagebox import YesOrNoMessageBox, InfoQMessageBox
 
 class JobTracker:
 
@@ -45,7 +45,7 @@ class JobTracker:
                 return
 
         with open(self.tracker_file_path, 'w') as tracker_file:
-            json.dump(dict(), tracker_file, indent=4)
+            json.dump({}, tracker_file, indent=4)
 
         InfoQMessageBox(self.parent_widget, text='New job tracker file created') 
 
@@ -67,7 +67,7 @@ class JobTracker:
                     json.dump({}, tracker_file, indent=4)
 
             else: 
-                print(f"MANUALLY REPAIR TRACKER FILE!")
+                print("MANUALLY REPAIR TRACKER FILE!")
 
     def makeBackup(self):
         """ Make a backup of the tracker file. """
@@ -84,20 +84,7 @@ class JobTracker:
         date_difference = current_date_object - created_on_date_object
         return date_difference.days > self.gv['DAYS_TO_KEEP_JOBS']
 
-    def updateJobStatus(self, job_name, new_status):
-        """ Update the main folder in the tracker. """
-        with open(self.tracker_file_path, 'r') as tracker_file:
-            tracker_dict = json.load(tracker_file)
-
-        # tracker_dict[job_name]["main_folder"] = new_main_folder
-        # if new_main_folder == 'VERWERKT':
-        #     for file_dict in tracker_dict[job_name]['laser_files'].values():
-        #         file_dict['done'] = True
-
-        with open(self.tracker_file_path, 'w') as tracker_file:
-            json.dump(tracker_dict, tracker_file, indent=4)
-
-    def getStaticAndDynamicJobNamesWithStatus(self, status: str) -> List[tuple]:
+    def getStaticAndDynamicJobNamesWithStatus(self, status: str) -> list[tuple]:
         ''' Return a list containing all dynamic job names that have a given status '''
 
         with open(self.tracker_file_path, 'r') as tracker_file:
@@ -105,7 +92,7 @@ class JobTracker:
 
         return [(job_name, job_dict['dynamic_job_name']) for job_name, job_dict in tracker_dict.items() if job_dict['status'] == status]
 
-    def getAllStaticAndDynamicJobNames(self) -> List[tuple]:
+    def getAllStaticAndDynamicJobNames(self) -> list[tuple]:
         ''' Return a list containing all dynamic job names. '''
 
         with open(self.tracker_file_path, 'r') as tracker_file:
@@ -154,7 +141,7 @@ class JobTracker:
             return job_name
         return job_name + '_(' + str(max_job_number + 1) + ')'
     
-    def jobGlobalPathToTrackerJobDict(self, tracker_dict: dict, job_folder_global_path: str) -> dict:
+    def jobGlobalPathToTrackerJobDict(self, tracker_dict: dict, job_folder_global_path: str) -> tuple:
         """ If exists, return job name and data from tracker dictionary
         corresponding to the print job with name print_job_folder_name. """
         for job_key, job_dict in tracker_dict.items():

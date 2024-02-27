@@ -1,25 +1,18 @@
 import os
-import pkg_resources
 import webbrowser
 from functools import partial
-from PyQt6 import uic
-from PyQt6.QtWidgets import *
-from PyQt6.QtCore import *
-from PyQt6.QtGui import *
+import pkg_resources
 
+from PyQt6.QtWidgets import QDialog, QWidget, QListWidgetItem
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QKeySequence, QShortcut
-
+from PyQt6.QtGui import QKeySequence, QShortcut, QFont
 from PyQt6.uic import loadUi
-
-from global_variables import gv # TODO: what in the hell is this here?
-
 
 class ImportFromMailQDialog(QDialog):
     """ Import from mail dialog. """
-    def __init__(self, parent, ui_global_path, *args, **kwargs):
+    def __init__(self, parent: QWidget, gv: dict, ui_global_path: str, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
-        self.gv=gv# This should be an arguement of init!!
+        self.gv=gv
 
         loadUi(ui_global_path, self)
         
@@ -36,13 +29,13 @@ class SelectQDialog(QDialog):
         super().__init__(parent, *args, **kwargs)
 
         loadUi(ui_global_path, self)
-        self.passwordQLineEdit.textChanged.connect(partial(self.check_password, gv=gv))
+        self.passwordQLineEdit.textChanged.connect(self.check_password)
 
         # shortcut on Esc button
         QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.closeDialog)
 
-    def check_password(self, gv: dict):
-        if self.passwordQLineEdit.text() == gv['PASSWORD']:
+    def check_password(self):
+        if self.passwordQLineEdit.text() == self.gv['PASSWORD']:
             self.passwordQLineEdit.setStyleSheet(f'background_color: {self.gv["GOOD_COLOR_RGBA"]};')
         else:
             self.passwordQLineEdit.setStyleSheet(f'background-color: {self.gv["BAD_COLOR_RGBA"]};')
@@ -55,11 +48,12 @@ class SelectQDialog(QDialog):
 class SelectOptionsQDialog(QDialog):
     ''' Select one of the options. '''
 
-    def __init__(self, parent, options: list, *args, **kwargs):
+    def __init__(self, parent: QWidget, gv: dict, options: list, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
+        self.gv = gv
 
         
-        loadUi(os.path.join(gv['LOCAL_UI_DIR'], 'select_material_done_dialog.ui'), self)
+        loadUi(os.path.join(self.gv['LOCAL_UI_DIR'], 'select_material_done_dialog.ui'), self)
 
         # QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.toggleSelection)
 
@@ -122,7 +116,7 @@ class AboutDialog(QDialog):
         # shortcut on Esc button
         QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.closeDialog)
 
-    def openGithubInBrowser(self, event):
+    def openGithubInBrowser(self):
         ''' Open Github in browser. '''
         webbrowser.open('https://github.com/GijsGroote/creator_administrator/')
 

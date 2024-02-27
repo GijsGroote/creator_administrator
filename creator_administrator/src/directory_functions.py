@@ -5,9 +5,7 @@ Functionality for moving/copying or searching in directories.
 import os
 import sys
 import shutil
-import json
 import subprocess
-from typing import List
 
 def copy_item(source_dir_global: str, target_dir_global: str):
     """ Copy directory and subdirectories recursively. """
@@ -15,7 +13,7 @@ def copy_item(source_dir_global: str, target_dir_global: str):
     if os.path.exists(target_dir_global):
         return
 
-    elif os.path.isdir(source_dir_global):
+    if os.path.isdir(source_dir_global):
         shutil.copytree(source_dir_global, target_dir_global)   
 
     else:

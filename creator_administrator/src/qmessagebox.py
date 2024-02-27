@@ -1,7 +1,7 @@
-import time
-from PyQt6.QtGui import *
-from PyQt6.QtWidgets import *
-from PyQt6.QtCore import *
+from PyQt6.QtGui import QKeySequence, QShortcut
+from PyQt6.QtWidgets import QWidget, QMessageBox, QApplication
+from PyQt6.QtCore import Qt, QTimer
+
 
 class TimedMessage(QMessageBox):
     ''' Short message that can only be clicked away. '''
@@ -55,7 +55,6 @@ class TimedMessage(QMessageBox):
 
     def doNothing(self):
         ''' Literally do nothing. '''
-        pass
         
     def getMainWidget(self, widget):
         while widget.parent() is not None:
@@ -66,7 +65,7 @@ class TimedMessage(QMessageBox):
 
 class JobFinishedMessageBox(QMessageBox):
 
-    def __init__(self, parent, text, icon=QMessageBox.Icon.Information, *args, **kwargs):
+    def __init__(self, parent, text, *args, icon=QMessageBox.Icon.Information, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         self.setText(text)
@@ -76,7 +75,7 @@ class JobFinishedMessageBox(QMessageBox):
 
 class YesOrNoMessageBox(QMessageBox):
 
-    def __init__(self, parent: QWidget, text: str, yes_button_text='Yes', no_button_text='No', *args, **kwargs):
+    def __init__(self, parent: QWidget, text: str, *args, yes_button_text='Yes', no_button_text='No', **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         self.setText(text)
@@ -93,7 +92,6 @@ class YesOrNoMessageBox(QMessageBox):
         if self.exec()==QMessageBox.StandardButton.Yes:
             return True
         return False
-
 
 
 

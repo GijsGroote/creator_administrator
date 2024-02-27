@@ -1,21 +1,19 @@
-import sys
-import qdarktheme
 import webbrowser
+import qdarktheme
 from functools import partial
-from PyQt6 import *
-from PyQt6.QtCore import *
-from PyQt6.QtGui import *
-from PyQt6.QtWidgets import *
-from PyQt6 import uic
 
-from src.qmessagebox import InfoQMessageBox
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QShortcut, QKeySequence 
+from PyQt6.QtWidgets import QMainWindow, QListWidget, QStackedWidget
+from PyQt6.uic import loadUi
+
 from src.qdialog import AboutDialog
 
 class MainWindow(QMainWindow):
 
     def __init__(self, ui_global_path: str, gv: dict, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        uic.loadUi(ui_global_path, self)
+        loadUi(ui_global_path, self)
         if gv['DARK_THEME']:
             qdarktheme.setup_theme()
             self.setStyleSheet("""QToolTip { 

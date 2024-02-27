@@ -1,14 +1,7 @@
-from PyQt6 import *
-from PyQt6.QtCore import *
-from PyQt6.QtGui import *
-from PyQt6.QtWidgets import *
 from src.qmessagebox import InfoQMessageBox, WarningQMessageBox, ErrorQMessageBox, TimedMessage
-from src.worker import Worker, WorkerSignals
+from src.worker import Worker
 from src.mail_manager import MailManager
 from src.loading_dialog import LoadingQDialog
-from src.job_tracker import JobTracker
-
-
 
 class ThreadedMailManager():
     ''' 
@@ -64,17 +57,6 @@ class ThreadedMailManager():
             self.parent_widget.refreshAllWidgets()
 
             
-
-    def handleMailError(self, exc: Exception):
-        ''' Handle the mail error. '''
-        assert isinstance(exc, Exception), f'Expected type Exception, received type: {type(exc)}'
-
-        if isinstance(exc, ConnectionError):
-            ErrorQMessageBox(self,
-                    text=f'Error: {str(exc)}')
-        else:
-            ErrorQMessageBox(self, text=f'Error Occured: {str(exc)}')
-
     ''' below this point functions: Start <mail_type> MailWorker.
 
         The following mail types exist:
@@ -228,11 +210,12 @@ class ThreadedMailManager():
     def handleMailError(self, exc: Exception):
         ''' Handle the mail Error. '''
         assert isinstance(exc, Exception), f'Expected type Exception, received type: {type(exc)}'
-
-        raise exc
        
         if isinstance(exc, ConnectionError):
-            ErrorQMessageBox(self.parent_widget, text=f'Connection Error {self.error_message}: {str(exc)}')
+            ErrorQMessageBox(
+                    self.parent_widget,
+                    text=f'Connection Error {self.error_message}: {str(exc)}')
         else:
-            ErrorQMessageBox(self.parent_widget, text=f'Error Occured {self.error_message}: {str(exc)}')
-
+            ErrorQMessageBox(
+                    self.parent_widget,
+                    text=f'Error Occured {self.error_message}: {str(exc)}')

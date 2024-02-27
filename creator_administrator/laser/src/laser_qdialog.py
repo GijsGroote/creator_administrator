@@ -1,7 +1,5 @@
 import os
 import re
-import sys
-import copy
 from PyQt6 import *
 from PyQt6.QtCore import *
 from PyQt6 import QtWebEngineWidgets
@@ -28,7 +26,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
     def __init__(self, parent, valid_msgs, *args, **kwargs):
         ui_global_path = os.path.join(gv['REPO_DIR_HOME'], 'laser/ui/import_mail_dialog.ui')
-        super().__init__(parent, ui_global_path, *args, **kwargs)
+        super().__init__(parent, gv, ui_global_path, *args, **kwargs)
 
         self.mail_manager = MailManager(gv)
         self.valid_msgs = valid_msgs

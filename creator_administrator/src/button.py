@@ -1,18 +1,16 @@
 import os
 
-from PyQt6 import *
-from PyQt6.QtCore import *
-from PyQt6 import QtWebEngineWidgets
-from PyQt6.QtGui import *
-from PyQt6.QtWidgets import *
+# from PyQt6 import *
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QShortcut, QKeySequence 
+from PyQt6.QtWidgets import QPushButton, QFileDialog, QLabel
 
 from src.mail_manager import MailManager
-from src.qmessagebox import InfoQMessageBox
-
 from src.qlist_widget import ContentQListWidget
-from laser_qlist_widget import JobContentQListWidget, OverviewQListWidget
-
 from src.qmessagebox import TimedMessage
+
+from laser_qlist_widget import OverviewQListWidget
+
 
 class JobsQPushButton(QPushButton):
     ''' Parent class for all buttons that update job status

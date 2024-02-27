@@ -1,16 +1,16 @@
 # from PyQt5 import Qt
 import os
-from PyQt6.QtGui import *
-from PyQt6.QtWidgets import *
-from PyQt6.QtCore import *
-from PyQt6 import uic
+from PyQt6.QtGui import QFont
+from PyQt6.QtWidgets import QDialog
+from PyQt6.QtCore import Qt
+from PyQt6.uic import loadUi
 
 class LoadingQDialog(QDialog):
 
-    def __init__(self, parent, gv: dict, text=None, *args, **kwargs):
+    def __init__(self, parent, gv: dict, *args, text=None, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
-        uic.loadUi(os.path.join(gv['REPO_DIR_HOME'], 'ui/loading_dialog.ui'), self)
+        loadUi(os.path.join(gv['REPO_DIR_HOME'], 'ui/loading_dialog.ui'), self)
         if text is not None:
             self.label.setText(text)
             self.label.setFont(QFont('Cantarell', 14))

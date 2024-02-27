@@ -1,28 +1,20 @@
 import sys
 import os
-from functools import partial
-from PyQt6 import QtWidgets
-from PyQt6 import QtCore
-from requests.exceptions import ConnectionError
-import time
 
-import traceback 
-from PyQt6.QtGui import *
-from PyQt6.QtWidgets import *
-from PyQt6.QtCore import *
+from PyQt6 import QtWidgets
+from PyQt6.QtWidgets import QListWidget
+
 from global_variables import gv
+
 from src.app import MainWindow
-from src.qmessagebox import InfoQMessageBox, WarningQMessageBox, ErrorQMessageBox, TimedMessage
-from src.worker import Worker
-from src.loading_dialog import LoadingQDialog
-from src.mail_manager import MailManager
-from unidecode import unidecode
+from src.qmessagebox import WarningQMessageBox, ErrorQMessageBox, TimedMessage
+from src.threaded_mail_manager import ThreadedMailManager
+
 from laser_job_tracker import LaserJobTracker
 from laser_settings_dialog import LaserSettingsQDialog
 from laser_qdialog import (
         LaserImportFromMailQDialog, LaserFilesSelectQDialog,
         LaserFolderSelectQDialog, LaserFileInfoQDialog)
-from src.threaded_mail_manager import ThreadedMailManager
 
 # ensure that win32com is imported after creating an executable with pyinstaller
 # from win32com import client

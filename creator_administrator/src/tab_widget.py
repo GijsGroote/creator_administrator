@@ -1,11 +1,7 @@
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QTabWidget, QListWidget, QStackedWidget
-from PyQt6.QtGui import QShortcut
-
-from PyQt6.QtGui import QKeySequence
-
-# from laser_qlist_widget import JobsOverviewQListWidget
+from PyQt6.QtGui import QShortcut, QKeySequence
 
 
 class JobsQTabWidget(QTabWidget):

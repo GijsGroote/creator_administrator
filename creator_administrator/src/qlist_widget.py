@@ -1,10 +1,8 @@
-import os
 import abc
-from typing import List
-import re
-from PyQt6.QtCore import *
-from PyQt6.QtGui import *
-from PyQt6.QtWidgets import *
+
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QKeySequence, QShortcut, QFont
+from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QLabel
 
 from src.directory_functions import open_file, open_folder
 
@@ -90,88 +88,6 @@ class ContentQListWidget(QListWidget):
         # shortcut for the Enter button
         QShortcut(QKeySequence(Qt.Key.Key_Return), self).activated.connect(self.itemEnterPressed)
         self.itemDoubleClicked.connect(self.fileDoubleClicked)
-
-        # self.setDragEnabled(True)
-        # self.itemPressed.connect(self.startDrag)
-        # self.itemEntered.connect(self.on_item_entered)
-        # self.itemMoved.connect(self.on_item_moved)
-        # self.itemDropped.connect(self.on_item_dropped)
-
-    # def startDrag(self, actions):
-    #     drag = QDrag(self)
-    #     indexes = self.selectedIndexes()
-    #     mime = self.model().mimeData(indexes)
-    #     urlList = []
-    #     for index in indexes:
-    #         urlList.append(QUrl.fromLocalFile(index.data()))
-    #     mime.setUrls(urlList)
-
-    #     print(f"start dragging this {urlList}")
-    #     drag.setMimeData(mime)
-    #     drag.exec(actions)
-
-    # def dropEvent(self, e):
-    #     if e.mimeData().hasUrls():
-    #         e.setDropAction(Qt.CopyAction)
-    #         e.accept()
-    #         fpath_list = []
-    #         for url in e.mimeData().urls():
-    #             fpath_list.append(str(url.toLocalFile()))
-    #         print(f"the list of paths {fpath_list}")
-
-    #         for fpath in fpath_list:
-    #             print(f'IMPORT {fpath}')
-    #             fileName = QFileInfo(fpath).fileName()
-    #             item = QListWidgetItem(fileName)
-    #             item.setData(FullPathRole, fpath)
-    #             self.addItem(fpath)
-    #         print(f"done somehow")
-
-    # def startDrag(self, file):
-
-    #     if file:
-    #         mime_data = QMimeData()
-    #         file_path = file.data(1)
-    #         print(f"the file path is  {file_path}")
-    #         mime_data.setUrls([QUrl.fromLocalFile(file_path)])
-
-    #         drag = QDrag(self)
-    #         drag.setMimeData(mime_data)
-
-    #         # Start the drag operation
-    #         drag.exec()
-
-
-    # def dragEnterEvent(self, event):
-    #     if event.mimeData().hasUrls():
-    #         event.accept()
-    #     else:
-    #         event.ignore()
-
-
-    # def dropEvent(self, event):
-    #     urls = [url for url in event.mimeData().urls()]
-
-    #     for url in urls:
-    #         print(f"the entire thing {url}")
-    #         print(url.toString())
-    #         print(url.toLocalFile())
-
-
-    # def dropEventtt(self, e):
-    #     if e.mimeData().hasUrls():
-    #         e.setDropAction(Qt.CopyAction)
-    #         e.accept()
-    #         fpath_list = []
-    #         for url in e.mimeData().urls():
-    #             fpath_list.append(str(url.toLocalFile()))
-
-    #         for fpath in fpath_list:
-    #             print(f'IMPORT {fpath}')
-    #             fileName = QFileInfo(fpath).fileName()
-    #             item = QListWidgetItem(fileName)
-    #             item.setData(FullPathRole, fpath)
-    #             self.addItem(fpath)
 
     def refresh(self):
         if self.current_item_name is not None:

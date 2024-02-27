@@ -11,28 +11,25 @@ import sys
 import re
 import time
 import http.client as httplib
-from typing import Tuple
+from unidecode import unidecode
 
 if sys.platform == 'linux':
     import imaplib
     import email
     import smtplib
     import ssl
-    import re
     from email.header import decode_header
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
     from email.utils import parseaddr, formataddr, parsedate_to_datetime
-    from email.parser import BytesParser
     from email.policy import default
 
     from requests.exceptions import ConnectionError
 
 elif sys.platform == 'win32':
-    from unidecode import unidecode
     import shutil
     from win32com import client
-    from src.directory_functions import copy_item, delete_directory_content
+    from src.directory_functions import  delete_directory_content
 else:
     raise ValueError(f'This software does not work for platform: {sys.platform}')
 
@@ -57,7 +54,7 @@ class MailManager():
             
             try:
                 self.verwerkt_folder = self.inbox.Parent.Folders.Item("Verwerkt")
-            except:
+            except Exception as _:
                 self.verwerkt_folder = self.inbox.Parent.Folders.Add("Verwerkt")
 
         if sys.platform == 'linux':
@@ -83,7 +80,7 @@ class MailManager():
         self.imap_mail.logout()
 
 
-    def getNewValidMails(self) -> Tuple[list, list]:
+    def getNewValidMails(self) -> tuple[list, list]:
         """ Return emails from Outlook inbox. """
         valid_msgs = []
         n_invalid_mails = 0
@@ -103,13 +100,12 @@ class MailManager():
                             valid_msgs.append(self.saveMsgAndAttachmentsInTempFolder(message))              
                         else:
                             n_invalid_mails += 1
+                elif self.isMailAValidJobRequest(message):    
+                        
+                   
+                        valid_msgs.append(self.saveMsgAndAttachmentsInTempFolder(message))
                 else:
-                    if self.isMailAValidJobRequest(message):    
-                            
-                       
-                            valid_msgs.append(self.saveMsgAndAttachmentsInTempFolder(message))
-                    else:
-                        n_invalid_mails += 1
+                    n_invalid_mails += 1
 
         if sys.platform == 'linux':
 
@@ -301,7 +297,7 @@ class MailManager():
             if isinstance(mail_item, email.message.Message):
                 return mail_item
 
-            elif isinstance(mail_item, list):
+            if isinstance(mail_item, list):
                 return email.message_from_bytes(mail_item[0][1])
 
             with open(mail_file_global_path, 'rb') as file:
@@ -365,8 +361,8 @@ class MailManager():
 
             if(encoding is None):
                 return filename
-            else:
-                return filename.decode(encoding)
+
+            return filename.decode(encoding)
 
     def saveMail(self, msg, job_folder_global_path: str):
         ''' Save mail in a folder. '''
@@ -472,9 +468,8 @@ class MailManager():
                 return matches.group(1)
             if len(matches.group(2)):
                 return matches.group(2).split('@')[0]
-        else:
-            if '@' in mail_name:
-                return mail_name.split('@')[0]
+        elif '@' in mail_name:
+            return mail_name.split('@')[0]
         return mail_name
 
     def isThereInternet(self) -> bool:

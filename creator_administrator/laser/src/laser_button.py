@@ -1,4 +1,3 @@
-import glob
 import os
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
@@ -66,7 +65,7 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
 
         laser_files_info_list = self.job_tracker.getLaserFilesWithMaterialThicknessInfo(material, thickness)
 
-        dialog = SelectOptionsQDialog(self, laser_files_info_list)
+        dialog = SelectOptionsQDialog(self, gv, laser_files_info_list)
 
         if dialog.exec() == 1:
             files_names = []
