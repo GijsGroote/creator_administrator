@@ -18,6 +18,12 @@ class MainWindow(QMainWindow):
         uic.loadUi(ui_global_path, self)
         if gv['DARK_THEME']:
             qdarktheme.setup_theme()
+            self.setStyleSheet("""QToolTip { 
+                           background-color: black; 
+                           color: white; 
+                           border: black solid 1px
+                           }""")
+            
         self.gv = gv
 
 

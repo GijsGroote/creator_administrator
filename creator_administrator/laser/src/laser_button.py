@@ -140,8 +140,17 @@ class OptionsQPushButton(JobsQPushButton):
 
         copy_todo_action = self.menu.addAction('Copy Files to TODO folder', self.copyLaserFilesTo)
         copy_todo_action.setToolTip('Shortcut: Ctrl+T')
+        
         QShortcut(QKeySequence('Ctrl+T'), self).activated.connect(self.copyLaserFilesTo)
         self.menu.setToolTipsVisible(True)
+
+        if gv['DARK_THEME']:
+            self.menu.setStyleSheet("""QToolTip { 
+                           background-color: black; 
+                           color: white; 
+                           border: black solid 1px
+                           }""")
+
 
         # initialize  
         self.objectNameChanged.connect(self.storeObjectNameInit)
