@@ -81,7 +81,7 @@ class SelectOptionsQDialog(QDialog):
                 else:
                     item.setText('❎ '+option)
             else:
-                    item.setText(option)
+                    item.setText('❎ '+option)
 
             item.setData(1, option_data)
             item.setFont(QFont('Cantarell', 14))
