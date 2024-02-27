@@ -71,11 +71,19 @@ class SelectOptionsQDialog(QDialog):
         QShortcut(QKeySequence('k'), self).activated.connect(self.toPreviousRow)
         QShortcut(QKeySequence('j'), self).activated.connect(self.toNextRow)
 
-        for (option, option_data, _) in options:
+        for (option, option_data, done) in options:
 
             item = QListWidgetItem()
+
+            if isinstance(done, bool):
+                if done:
+                    item.setText('✅ '+option)
+                else:
+                    item.setText('❎ '+option)
+            else:
+                    item.setText(option)
+
             item.setData(1, option_data)
-            item.setText(option)
             item.setFont(QFont('Cantarell', 14))
             self.optionsQListWidget.addItem(item)
 

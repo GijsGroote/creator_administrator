@@ -1,7 +1,5 @@
 import os
-import abc
-from typing import List, Tuple
-import re
+from typing import List
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
@@ -88,21 +86,24 @@ class JobContentQListWidget(ContentQListWidget):
         if job_dict is not None:
             self.parent().findChild(QLabel).setText(job_dict['dynamic_job_name'])
 
+
             for file in os.listdir(job_dict['job_folder_global_path']):
 
                 item = QListWidgetItem()
+
+                # check if it is a laser file, indicate if it is done with an emoticon
+                for laser_file_dict in [val for key,val in job_dict['laser_files'].items() if file in key]:
+                    # ☑️✅✔️❎
+                    if laser_file_dict['done']:
+                        file ='✅ '+file
+                    else:
+                        file ='❎ '+file
+
                 item.setText(file)
                 item.setData(1, os.path.join(
                     job_dict['job_folder_global_path'], file))
                 item.setFont(QFont('Cantarell', 14))
                 
-                # check if it is a laser file 
-                # for laser_file_dict in [val for key,val in job_dict['laser_files'].items() if file in key]:
-                    # TODO: add symbol to indicate if it is done
-                    # if laser_file_dict['done']:
-                    #     item.setBackground(QColor(gv["GOOD_COLOR_HEX"]))
-                    # else:
-                    #     item.setBackground(QColor(gv["BAD_COLOR_HEX"]))
 
                 self.addItem(item)
 
@@ -154,14 +155,15 @@ class MaterialContentQListWidget(ContentQListWidget):
 
         for (dxf_name, dxf_global_path, done) in laser_file_info_list:
             item = QListWidgetItem()
+
+            # Indicate if done with emotico
+            if done:
+                item.setText('✅ '+dxf_name)
+            else:
+                item.setText('❎ '+dxf_name)
+
             item.setFont(QFont('Cantarell', 14))
-            item.setText(dxf_name)
             item.setData(1, dxf_global_path)
-            # TODO do with symbol/smiley
-            # if done:
-            #     item.setBackground(QColor(gv["GOOD_COLOR_HEX"]))
-            # else:
-            #     item.setBackground(QColor(gv["BAD_COLOR_HEX"]))
 
             self.addItem(item)
 
