@@ -38,6 +38,8 @@ class LaserKlaarQPushButton(JobsQPushButton):
         
         job_folder_global_path = job_tracker.getJobFolderGlobalPathFromJobName(job_name)
         job_tracker.updateJobStatus(job_name, 'VERWERKT')
+        job_tracker.markAllFilesAsDone(job_name=job_name, done=True)
+
         sender_name = job_tracker.jobNameToSenderName(job_name)
         self.refreshAllQListWidgets()
 
@@ -80,7 +82,9 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
             job_name = self.job_tracker.fileGlobalPathToJobName(file_global_path)
 
             # material done, mark it done
-            self.job_tracker.markFileIsDone(job_name, file_global_path)
+            self.job_tracker.markLaserFileAsDone(job_name=job_name,
+                                                 file_global_path=file_global_path,
+                                                 done=True)
 
             # if all is done, display message
             if self.job_tracker.isJobDone(job_name):
@@ -191,7 +195,10 @@ class OptionsQPushButton(JobsQPushButton):
         self.setMenu(self.menu)
 
     def moveJobToWachtrij(self):
-        # TODO: moving a job to wachtrij also includes putting the laser files on not done (to display in material queue)
+        # Mark all alser files as not done
+        job_name = self.getCurrentItemName()
+        LaserJobTracker(self).markAllFilesAsDone(job_name=job_name,
+                                                 done=False)
         self.moveJobTo('WACHTRIJ')
         self.refreshAllQListWidgets()
 

@@ -74,6 +74,7 @@ class SelectOptionsQDialog(QDialog):
         for (option, option_data, done) in options:
 
             item = QListWidgetItem()
+            item.setData(1, option_data)
 
             if isinstance(done, bool):
                 if done:
@@ -81,9 +82,8 @@ class SelectOptionsQDialog(QDialog):
                 else:
                     item.setText('❎ '+option)
             else:
-                    item.setText('❎ '+option)
+                    item.setText(option)
 
-            item.setData(1, option_data)
             item.setFont(QFont('Cantarell', 14))
             self.optionsQListWidget.addItem(item)
 

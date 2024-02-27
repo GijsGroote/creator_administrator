@@ -105,16 +105,31 @@ class LaserJobTracker(JobTracker):
         with open(self.tracker_file_path, 'w') as tracker_file:
             json.dump(tracker_dict, tracker_file, indent=4)
 
-    def markFileIsDone(self, job_name: str, file_global_path: str):
-        ''' Update file status to done = True. '''
+    def markAllFilesAsDone(self, job_name: str, done: bool):
+        ''' Update all laser files to done. '''
         assert job_name is not None, f'Job name is None'
+        assert isinstance(done, bool), 'done is not a boolean'
+
+        with open(self.tracker_file_path, 'r') as tracker_file:
+            tracker_dict = json.load(tracker_file)
+
+        for file_dict in tracker_dict[job_name]['laser_files'].values():
+            file_dict['done'] = done
+
+        with open(self.tracker_file_path, 'w') as tracker_file:
+            json.dump(tracker_dict, tracker_file, indent=4)
+
+    def markLaserFileAsDone(self, job_name: str, file_global_path: str, done: bool):
+        ''' Update laser file to done. '''
+        assert job_name is not None, f'Job name is None'
+        assert isinstance(done, bool), 'done is not a boolean'
 
         with open(self.tracker_file_path, 'r') as tracker_file:
             tracker_dict = json.load(tracker_file)
 
         for file_dict in tracker_dict[job_name]['laser_files'].values():
             if file_dict['file_global_path']==file_global_path:
-                file_dict['done'] = True
+                file_dict['done'] = done
 
         with open(self.tracker_file_path, 'w') as tracker_file:
             json.dump(tracker_dict, tracker_file, indent=4)

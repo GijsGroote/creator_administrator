@@ -86,10 +86,11 @@ class JobContentQListWidget(ContentQListWidget):
         if job_dict is not None:
             self.parent().findChild(QLabel).setText(job_dict['dynamic_job_name'])
 
-
             for file in os.listdir(job_dict['job_folder_global_path']):
 
                 item = QListWidgetItem()
+                item.setData(1, os.path.join(
+                    job_dict['job_folder_global_path'], file))
 
                 # check if it is a laser file, indicate if it is done with an emoticon
                 for laser_file_dict in [val for key,val in job_dict['laser_files'].items() if file in key]:
@@ -100,11 +101,7 @@ class JobContentQListWidget(ContentQListWidget):
                         file ='❎ '+file
 
                 item.setText(file)
-                item.setData(1, os.path.join(
-                    job_dict['job_folder_global_path'], file))
                 item.setFont(QFont('Cantarell', 14))
-                
-
                 self.addItem(item)
 
 
@@ -155,6 +152,7 @@ class MaterialContentQListWidget(ContentQListWidget):
 
         for (dxf_name, dxf_global_path, done) in laser_file_info_list:
             item = QListWidgetItem()
+            item.setData(1, dxf_global_path)
 
             # Indicate if done with emotico
             if done:
@@ -163,7 +161,5 @@ class MaterialContentQListWidget(ContentQListWidget):
                 item.setText('❎ '+dxf_name)
 
             item.setFont(QFont('Cantarell', 14))
-            item.setData(1, dxf_global_path)
-
             self.addItem(item)
 
