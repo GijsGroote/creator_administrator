@@ -7,6 +7,10 @@ import sys
 import shutil
 import subprocess
 
+
+from PyQt6.QtWidgets import QWidget
+from src.qmessagebox import  ErrorQMessageBox
+
 def copy_item(source_dir_global: str, target_dir_global: str):
     """ Copy directory and subdirectories recursively. """
 
@@ -19,14 +23,7 @@ def copy_item(source_dir_global: str, target_dir_global: str):
     else:
         shutil.copy(source_dir_global, target_dir_global)
         
-# TODO: move source_dir to target_dir (and content), but target_dir already exist
-# result: content from source_dir is not copied to target_dir
-# def move_item(source_dir_global: str, target_dir_global: str):
-#     """ Move directory and subdirectories recursively. """
-#     copy_item(source_dir_global, target_dir_global)
-#     delete_item(source_dir_global)
-
-def delete_item(item_global_path: str):
+def delete_item(parent_widget: QWidget, item_global_path: str):
     """ Delete the file from the file system. """
     if os.path.exists(item_global_path):
         try:
@@ -34,13 +31,14 @@ def delete_item(item_global_path: str):
                 shutil.rmtree(item_global_path)
             else:
                 os.remove(item_global_path)
-        except Exception as e:
-            print(f"An error occurred: {e}") # TODO: better to not print anything in a GUI based application
 
-def delete_directory_content(folder_global_path: str):
+        except PermissionError as exc:
+            ErrorQMessageBox(parent_widget, text=f'Error Occured: {str(exc)}')
+
+def delete_directory_content(parent_widget: QWidget, folder_global_path: str):
         ''' Delete all contents of a folder. '''
         for item in os.listdir(folder_global_path):
-            delete_item(os.path.join(folder_global_path, item))
+            delete_item(parent_widget, os.path.join(folder_global_path, item))
 
 def open_file(file_global_path: str):
     ''' Open a folder in the default file explorer. '''

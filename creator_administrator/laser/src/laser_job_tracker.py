@@ -69,7 +69,7 @@ class LaserJobTracker(JobTracker):
             tracker_dict = json.load(tracker_file)
 
         deleted_job_dict = tracker_dict.pop(job_name)
-        delete_item(deleted_job_dict['job_folder_global_path'])
+        delete_item(self.parent_widget, deleted_job_dict['job_folder_global_path'])
         
         with open(self.tracker_file_path, 'w', encoding='utf-8') as tracker_file:
             json.dump(tracker_dict, tracker_file, indent=4)
@@ -202,7 +202,7 @@ class LaserJobTracker(JobTracker):
 
                 else:
                     # remove that directory
-                    delete_item(job_global_path)
+                    delete_item(self.parent_widget, job_global_path)
                     TimedMessage(gv=gv, parent=self.parent_widget, text=f'removed folder {job_global_path}')
                     continue
 
@@ -274,7 +274,7 @@ class LaserJobTracker(JobTracker):
 
             else:
                 for file in new_files_list:
-                    delete_item(os.path.join(job_folder_global_path, file))
+                    delete_item(self.parent_widget, os.path.join(job_folder_global_path, file))
                 TimedMessage(gv=gv, parent=self.parent_widget, text=f'Removed {len(new_files_list)} {file_str} from File System')
 
 
