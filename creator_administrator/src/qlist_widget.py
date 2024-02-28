@@ -75,7 +75,7 @@ class OverviewQListWidget(QListWidget):
         ''' Return a list of names or tuples. '''
 
     @abc.abstractmethod
-    def displayItem(self, item_name: str):
+    def displayItem(self, *args):
         ''' Display the item page and load its content for the highlighted job. '''
 
 class ContentQListWidget(QListWidget):

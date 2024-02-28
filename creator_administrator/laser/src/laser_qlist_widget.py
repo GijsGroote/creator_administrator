@@ -104,10 +104,9 @@ class JobContentQListWidget(ContentQListWidget):
 class MaterialOverviewQListWidget(OverviewQListWidget):
 
     def __init__(self, *args, **kwargs):
-        QListWidget.__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.initialize(self.getItemNames())
-
 
         self.itemDoubleClicked.connect(self.itemIsDoubleClicked)
 

@@ -464,7 +464,7 @@ class MailManager():
         try:
             conn.request("HEAD", "/")
             return True
-        except BaseException:
+        except Exception:
             return False
         finally:
             conn.close()

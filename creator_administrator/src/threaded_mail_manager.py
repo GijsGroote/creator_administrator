@@ -111,7 +111,7 @@ class ThreadedMailManager():
                           template_content=template_content)
                 self.displaySuccessMessage()
 
-            except BaseException as exc:
+            except Exception as exc:
                 self.handleMailError(exc)
 
     def startDeclinedMailWorker(self,
@@ -207,9 +207,9 @@ class ThreadedMailManager():
         if self.success_message is not None:
             TimedMessage(self.gv, parent=self.parent_widget, text=self.success_message)
 
-    def handleMailError(self, exc: BaseException):
+    def handleMailError(self, exc: Exception):
         ''' Handle the mail Error. '''
-        assert isinstance(exc, BaseException), f'Expected type Exception, received type: {type(exc)}'
+        assert isinstance(exc, Exception), f'Expected type Exception, received type: {type(exc)}'
        
         if isinstance(exc, ConnectionError):
             ErrorQMessageBox(

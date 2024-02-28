@@ -150,20 +150,20 @@ class SettingsQDialog(QDialog):
             settings_dict['DATA_DIR_HOME'] = self.selectDataDirectoryButton.folder_global_path
             settings_dict['TODO_DIR_HOME'] = self.selectTodoDirectoryButton.folder_global_path
 
-        for checkbox_name, widget in [('DISPLAY_WARNING_MESSAGES', self.dispWarnMessageCheckBox),
+        for checkbox_name, widget in (('DISPLAY_WARNING_MESSAGES', self.dispWarnMessageCheckBox),
                                      ('DISPLAY_TEMP_MESSAGES', self.dispTempMessageCheckBox),
                                      ('ONLY_UNREAD_MAIL', self.onlyUnreadMailCheckBox),
                                      ('MOVE_MAILS_TO_VERWERKT_FOLDER', self.moveMailToVerwerktCheckBox),
                                      ('SEND_MAILS_ON_SEPERATE_THREAD', self.sendMailThreadedCheckBox),
                                      ('EMPTY_TODO_DIR_BEFORE_EXPORT', self.emptyTodoDirCheckBox),
-                                     ('DARK_THEME', self.darkModeCheckBox)]:
+                                     ('DARK_THEME', self.darkModeCheckBox)):
 
-            settings_dict[checkbox_name] =  'true' if widget.isChecked() else 'false'
+            settings_dict[checkbox_name] = 'true' if widget.isChecked() else 'false'
 
-        for template_name, widget_button in [('RECEIVED_MAIL_TEMPLATE', self.selectReceivedTemplateButton),
+        for template_name, widget_button in (('RECEIVED_MAIL_TEMPLATE', self.selectReceivedTemplateButton),
                                              ('UNCLEAR_MAIL_TEMPLATE', self.selectUnclearTemplateButton),
                                              ('FINISHED_MAIL_TEMPLATE', self.selectFinishedTemplateButton),
-                                             ('DECLINED_MAIL_TEMPLATE', self.selectDeclinedTemplateButton)]:
+                                             ('DECLINED_MAIL_TEMPLATE', self.selectDeclinedTemplateButton)):
             if widget_button.file_global_path is not None:
                 if sys.platform == 'win32':
                     settings_dict[template_name] = widget_button.file_global_path.replace('/', '\\')
@@ -171,7 +171,7 @@ class SettingsQDialog(QDialog):
                     settings_dict[template_name] = widget_button.file_global_path
 
 
-        with open(self.gv['SETTINGS_FILE_PATH'], 'w') as settings_file:
+        with open(self.gv['SETTINGS_FILE_PATH'], 'w', encoding='utf-8') as settings_file:
             json.dump(settings_dict, settings_file, indent=4)
 
     def checkInt(self, widget: QWidget) -> bool:
@@ -180,7 +180,7 @@ class SettingsQDialog(QDialog):
             widget.setStyleSheet(f'background-color: {self.gv["GOOD_COLOR_RGBA"]};')
             return True
 
-        except:
+        except ValueError:
             widget.setStyleSheet(f'background-color: {self.gv["BAD_COLOR_RGBA"]};')
             return False
 
@@ -188,7 +188,7 @@ class SettingsQDialog(QDialog):
         try:
             tuple(widget.text().split(', '))
 
-        except:
+        except ValueError:
             widget.setStyleSheet(f'background-color: {self.gv["GOOD_COLOR_RGBA"]};')
             return False
 
@@ -204,7 +204,7 @@ class SettingsQDialog(QDialog):
         try:
             tuple(widget.text().split(', '))
 
-        except:
+        except ValueError:
             widget.setStyleSheet(f'background-color: {self.gv["BAD_COLOR_RGBA"]};')
             return False
 
