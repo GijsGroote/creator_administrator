@@ -1,32 +1,23 @@
 import os
-from PyQt6.QtCore import *
-from PyQt6.QtGui import *
-from PyQt6.QtWidgets import *
 
-from global_variables import gv
-from src.worker import Worker
+from PyQt6.QtGui import QShortcut, QKeySequence 
+from PyQt6.QtWidgets import QMenu
 
-from laser_job_tracker import LaserJobTracker
 from src.button import JobsQPushButton
 from src.directory_functions import open_folder
-
-from src.directory_functions import delete, delete_directory_content
-
-from convert import split_material_name
-from src.mail_manager import MailManager
+from src.directory_functions import delete_directory_content
 from src.qdialog import SelectOptionsQDialog
-
-
 from src.directory_functions import copy_item
-from src.qmessagebox import TimedMessage, JobFinishedMessageBox, YesOrNoMessageBox, ErrorQMessageBox, WarningQMessageBox
-from laser_qlist_widget import MaterialContentQListWidget
-from requests.exceptions import ConnectionError
+from src.qmessagebox import TimedMessage, WarningQMessageBox
 from src.threaded_mail_manager import ThreadedMailManager
 
+from convert import split_material_name
+from global_variables import gv
+from laser_job_tracker import LaserJobTracker
 
 class LaserKlaarQPushButton(JobsQPushButton):
 
-    def __init__(self, parent=None, *args, **kwargs):
+    def __init__(self, *args, parent=None, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.threadpool = gv["THREAD_POOL"]
         self.clicked.connect(self.on_click)
@@ -43,7 +34,7 @@ class LaserKlaarQPushButton(JobsQPushButton):
         self.refreshAllQListWidgets()
 
         if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]):
-            WarningQMessageBox(gv=gv, parent=self, text=f'No Job finished mail send because: No mail file found')
+            WarningQMessageBox(gv=gv, parent=self, text='No Job finished mail send because: No mail file found')
         else:
             ThreadedMailManager(parent_widget=self, gv=gv).startMailWorker(
                 success_message=f'Job finished mail send to {sender_name}',
@@ -122,7 +113,7 @@ class AfgekeurdQPushButton(JobsQPushButton):
 
         
         if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]):
-                    WarningQMessageBox(gv=gv, parent=self, text=f'No Afgekeurd mail send because: No mail file found')
+                    WarningQMessageBox(gv=gv, parent=self, text='No Afgekeurd mail send because: No mail file found')
         else:
             sender_name = job_tracker.jobNameToSenderName(job_name)
 

@@ -1,26 +1,19 @@
 import os
 import re
-from PyQt6 import *
-from PyQt6.QtCore import *
-from PyQt6 import QtWebEngineWidgets
-from PyQt6.QtGui import *
-from PyQt6.QtWidgets import *
+import datetime
 
+from PyQt6.QtWidgets import QMessageBox, QDialog
 from PyQt6.uic import loadUi
 
-import datetime
-from global_variables import gv
 from src.qdialog import ImportFromMailQDialog, SelectQDialog
-
 from src.mail_manager import MailManager
-from src.qmessagebox import TimedMessage, ErrorQMessageBox
-
-from requests.exceptions import ConnectionError
-from laser_job_tracker import LaserJobTracker
-from src.worker import Worker
+from src.qmessagebox import TimedMessage
 from src.threaded_mail_manager import ThreadedMailManager
 from src.directory_functions import copy_item
+
+from laser_job_tracker import LaserJobTracker
   
+from global_variables import gv
 
 class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
@@ -284,7 +277,7 @@ class LaserFilesSelectQDialog(SelectQDialog):
     """ Select files dialog. """
     def __init__(self, parent, *args, **kwargs):
         ui_global_path = os.path.join(gv['REPO_DIR_HOME'], 'laser/ui/select_files_dialog.ui')
-        super().__init__(parent, ui_global_path, *args, **kwargs)
+        super().__init__(parent, gv, ui_global_path, *args, **kwargs)
         self.filesGlobalPathsQLabel.hide()
         
 
@@ -326,7 +319,7 @@ class LaserFolderSelectQDialog(SelectQDialog):
     """ Select folder dialog. """
     def __init__(self, parent, *args, **kwargs):
         ui_global_path = os.path.join(gv['REPO_DIR_HOME'], 'laser/ui/select_folders_dialog.ui')
-        super().__init__(parent, ui_global_path, *args, **kwargs)
+        super().__init__(parent, gv, ui_global_path, *args, **kwargs)
 
         self.buttonBox.accepted.connect(self.validate)
 
@@ -522,21 +515,23 @@ class LaserFileInfoQDialog(QDialog):
             self.loadJobContent()
 
     def validate(self, material: str, thickness: str, amount: str) -> bool:
-        for (thing, value) in [('material', material), ('thickness', thickness), ('amount', amount)]:
+        for (thing, value) in (('material', material), ('thickness', thickness), ('amount', amount)):
             if value == "":
                 dlg = QMessageBox(self)
                 dlg.setText(f'Fill in {thing}')
                 dlg.exec()
-                return False
 
+                return False
         try:
             thickness_float = float(thickness)
-        except Exception:
+
+        except (ValueError, SyntaxError):
             dlg = QMessageBox(self)
             dlg.setText(f'Thickness should be a positive number, not {thickness}')
             dlg.exec()
             return False
-        if thickness_float <=0:
+
+        if thickness_float <= 0:
             dlg = QMessageBox(self)
             dlg.setText(f'Thickness should be a positive number, not {thickness}')
             dlg.exec()
@@ -544,7 +539,7 @@ class LaserFileInfoQDialog(QDialog):
 
         try:
             amount_int = int(amount)
-        except Exception:
+        except (ValueError, SyntaxError):
             dlg = QMessageBox(self)
             dlg.setText(f'Amount should be a positive interger, not: {amount}')
             dlg.exec()
@@ -574,4 +569,3 @@ class LaserFileInfoQDialog(QDialog):
             copy_item(file_dict['source_file_global_path'], file_dict['target_file_global_path'])
 
         TimedMessage(gv, self, text=f"Laser job {self.temp_job_name} created")
-

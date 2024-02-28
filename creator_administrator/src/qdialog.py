@@ -1,6 +1,5 @@
 import os
 import webbrowser
-from functools import partial
 import pkg_resources
 
 from PyQt6.QtWidgets import QDialog, QWidget, QListWidgetItem
@@ -25,8 +24,9 @@ class ImportFromMailQDialog(QDialog):
 
 class SelectQDialog(QDialog):
     """ Select file dialog. """
-    def __init__(self, parent, ui_global_path, *args, **kwargs):
+    def __init__(self, parent, gv: dict, ui_global_path: str, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
+        self.gv=gv
 
         loadUi(ui_global_path, self)
         self.passwordQLineEdit.textChanged.connect(self.check_password)
@@ -36,7 +36,7 @@ class SelectQDialog(QDialog):
 
     def check_password(self):
         if self.passwordQLineEdit.text() == self.gv['PASSWORD']:
-            self.passwordQLineEdit.setStyleSheet(f'background_color: {self.gv["GOOD_COLOR_RGBA"]};')
+            self.passwordQLineEdit.setStyleSheet(f'background-color: {self.gv["GOOD_COLOR_RGBA"]};')
         else:
             self.passwordQLineEdit.setStyleSheet(f'background-color: {self.gv["BAD_COLOR_RGBA"]};')
 

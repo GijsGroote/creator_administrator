@@ -85,6 +85,11 @@ class LaserMainWindow(MainWindow):
             project_name = dialog.projectNameQLineEdit.text()
             folders_global_paths_list = []
             jobs_names_list = []
+
+            if not os.path.exists(folder_global_path):
+                WarningQMessageBox(gv, self, text=f'<Folder> does not exist')
+                return
+
             for subfolder in os.listdir(folder_global_path):
                 subfolder_global_path = os.path.join(folder_global_path, subfolder)
 
@@ -92,27 +97,23 @@ class LaserMainWindow(MainWindow):
                     files_in_subfolder_global_paths = []
                     subfolder_contains_laser_file = False
 
-                    try:
-                        for item in os.listdir(subfolder_global_path):
-                            item_global_path = os.path.join(subfolder_global_path, item)
-                            if os.path.isdir(item_global_path):
-                                WarningQMessageBox(gv, self, text=f'{subfolder_global_path} contains a folder '\
-                                    f'{item_global_path} which is skipped' )
-                                    
-                                continue
+                    for item in os.listdir(subfolder_global_path):
+                        item_global_path = os.path.join(subfolder_global_path, item)
+                        if os.path.isdir(item_global_path):
+                            WarningQMessageBox(gv, self, text=f'{subfolder_global_path} contains a folder '\
+                                f'{item_global_path} which is skipped' )
+                            continue
 
-                            if item_global_path.endswith(gv['ACCEPTED_EXTENSIONS']):
-                                files_in_subfolder_global_paths.append(item_global_path)
-                                subfolder_contains_laser_file = True
+                        if item_global_path.endswith(gv['ACCEPTED_EXTENSIONS']):
+                            files_in_subfolder_global_paths.append(item_global_path)
+                            subfolder_contains_laser_file = True
 
-                        if subfolder_contains_laser_file:
-                            folders_global_paths_list.append(files_in_subfolder_global_paths)
-                            jobs_names_list.append(project_name+'_'+os.path.basename(subfolder))
-                        else:
-                            WarningQMessageBox(gv, self, text=f'No laser file found in {subfolder_global_path}'\
-                                    f' skip this subfolder')
-                    except Exception as exc:
-                        ErrorQMessageBox(self, text=f'An Error Occured: {str(exc)}')
+                    if subfolder_contains_laser_file:
+                        folders_global_paths_list.append(files_in_subfolder_global_paths)
+                        jobs_names_list.append(project_name+'_'+os.path.basename(subfolder))
+                    else:
+                        WarningQMessageBox(gv, self, text=f'No laser file found in {subfolder_global_path}'\
+                                f' skip this subfolder')
             
             if len(jobs_names_list) > 0:
                 LaserFileInfoQDialog(self, jobs_names_list, folders_global_paths_list).exec()

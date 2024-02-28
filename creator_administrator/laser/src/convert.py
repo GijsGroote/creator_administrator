@@ -1,7 +1,6 @@
 import re
-from typing import Tuple
 
-def split_material_name(material_name) -> Tuple[str, str]:
+def split_material_name(material_name) -> tuple[str, str]:
     ''' Split material name (such as steel_3mm) into steel and 3. '''
 
     match = re.search(r'(.+)_([\d.]+)mm', material_name)

@@ -6,6 +6,7 @@ import json
 import os
 import sys
 import shutil
+
 from PyQt6.QtCore import QThreadPool
 
 if sys.platform == 'linux':
@@ -41,7 +42,7 @@ if not os.path.exists(settings_file_path):
 
     this_file_path = os.path.dirname(os.path.realpath(__file__))
     if sys.platform == 'win32':
-        repo_folder_name = 'creator_administrator\creator_administrator'
+        repo_folder_name = r'creator_administrator\creator_administrator'
     elif sys.platform == 'linux':
         repo_folder_name = 'creator_administrator/creator_administrator'
     else:
@@ -135,10 +136,10 @@ with open(settings_file_path, 'r') as settings_file:
         gv['MAIL_INBOX_NAME'] = 'Inbox'
 
 
-    for mail_template in ['RECEIVED_MAIL_TEMPLATE',
+    for mail_template in ('RECEIVED_MAIL_TEMPLATE',
                           'DECLINED_MAIL_TEMPLATE',
                           'FINISHED_MAIL_TEMPLATE',
-                          'UNCLEAR_MAIL_TEMPLATE']:
+                          'UNCLEAR_MAIL_TEMPLATE'):
 
         if mail_template in gv_data:
             if os.path.exists(gv_data[mail_template]):

@@ -1,28 +1,16 @@
-"""
-Laser Job tracker, tracking laser jobs.
-"""
-
 import json
 import os
 import re
 from datetime import datetime
 
-
-
-
-from global_variables import gv
-
-from PyQt6 import *
-from PyQt6.QtCore import *
-from PyQt6.QtGui import *
-from PyQt6.QtWidgets import *
-
+from PyQt6.QtWidgets import QDialog, QMessageBox
 from PyQt6.uic import loadUi
-from src.directory_functions import delete
 
+from src.directory_functions import delete
 from src.job_tracker import JobTracker
 from src.qmessagebox import TimedMessage, YesOrNoMessageBox, WarningQMessageBox
 
+from global_variables import gv
 
 class LaserJobTracker(JobTracker):
     """
@@ -48,7 +36,7 @@ class LaserJobTracker(JobTracker):
                status='WACHTRIJ') -> dict:
         """ Add a job to the tracker. """
 
-        with open(self.tracker_file_path, 'r') as tracker_file:
+        with open(self.tracker_file_path, 'r', encoding='utf-8') as tracker_file:
             tracker_dict = json.load(tracker_file)
 
         job_name = self.makeJobNameUnique(job_name)
@@ -68,71 +56,69 @@ class LaserJobTracker(JobTracker):
 
         tracker_dict[job_name] = add_job_dict
 
-        with open(self.tracker_file_path, 'w') as tracker_file:
+        with open(self.tracker_file_path, 'w', encoding='utf-8') as tracker_file:
             json.dump(tracker_dict, tracker_file, indent=4)
 
         return add_job_dict
     
-    def deleteJob(self, job_name: str) -> dict:
+    def deleteJob(self, job_name: str):
         """ Delete a job from the job tracker. """
 
-        with open(self.tracker_file_path, 'r') as tracker_file:
+        with open(self.tracker_file_path, 'r', encoding='utf-8') as tracker_file:
             tracker_dict = json.load(tracker_file)
 
         deleted_job_dict = tracker_dict.pop(job_name)
-
         delete(deleted_job_dict['job_folder_global_path'])
         
-
-        with open(self.tracker_file_path, 'w') as tracker_file:
+        with open(self.tracker_file_path, 'w', encoding='utf-8') as tracker_file:
             json.dump(tracker_dict, tracker_file, indent=4)
 
 
     def updateJobStatus(self, job_name: str, new_job_status: str):
         ''' Update status of a job. '''
 
-        with open(self.tracker_file_path, 'r') as tracker_file:
+        with open(self.tracker_file_path, 'r', encoding='utf-8') as tracker_file:
             tracker_dict = json.load(tracker_file)
 
         tracker_dict[job_name]['status'] = new_job_status
 
-        with open(self.tracker_file_path, 'w') as tracker_file:
+        with open(self.tracker_file_path, 'w', encoding='utf-8') as tracker_file:
             json.dump(tracker_dict, tracker_file, indent=4)
 
     def markAllFilesAsDone(self, job_name: str, done: bool):
         ''' Update all laser files to done. '''
-        assert job_name is not None, f'Job name is None'
+        assert job_name is not None, 'Job name is None'
         assert isinstance(done, bool), 'done is not a boolean'
 
-        with open(self.tracker_file_path, 'r') as tracker_file:
+        with open(self.tracker_file_path, 'r', encoding='utf-8') as tracker_file:
             tracker_dict = json.load(tracker_file)
 
         for file_dict in tracker_dict[job_name]['laser_files'].values():
             file_dict['done'] = done
 
-        with open(self.tracker_file_path, 'w') as tracker_file:
+        with open(self.tracker_file_path, 'w', encoding='utf-8') as tracker_file:
             json.dump(tracker_dict, tracker_file, indent=4)
 
     def markLaserFileAsDone(self, job_name: str, file_global_path: str, done: bool):
         ''' Update laser file to done. '''
-        assert job_name is not None, f'Job name is None'
+        assert job_name is not None, 'Job name is None'
         assert isinstance(done, bool), 'done is not a boolean'
 
-        with open(self.tracker_file_path, 'r') as tracker_file:
+        with open(self.tracker_file_path, 'r', encoding='utf-8') as tracker_file:
             tracker_dict = json.load(tracker_file)
 
         for file_dict in tracker_dict[job_name]['laser_files'].values():
             if file_dict['file_global_path']==file_global_path:
                 file_dict['done'] = done
 
-        with open(self.tracker_file_path, 'w') as tracker_file:
+        with open(self.tracker_file_path, 'w', encoding='utf-8') as tracker_file:
             json.dump(tracker_dict, tracker_file, indent=4)
 
 
     def getJobDict(self, job_name: str) -> dict:
         ''' Return the job dict from a job name. '''
         
-        with open(self.tracker_file_path, 'r') as tracker_file:
+        with open(self.tracker_file_path, 'r', encoding='utf-8') as tracker_file:
             tracker_file = json.load(tracker_file)
 
         if job_name in tracker_file:
@@ -141,7 +127,7 @@ class LaserJobTracker(JobTracker):
 
     def getJobFolderGlobalPathFromJobName(self, job_name: str) -> str:
         ''' Return the job folder global path from the job name. '''
-        with open(self.tracker_file_path, 'r') as tracker_file:
+        with open(self.tracker_file_path, 'r', encoding='utf-8') as tracker_file:
             tracker_dict = json.load(tracker_file)
 
         return tracker_dict[job_name]['job_folder_global_path']
@@ -157,7 +143,7 @@ class LaserJobTracker(JobTracker):
                 os.mkdir(jobs_folder_global_path)
 
         # Get job info from tracker file
-        with open(self.tracker_file_path, 'r') as tracker_file:
+        with open(self.tracker_file_path, 'r', encoding='utf-8') as tracker_file:
             tracker_dict = json.load(tracker_file)
 
         # remove old jobs
@@ -227,24 +213,17 @@ class LaserJobTracker(JobTracker):
             if not job_checked:
                 tracker_dict.pop(tracker_job_name)
 
-        with open(self.tracker_file_path, 'w') as tracker_file:
+        with open(self.tracker_file_path, 'w', encoding='utf-8') as tracker_file:
             json.dump(tracker_dict, tracker_file, indent=4)
 
         self.makeBackup()
 
     def IsJobDictAndFileSystemInSync(self, job_dict, job_folder_global_path):
         ''' Check if all files are in both the tracker and the file system. '''
-        valid_file_names = [file_name for file_name in os.listdir(job_folder_global_path) if file_name.lower().endswith(gv['ACCEPTED_EXTENSIONS'])]
+        file_system_laser_file_names = [file_name for file_name in os.listdir(job_folder_global_path) if file_name.lower().endswith(gv['ACCEPTED_EXTENSIONS'])]
+        tracker_laser_file_names = [os.path.basename(laser_file_dict['file_global_path']) for laser_file_dict in job_dict['laser_files'].values()]
 
-        for file in valid_file_names:
-            if not any([os.path.basename(laser_file_dict['file_global_path'])==file for laser_file_dict in job_dict['laser_files'].values()]):
-                return False
-            
-        for key, file_dict in job_dict['laser_files'].items():
-            if not os.path.basename(file_dict['file_global_path']) in valid_file_names:
-                return False
-            
-        return True
+        return file_system_laser_file_names.sort() == tracker_laser_file_names.sort()
     
     def syncronizeJobDictWithFileSystem(self, job_dict: dict, job_folder_global_path: str):
         ''' Sychronize job dict based on file system. '''
@@ -331,7 +310,7 @@ class LaserJobTracker(JobTracker):
 
     def getExistingMaterials(self) -> set:
         ''' Return all materials that exist in the jobs with a wachtrij status. '''
-        with open(self.tracker_file_path, 'r') as tracker_file:
+        with open(self.tracker_file_path, 'r', encoding='utf-8') as tracker_file:
             tracker_dict = json.load(tracker_file)
 
         materials = set()
@@ -345,7 +324,7 @@ class LaserJobTracker(JobTracker):
     def getMaterialAndThicknessList(self) -> list:
         ''' Return all materials and thickness with status WACHTRIJ. '''
 
-        with open(self.tracker_file_path, 'r') as tracker_file:
+        with open(self.tracker_file_path, 'r', encoding='utf-8') as tracker_file:
             tracker_dict = json.load(tracker_file)
 
         materials_and_thickness_set = set()
@@ -362,7 +341,7 @@ class LaserJobTracker(JobTracker):
         ''' Return all names, global paths and indication if they are done
         of material with thickness and status WACHTRIJ. '''
 
-        with open(self.tracker_file_path, 'r') as tracker_file:
+        with open(self.tracker_file_path, 'r', encoding='utf-8') as tracker_file:
             tracker_dict = json.load(tracker_file)
 
         laser_file_info_list = []
@@ -378,13 +357,13 @@ class LaserJobTracker(JobTracker):
     def getLaserFilesDict(self, job_name) -> dict:
         ''' TODO '''
 
-        with open(self.tracker_file_path, 'r') as tracker_file:
+        with open(self.tracker_file_path, 'r', encoding='utf-8') as tracker_file:
             tracker_dict = json.load(tracker_file)
         return tracker_dict[job_name]['laser_files']
 
     def fileGlobalPathToJobName(self, file_global_path: str) -> str:
         ''' Return a job name from a file. '''
-        with open(self.tracker_file_path, 'r') as tracker_file:
+        with open(self.tracker_file_path, 'r', encoding='utf-8') as tracker_file:
             tracker_dict = json.load(tracker_file)
 
         job_name = None
@@ -396,19 +375,16 @@ class LaserJobTracker(JobTracker):
 
     def isJobDone(self, job_name: str) -> bool: 
         ''' Return boolean indicating if a job is done. '''
-        with open(self.tracker_file_path, 'r') as tracker_file:
+        with open(self.tracker_file_path, 'r', encoding='utf-8') as tracker_file:
             tracker_dict = json.load(tracker_file)
 
-        for file_dict in tracker_dict[job_name]['laser_files'].values():
-            if not file_dict['done']:
-                return False
-        return True
+        return all(file_dict['done'] for file_dict in tracker_dict[job_name]['laser_files'].values())
 
 
     def getLaserFilesString(self, job_name: str) -> str:
         ''' Return a sting representation of all laser files. '''
 
-        with open(self.tracker_file_path, 'r') as tracker_file:
+        with open(self.tracker_file_path, 'r', encoding='utf-8') as tracker_file:
             tracker_dict = json.load(tracker_file)
 
         return_string = ""
@@ -419,7 +395,7 @@ class LaserJobTracker(JobTracker):
 
     def jobNameToSenderName(self, job_name: str):
         ''' Return Sender name from job name. '''
-        with open(self.tracker_file_path, 'r') as tracker_file:
+        with open(self.tracker_file_path, 'r', encoding='utf-8') as tracker_file:
             return json.load(tracker_file)[job_name]['sender_name']
 
 
@@ -434,8 +410,9 @@ class LaserTrackerFileInfoQDialog(QDialog):
     def __init__(self, parent,
                  job_name_list: list,
                  files_global_paths_list: list,
+                 *args,
                  job_dict_list=None,
-                 *args, **kwargs):
+                 **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         loadUi(os.path.join(gv['REPO_DIR_HOME'], 'laser/ui/enter_job_details_dialog.ui'), self)
@@ -611,7 +588,7 @@ class LaserTrackerFileInfoQDialog(QDialog):
             self.loadJobContent()
 
     def validate(self, material: str, thickness: str, amount: str) -> bool:
-        for (thing, value) in [('material', material), ('thickness', thickness), ('amount', amount)]:
+        for (thing, value) in (('material', material), ('thickness', thickness), ('amount', amount)):
             if value == "":
                 dlg = QMessageBox(self)
                 dlg.setText(f'Fill in {thing}')

@@ -1,16 +1,12 @@
 import os
-from typing import List
-from PyQt6.QtCore import *
-from PyQt6.QtGui import *
-from PyQt6.QtWidgets import *
 
-from src.directory_functions import open_file, open_folder
-from global_variables import gv
-from convert import split_material_name
+# from PyQt6.QtCore import *
+from PyQt6.QtGui import QFont
+from PyQt6.QtWidgets import QStackedWidget, QListWidgetItem, QLabel, QListWidget, QTabWidget
 
-
-from laser_job_tracker import LaserJobTracker
 from src.qlist_widget import OverviewQListWidget, ContentQListWidget
+from convert import split_material_name
+from laser_job_tracker import LaserJobTracker
 
 class JobsOverviewQListWidget(OverviewQListWidget):
 
@@ -19,21 +15,21 @@ class JobsOverviewQListWidget(OverviewQListWidget):
 
         self.object_name = None
 
-        self.widget_names ={'WACHTRIJ': 
+        self.widget_names ={'WACHTRIJ':
                                 {'QStackedWidget': 'wachtrijQStackedWidget',
                                  'tab_widget_position': 1},
-                            'VERWERKT': 
+                            'VERWERKT':
                                 {'QStackedWidget': 'verwerktQStackedWidget',
                                  'tab_widget_position': 3},
-                            'AFGEKEURD': 
+                            'AFGEKEURD':
                                 {'QStackedWidget': 'afgekeurdQStackedWidget',
-                                 'tab_widget_position': 4}}        
+                                 'tab_widget_position': 4}}
 
-        # initialize  
+        # initialize
         self.objectNameChanged.connect(self.storeObjectNameInit)
 
 
-    def getItemNames(self) -> List[tuple]:
+    def getItemNames(self) -> list[tuple]:
         ''' Return a list of tuples containing:
                 first the short unique job name
                 second the informative dynamic job name '''
@@ -41,14 +37,14 @@ class JobsOverviewQListWidget(OverviewQListWidget):
         job_tracker = LaserJobTracker(self)
         if self.object_name == 'allJobsQListWidget':
             return job_tracker.getAllStaticAndDynamicJobNames()
-        elif self.object_name == 'wachtrijJobsQListWidget':
+        if self.object_name == 'wachtrijJobsQListWidget':
             return job_tracker.getStaticAndDynamicJobNamesWithStatus('WACHTRIJ')
-        elif self.object_name == 'verwerktJobsQListWidget':
+        if self.object_name == 'verwerktJobsQListWidget':
             return job_tracker.getStaticAndDynamicJobNamesWithStatus('VERWERKT')
-        elif self.object_name == 'afgekeurdJobsQListWidget':
+        if self.object_name == 'afgekeurdJobsQListWidget':
             return job_tracker.getStaticAndDynamicJobNamesWithStatus('AFGEKEURD')
-        else:
-            raise ValueError(f'could not find jobs for {self.objectName()}')
+
+        raise ValueError(f'could not find jobs for {self.objectName()}')
 
 
     def displayItem(self, job_name: str):
@@ -64,7 +60,7 @@ class JobsOverviewQListWidget(OverviewQListWidget):
         # load job into JobContentQListWidget
         stacked_widget.findChild(JobContentQListWidget).loadContent(job_name)
 
-        # show jobPage in stackedWidget 
+        # show jobPage in stackedWidget
         stacked_widget.setCurrentIndex(1)
 
         # show job_status tabWidget
@@ -82,7 +78,7 @@ class JobContentQListWidget(ContentQListWidget):
         self.current_item_name = job_name
 
         job_dict = LaserJobTracker(self).getJobDict(job_name)
-        
+
         if job_dict is not None:
             self.parent().findChild(QLabel).setText(job_dict['dynamic_job_name'])
 
@@ -114,8 +110,8 @@ class MaterialOverviewQListWidget(OverviewQListWidget):
 
 
         self.itemDoubleClicked.connect(self.itemIsDoubleClicked)
-        
-    
+
+
     def getItemNames(self) -> list:
         ''' Return the materials and thickness in a list. '''
         return LaserJobTracker(self).getMaterialAndThicknessList()
@@ -130,7 +126,7 @@ class MaterialOverviewQListWidget(OverviewQListWidget):
                 'wachtrijMateriaalQStackedWidget')
 
         stacked_widget.findChild(MaterialContentQListWidget).loadContent(material_name)
-        # show materialPage in stackedWidget 
+        # show materialPage in stackedWidget
         stacked_widget.setCurrentIndex(1)
 
 

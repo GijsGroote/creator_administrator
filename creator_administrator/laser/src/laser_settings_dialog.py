@@ -1,7 +1,4 @@
 import os
-from PyQt6.QtGui import *
-from PyQt6.QtWidgets import *
-from PyQt6.QtCore import *
 from src.settings_dialog import SettingsQDialog
 
 class LaserSettingsQDialog(SettingsQDialog):
@@ -10,7 +7,4 @@ class LaserSettingsQDialog(SettingsQDialog):
         ui_global_path = os.path.join(gv['LOCAL_UI_DIR'], 'settings_dialog.ui')
         super().__init__(parent, ui_global_path, gv, *args, **kwargs)
 
-
     # TODO: add settings specific for the lasers here
-
-

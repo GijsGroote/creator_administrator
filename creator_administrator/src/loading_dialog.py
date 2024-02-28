@@ -1,4 +1,3 @@
-# from PyQt5 import Qt
 import os
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import QDialog
