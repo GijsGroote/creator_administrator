@@ -3,14 +3,15 @@ import os
 import re
 from datetime import datetime
 
-from PyQt6.QtWidgets import QDialog, QMessageBox
+from PyQt6.QtWidgets import QDialog
 from PyQt6.uic import loadUi
 
-from src.directory_functions import delete
+from src.directory_functions import delete_item
 from src.job_tracker import JobTracker
 from src.qmessagebox import TimedMessage, YesOrNoMessageBox, WarningQMessageBox
 
 from global_variables import gv
+from laser_validate import validate_material_info
 
 class LaserJobTracker(JobTracker):
     """
@@ -68,7 +69,7 @@ class LaserJobTracker(JobTracker):
             tracker_dict = json.load(tracker_file)
 
         deleted_job_dict = tracker_dict.pop(job_name)
-        delete(deleted_job_dict['job_folder_global_path'])
+        delete_item(deleted_job_dict['job_folder_global_path'])
         
         with open(self.tracker_file_path, 'w', encoding='utf-8') as tracker_file:
             json.dump(tracker_dict, tracker_file, indent=4)
@@ -201,7 +202,7 @@ class LaserJobTracker(JobTracker):
 
                 else:
                     # remove that directory
-                    delete(job_global_path)
+                    delete_item(job_global_path)
                     TimedMessage(gv=gv, parent=self.parent_widget, text=f'removed folder {job_global_path}')
                     continue
 
@@ -273,7 +274,7 @@ class LaserJobTracker(JobTracker):
 
             else:
                 for file in new_files_list:
-                    delete(os.path.join(job_folder_global_path, file))
+                    delete_item(os.path.join(job_folder_global_path, file))
                 TimedMessage(gv=gv, parent=self.parent_widget, text=f'Removed {len(new_files_list)} {file_str} from File System')
 
 
@@ -552,7 +553,7 @@ class LaserTrackerFileInfoQDialog(QDialog):
         thickness = self.thicknessQLineEdit.text()
         amount = self.amountQLineEdit.text()
         
-        if not self.validate(material, thickness, amount):
+        if not validate_material_info(self, material, thickness, amount):
             return
 
         source_file_global_path = self.temp_files_global_paths[self.file_counter]
@@ -586,43 +587,6 @@ class LaserTrackerFileInfoQDialog(QDialog):
             self.job_counter += 1
             self.file_counter = 0
             self.loadJobContent()
-
-    def validate(self, material: str, thickness: str, amount: str) -> bool:
-        for (thing, value) in (('material', material), ('thickness', thickness), ('amount', amount)):
-            if value == "":
-                dlg = QMessageBox(self)
-                dlg.setText(f'Fill in {thing}')
-                dlg.exec()
-                return False
-
-        try:
-            thickness_float = float(thickness)
-        except Exception:
-            dlg = QMessageBox(self)
-            dlg.setText(f'Thickness should be a positive number, not {thickness}')
-            dlg.exec()
-            return False
-        if thickness_float <=0:
-            dlg = QMessageBox(self)
-            dlg.setText(f'Thickness should be a positive number, not {thickness}')
-            dlg.exec()
-            return False
-
-        try:
-            amount_int = int(amount)
-        except Exception:
-            dlg = QMessageBox(self)
-            dlg.setText(f'Amount should be a positive interger, not: {amount}')
-            dlg.exec()
-            return False
-
-        if amount_int <= 0:
-            dlg = QMessageBox(self)
-            dlg.setText(f'Amount should be a positive interger, not: {amount}')
-            dlg.exec()
-            return False
-
-        return True
 
     def storeLaserJobDict(self):
         """ Store laser job dict. """

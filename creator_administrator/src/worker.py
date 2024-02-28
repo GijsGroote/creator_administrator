@@ -33,7 +33,7 @@ class Worker(QRunnable):
             self.signals.result.emit(data)
             self.signals.finished.emit()
 
-        except Exception as e:
+        except BaseException as e:
             self.signals.error.emit(e)
 
 
@@ -47,12 +47,12 @@ class WorkerSignals(QObject):
         No data
 
     error
-        Exception
+        BaseException
 
     result
         object data returned from processing, anything
 
     '''
     finished = pyqtSignal()
-    error = pyqtSignal(Exception)
+    error = pyqtSignal(BaseException)
     result = pyqtSignal(object)

@@ -2,6 +2,7 @@
 Job tracker, a backup to check and repair the actual files on the file system.
 """
 
+import sys
 import json
 import shutil
 import os
@@ -50,24 +51,24 @@ class JobTracker:
         InfoQMessageBox(self.parent_widget, text='New job tracker file created') 
 
     def checkTrackerFileHealth(self):
-        # Create the tracker file if it doesn't exist
         if not os.path.exists(self.tracker_file_path):
             self.createTrackerFile()
 
         try:
             with open(self.tracker_file_path, 'r', encoding='utf-8') as tracker_file:
                 json.load(tracker_file)
-        except Exception as e:
+        except json.decoder.JSONDecodeError:
             if os.path.isfile(self.tracker_backup_file_path):
                 if YesOrNoMessageBox(self.parent_widget, 'Do you want to restore the backup tracker file (Y/n)?'):
                     os.remove(self.tracker_file_path)
                     os.rename(self.tracker_backup_file_path, self.tracker_file_path)
+
             elif YesOrNoMessageBox(self.parent_widget, 'Do you want to create a new empty tracker file (Y/n)?'):
                 with open(self.tracker_file_path, 'w', encoding='utf-8') as tracker_file:
                     json.dump({}, tracker_file, indent=4)
-
-            else: 
-                print("MANUALLY REPAIR TRACKER FILE!")
+            else:
+                InfoQMessageBox(self.parent_widget, "Could not load tracker file, closing application.")
+                sys.exit(0)
 
     def makeBackup(self):
         """ Make a backup of the tracker file. """

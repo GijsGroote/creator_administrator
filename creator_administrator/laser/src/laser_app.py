@@ -7,7 +7,7 @@ from PyQt6.QtWidgets import QListWidget
 from global_variables import gv
 
 from src.app import MainWindow
-from src.qmessagebox import WarningQMessageBox, ErrorQMessageBox, TimedMessage
+from src.qmessagebox import WarningQMessageBox, TimedMessage
 from src.threaded_mail_manager import ThreadedMailManager
 
 from laser_job_tracker import LaserJobTracker
@@ -87,7 +87,7 @@ class LaserMainWindow(MainWindow):
             jobs_names_list = []
 
             if not os.path.exists(folder_global_path):
-                WarningQMessageBox(gv, self, text=f'<Folder> does not exist')
+                WarningQMessageBox(gv, self, text='<Folder> does not exist')
                 return
 
             for subfolder in os.listdir(folder_global_path):

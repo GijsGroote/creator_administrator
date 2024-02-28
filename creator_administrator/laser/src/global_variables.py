@@ -28,12 +28,17 @@ if not os.path.exists(jobs_dir_home):
 temp_dir_home = os.path.join(data_dir_home, 'TEMP')
 if not os.path.exists(temp_dir_home):
     os.mkdir(temp_dir_home)
-for temp_dir in os.listdir(temp_dir_home):
-    try:
-        shutil.rmtree(os.path.join(temp_dir_home, temp_dir))
 
-    except Exception as exc:
-        print(str(exc))
+for temp_item in os.listdir(temp_dir_home):
+    try:
+        shutil.rmtree(os.path.join(temp_dir_home, temp_item))
+
+    except NotADirectoryError:
+        os.remove(os.path.join(temp_dir_home, temp_item))
+
+    except PermissionError:
+        pass
+
     
 settings_file_path = os.path.join(data_dir_home, 'laser_settings.json')
 

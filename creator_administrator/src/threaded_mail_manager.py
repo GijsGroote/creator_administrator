@@ -207,9 +207,9 @@ class ThreadedMailManager():
         if self.success_message is not None:
             TimedMessage(self.gv, parent=self.parent_widget, text=self.success_message)
 
-    def handleMailError(self, exc: Exception):
+    def handleMailError(self, exc: BaseException):
         ''' Handle the mail Error. '''
-        assert isinstance(exc, Exception), f'Expected type Exception, received type: {type(exc)}'
+        assert isinstance(exc, BaseException), f'Expected type Exception, received type: {type(exc)}'
        
         if isinstance(exc, ConnectionError):
             ErrorQMessageBox(

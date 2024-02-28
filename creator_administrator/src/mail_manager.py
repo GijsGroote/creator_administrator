@@ -42,19 +42,16 @@ class MailManager():
 
             self.outlook =  client.Dispatch("Outlook.Application").GetNamespace('MAPI')
             
-            try:
-                if gv['MAIL_INBOX_NAME'] == 'Inbox':
-                    self.inbox = self.outlook.GetDefaultFolder(6)
-                else:
-                    account_name = self.outlook.Session.Accounts.Item(1).DeliveryStore.DisplayName
-                    self.inbox = self.outlook.Folders[account_name].Folders[gv['MAIL_INBOX_NAME']]
+            if gv['MAIL_INBOX_NAME'] == 'Inbox':
+                self.inbox = self.outlook.GetDefaultFolder(6)
+            else:
+                account_name = self.outlook.Session.Accounts.Item(1).DeliveryStore.DisplayName
+                self.inbox = self.outlook.Folders[account_name].Folders[gv['MAIL_INBOX_NAME']]
 
-            except Exception as exc:
-                raise exc
-            
             try:
                 self.verwerkt_folder = self.inbox.Parent.Folders.Item("Verwerkt")
-            except Exception as _:
+            except Exception as exc:
+                raise exc 
                 self.verwerkt_folder = self.inbox.Parent.Folders.Add("Verwerkt")
 
         if sys.platform == 'linux':
@@ -62,6 +59,8 @@ class MailManager():
             self.smtp_server = 'smtp-mail.outlook.com'
             self.smtp_port = 587 
             self.imap_server = 'outlook.office365.com'
+
+        # TODO: check folder 'Verwerkt" exists, if not create it.
 
     def imapLogin(self):
         ''' Login to the IMAP server to download mails. '''

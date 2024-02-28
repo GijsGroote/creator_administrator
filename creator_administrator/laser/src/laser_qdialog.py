@@ -10,8 +10,10 @@ from src.mail_manager import MailManager
 from src.qmessagebox import TimedMessage
 from src.threaded_mail_manager import ThreadedMailManager
 from src.directory_functions import copy_item
+from src.validate import validate_password
 
 from laser_job_tracker import LaserJobTracker
+from laser_validate import validate_material_info
   
 from global_variables import gv
 
@@ -147,7 +149,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         thickness = self.thicknessQLineEdit.text()
         amount = self.amountQLineEdit.text()
         
-        if not self.validate(material, thickness, amount):
+        if not validate_material_info(material, thickness, amount):
             return
 
         attachment = self.temp_attachments[self.attachment_counter]
@@ -185,43 +187,6 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
             self.msg_counter += 1
             self.attachment_counter = 0
             self.loadMailContent()
-
-    def validate(self, material: str, thickness: str, amount: str) -> bool:
-        for (thing, value) in [('material', material), ('thickness', thickness), ('amount', amount)]:
-            if value == "":
-                dlg = QMessageBox(self)
-                dlg.setText(f'Fill in {thing}')
-                dlg.exec()
-                return False
-
-        try:
-            thickness_float = float(thickness)
-        except Exception:
-            dlg = QMessageBox(self)
-            dlg.setText(f'Thickness should be a positive number, not {thickness}')
-            dlg.exec()
-            return False
-        if thickness_float <=0:
-            dlg = QMessageBox(self)
-            dlg.setText(f'Thickness should be a positive number, not {thickness}')
-            dlg.exec()
-            return False
-
-        try:
-            amount_int = int(amount)
-        except Exception:
-            dlg = QMessageBox(self)
-            dlg.setText(f'Amount should be a positive interger, not: {amount}')
-            dlg.exec()
-            return False
-
-        if amount_int <= 0:
-            dlg = QMessageBox(self)
-            dlg.setText(f'Amount should be a positive interger, not: {amount}')
-            dlg.exec()
-            return False
-
-        return True
 
     def sendUnclearRequestMailJob(self):
         ''' Send a mail asking for the material, thickness and amount. '''
@@ -284,10 +249,8 @@ class LaserFilesSelectQDialog(SelectQDialog):
         self.buttonBox.accepted.connect(self.validate)
 
     def validate(self):
-        if self.passwordQLineEdit.text() != gv['PASSWORD']:
-            dlg = QMessageBox(self)
-            dlg.setText('Password Incorrect')
-            dlg.exec()
+
+        if not validate_password(self, gv, self.passwordQLineEdit.text()):
             return
 
         if len(self.selectFilesButton.files_global_paths) == 0:
@@ -324,10 +287,8 @@ class LaserFolderSelectQDialog(SelectQDialog):
         self.buttonBox.accepted.connect(self.validate)
 
     def validate(self):
-        if self.passwordQLineEdit.text() != gv['PASSWORD']:
-            dlg = QMessageBox(self)
-            dlg.setText('Password Incorrect')
-            dlg.exec()
+
+        if not validate_password(self, gv, self.passwordQLineEdit.text()):
             return
 
         if self.selectFolderButton.folder_global_path is None:
@@ -477,7 +438,7 @@ class LaserFileInfoQDialog(QDialog):
         thickness = self.thicknessQLineEdit.text()
         amount = self.amountQLineEdit.text()
         
-        if not self.validate(material, thickness, amount):
+        if not validate_material_info(self, material, thickness, amount):
             return
 
         source_file_global_path = self.temp_files_global_paths[self.file_counter]
@@ -513,45 +474,6 @@ class LaserFileInfoQDialog(QDialog):
             self.job_counter += 1
             self.file_counter = 0
             self.loadJobContent()
-
-    def validate(self, material: str, thickness: str, amount: str) -> bool:
-        for (thing, value) in (('material', material), ('thickness', thickness), ('amount', amount)):
-            if value == "":
-                dlg = QMessageBox(self)
-                dlg.setText(f'Fill in {thing}')
-                dlg.exec()
-
-                return False
-        try:
-            thickness_float = float(thickness)
-
-        except (ValueError, SyntaxError):
-            dlg = QMessageBox(self)
-            dlg.setText(f'Thickness should be a positive number, not {thickness}')
-            dlg.exec()
-            return False
-
-        if thickness_float <= 0:
-            dlg = QMessageBox(self)
-            dlg.setText(f'Thickness should be a positive number, not {thickness}')
-            dlg.exec()
-            return False
-
-        try:
-            amount_int = int(amount)
-        except (ValueError, SyntaxError):
-            dlg = QMessageBox(self)
-            dlg.setText(f'Amount should be a positive interger, not: {amount}')
-            dlg.exec()
-            return False
-
-        if amount_int <= 0:
-            dlg = QMessageBox(self)
-            dlg.setText(f'Amount should be a positive interger, not: {amount}')
-            dlg.exec()
-            return False
-
-        return True
 
     def createLaserJob(self):
         """ Create a laser job. """
