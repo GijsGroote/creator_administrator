@@ -305,9 +305,6 @@ class LaserJobTracker(JobTracker):
         
         return job_dict
 
-    def getNumberOfJobsInQueue(self) -> int:
-        ''' Return the number of jobs with status WACHTRIJ. '''
-        return self.getNumberOfJobsWithStatus(['WACHTRIJ'])
 
     def getExistingMaterials(self) -> set:
         ''' Return all materials that exist in the jobs with a wachtrij status. '''

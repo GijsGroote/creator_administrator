@@ -3,6 +3,7 @@ import os
 
 from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import QListWidget
+from PyQt6.QtGui import QKeySequence, QShortcut
 
 from global_variables import gv
 
@@ -46,12 +47,12 @@ class LaserMainWindow(MainWindow):
 
 
         # Delete this and showTimedMessage as well
-        # QShortcut(QKeySequence("Ctrl+H"), self).activated.connect(self.showTimedMessage)
+        QShortcut(QKeySequence("Ctrl+H"), self).activated.connect(self.showTimedMessage)
 
-    # def showTimedMessage(self):
-    #     print(f"shwo times messages boyo")
+    def showTimedMessage(self):
 
-    #     TimedMessage(gv, self, text='Laser job {self.temp_job_name} created')
+        haa = ' aj jonh'
+        TimedMessage(gv, self, text=f'Laser job {haa} created')
         
 
     def handleNewValidMails(self):
