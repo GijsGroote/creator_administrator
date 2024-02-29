@@ -93,7 +93,7 @@ if not os.path.exists(settings_file_path):
 
         default_settings_dict["MAIL_PASSWORD"]= "Fill in Your Mail Password"
 
-    with open(os.path.join(data_dir_home, 'laser_settings.json'), 'w', encoding='uft-8') as settings_file:
+    with open(os.path.join(data_dir_home, 'laser_settings.json'), 'w') as settings_file:
         json.dump(default_settings_dict, settings_file, indent=4)
 
     
@@ -104,7 +104,7 @@ gv = {'SETTINGS_FILE_PATH': settings_file_path,
       'TRACKER_FILE_PATH': tracker_file_path}
 
 # Load settings into global variables (gv)
-with open(settings_file_path, 'r', encoding='uft-8') as settings_file:
+with open(settings_file_path, 'r') as settings_file:
     gv_data = json.load(settings_file)
     gv['REPO_DIR_HOME'] = gv_data['REPO_DIR_HOME']
 
