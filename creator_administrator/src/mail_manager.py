@@ -401,7 +401,7 @@ class MailManager():
             # load recipient_name in template
             template_content["{sender_name}"] = msg.Sender
 
-            with open(self.gv[template_file_name], 'r', encoding='uft-8') as file:
+            with open(self.gv[template_file_name], 'r') as file:
                 html_content = file.read()
 
             for key, value in template_content.items():

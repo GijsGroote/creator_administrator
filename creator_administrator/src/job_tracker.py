@@ -45,7 +45,7 @@ class JobTracker:
                 InfoQMessageBox(self.parent, "Backup restored!") 
                 return
 
-        with open(self.tracker_file_path, 'w', encoding='utf-8') as tracker_file:
+        with open(self.tracker_file_path, 'w' ) as tracker_file:
             json.dump({}, tracker_file, indent=4)
 
         InfoQMessageBox(self.parent, text='New job tracker file created') 
@@ -55,7 +55,7 @@ class JobTracker:
             self.createTrackerFile()
 
         try:
-            with open(self.tracker_file_path, 'r', encoding='utf-8') as tracker_file:
+            with open(self.tracker_file_path, 'r' ) as tracker_file:
                 json.load(tracker_file)
         except json.decoder.JSONDecodeError:
             if os.path.isfile(self.tracker_backup_file_path):
@@ -64,7 +64,7 @@ class JobTracker:
                     os.rename(self.tracker_backup_file_path, self.tracker_file_path)
 
             elif YesOrNoMessageBox(self.parent, 'Do you want to create a new empty tracker file (Y/n)?'):
-                with open(self.tracker_file_path, 'w', encoding='utf-8') as tracker_file:
+                with open(self.tracker_file_path, 'w' ) as tracker_file:
                     json.dump({}, tracker_file, indent=4)
             else:
                 InfoQMessageBox(self.parent, "Could not load tracker file, closing application.")
@@ -88,7 +88,7 @@ class JobTracker:
     def getStaticAndDynamicJobNamesWithStatus(self, status: str) -> list[tuple]:
         ''' Return a list containing all dynamic job names that have a given status '''
 
-        with open(self.tracker_file_path, 'r', encoding='utf-8') as tracker_file:
+        with open(self.tracker_file_path, 'r' ) as tracker_file:
             tracker_dict = json.load(tracker_file)
 
         return [(job_name, job_dict['dynamic_job_name']) for job_name, job_dict in tracker_dict.items() if job_dict['status'] == status]
@@ -96,7 +96,7 @@ class JobTracker:
     def getAllStaticAndDynamicJobNames(self) -> list[tuple]:
         ''' Return a list containing all dynamic job names. '''
 
-        with open(self.tracker_file_path, 'r', encoding='utf-8') as tracker_file:
+        with open(self.tracker_file_path, 'r' ) as tracker_file:
             tracker_dict = json.load(tracker_file)
 
         return [(job_name, job_dict['dynamic_job_name']) for job_name, job_dict in tracker_dict.items()]
@@ -105,7 +105,7 @@ class JobTracker:
     def getNumberOfJobsWithStatus(self, status_list: list) -> int:
         """ Return the number of jobs that have a certain status. """
 
-        with open(self.tracker_file_path, 'r', encoding='utf-8') as tracker_file:
+        with open(self.tracker_file_path, 'r' ) as tracker_file:
             tracker_dict = json.load(tracker_file)
 
         return len([job_key for job_key, job_value in tracker_dict.items() if job_value['status'] in status_list])
@@ -121,7 +121,7 @@ class JobTracker:
         max_job_number = 0
         does_job_name_exist = False
 
-        with open(self.tracker_file_path, 'r', encoding='utf-8') as tracker_file:
+        with open(self.tracker_file_path, 'r' ) as tracker_file:
             tracker_dict = json.load(tracker_file)
 
         for job_dict in tracker_dict.values():

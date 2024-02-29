@@ -171,7 +171,7 @@ class SettingsQDialog(QDialog):
                     settings_dict[template_name] = widget_button.file_global_path
 
 
-        with open(self.gv['SETTINGS_FILE_PATH'], 'w', encoding='utf-8') as settings_file:
+        with open(self.gv['SETTINGS_FILE_PATH'], 'w' ) as settings_file:
             json.dump(settings_dict, settings_file, indent=4)
 
     def checkInt(self, widget: QWidget) -> bool:
