@@ -385,12 +385,15 @@ class MailManager():
 
     def replyToEmailFromFileUsingTemplate(self,
                     mail_item, # mail file, path toward folder containing mail file or mail file global path
-                                        template_file_name: str,
-                                        template_content: dict,
-                                        popup_reply=True):
+                    template_file_name: str,
+                    template_content: dict,
+                    popup_reply=True):
         """ Reply to .msg file using a template. """
         if not self.isThereInternet():
             raise ConnectionError('Not connected to the internet')
+
+        if template_content is None:
+            template_content = {}
 
         if sys.platform == 'win32':            
             msg = self.mailItemToMailFile(mail_item)
@@ -398,7 +401,7 @@ class MailManager():
             # load recipient_name in template
             template_content["{sender_name}"] = msg.Sender
 
-            with open(self.gv[template_file_name], "r") as file:
+            with open(self.gv[template_file_name], 'r', encoding='uft-8') as file:
                 html_content = file.read()
 
             for key, value in template_content.items():

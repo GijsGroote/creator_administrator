@@ -1,7 +1,10 @@
+from functools import partial
+
 from src.qmessagebox import InfoQMessageBox, WarningQMessageBox, ErrorQMessageBox, TimedMessage
 from src.worker import Worker
 from src.mail_manager import MailManager
 from src.loading_dialog import LoadingQDialog
+from src.job_tracker import JobTracker
 
 class ThreadedMailManager():
     ''' 
@@ -67,32 +70,66 @@ class ThreadedMailManager():
 
     These MailWorker functions use the send <mail_type> Mail functions
     '''
+    def startMailWorkerFromJobDict(self, job_dict: dict, mail_type: str):
+        ''' Start a mail worker from only a job dictionary. '''
+
+        mail_item=MailManager(self.gv).getMailGlobalPathFromFolder(job_dict['job_folder_global_path'])
+
+        if mail_type=='RECEIVED':
+            template_content=JobTracker(gv=self.gv, parent_widget=self.parent_widget).getNumberOfJobsInQueue()
+        else:
+            template_content={}
+
+        if 'sender_mail_adress' in job_dict:
+            sender_mail_adress=job_dict['sender_mail_adress']
+        else:
+            sender_mail_adress=None
+
+        if 'sender_mail_receive_time' in job_dict:
+            sender_mail_receive_time=job_dict['sender_mail_receive_time']
+        else:
+            sender_mail_receive_time=None
+
+        self.startMailWorker(
+                sender_name=job_dict['sender_name'],
+                mail_type=mail_type,
+                mail_item=mail_item,
+                template_content=template_content,
+                sender_mail_adress=sender_mail_adress,
+                sender_mail_receive_time=sender_mail_receive_time)
 
     def startMailWorker(self,
-                        success_message: str,
-                        error_message: str,
+                        sender_name: str,
                         mail_type: str,
                         mail_item,
-                        template_content: dict,
+                        move_mail_to_verwerkt=False,
+                        template_content=None,
                         sender_mail_adress=None,
                         sender_mail_receive_time=None):
 
-        self.success_message = success_message
-        self.error_message = error_message
         self.sender_mail_adress = sender_mail_adress
         self.sender_mail_receive_time = sender_mail_receive_time
 
         if mail_type == 'RECEIVED':
             mail_function = self.sendReceivedMail
+            mail_type_readable = 'Job Received'
+
         elif mail_type == 'UNCLEAR':
             mail_function = self.sendUnclearMail
+            mail_type_readable = 'Unclear Request'
+
         elif mail_type == 'FINISHED':
             mail_function = self.sendFinishedMail
+            mail_type_readable = 'Job Finished'
+
         elif mail_type == 'DECLINED':
             mail_function = self.sendDeclinedMail
+            mail_type_readable = 'Job Declined'
         else:
             raise ValueError(f'unknown mail_type: {mail_type}')
 
+        self.success_message=f'{mail_type_readable} mail send to {sender_name}'
+        self.error_message=f'No {mail_type_readable} mail send to {sender_name}'
 
         if self.gv['SEND_MAILS_ON_SEPERATE_THREAD']: 
 
@@ -103,12 +140,19 @@ class ThreadedMailManager():
             self.worker.signals.finished.connect(self.displaySuccessMessage)
             self.worker.signals.error.connect(self.handleMailError)
 
+            if move_mail_to_verwerkt:
+                self.worker.signals.finished.connect(partial(self.moveMailToVerwerktFolder, mail_item))
+
             self.thread_pool.start(self.worker)
 
         else:
             try:
                 mail_function(mail_item=mail_item,
                           template_content=template_content)
+
+                if move_mail_to_verwerkt:
+                    self.moveMailToVerwerktFolder(mail_item=mail_item)
+
                 self.displaySuccessMessage()
 
             except Exception as exc:
@@ -119,7 +163,6 @@ class ThreadedMailManager():
                             error_message: str,
                             mail_item: str):        
 
-        # TODO: make this threaded or not threaded.
         self.success_message = success_message
         self.error_message = error_message
 
@@ -128,15 +171,30 @@ class ThreadedMailManager():
                                              text='Send the Outlook popup reply, it can be behind other windows')
         
         self.loading_dialog.show()
-        self.worker = Worker(self.sendDeclinedMail, 
-                             mail_item=mail_item,
-                             template_content={})
 
-        self.worker.signals.finished.connect(self.loading_dialog.accept)
-        self.worker.signals.finished.connect(self.displaySuccessMessage)
-        self.worker.signals.error.connect(self.loading_dialog.accept)
-        self.worker.signals.error.connect(self.handleMailError)
-        self.thread_pool.start(self.worker)
+
+        if self.gv['SEND_MAILS_ON_SEPERATE_THREAD']: 
+            self.worker = Worker(self.sendDeclinedMail, 
+                                 mail_item=mail_item,
+                                 template_content={})
+
+            self.worker.signals.finished.connect(self.loading_dialog.accept)
+            self.worker.signals.finished.connect(self.displaySuccessMessage)
+            self.worker.signals.error.connect(self.loading_dialog.accept)
+            self.worker.signals.error.connect(self.handleMailError)
+            self.thread_pool.start(self.worker)
+
+        else:
+            try:
+                self.sendDeclinedMail(mail_item=mail_item,
+                                      template_content={})
+                self.loading_dialog.accept()
+                self.displaySuccessMessage()
+
+            except Exception as exc:
+                self.loading_dialog.accept()
+                self.handleMailError(exc)
+
 
     def sendReceivedMail(self,
                         mail_item,
@@ -152,12 +210,6 @@ class ThreadedMailManager():
                                 template_content=template_content,
                                 popup_reply=False)
 
-        # job_tracker = JobTracker(self.gv, self.parent_widget)
-
-
-        mail_manager.moveEmailToVerwerktFolder(mail_item=mail_item,
-                                               sender_mail_adress=self.sender_mail_adress,
-                                               sender_mail_receive_time=self.sender_mail_receive_time)
 
     def sendUnclearMail(self,
                         mail_item,
@@ -171,9 +223,6 @@ class ThreadedMailManager():
                                 template_file_name="UNCLEAR_MAIL_TEMPLATE",
                                 template_content=template_content,
                                 popup_reply=False)
-        mail_manager.moveEmailToVerwerktFolder(mail_item=mail_item,
-                                               sender_mail_adress=self.sender_mail_adress,
-                                               sender_mail_receive_time=self.sender_mail_receive_time)
 
     def sendFinishedMail(self,
                         mail_item: str,
@@ -201,6 +250,13 @@ class ThreadedMailManager():
                                 template_file_name="DECLINED_MAIL_TEMPLATE",
                                 template_content=template_content,
                                 popup_reply=True)
+
+    def moveMailToVerwerktFolder(self, mail_item):
+        ''' Move mail_item to the Verwerkt folder. '''
+        MailManager(self.gv).moveEmailToVerwerktFolder(
+                                mail_item=mail_item,
+                                sender_mail_adress=self.sender_mail_adress,
+                                sender_mail_receive_time=self.sender_mail_receive_time)
 
     def displaySuccessMessage(self):
         ''' Display a confirmation message to the user. '''

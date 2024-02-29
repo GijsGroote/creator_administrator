@@ -149,3 +149,7 @@ class JobTracker:
             if job_folder_global_path == job_dict['job_folder_global_path']:
                 return job_key, job_dict
         return None, None
+
+    def getNumberOfJobsInQueue(self) -> int:
+        ''' Return the number of jobs with status WACHTRIJ. '''
+        return self.getNumberOfJobsWithStatus(['WACHTRIJ'])

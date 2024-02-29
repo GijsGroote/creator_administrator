@@ -149,7 +149,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         thickness = self.thicknessQLineEdit.text()
         amount = self.amountQLineEdit.text()
         
-        if not validate_material_info(material, thickness, amount):
+        if not validate_material_info(self, material, thickness, amount):
             return
 
         attachment = self.temp_attachments[self.attachment_counter]
@@ -194,11 +194,10 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         msg = self.valid_msgs[self.msg_counter]
 
         ThreadedMailManager(parent_widget=self, gv=gv).startMailWorker(
-                success_message=f'Unclear request mail send to {self.temp_sender_name}',
-                error_message=f'No unclear request mail was send to {self.temp_sender_name}',
+                sender_name=self.temp_sender_name,
                 mail_type='UNCLEAR',
                 mail_item=msg,
-                template_content= {},
+                move_mail_to_verwerkt=True,
                 sender_mail_adress=self.mail_manager.getEmailAddress(msg),
                 sender_mail_receive_time=self.mail_manager.getSenderMailReceiveTime(msg))
         
@@ -227,11 +226,10 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
             self.mail_manager.saveAttachment(attachment_dict['attachment'], attachment_dict['file_global_path'])
         
         ThreadedMailManager(parent_widget=self, gv=gv).startMailWorker(
-                success_message=f'Job request receieved mail send to {self.temp_sender_name}',
-                error_message=f'No job request receieved mail send to {self.temp_sender_name}',
+                sender_name=self.temp_sender_name,
                 mail_type='RECEIVED',
-                # mail_item=copy.copy(self.temp_job_folder_global_path),
                 mail_item=msg,
+                move_mail_to_verwerkt=True,
                 template_content= {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
                 sender_mail_adress=sender_mail_adress,
                 sender_mail_receive_time=sender_mail_receive_time)

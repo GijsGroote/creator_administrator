@@ -1,4 +1,5 @@
 import os
+from functools import partial
 
 from PyQt6.QtGui import QShortcut, QKeySequence 
 from PyQt6.QtWidgets import QMenu
@@ -37,11 +38,9 @@ class LaserKlaarQPushButton(JobsQPushButton):
             WarningQMessageBox(gv=gv, parent=self, text='No Job finished mail send because: No mail file found')
         else:
             ThreadedMailManager(parent_widget=self, gv=gv).startMailWorker(
-                success_message=f'Job finished mail send to {sender_name}',
-                error_message=f'No job finished mail send to {sender_name}',
-                mail_type='FINISHED',
-                mail_item=job_folder_global_path,
-                template_content={})
+                    sender_name=sender_name,
+                    mail_type='FINISHED',
+                    mail_item=job_folder_global_path)
 
 class MateriaalKlaarQPushButton(JobsQPushButton):
 
@@ -91,8 +90,7 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
                             success_message=f"Job finished mail send to {sender_name}",
                             error_message=f'No job finished mail send to {sender_name}',
                             mail_type='FINISHED',
-                            mail_item=job_folder_global_path,
-                            template_content={})
+                            mail_item=job_folder_global_path)
 
         self.refreshAllQListWidgets()
 
@@ -153,14 +151,11 @@ class OptionsQPushButton(JobsQPushButton):
         ''' store the object name and initialize. '''
         self.object_name = self.objectName()
 
+        mail_menu = None
 
-        if self.object_name == 'allJobsOptionsQPushButton':
-            self.menu.addAction('Move to Wachtrij', self.moveJobToWachtrij)
+        if self.object_name == 'wachtrijOptionsQPushButton':
             self.menu.addAction('Open in File Explorer', self.openInFileExplorer)
-            self.menu.addAction('Delete Job', self.deleteJob)
-                        
-        elif self.object_name == 'wachtrijOptionsQPushButton':
-            self.menu.addAction('Open in File Explorer', self.openInFileExplorer)
+            mail_menu = self.menu.addMenu('Send Mail')
             self.menu.addAction('Delete Job', self.deleteJob)
 
         elif self.object_name == 'wachtrijMateriaalOptionsQPushButton':
@@ -169,6 +164,7 @@ class OptionsQPushButton(JobsQPushButton):
         elif self.object_name == 'verwerktOptionsQPushButton':
             self.menu.addAction('Move to Wachtrij', self.moveJobToWachtrij)
             self.menu.addAction('Move to Afgekeurd', self.moveJobToAfgekeurd)
+            mail_menu = self.menu.addMenu('Send Mail')
             self.menu.addAction('Open in File Explorer', self.openInFileExplorer)
             self.menu.addAction('Delete Job', self.deleteJob)
 
@@ -176,11 +172,18 @@ class OptionsQPushButton(JobsQPushButton):
         elif self.object_name == 'afgekeurdOptionsQPushButton':
             self.menu.addAction('Move to Wachtrij', self.moveJobToWachtrij)
             self.menu.addAction('Move to Verwerkt', self.moveJobToVerwerkt)
+            mail_menu = self.menu.addMenu('Send Mail')
             self.menu.addAction('Open in File Explorer', self.openInFileExplorer)
             self.menu.addAction('Delete Job', self.deleteJob)
 
         else:
             raise ValueError(f'could not identify {self.object_name}')
+
+        if mail_menu is not None:
+            mail_menu.addAction('Send job Received mail', partial(self.sendMail, 'RECEIVED'))
+            mail_menu.addAction('Send job Unclear mail', partial(self.sendMail, 'UNCLEAR'))
+            mail_menu.addAction('Send job Finished mail', partial(self.sendMail, 'FINISHED'))
+            mail_menu.addAction('Send job Declined Mail', partial(self.sendMail, 'DECLINED'))
 
         self.setMenu(self.menu)
 
@@ -240,3 +243,41 @@ class OptionsQPushButton(JobsQPushButton):
                 copy_item(source_item_global_path, target_item_global_path)
 
         TimedMessage(gv=gv, parent=self, text='Copied Files to TODO folder')
+
+
+    # def sendReceivedMail(self, job_name: str)
+    #     ''' Send a Received mail. '''
+    #     self.sendMail(job_name, 'RECEIVED')
+
+    def sendUnclearMail(self):
+        ''' Send a Received mail. '''
+        self.sendMail('UNCLEAR')
+
+    # def sendDeclinedMail(self, job_name: str)
+    #     ''' Send a Received mail. '''
+    #     self.sendMail(job_name, 'DECLINED')
+
+    # def sendFinishedMail(self, job_name: str)
+    #     ''' Send a Received mail. '''
+    #     self.sendMail(job_name, 'FINISHED')
+
+    def sendMail(self, mail_type: str):
+        ''' Send a mail. '''
+        job_name = self.getCurrentItemName()
+
+
+        job_dict = LaserJobTracker(parent_widget=self).getJobDict(job_name)
+
+        if job_dict is None:
+            WarningQMessageBox(gv=gv, parent=self, text='No mail send because: Job Name could not be found')
+            return
+
+        if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_dict['job_folder_global_path'])]):
+            WarningQMessageBox(gv=gv, parent=self, text='No Job finished mail send because: No mail file found')
+            return
+
+        ThreadedMailManager(parent_widget=self, gv=gv).startMailWorker(
+                sender_name=job_dict['sender_name'],
+                mail_type=mail_type,
+                mail_item=job_dict['job_folder_global_path'])
+
