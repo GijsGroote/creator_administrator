@@ -12,10 +12,10 @@ class ThreadedMailManager():
     as sending mail, retrieving mail, or moving mail to a seperate folder. 
     '''
 
-    def __init__(self, parent_widget, gv: dict, dialog=None):
+    def __init__(self, parent, gv: dict, dialog=None):
         self.gv=gv
         self.thread_pool = gv['THREAD_POOL']
-        self.parent_widget = parent_widget
+        self.parent= parent
         self.dialog = dialog # dialog to open with data retrieved on another thread
         self.worker = None
 
@@ -29,7 +29,7 @@ class ThreadedMailManager():
         self.success_message = None
         self.error_message = ''
 
-        self.loading_dialog = LoadingQDialog(self.parent_widget, self.gv)
+        self.loading_dialog = LoadingQDialog(self.parent, self.gv)
         self.loading_dialog.show()
         
         get_mail_worker = Worker(self.getNewMails)
@@ -50,14 +50,14 @@ class ThreadedMailManager():
 
         if len(warnings) != 0:
             for warning in warnings:
-                WarningQMessageBox(self.gv, self.parent_widget, text=warning)
+                WarningQMessageBox(self.gv, self.parent, text=warning)
 
         if len(valid_msgs) == 0:
-            InfoQMessageBox(parent=self.parent_widget, text='No new valid job request in mail inbox')
+            InfoQMessageBox(parent=self.parent, text='No new valid job request in mail inbox')
 
         else:
-            self.dialog(self.parent_widget, valid_msgs).exec()
-            self.parent_widget.refreshAllWidgets()
+            self.dialog(self.parent, valid_msgs).exec()
+            self.parent.refreshAllWidgets()
 
             
     ''' below this point functions: Start <mail_type> MailWorker.
@@ -76,7 +76,7 @@ class ThreadedMailManager():
         mail_item=MailManager(self.gv).getMailGlobalPathFromFolder(job_dict['job_folder_global_path'])
 
         if mail_type=='RECEIVED':
-            template_content=JobTracker(gv=self.gv, parent_widget=self.parent_widget).getNumberOfJobsInQueue()
+            template_content=JobTracker(parent=self.parent(), gv=self.gv).getNumberOfJobsInQueue()
         else:
             template_content={}
 
@@ -166,7 +166,7 @@ class ThreadedMailManager():
         self.success_message = success_message
         self.error_message = error_message
 
-        self.loading_dialog = LoadingQDialog(self.parent_widget.parent().parent().parent().parent().parent(), 
+        self.loading_dialog = LoadingQDialog(self.parent().parent().parent().parent().parent().parent(), 
                                              self.gv, 
                                              text='Send the Outlook popup reply, it can be behind other windows')
         
@@ -261,7 +261,7 @@ class ThreadedMailManager():
     def displaySuccessMessage(self):
         ''' Display a confirmation message to the user. '''
         if self.success_message is not None:
-            TimedMessage(self.gv, parent=self.parent_widget, text=self.success_message)
+            TimedMessage(self.gv, parent=self.parent, text=self.success_message)
 
     def handleMailError(self, exc: Exception):
         ''' Handle the mail Error. '''
@@ -269,9 +269,9 @@ class ThreadedMailManager():
        
         if isinstance(exc, ConnectionError):
             ErrorQMessageBox(
-                    self.parent_widget,
+                    self.parent,
                     text=f'Connection Error {self.error_message}: {str(exc)}')
         else:
             ErrorQMessageBox(
-                    self.parent_widget,
+                    self.parent(),
                     text=f'Error Occured {self.error_message}: {str(exc)}')

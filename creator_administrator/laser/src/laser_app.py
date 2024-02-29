@@ -29,7 +29,7 @@ class LaserMainWindow(MainWindow):
         self.threadpool = gv['THREAD_POOL']
 
         # call job tracker twice to enforce healthy job log
-        self.job_tracker = LaserJobTracker(parent_widget=self)
+        self.job_tracker = LaserJobTracker(parent=self)
         self.job_tracker.checkHealth()
 
         self.refreshAllWidgets()

@@ -23,7 +23,7 @@ def copy_item(source_dir_global: str, target_dir_global: str):
     else:
         shutil.copy(source_dir_global, target_dir_global)
         
-def delete_item(parent_widget: QWidget, item_global_path: str):
+def delete_item(parent: QWidget, item_global_path: str):
     """ Delete the file from the file system. """
     if os.path.exists(item_global_path):
         try:
@@ -33,12 +33,12 @@ def delete_item(parent_widget: QWidget, item_global_path: str):
                 os.remove(item_global_path)
 
         except PermissionError as exc:
-            ErrorQMessageBox(parent_widget, text=f'Error Occured: {str(exc)}')
+            ErrorQMessageBox(parent, text=f'Error Occured: {str(exc)}')
 
-def delete_directory_content(parent_widget: QWidget, folder_global_path: str):
+def delete_directory_content(parent: QWidget, folder_global_path: str):
         ''' Delete all contents of a folder. '''
         for item in os.listdir(folder_global_path):
-            delete_item(parent_widget, os.path.join(folder_global_path, item))
+            delete_item(parent, os.path.join(folder_global_path, item))
 
 def open_file(file_global_path: str):
     ''' Open a folder in the default file explorer. '''

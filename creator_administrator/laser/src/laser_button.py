@@ -9,7 +9,7 @@ from src.directory_functions import open_folder
 from src.directory_functions import delete_directory_content
 from src.qdialog import SelectOptionsQDialog
 from src.directory_functions import copy_item
-from src.qmessagebox import TimedMessage, WarningQMessageBox
+from src.qmessagebox import TimedMessage, WarningQMessageBox, InfoQMessageBox
 from src.threaded_mail_manager import ThreadedMailManager
 
 from convert import split_material_name
@@ -37,7 +37,7 @@ class LaserKlaarQPushButton(JobsQPushButton):
         if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]):
             WarningQMessageBox(gv=gv, parent=self, text='No Job finished mail send because: No mail file found')
         else:
-            ThreadedMailManager(parent_widget=self, gv=gv).startMailWorker(
+            ThreadedMailManager(parent=self, gv=gv).startMailWorker(
                     sender_name=sender_name,
                     mail_type='FINISHED',
                     mail_item=job_folder_global_path)
@@ -81,15 +81,20 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
 
                 self.job_tracker.updateJobStatus(job_name, 'VERWERKT')
                 sender_name = self.job_tracker.jobNameToSenderName(job_name)
-                job_folder_global_path = self.job_tracker.getJobFolderGlobalPathFromJobName(job_name)               
+                job_folder_global_path = self.job_tracker.getJobFolderGlobalPathFromJobName(job_name)
+                done_files = ''
+                for laser_file_dict in self.job_tracker.getJobDict(job_name)['laser_files'].values():
+                    done_files += laser_file_dict['file_name']+'\n'
+                InfoQMessageBox(self.parent(), f'For {sender_name} put into Uitgifterek:\n{done_files}')
             
                 if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]):
                     WarningQMessageBox(gv=gv, parent=self, text=f'No Job finished mail send because: No mail file found')
                 else:
-                    ThreadedMailManager(parent_widget=self, gv=gv).startMailWorker(
+                    ThreadedMailManager(parent=self, gv=gv).startMailWorker(
                             sender_name=sender_name,
                             mail_type='FINISHED',
                             mail_item=job_folder_global_path)
+
 
         self.refreshAllQListWidgets()
 
@@ -114,7 +119,7 @@ class AfgekeurdQPushButton(JobsQPushButton):
         else:
             sender_name = job_tracker.jobNameToSenderName(job_name)
 
-            ThreadedMailManager(parent_widget=self, gv=gv).startDeclinedMailWorker(
+            ThreadedMailManager(parent=self, gv=gv).startDeclinedMailWorker(
                 success_message=f'Job declined mail send to {sender_name}',
                 error_message=f'No job declined mail send to {sender_name}',
                 mail_item=job_folder_global_path)
@@ -265,7 +270,7 @@ class OptionsQPushButton(JobsQPushButton):
         job_name = self.getCurrentItemName()
 
 
-        job_dict = LaserJobTracker(parent_widget=self).getJobDict(job_name)
+        job_dict = LaserJobTracker(parent=self).getJobDict(job_name)
 
         if job_dict is None:
             WarningQMessageBox(gv=gv, parent=self, text='No mail send because: Job Name could not be found')
@@ -275,7 +280,7 @@ class OptionsQPushButton(JobsQPushButton):
             WarningQMessageBox(gv=gv, parent=self, text='No Job finished mail send because: No mail file found')
             return
 
-        ThreadedMailManager(parent_widget=self, gv=gv).startMailWorker(
+        ThreadedMailManager(parent=self, gv=gv).startMailWorker(
                 sender_name=job_dict['sender_name'],
                 mail_type=mail_type,
                 mail_item=job_dict['job_folder_global_path'])

@@ -17,9 +17,9 @@ from src.qmessagebox import YesOrNoMessageBox, InfoQMessageBox
 
 class JobTracker:
 
-    def __init__(self, gv: dict, parent_widget: QWidget):
+    def __init__(self, parent: QWidget, gv: dict):
         self.gv = gv
-        self.parent_widget = parent_widget
+        self.parent= parent
         self.job_keys = ['job_name', 'dynamic_job_name', 'status',
                          'folder_path', 'created_on_date']
         self.tracker_file_path = gv['TRACKER_FILE_PATH']
@@ -40,15 +40,15 @@ class JobTracker:
     def createTrackerFile(self):
         """ Create the file that tracks jobs. """
         if os.path.exists(self.tracker_backup_file_path):
-            if YesOrNoMessageBox(self.parent_widget, text=f"Backup file detected at: {self.tracker_backup_file_path}, do you want to restore it (Y/n)?").answer(): 
+            if YesOrNoMessageBox(self.parent, text=f"Backup file detected at: {self.tracker_backup_file_path}, do you want to restore it (Y/n)?").answer(): 
                 os.rename(self.tracker_backup_file_path, self.tracker_file_path)
-                InfoQMessageBox(self.parent_widget, "Backup restored!")
+                InfoQMessageBox(self.parent, "Backup restored!") 
                 return
 
         with open(self.tracker_file_path, 'w', encoding='utf-8') as tracker_file:
             json.dump({}, tracker_file, indent=4)
 
-        InfoQMessageBox(self.parent_widget, text='New job tracker file created') 
+        InfoQMessageBox(self.parent, text='New job tracker file created') 
 
     def checkTrackerFileHealth(self):
         if not os.path.exists(self.tracker_file_path):
@@ -59,15 +59,15 @@ class JobTracker:
                 json.load(tracker_file)
         except json.decoder.JSONDecodeError:
             if os.path.isfile(self.tracker_backup_file_path):
-                if YesOrNoMessageBox(self.parent_widget, 'Do you want to restore the backup tracker file (Y/n)?'):
+                if YesOrNoMessageBox(self.parent, 'Do you want to restore the backup tracker file (Y/n)?'):
                     os.remove(self.tracker_file_path)
                     os.rename(self.tracker_backup_file_path, self.tracker_file_path)
 
-            elif YesOrNoMessageBox(self.parent_widget, 'Do you want to create a new empty tracker file (Y/n)?'):
+            elif YesOrNoMessageBox(self.parent, 'Do you want to create a new empty tracker file (Y/n)?'):
                 with open(self.tracker_file_path, 'w', encoding='utf-8') as tracker_file:
                     json.dump({}, tracker_file, indent=4)
             else:
-                InfoQMessageBox(self.parent_widget, "Could not load tracker file, closing application.")
+                InfoQMessageBox(self.parent, "Could not load tracker file, closing application.")
                 sys.exit(0)
 
     def makeBackup(self):

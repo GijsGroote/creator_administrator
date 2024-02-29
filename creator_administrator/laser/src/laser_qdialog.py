@@ -193,7 +193,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
 
         msg = self.valid_msgs[self.msg_counter]
 
-        ThreadedMailManager(parent_widget=self, gv=gv).startMailWorker(
+        ThreadedMailManager(parent=self, gv=gv).startMailWorker(
                 sender_name=self.temp_sender_name,
                 mail_type='UNCLEAR',
                 mail_item=msg,
@@ -225,7 +225,7 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
         for attachment_dict in self.temp_attachments_dict.values():
             self.mail_manager.saveAttachment(attachment_dict['attachment'], attachment_dict['file_global_path'])
         
-        ThreadedMailManager(parent_widget=self, gv=gv).startMailWorker(
+        ThreadedMailManager(parent=self, gv=gv).startMailWorker(
                 sender_name=self.temp_sender_name,
                 mail_type='RECEIVED',
                 mail_item=msg,

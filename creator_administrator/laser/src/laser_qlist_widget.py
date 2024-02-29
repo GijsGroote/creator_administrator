@@ -1,8 +1,7 @@
 import os
 
-# from PyQt6.QtCore import *
 from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import QStackedWidget, QListWidgetItem, QLabel, QListWidget, QTabWidget
+from PyQt6.QtWidgets import QStackedWidget, QListWidgetItem, QLabel, QTabWidget
 
 from src.qlist_widget import OverviewQListWidget, ContentQListWidget
 from convert import split_material_name
