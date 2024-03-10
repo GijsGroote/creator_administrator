@@ -116,7 +116,7 @@ class AboutDialog(QDialog):
         # shortcut on Esc button
         QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.closeDialog)
 
-    def openGithubInBrowser(self):
+    def openGithubInBrowser(self, _):
         ''' Open Github in browser. '''
         webbrowser.open('https://github.com/GijsGroote/creator_administrator/')
 
