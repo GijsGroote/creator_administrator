@@ -1,5 +1,5 @@
 """
-Global variables / Settings specific for the computer managing the printer machine.
+Global variables/Settings specific for the computer managing the printer machine.
 """
 
 import json
@@ -72,7 +72,6 @@ if not os.path.exists(settings_file_path):
         "ACCEPTED_EXTENSIONS": ".stl, .step, .3mf, .obj, .amf",
         "ACCEPTED_MATERIALS": "PLA, ABS",
         "DAYS_TO_KEEP_JOBS": "15",
-        "PASSWORD": "",
         "DARK_THEME": "true",
         "DISPLAY_TEMP_MESSAGES": "true",
         "DISPLAY_WARNING_MESSAGES": "true",
@@ -130,8 +129,6 @@ with open(settings_file_path, 'r') as settings_file:
     gv['EMPTY_TODO_DIR_BEFORE_EXPORT'] =  gv_data['EMPTY_TODO_DIR_BEFORE_EXPORT'] == 'true'
     gv['DISPLAY_TEMP_MESSAGES'] = gv_data['DISPLAY_TEMP_MESSAGES'] == 'true'
     gv['DISPLAY_WARNING_MESSAGES'] = gv_data['DISPLAY_WARNING_MESSAGES'] == 'true'
-
-    gv['PASSWORD'] = gv_data['PASSWORD']
 
 
     if 'MAIL_INBOX_NAME' in gv_data:

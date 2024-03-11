@@ -1,3 +1,8 @@
+#TODO: update this readme which is clearly outdated...!!!!
+
+
+
+
 This repository is intended for Windows OS.
 
 Before you begin, make sure you have the following dependencies installed:
@@ -44,7 +49,6 @@ Before you begin, make sure you have the following dependencies installed:
        "PYTHON_PATH": "C:Program Files\\Python311\\python.exe",
        "IOBIT_UNLOCKER_PATH": "C:\\Program Files (x86)\\IObit\\IObit Unlocker\\IObitUnlocker.exe",
        "OUTLOOK_PATH":  "C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE",
-       "PASSWORD":  "a simple password"
    }
    ```
 

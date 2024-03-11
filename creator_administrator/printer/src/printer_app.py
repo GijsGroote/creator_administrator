@@ -3,19 +3,17 @@ import os
 
 from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import QListWidget
-from PyQt6.QtGui import QKeySequence, QShortcut
 
 from global_variables import gv
 
 from src.app import MainWindow
 from src.qmessagebox import WarningQMessageBox, TimedMessage
 from src.threaded_mail_manager import ThreadedMailManager
+from src.qdialog import FilesSelectQDialog, FolderSelectQDialog
 
 from printer_job_tracker import PrintJobTracker
 from printer_settings_dialog import PrintSettingsQDialog
-from printer_qdialog import (
-        PrintImportFromMailQDialog, PrintFilesSelectQDialog,
-        PrintFolderSelectQDialog, PrintFileInfoQDialog)
+from printer_qdialog import PrintImportFromMailQDialog, PrintFileInfoQDialog
 
 # ensure that win32com is imported after creating an executable with pyinstaller
 # from win32com import client
@@ -46,15 +44,6 @@ class PrintMainWindow(MainWindow):
         self.checkHealthAction.triggered.connect(self.checkHealth)
 
 
-        # Delete this and showTimedMessage as well
-        QShortcut(QKeySequence("Ctrl+H"), self).activated.connect(self.showTimedMessage)
-
-    def showTimedMessage(self):
-
-        haa = ' aj jonh'
-        TimedMessage(gv, self, text=f'Print job {haa} created')
-        
-
     def handleNewValidMails(self):
         ''' Handle the new mails in the inbox. '''
         
@@ -66,7 +55,7 @@ class PrintMainWindow(MainWindow):
 
     def openSelectFilesDialog(self):
         ''' Open dialog to select multiple files. ''' 
-        dialog = PrintFilesSelectQDialog(self)
+        dialog = FilesSelectQDialog(self, gv)
 
         if dialog.exec() == 1:
             files_global_paths = dialog.selectFilesButton.files_global_paths
@@ -79,7 +68,7 @@ class PrintMainWindow(MainWindow):
 
     def openSelectFolderDialog(self):
         ''' Open dialog to select folder with multiple subfolders. ''' 
-        dialog = PrintFolderSelectQDialog(self)
+        dialog = FolderSelectQDialog(self, gv)
 
         if dialog.exec() == 1:
             folder_global_path = dialog.selectFolderButton.folder_global_path

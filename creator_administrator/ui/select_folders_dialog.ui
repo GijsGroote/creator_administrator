@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>900</width>
-    <height>394</height>
+    <width>858</width>
+    <height>486</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,37 +17,24 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
       <layout class="QFormLayout" name="formLayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_3">
          <property name="font">
           <font>
            <pointsize>14</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>&amp;Password</string>
+          <string>&amp;Project Name</string>
          </property>
          <property name="buddy">
-          <cstring>passwordQLineEdit</cstring>
+          <cstring>projectNameQLineEdit</cstring>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="passwordQLineEdit"/>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="projectNameQLineEdit"/>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="label_2">
@@ -61,11 +48,11 @@
 
 └───&lt;FOLDER&gt;
       ├───&lt;SUBFOLDER_1&gt;
-      │  ├───laser_file
-      │  └───another_laser_file
+      │  ├───file
+      │  └───another_file
       └───&lt;SUBFOLDER_2&gt;
-             ├───laser_file
-             └───another_laser_file
+             ├───file
+             └───another_file
 
 </string>
          </property>
@@ -86,50 +73,45 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_3">
-         <property name="font">
-          <font>
-           <pointsize>14</pointsize>
-          </font>
+       <item row="0" column="1">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
-         <property name="text">
-          <string>&amp;Project Name</string>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
          </property>
-         <property name="buddy">
-          <cstring>projectNameQLineEdit</cstring>
-         </property>
-        </widget>
+        </spacer>
        </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="projectNameQLineEdit"/>
+       <item row="3" column="1">
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </item>
-     <item>
-      <widget class="QDialogButtonBox" name="buttonBox">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="standardButtons">
-        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="verticalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -141,7 +123,6 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>passwordQLineEdit</tabstop>
   <tabstop>projectNameQLineEdit</tabstop>
   <tabstop>selectFolderButton</tabstop>
  </tabstops>

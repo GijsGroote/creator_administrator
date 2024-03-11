@@ -10,7 +10,6 @@ from src.mail_manager import MailManager
 from src.qmessagebox import TimedMessage
 from src.threaded_mail_manager import ThreadedMailManager
 from src.directory_functions import copy_item
-from src.validate import validate_password
 
 from laser_job_tracker import LaserJobTracker
 from laser_validate import validate_material_info
@@ -235,73 +234,6 @@ class LaserImportFromMailQDialog(ImportFromMailQDialog):
                 sender_mail_receive_time=sender_mail_receive_time)
                 
         TimedMessage(gv, self, text=f'Laser job {self.temp_job_name} created')
-
-class LaserFilesSelectQDialog(SelectQDialog):
-    """ Select files dialog. """
-    def __init__(self, parent, *args, **kwargs):
-        ui_global_path = os.path.join(gv['REPO_DIR_HOME'], 'laser/ui/select_files_dialog.ui')
-        super().__init__(parent, gv, ui_global_path, *args, **kwargs)
-        self.filesGlobalPathsQLabel.hide()
-        
-
-        self.buttonBox.accepted.connect(self.validate)
-
-    def validate(self):
-
-        if not validate_password(self, gv, self.passwordQLineEdit.text()):
-            return
-
-        if len(self.selectFilesButton.files_global_paths) == 0:
-            dlg = QMessageBox(self)
-            dlg.setText('Select Files')
-            dlg.exec()
-            return
-
-        contains_accepted_extension = False
-        for file_global_path in self.selectFilesButton.files_global_paths:
-            if file_global_path.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
-                contains_accepted_extension = True
-
-        if not contains_accepted_extension:
-            dlg = QMessageBox(self)
-            dlg.setText(f'Select should contain one or more files with extension {gv["ACCEPTED_EXTENSIONS"]}')
-            dlg.exec()
-            return
-
-        if len(self.projectNameQLineEdit.text()) == 0:
-            dlg = QMessageBox(self)
-            dlg.setText('Provide a Job Name')
-            dlg.exec()
-            return
-
-        self.accept()
-
-class LaserFolderSelectQDialog(SelectQDialog):
-    """ Select folder dialog. """
-    def __init__(self, parent, *args, **kwargs):
-        ui_global_path = os.path.join(gv['REPO_DIR_HOME'], 'laser/ui/select_folders_dialog.ui')
-        super().__init__(parent, gv, ui_global_path, *args, **kwargs)
-
-        self.buttonBox.accepted.connect(self.validate)
-
-    def validate(self):
-
-        if not validate_password(self, gv, self.passwordQLineEdit.text()):
-            return
-
-        if self.selectFolderButton.folder_global_path is None:
-            dlg = QMessageBox(self)
-            dlg.setText('Select a Folder')
-            dlg.exec()
-            return
-
-        if len(self.projectNameQLineEdit.text()) == 0:
-            dlg = QMessageBox(self)
-            dlg.setText('Provide a Project Name')
-            dlg.exec()
-            return
-
-        self.accept()
 
 class LaserFileInfoQDialog(QDialog):
     ''' Ask for file laser file details (material, thickness, amount) and create laser jobs.

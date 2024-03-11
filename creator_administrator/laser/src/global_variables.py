@@ -72,7 +72,6 @@ if not os.path.exists(settings_file_path):
         "ACCEPTED_EXTENSIONS": ".dxf, .dwg",
         "ACCEPTED_MATERIALS": "steel, alu",
         "DAYS_TO_KEEP_JOBS": "15",
-        "PASSWORD": "",
         "DARK_THEME": "true",
         "DISPLAY_TEMP_MESSAGES": "true",
         "DISPLAY_WARNING_MESSAGES": "true",
@@ -132,7 +131,6 @@ with open(settings_file_path, 'r') as settings_file:
     gv['DISPLAY_TEMP_MESSAGES'] = gv_data['DISPLAY_TEMP_MESSAGES'] == 'true'
     gv['DISPLAY_WARNING_MESSAGES'] = gv_data['DISPLAY_WARNING_MESSAGES'] == 'true'
 
-    gv['PASSWORD'] = gv_data['PASSWORD']
 
 
     if 'MAIL_INBOX_NAME' in gv_data:

@@ -35,22 +35,22 @@
       </spacer>
      </item>
      <item row="1" column="0">
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="label_3">
        <property name="font">
         <font>
          <pointsize>14</pointsize>
         </font>
        </property>
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;Password                &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;             </string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;Job Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="buddy">
-        <cstring>passwordQLineEdit</cstring>
+        <cstring>projectNameQLineEdit</cstring>
        </property>
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QLineEdit" name="passwordQLineEdit">
+      <widget class="QLineEdit" name="projectNameQLineEdit">
        <property name="font">
         <font>
          <pointsize>14</pointsize>
@@ -58,7 +58,7 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
+     <item row="2" column="0">
       <widget class="QLabel" name="label_2">
        <property name="font">
         <font>
@@ -73,7 +73,7 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
+     <item row="2" column="1">
       <widget class="SelectFilesQPushButton" name="selectFilesButton">
        <property name="font">
         <font>
@@ -85,7 +85,19 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
+     <item row="3" column="1">
+      <widget class="QLabel" name="filesGlobalPathsQLabel">
+       <property name="font">
+        <font>
+         <pointsize>14</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;selected_files&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
       <spacer name="verticalSpacer">
        <property name="font">
         <font>
@@ -102,42 +114,6 @@
         </size>
        </property>
       </spacer>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="font">
-        <font>
-         <pointsize>14</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;Job Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="buddy">
-        <cstring>projectNameQLineEdit</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QLineEdit" name="projectNameQLineEdit">
-       <property name="font">
-        <font>
-         <pointsize>14</pointsize>
-        </font>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QLabel" name="filesGlobalPathsQLabel">
-       <property name="font">
-        <font>
-         <pointsize>14</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;selected_files&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-      </widget>
      </item>
     </layout>
    </item>
@@ -166,7 +142,6 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>passwordQLineEdit</tabstop>
   <tabstop>projectNameQLineEdit</tabstop>
   <tabstop>selectFilesButton</tabstop>
  </tabstops>

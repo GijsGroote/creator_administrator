@@ -2,7 +2,7 @@ import os
 import webbrowser
 import pkg_resources
 
-from PyQt6.QtWidgets import QDialog, QWidget, QListWidgetItem
+from PyQt6.QtWidgets import QDialog, QWidget, QListWidgetItem, QMessageBox
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QKeySequence, QShortcut, QFont
 from PyQt6.uic import loadUi
@@ -22,28 +22,6 @@ class ImportFromMailQDialog(QDialog):
         ''' Close the dialog, press cancel. '''
         self.close()
 
-class SelectQDialog(QDialog):
-    """ Select file dialog. """
-    def __init__(self, parent, gv: dict, ui_global_path: str, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
-        self.gv=gv
-
-        loadUi(ui_global_path, self)
-        self.passwordQLineEdit.textChanged.connect(self.check_password)
-
-        # shortcut on Esc button
-        QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.closeDialog)
-
-    def check_password(self):
-        if self.passwordQLineEdit.text() == self.gv['PASSWORD']:
-            self.passwordQLineEdit.setStyleSheet(f'background-color: {self.gv["GOOD_COLOR_RGBA"]};')
-        else:
-            self.passwordQLineEdit.setStyleSheet(f'background-color: {self.gv["BAD_COLOR_RGBA"]};')
-
-
-    def closeDialog(self):
-        ''' Close the dialog, press cancel. '''
-        self.close()
 
 class SelectOptionsQDialog(QDialog):
     ''' Select one of the options. '''
@@ -53,9 +31,8 @@ class SelectOptionsQDialog(QDialog):
         self.gv = gv
 
         
-        loadUi(os.path.join(self.gv['LOCAL_UI_DIR'], 'select_material_done_dialog.ui'), self)
+        loadUi(os.path.join(self.gv['GLOBAL_UI_DIR'], 'select_done_dialog.ui'), self)
 
-        # QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.toggleSelection)
 
         # shortcuts on arrow keys
         QShortcut(QKeySequence(Qt.Key.Key_Up), self).activated.connect(self.toPreviousRow)
@@ -124,3 +101,80 @@ class AboutDialog(QDialog):
         ''' Close the dialog, press cancel. '''
         self.close()
 
+
+
+class SelectQDialog(QDialog):
+    """ Select file dialog. """
+    def __init__(self, parent, gv: dict, ui_global_path: str, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.gv=gv
+
+        loadUi(ui_global_path, self)
+
+        # shortcut on Esc button
+        QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.closeDialog)
+
+    def closeDialog(self):
+        ''' Close the dialog, press cancel. '''
+        self.close()
+
+class FilesSelectQDialog(SelectQDialog):
+    """ Select files dialog. """
+    def __init__(self, parent: QWidget, gv: dict, *args, **kwargs):
+        ui_global_path = os.path.join(gv['GLOBAL_UI_DIR'], 'select_files_dialog.ui')
+        super().__init__(parent, gv, ui_global_path, *args, **kwargs)
+        self.filesGlobalPathsQLabel.hide()
+        
+
+        self.buttonBox.accepted.connect(self.validate)
+
+    def validate(self):
+
+        if len(self.selectFilesButton.files_global_paths) == 0:
+            dlg = QMessageBox(self)
+            dlg.setText('Select Files')
+            dlg.exec()
+            return
+
+        contains_accepted_extension = False
+        for file_global_path in self.selectFilesButton.files_global_paths:
+            if file_global_path.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
+                contains_accepted_extension = True
+
+        if not contains_accepted_extension:
+            dlg = QMessageBox(self)
+            dlg.setText(f'Selected files should contain one or more files with extension {self.gv["ACCEPTED_EXTENSIONS"]}')
+            dlg.exec()
+            return
+
+        if len(self.projectNameQLineEdit.text()) == 0:
+            dlg = QMessageBox(self)
+            dlg.setText('Provide a Job Name')
+            dlg.exec()
+            return
+
+        self.accept()
+
+class FolderSelectQDialog(SelectQDialog):
+    """ Select folder dialog. """
+    def __init__(self, parent: QWidget, gv: dict, *args, **kwargs):
+        ui_global_path = os.path.join(gv['GLOBAL_UI_DIR'], 'select_folders_dialog.ui')
+        super().__init__(parent, gv, ui_global_path, *args, **kwargs)
+
+        self.buttonBox.accepted.connect(self.validate)
+
+    def validate(self):
+
+        if self.selectFolderButton.folder_global_path is None:
+            dlg = QMessageBox(self)
+            dlg.setText('Select a Folder')
+            dlg.exec()
+            return
+
+        if len(self.projectNameQLineEdit.text()) == 0:
+            dlg = QMessageBox(self)
+            dlg.setText('Provide a Project Name')
+            dlg.exec()
+            return
+
+        self.accept()

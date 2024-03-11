@@ -138,7 +138,7 @@ class OptionsQPushButton(JobsQPushButton):
         self.setMenu(self.menu)
 
     def moveJobToWachtrij(self):
-        # Mark all alser files as not done
+        # Mark all print files as not done
         job_name = self.getCurrentItemName()
         PrintJobTracker(self).markAllFilesAsDone(job_name=job_name,
                                                  done=False)

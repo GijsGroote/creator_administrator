@@ -3,19 +3,17 @@ import os
 
 from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import QListWidget
-from PyQt6.QtGui import QKeySequence, QShortcut
 
 from global_variables import gv
 
 from src.app import MainWindow
 from src.qmessagebox import WarningQMessageBox, TimedMessage
 from src.threaded_mail_manager import ThreadedMailManager
+from src.qdialog import FilesSelectQDialog, FolderSelectQDialog
 
 from laser_job_tracker import LaserJobTracker
 from laser_settings_dialog import LaserSettingsQDialog
-from laser_qdialog import (
-        LaserImportFromMailQDialog, LaserFilesSelectQDialog,
-        LaserFolderSelectQDialog, LaserFileInfoQDialog)
+from laser_qdialog import LaserImportFromMailQDialog, LaserFileInfoQDialog
 
 # ensure that win32com is imported after creating an executable with pyinstaller
 # from win32com import client
@@ -46,18 +44,8 @@ class LaserMainWindow(MainWindow):
         self.checkHealthAction.triggered.connect(self.checkHealth)
 
 
-        # Delete this and showTimedMessage as well
-        QShortcut(QKeySequence("Ctrl+H"), self).activated.connect(self.showTimedMessage)
-
-    def showTimedMessage(self):
-
-        haa = ' aj jonh'
-        TimedMessage(gv, self, text=f'Laser job {haa} created')
-        
-
     def handleNewValidMails(self):
         ''' Handle the new mails in the inbox. '''
-        
         self.threaded_mail_manager = ThreadedMailManager(self, gv, dialog=LaserImportFromMailQDialog)
         # getValidmails gets mail and triggers openImportFromMailDialog
         self.threaded_mail_manager.getValidMailsFromInbox()
@@ -66,7 +54,7 @@ class LaserMainWindow(MainWindow):
 
     def openSelectFilesDialog(self):
         ''' Open dialog to select multiple files. ''' 
-        dialog = LaserFilesSelectQDialog(self)
+        dialog = FilesSelectQDialog(self, gv)
 
         if dialog.exec() == 1:
             files_global_paths = dialog.selectFilesButton.files_global_paths
@@ -79,7 +67,7 @@ class LaserMainWindow(MainWindow):
 
     def openSelectFolderDialog(self):
         ''' Open dialog to select folder with multiple subfolders. ''' 
-        dialog = LaserFolderSelectQDialog(self)
+        dialog = FolderSelectQDialog(self, gv)
 
         if dialog.exec() == 1:
             folder_global_path = dialog.selectFolderButton.folder_global_path

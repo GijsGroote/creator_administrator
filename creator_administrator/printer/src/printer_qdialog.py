@@ -10,7 +10,6 @@ from src.mail_manager import MailManager
 from src.qmessagebox import TimedMessage
 from src.threaded_mail_manager import ThreadedMailManager
 from src.directory_functions import copy_item
-from src.validate import validate_password
 
 from printer_job_tracker import PrintJobTracker
 from printer_validate import validate_material_info
@@ -248,9 +247,6 @@ class PrintFilesSelectQDialog(SelectQDialog):
 
     def validate(self):
 
-        if not validate_password(self, gv, self.passwordQLineEdit.text()):
-            return
-
         if len(self.selectFilesButton.files_global_paths) == 0:
             dlg = QMessageBox(self)
             dlg.setText('Select Files')
@@ -285,9 +281,6 @@ class PrintFolderSelectQDialog(SelectQDialog):
         self.buttonBox.accepted.connect(self.validate)
 
     def validate(self):
-
-        if not validate_password(self, gv, self.passwordQLineEdit.text()):
-            return
 
         if self.selectFolderButton.folder_global_path is None:
             dlg = QMessageBox(self)
