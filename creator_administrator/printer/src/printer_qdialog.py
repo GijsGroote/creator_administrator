@@ -2,10 +2,11 @@ import os
 import re
 import datetime
 
-from PyQt6.QtWidgets import QMessageBox, QDialog
+from PyQt6.QtWidgets import QDialog
 from PyQt6.uic import loadUi
 
-from src.qdialog import ImportFromMailQDialog, SelectQDialog
+
+from src.qdialog import CreateJobsQDialog, ImportFromMailQDialog
 from src.mail_manager import MailManager
 from src.qmessagebox import TimedMessage
 from src.threaded_mail_manager import ThreadedMailManager
@@ -13,8 +14,14 @@ from src.directory_functions import copy_item
 
 from printer_job_tracker import PrintJobTracker
 from printer_validate import validate_material_info
-  
+
 from global_variables import gv
+
+
+class CreatePrintJobsQDialog(CreateJobsQDialog):
+    pass
+    # TODO: create laser jobs with dialog (should be with mail, folder or file input)
+
 
 class PrintImportFromMailQDialog(ImportFromMailQDialog):
 
@@ -24,7 +31,7 @@ class PrintImportFromMailQDialog(ImportFromMailQDialog):
 
         self.mail_manager = MailManager(gv)
         self.valid_msgs = valid_msgs
- 
+
         self.msg_counter = 0
         self.attachment_counter = 0
         self.new_material_text = 'New Material'
@@ -51,7 +58,7 @@ class PrintImportFromMailQDialog(ImportFromMailQDialog):
 
             if self.msg_counter >= len(self.valid_msgs):
                 # done! close dialog
-                self.accept() 
+                self.accept()
             else:
                 self.loadMailContent()
         else:
@@ -94,7 +101,7 @@ class PrintImportFromMailQDialog(ImportFromMailQDialog):
             self.attachmentProgressQLabel.setText(f'Attachment ({self.attachment_counter+1}/{len(self.temp_attachments)})')
             self.attachmentNameQLabel.setText(attachment_name)
 
-            # initially hide option for new material 
+            # initially hide option for new material
             self.newMaterialQLabel.setHidden(True)
             self.newMaterialQLineEdit.setHidden(True)
 
@@ -137,7 +144,7 @@ class PrintImportFromMailQDialog(ImportFromMailQDialog):
         else:
             self.newMaterialQLabel.setHidden(True)
             self.newMaterialQLineEdit.setHidden(True)
-        
+
     def collectAttachmentInfo(self):
         ''' Collect material, thickness and amount info. '''
         material = self.materialQComboBox.currentText()
@@ -147,7 +154,7 @@ class PrintImportFromMailQDialog(ImportFromMailQDialog):
 
         thickness = self.thicknessQLineEdit.text()
         amount = self.amountQLineEdit.text()
-        
+
         if not validate_material_info(self, material, thickness, amount):
             return
 
@@ -165,7 +172,7 @@ class PrintImportFromMailQDialog(ImportFromMailQDialog):
             file_name = material+'_'+thickness+'mm_'+amount+'x_'+original_file_name
 
         file_global_path = os.path.join(self.temp_job_folder_global_path, file_name)
-    
+
         self.temp_print_cut_files_dict[self.temp_job_name + '_' + file_name] = {
                             'file_name': file_name,
                             'file_global_path': file_global_path,
@@ -181,7 +188,7 @@ class PrintImportFromMailQDialog(ImportFromMailQDialog):
     def skipMail(self):
         ''' Skip mail and go to the next. '''
         if self.msg_counter+1 >= len(self.valid_msgs):
-            self.accept() 
+            self.accept()
         else:
             self.msg_counter += 1
             self.attachment_counter = 0
@@ -199,7 +206,7 @@ class PrintImportFromMailQDialog(ImportFromMailQDialog):
                 move_mail_to_verwerkt=True,
                 sender_mail_adress=self.mail_manager.getEmailAddress(msg),
                 sender_mail_receive_time=self.mail_manager.getSenderMailReceiveTime(msg))
-        
+
         self.skipMail()
 
     def threadedSendReceivedMailAndCreatePrintJob(self):
@@ -223,7 +230,7 @@ class PrintImportFromMailQDialog(ImportFromMailQDialog):
         # save the attachments
         for attachment_dict in self.temp_attachments_dict.values():
             self.mail_manager.saveAttachment(attachment_dict['attachment'], attachment_dict['file_global_path'])
-        
+
         ThreadedMailManager(parent=self, gv=gv).startMailWorker(
                 sender_name=self.temp_sender_name,
                 mail_type='RECEIVED',
@@ -232,74 +239,13 @@ class PrintImportFromMailQDialog(ImportFromMailQDialog):
                 template_content= {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
                 sender_mail_adress=sender_mail_adress,
                 sender_mail_receive_time=sender_mail_receive_time)
-                
+
         TimedMessage(gv, self, text=f'Print job {self.temp_job_name} created')
-
-class PrintFilesSelectQDialog(SelectQDialog):
-    """ Select files dialog. """
-    def __init__(self, parent, *args, **kwargs):
-        ui_global_path = os.path.join(gv['REPO_DIR_HOME'], 'printer/ui/select_files_dialog.ui')
-        super().__init__(parent, gv, ui_global_path, *args, **kwargs)
-        self.filesGlobalPathsQLabel.hide()
-        
-
-        self.buttonBox.accepted.connect(self.validate)
-
-    def validate(self):
-
-        if len(self.selectFilesButton.files_global_paths) == 0:
-            dlg = QMessageBox(self)
-            dlg.setText('Select Files')
-            dlg.exec()
-            return
-
-        contains_accepted_extension = False
-        for file_global_path in self.selectFilesButton.files_global_paths:
-            if file_global_path.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
-                contains_accepted_extension = True
-
-        if not contains_accepted_extension:
-            dlg = QMessageBox(self)
-            dlg.setText(f'Select should contain one or more files with extension {gv["ACCEPTED_EXTENSIONS"]}')
-            dlg.exec()
-            return
-
-        if len(self.projectNameQLineEdit.text()) == 0:
-            dlg = QMessageBox(self)
-            dlg.setText('Provide a Job Name')
-            dlg.exec()
-            return
-
-        self.accept()
-
-class PrintFolderSelectQDialog(SelectQDialog):
-    """ Select folder dialog. """
-    def __init__(self, parent, *args, **kwargs):
-        ui_global_path = os.path.join(gv['REPO_DIR_HOME'], 'printer/ui/select_folders_dialog.ui')
-        super().__init__(parent, gv, ui_global_path, *args, **kwargs)
-
-        self.buttonBox.accepted.connect(self.validate)
-
-    def validate(self):
-
-        if self.selectFolderButton.folder_global_path is None:
-            dlg = QMessageBox(self)
-            dlg.setText('Select a Folder')
-            dlg.exec()
-            return
-
-        if len(self.projectNameQLineEdit.text()) == 0:
-            dlg = QMessageBox(self)
-            dlg.setText('Provide a Project Name')
-            dlg.exec()
-            return
-
-        self.accept()
 
 class PrintFileInfoQDialog(QDialog):
     ''' Ask for file print file details (material, thickness, amount) and create print jobs.
     job_name: List with job names
-    files_global_paths_list: nested lists with global paths for every file in the job.  
+    files_global_paths_list: nested lists with global paths for every file in the job.
 
     '''
 
@@ -311,7 +257,7 @@ class PrintFileInfoQDialog(QDialog):
         assert len(job_name_list) == len(files_global_paths_list),\
             f'length of job name list: {len(job_name_list)} should'\
             f'be equal to the files_global_path_list: {len(files_global_paths_list)}'
-                   
+
 
         self.job_tracker = PrintJobTracker(self)
         self.job_counter = 0
@@ -320,7 +266,7 @@ class PrintFileInfoQDialog(QDialog):
         self.files_global_paths_list = files_global_paths_list
         self.temp_job_name = self.job_tracker.makeJobNameUnique(self.job_name_list[self.job_counter])
         self.temp_files_global_paths = files_global_paths_list[self.job_counter]
- 
+
         self.new_material_text = 'New Material'
         self.new_materials_list = []
 
@@ -370,7 +316,7 @@ class PrintFileInfoQDialog(QDialog):
             self.fileProgressQLabel.setText(f'File({self.file_counter+1}/{len(self.temp_files_global_paths)})')
             self.fileNameQLabel.setText(file_name)
 
-            # initially hide option for new material 
+            # initially hide option for new material
             self.newMaterialQLabel.setHidden(True)
             self.newMaterialQLineEdit.setHidden(True)
 
@@ -418,17 +364,17 @@ class PrintFileInfoQDialog(QDialog):
         else:
             self.newMaterialQLabel.setHidden(True)
             self.newMaterialQLineEdit.setHidden(True)
-        
+
     def collectFileInfo(self):
         ''' Collect material, thickness and amount info. '''
         material = self.materialQComboBox.currentText()
         if material == self.new_material_text:
             material = self.newMaterialQLineEdit.text()
             self.new_materials_list.append(material)
-            
+
         thickness = self.thicknessQLineEdit.text()
         amount = self.amountQLineEdit.text()
-        
+
         if not validate_material_info(self, material, thickness, amount):
             return
 
@@ -441,7 +387,7 @@ class PrintFileInfoQDialog(QDialog):
             file_name = original_file_name
         else:
             file_name = material+'_'+thickness+'mm_'+amount+'x_'+original_file_name
-        
+
         target_file_global_path = os.path.join(self.temp_job_folder_global_path, file_name)
 
         self.temp_print_cut_files_dict[self.temp_job_name + '_' + file_name] = {
@@ -460,7 +406,7 @@ class PrintFileInfoQDialog(QDialog):
     def skipJob(self):
         ''' Skip job and go to the next. '''
         if self.job_counter+1 >= len(self.job_name_list):
-            self.accept() 
+            self.accept()
         else:
             self.job_counter += 1
             self.file_counter = 0

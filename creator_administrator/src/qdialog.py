@@ -7,6 +7,11 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QKeySequence, QShortcut, QFont
 from PyQt6.uic import loadUi
 
+
+class CreateJobsQDialog(QDialog):
+    ''' Create jobs with data from mail or the file system. '''
+    pass
+
 class ImportFromMailQDialog(QDialog):
     """ Import from mail dialog. """
     def __init__(self, parent: QWidget, gv: dict, ui_global_path: str, *args, **kwargs):
@@ -123,8 +128,6 @@ class FilesSelectQDialog(SelectQDialog):
     def __init__(self, parent: QWidget, gv: dict, *args, **kwargs):
         ui_global_path = os.path.join(gv['GLOBAL_UI_DIR'], 'select_files_dialog.ui')
         super().__init__(parent, gv, ui_global_path, *args, **kwargs)
-        self.filesGlobalPathsQLabel.hide()
-        
 
         self.buttonBox.accepted.connect(self.validate)
 

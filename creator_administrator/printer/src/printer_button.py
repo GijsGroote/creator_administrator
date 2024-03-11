@@ -110,7 +110,7 @@ class OptionsQPushButton(JobsQPushButton):
         elif self.object_name == 'geslicedOptionsQPushButton':
             pass
 
-        elif self.object_name == 'aanHetPrintenOptionsQPushButton':
+        elif self.object_name == 'printenOptionsQPushButton':
             pass
 
         elif self.object_name == 'verwerktOptionsQPushButton':

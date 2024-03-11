@@ -39,7 +39,7 @@ class JobsOverviewQListWidget(OverviewQListWidget):
             return job_tracker.getStaticAndDynamicJobNamesWithStatus('WACHTRIJ')
         if self.object_name == 'geslicedJobsQListWidget':
             return job_tracker.getStaticAndDynamicJobNamesWithStatus('GESLICED')
-        if self.object_name == 'aanHetPrintenJobsQListWidget':
+        if self.object_name == 'printenJobsQListWidget':
             return job_tracker.getStaticAndDynamicJobNamesWithStatus('AAN_HET_PRINTEN')
         if self.object_name == 'verwerktJobsQListWidget':
             return job_tracker.getStaticAndDynamicJobNamesWithStatus('VERWERKT')

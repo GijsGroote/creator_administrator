@@ -1,10 +1,8 @@
 import os
 
-# from PyQt6 import *
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QShortcut, QKeySequence 
-from PyQt6.QtWidgets import QPushButton, QFileDialog, QLabel
-
+from PyQt6.QtWidgets import QPushButton, QFileDialog
 from src.mail_manager import MailManager
 from src.qlist_widget import ContentQListWidget
 from src.qmessagebox import TimedMessage
@@ -23,9 +21,6 @@ class JobsQPushButton(QPushButton):
     def refreshAllQListWidgets(self):
 
         self.parent().parent().setCurrentIndex(0)        # show list of jobs in tabs
-
-        # for qstacked_widget in qstacked_widgets:
-            # qstacked_widget.setCurrentIndex(0)
 
         qlist_widgets = self.window().findChildren(OverviewQListWidget)
         # refresh all QListWidgets that contain jobs
@@ -86,18 +81,15 @@ class SelectFilesQPushButton(QPushButton):
             'Select Files',
             os.path.expanduser('~'),
             'All Files (*)')
-        self.files_global_paths.extend(files_paths)
 
-        selected_files_str = 'Selected Files:\n'
+        self.files_global_paths = list(dict.fromkeys(self.files_global_paths + files_paths))
+
+        selected_files_str = 'Selected Files:'
+
         for file_global_path in self.files_global_paths:
-            selected_files_str += f'{os.path.basename(file_global_path)}, '
-        selected_files_str = selected_files_str[:-2]
+            selected_files_str += f'\n{os.path.basename(file_global_path)}'
 
-        files_global_path_label = self.parent().findChild(QLabel, 'filesGlobalPathQLabel')
-
-        if len(self.files_global_paths) > 0 and files_global_path_label is not None:
-            files_global_path_label.setText(selected_files_str)
-            files_global_path_label.show()
+        self.setText(selected_files_str)
 
 class SelectFileQPushButton(QPushButton):
     ''' Select a single file from file system. '''
