@@ -101,12 +101,16 @@ class OptionsQPushButton(JobsQPushButton):
 
         mail_menu = None
 
+
         if self.object_name == 'wachtrijOptionsQPushButton':
             self.menu.addAction('Open in File Explorer', self.openInFileExplorer)
             mail_menu = self.menu.addMenu('Send Mail')
             self.menu.addAction('Delete Job', self.deleteJob)
 
-        elif self.object_name == 'wachtrijMateriaalOptionsQPushButton':
+        elif self.object_name == 'geslicedOptionsQPushButton':
+            pass
+
+        elif self.object_name == 'aanHetPrintenOptionsQPushButton':
             pass
 
         elif self.object_name == 'verwerktOptionsQPushButton':
@@ -115,7 +119,6 @@ class OptionsQPushButton(JobsQPushButton):
             mail_menu = self.menu.addMenu('Send Mail')
             self.menu.addAction('Open in File Explorer', self.openInFileExplorer)
             self.menu.addAction('Delete Job', self.deleteJob)
-
 
         elif self.object_name == 'afgekeurdOptionsQPushButton':
             self.menu.addAction('Move to Wachtrij', self.moveJobToWachtrij)
@@ -129,7 +132,6 @@ class OptionsQPushButton(JobsQPushButton):
 
         if mail_menu is not None:
             mail_menu.addAction('Send job Received mail', partial(self.sendMail, 'RECEIVED'))
-            mail_menu.addAction('Send job Unclear mail', partial(self.sendMail, 'UNCLEAR'))
             mail_menu.addAction('Send job Finished mail', partial(self.sendMail, 'FINISHED'))
             mail_menu.addAction('Send job Declined Mail', partial(self.sendMail, 'DECLINED'))
 
