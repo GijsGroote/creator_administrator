@@ -1,39 +1,145 @@
 import sys
 import os
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QDialog
+
+from PyQt6 import QtWidgets
+from PyQt6.QtWidgets import QListWidget
+from PyQt6.QtGui import QKeySequence, QShortcut
 
 from global_variables import gv
+
 from src.app import MainWindow
-# from select_file import create_laser_jobs
-# from laser_qdialog import LaserSelectFileQDialog
+from src.qmessagebox import WarningQMessageBox, TimedMessage
+from src.threaded_mail_manager import ThreadedMailManager
 
-class PrinterMainWindow(MainWindow):
+from printer_job_tracker import PrintJobTracker
+from printer_settings_dialog import PrintSettingsQDialog
+from printer_qdialog import (
+        PrintImportFromMailQDialog, PrintFilesSelectQDialog,
+        PrintFolderSelectQDialog, PrintFileInfoQDialog)
 
+# ensure that win32com is imported after creating an executable with pyinstaller
+# from win32com import client
+
+class PrintMainWindow(MainWindow):
     def __init__(self, *args, **kwargs):
-        print(gv['UI_DIR_HOME'])
-        ui_global_path = os.path.join(gv['UI_DIR_HOME'], 'printer_main_window.ui')
-        MainWindow.__init__(self, ui_global_path, *args, **kwargs)
+        ui_global_path = os.path.join(gv['LOCAL_UI_DIR'], 'printer_main_window.ui')
+        super().__init__(ui_global_path, gv, *args, **kwargs)
+
+        self.valid_msgs = []
+        self.threadpool = gv['THREAD_POOL']
+
+        # call job tracker twice to enforce healthy job log
+        self.job_tracker = PrintJobTracker(parent=self)
+        self.job_tracker.checkHealth()
+
+        self.refreshAllWidgets()
+
 
         # menu bar actions
-        self.ActionImportFromMail.triggered.connect(self.onActionImportFromMail)
-        self.ActionSelectFile.triggered.connect(self.onActionSelectFileclicked)
+        self.importFromMailAction.triggered.connect(self.handleNewValidMails)
+        self.selectFilesAction.triggered.connect(self.openSelectFilesDialog)
+        self.selectFoldersAction.triggered.connect(self.openSelectFolderDialog)
 
-    def onActionImportFromMail(self):
-        print('please import mail now')
 
-    # def onActionSelectFileclicked(self):
-    #     # dialog = PrinterSelectFileQDialog(self)
+        self.menuSettings.setToolTipsVisible(True)
+        self.editSettingsAction.triggered.connect(self.openEditSettingsDialog)
+        self.checkHealthAction.triggered.connect(self.checkHealth)
 
-    #     if dialog.exec() == 1:
-    #         folder_global_path = dialog.selectFolderButton.folder_global_path
-    #         project_name = dialog.projectNameQLineEdit.text()
-    #         print(f'the folder is {folder_global_path} and pj {project_name}')
-    #         create_laser_jobs(folder_global_path, project_name)
-    
+
+        # Delete this and showTimedMessage as well
+        QShortcut(QKeySequence("Ctrl+H"), self).activated.connect(self.showTimedMessage)
+
+    def showTimedMessage(self):
+
+        haa = ' aj jonh'
+        TimedMessage(gv, self, text=f'Print job {haa} created')
+        
+
+    def handleNewValidMails(self):
+        ''' Handle the new mails in the inbox. '''
+        
+        self.threaded_mail_manager = ThreadedMailManager(self, gv, dialog=PrintImportFromMailQDialog)
+        # getValidmails gets mail and triggers openImportFromMailDialog
+        self.threaded_mail_manager.getValidMailsFromInbox()
+        
+
+
+    def openSelectFilesDialog(self):
+        ''' Open dialog to select multiple files. ''' 
+        dialog = PrintFilesSelectQDialog(self)
+
+        if dialog.exec() == 1:
+            files_global_paths = dialog.selectFilesButton.files_global_paths
+            job_name = dialog.projectNameQLineEdit.text()
+
+            if len(files_global_paths) > 0:
+                PrintFileInfoQDialog(self, [job_name], [files_global_paths]).exec()
+            
+        self.refreshAllWidgets()
+
+    def openSelectFolderDialog(self):
+        ''' Open dialog to select folder with multiple subfolders. ''' 
+        dialog = PrintFolderSelectQDialog(self)
+
+        if dialog.exec() == 1:
+            folder_global_path = dialog.selectFolderButton.folder_global_path
+            project_name = dialog.projectNameQLineEdit.text()
+            folders_global_paths_list = []
+            jobs_names_list = []
+
+            if not os.path.exists(folder_global_path):
+                WarningQMessageBox(gv, self, text='<Folder> does not exist')
+                return
+
+            for subfolder in os.listdir(folder_global_path):
+                subfolder_global_path = os.path.join(folder_global_path, subfolder)
+
+                if os.path.isdir(subfolder_global_path):
+                    files_in_subfolder_global_paths = []
+                    subfolder_contains_print_file = False
+
+                    for item in os.listdir(subfolder_global_path):
+                        item_global_path = os.path.join(subfolder_global_path, item)
+                        if os.path.isdir(item_global_path):
+                            WarningQMessageBox(gv, self, text=f'{subfolder_global_path} contains a folder '\
+                                f'{item_global_path} which is skipped' )
+                            continue
+
+                        if item_global_path.endswith(gv['ACCEPTED_EXTENSIONS']):
+                            files_in_subfolder_global_paths.append(item_global_path)
+                            subfolder_contains_print_file = True
+
+                    if subfolder_contains_print_file:
+                        folders_global_paths_list.append(files_in_subfolder_global_paths)
+                        jobs_names_list.append(project_name+'_'+os.path.basename(subfolder))
+                    else:
+                        WarningQMessageBox(gv, self, text=f'No print file found in {subfolder_global_path}'\
+                                f' skip this subfolder')
+            
+            if len(jobs_names_list) > 0:
+                PrintFileInfoQDialog(self, jobs_names_list, folders_global_paths_list).exec()
+
+        self.refreshAllWidgets()
+
+    def openEditSettingsDialog(self):
+        ''' Open dialog to edit the settings. '''
+        PrintSettingsQDialog(self, gv).exec()
+
+    def checkHealth(self):
+        ''' Check health with tracker file. '''
+        PrintJobTracker(self).checkHealth()
+        self.refreshAllWidgets()
+        TimedMessage(gv=gv, parent=self, text='System Healthy ;)')
+
+    def refreshAllWidgets(self):
+        ''' Refresh the widgets. '''
+        # refresh all print job tabs
+        qlist_widgets = self.findChildren(QListWidget)
+        for list_widget in qlist_widgets:
+            list_widget.refresh()
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    printer_window = PrinterMainWindow()
+    printer_window = PrintMainWindow()
     printer_window.show()
-    app.exec_()
+    app.exec()

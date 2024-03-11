@@ -9,7 +9,7 @@ from src.mail_manager import MailManager
 from src.qlist_widget import ContentQListWidget
 from src.qmessagebox import TimedMessage
 
-from laser_qlist_widget import OverviewQListWidget
+from qlist_widget import OverviewQListWidget
 
 
 class JobsQPushButton(QPushButton):

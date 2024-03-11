@@ -102,7 +102,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="jobsListPage_2">
              <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -184,7 +184,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="PrintKlaarQPushButton" name="pushButton_3">
+                   <widget class="LaserKlaarQPushButton" name="pushButton_3">
                     <property name="toolTip">
                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Ctrl+k&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                     </property>
@@ -219,6 +219,106 @@
            </widget>
           </item>
          </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="wachtrijMateriaalTab">
+       <property name="whatsThis">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wachtrij Material&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <attribute name="title">
+        <string>Wachtrij Material</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <widget class="QStackedWidget" name="wachtrijMateriaalQStackedWidget">
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="jobsListPage_3">
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="MaterialOverviewQListWidget" name="wachtrijMateriaalJobsQListWidget"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="jobPage_3">
+           <layout class="QVBoxLayout" name="verticalLayout_12">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_10">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_15">
+                <item>
+                 <spacer name="horizontalSpacer_5">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QLabel" name="materialQLabel">
+                  <property name="text">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;material_name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_6">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="MaterialContentQListWidget" name="listWidget_7"/>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_7">
+              <item>
+               <widget class="BackQPushButton" name="backPushButton_3">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Esc&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="text">
+                 <string>Back</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="MateriaalKlaarQPushButton" name="pushButton_5">
+                <property name="text">
+                 <string>Materiaal Klaar</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="OptionsQPushButton" name="wachtrijMateriaalOptionsQPushButton">
+                <property name="text">
+                 <string>Options</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -537,33 +637,48 @@
   <customwidget>
    <class>JobsOverviewQListWidget</class>
    <extends>QListWidget</extends>
-   <header>printer_qlist_widget.h</header>
+   <header>laser_qlist_widget.h</header>
   </customwidget>
   <customwidget>
-   <class>PrintKlaarQPushButton</class>
+   <class>LaserKlaarQPushButton</class>
    <extends>QPushButton</extends>
-   <header>printer_button.h</header>
+   <header>laser_button.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MateriaalKlaarQPushButton</class>
+   <extends>QPushButton</extends>
+   <header>laser_button.h</header>
   </customwidget>
   <customwidget>
    <class>AfgekeurdQPushButton</class>
    <extends>QPushButton</extends>
-   <header>printer_button.h</header>
+   <header>laser_button.h</header>
   </customwidget>
   <customwidget>
    <class>JobContentQListWidget</class>
    <extends>QListWidget</extends>
-   <header>printer_qlist_widget.h</header>
+   <header>laser_qlist_widget.h</header>
   </customwidget>
   <customwidget>
    <class>OptionsQPushButton</class>
    <extends>QPushButton</extends>
-   <header>printer_button.h</header>
+   <header>laser_button.h</header>
   </customwidget>
   <customwidget>
    <class>JobsQTabWidget</class>
    <extends>QTabWidget</extends>
    <header>tab_widget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MaterialOverviewQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>laser_qlist_widget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MaterialContentQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>laser_qlist_widget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
