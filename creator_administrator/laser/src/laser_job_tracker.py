@@ -69,7 +69,7 @@ class LaserJobTracker(JobTracker):
             tracker_dict = json.load(tracker_file)
 
         deleted_job_dict = tracker_dict.pop(job_name)
-        delete_item(self.parent(), deleted_job_dict['job_folder_global_path'])
+        delete_item(self.parent, deleted_job_dict['job_folder_global_path'])
         
         with open(self.tracker_file_path, 'w' ) as tracker_file:
             json.dump(tracker_dict, tracker_file, indent=4)
@@ -155,7 +155,7 @@ class LaserJobTracker(JobTracker):
                 self.deleteJob(job_key)
 
         if n_old_jobs > 0:
-            TimedMessage(gv=gv, parent=self.parent(), text=f'removed {str(n_old_jobs)} old jobs')
+            TimedMessage(gv=gv, parent=self.parent, text=f'removed {str(n_old_jobs)} old jobs')
 
         # get job info from file system
         jobs_global_paths = [os.path.join(jobs_folder_global_path, job_folder) for job_folder in os.listdir(jobs_folder_global_path) 
