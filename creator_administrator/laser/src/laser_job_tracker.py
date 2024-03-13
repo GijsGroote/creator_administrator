@@ -24,7 +24,6 @@ class LaserJobTracker(JobTracker):
         super().__init__(parent, gv)
 
         self.checkTrackerFileHealth()
-
         self.job_keys.append(['laserfiles'])
 
     def addJob(self,

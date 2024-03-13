@@ -13,7 +13,7 @@ from src.qdialog import FilesSelectQDialog, FolderSelectQDialog
 
 from printer_job_tracker import PrintJobTracker
 from printer_settings_dialog import PrintSettingsQDialog
-from printer_qdialog import PrintImportFromMailQDialog, PrintFileInfoQDialog
+from printer_qdialog import CreatePrintJobsQDialog, PrintFileInfoQDialog
 
 # ensure that win32com is imported after creating an executable with pyinstaller
 # from win32com import client
@@ -47,7 +47,7 @@ class PrintMainWindow(MainWindow):
     def handleNewValidMails(self):
         ''' Handle the new mails in the inbox. '''
         
-        self.threaded_mail_manager = ThreadedMailManager(self, gv, dialog=PrintImportFromMailQDialog)
+        self.threaded_mail_manager = ThreadedMailManager(self, gv, dialog=CreatePrintJobsQDialog)
         # getValidmails gets mail and triggers openImportFromMailDialog
         self.threaded_mail_manager.getValidMailsFromInbox()
         

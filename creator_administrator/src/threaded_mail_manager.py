@@ -13,9 +13,9 @@ class ThreadedMailManager():
     '''
 
     def __init__(self, parent, gv: dict, dialog=None):
-        self.gv=gv
+        self.gv = gv
         self.thread_pool = gv['THREAD_POOL']
-        self.parent= parent
+        self.parent = parent
         self.dialog = dialog # dialog to open with data retrieved on another thread
         self.worker = None
 
@@ -56,7 +56,7 @@ class ThreadedMailManager():
             InfoQMessageBox(parent=self.parent, text='No new valid job request in mail inbox')
 
         else:
-            self.dialog(self.parent, valid_msgs).exec()
+            self.dialog(self.parent, valid_msgs=valid_msgs).exec()
             self.parent.refreshAllWidgets()
 
             
@@ -266,6 +266,8 @@ class ThreadedMailManager():
     def handleMailError(self, exc: Exception):
         ''' Handle the mail Error. '''
         assert isinstance(exc, Exception), f'Expected type Exception, received type: {type(exc)}'
+
+        raise exc
        
         if isinstance(exc, ConnectionError):
             ErrorQMessageBox(
@@ -273,5 +275,5 @@ class ThreadedMailManager():
                     text=f'Connection Error {self.error_message}: {str(exc)}')
         else:
             ErrorQMessageBox(
-                    self.parent(),
+                    self.parent,
                     text=f'Error Occured {self.error_message}: {str(exc)}')
