@@ -69,7 +69,7 @@ class PrintJobTracker(JobTracker):
             tracker_dict = json.load(tracker_file)
 
         deleted_job_dict = tracker_dict.pop(job_name)
-        delete_item(self.parent(), deleted_job_dict['job_folder_global_path'])
+        delete_item(self.parent, deleted_job_dict['job_folder_global_path'])
         
         with open(self.tracker_file_path, 'w' ) as tracker_file:
             json.dump(tracker_dict, tracker_file, indent=4)
@@ -155,7 +155,7 @@ class PrintJobTracker(JobTracker):
                 self.deleteJob(job_key)
 
         if n_old_jobs > 0:
-            TimedMessage(gv=gv, parent=self.parent(), text=f'removed {str(n_old_jobs)} old jobs')
+            TimedMessage(gv=gv, parent=self.parent, text=f'removed {str(n_old_jobs)} old jobs')
 
         # get job info from file system
         jobs_global_paths = [os.path.join(jobs_folder_global_path, job_folder) for job_folder in os.listdir(jobs_folder_global_path) 
@@ -182,7 +182,7 @@ class PrintJobTracker(JobTracker):
 
             
             if job_dict is None:
-                yes_or_no = YesOrNoMessageBox(parent=self.parent(), 
+                yes_or_no = YesOrNoMessageBox(parent=self.parent, 
                                       text=f'SYNCHRONIZE ISSUES!\nJob Tracker and jobs on File System are out of sync!\n\n'\
                                             f'what do you want to do with:\n {job_global_path}?',
                                               yes_button_text='Add to Job Tracker',
@@ -198,11 +198,11 @@ class PrintJobTracker(JobTracker):
                     # TODO: find the material details from the .dxf files first please
                     # add this file to the to tracker
                     print('TODO: add job to tracker')
-                    TimedMessage(parent=self.parent(), gv=gv, text=f'Added {job_dict["job_name"]} to Tracker')
+                    TimedMessage(parent=self.parent, gv=gv, text=f'Added {job_dict["job_name"]} to Tracker')
                 else:
                     # remove that directory
-                    delete_item(self.parent(), job_global_path)
-                    TimedMessage(parent=self.parent(), gv=gv, text=f'removed folder {job_global_path}')
+                    delete_item(self.parent, job_global_path)
+                    TimedMessage(parent=self.parent, gv=gv, text=f'removed folder {job_global_path}')
                     continue
 
             if not self.IsJobDictAndFileSystemInSync(job_dict, job_global_path):
@@ -251,14 +251,14 @@ class PrintJobTracker(JobTracker):
 
             yes_or_no_text += f'\nWhat do you want with these {file_str}?'
 
-            yes_or_no = YesOrNoMessageBox(parent=self.parent(),
+            yes_or_no = YesOrNoMessageBox(parent=self.parent,
                                           text=yes_or_no_text,
                                           yes_button_text='Add to Job Tracker',
                                           no_button_text='Remove from File System')
             if yes_or_no.answer():
 
                 # TODO: get info about this and that
-                file_info_dialog = PrintTrackerFileInfoQDialog(self.parent(),
+                file_info_dialog = PrintTrackerFileInfoQDialog(self.parent,
                                                 [job_dict['job_name']],
                                                 [new_files_list],
                                                 job_dict_list=[job_dict])
@@ -267,14 +267,14 @@ class PrintJobTracker(JobTracker):
 
                     for key, value in new_print_file_dict.items():
                        job_dict['print_files'][key] = value
-                    TimedMessage(gv=gv, parent=self.parent(), text=f'Updated print files for job: {job_dict["job_name"]} in Job Tracker')
+                    TimedMessage(gv=gv, parent=self.parent, text=f'Updated print files for job: {job_dict["job_name"]} in Job Tracker')
                 else:
-                    TimedMessage(parent=self.parent(), gv=gv, text='Some Error Occured, Job Tracker file and File System still not in Sync')
+                    TimedMessage(parent=self.parent, gv=gv, text='Some Error Occured, Job Tracker file and File System still not in Sync')
 
             else:
                 for file in new_files_list:
-                    delete_item(self.parent(), os.path.join(job_folder_global_path, file))
-                TimedMessage(parent=self.parent(), gv=gv, text=f'Removed {len(new_files_list)} {file_str} from File System')
+                    delete_item(self.parent, os.path.join(job_folder_global_path, file))
+                TimedMessage(parent=self.parent, gv=gv, text=f'Removed {len(new_files_list)} {file_str} from File System')
 
 
         # delete file from job dict if it is not on the file system
@@ -297,7 +297,7 @@ class PrintJobTracker(JobTracker):
 
 
             warning_text += f'\n{is_are_str} removed from the Job Tracker.'
-            WarningQMessageBox(parent=self.parent(), gv=gv, text=warning_text)
+            WarningQMessageBox(parent=self.parent, gv=gv, text=warning_text)
 
         for key in remove_keys:
             job_dict['print_files'].pop(key)

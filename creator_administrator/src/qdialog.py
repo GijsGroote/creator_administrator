@@ -100,15 +100,15 @@ class CreateJobsFromMailQDialog(CreateJobsQDialog):
     def __init__(self,
                  parent: QWidget,
                  gv: dict,
-                 ui_global_path: str,
                  job_tracker: JobTracker,
                  valid_msgs,
                  *args,
                  **kwargs):
 
+
         super().__init__(parent,
                          gv,
-                         ui_global_path,
+                         os.path.join(gv['LOCAL_UI_DIR'], 'import_mail_dialog.ui'),
                          job_tracker,
                          *args,
                          **kwargs)
@@ -152,7 +152,6 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
     def __init__(self,
                  parent: QWidget,
                  gv: dict,
-                 ui_global_path: str,
                  job_tracker: JobTracker,
                  job_name_list,
                  files_global_paths_list,
@@ -165,7 +164,7 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
 
         super().__init__(parent,
                          gv,
-                         ui_global_path,
+                         os.path.join(gv['LOCAL_UI_DIR'], 'enter_job_details_dialog.ui'),
                          job_tracker,
                          *args,
                          **kwargs)

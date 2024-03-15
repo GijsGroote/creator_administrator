@@ -76,7 +76,7 @@ class ThreadedMailManager():
         mail_item=MailManager(self.gv).getMailGlobalPathFromFolder(job_dict['job_folder_global_path'])
 
         if mail_type=='RECEIVED':
-            template_content=JobTracker(parent=self.parent(), gv=self.gv).getNumberOfJobsInQueue()
+            template_content=JobTracker(parent=self.parent, gv=self.gv).getNumberOfJobsInQueue()
         else:
             template_content={}
 
@@ -166,7 +166,7 @@ class ThreadedMailManager():
         self.success_message = success_message
         self.error_message = error_message
 
-        self.loading_dialog = LoadingQDialog(self.parent().parent().parent().parent().parent().parent(), 
+        self.loading_dialog = LoadingQDialog(self.parent.parent().parent().parent().parent().parent(), 
                                              self.gv, 
                                              text='Send the Outlook popup reply, it can be behind other windows')
         

@@ -15,7 +15,7 @@ from global_variables import gv
 
 
 class CreateLaserJobsFromMailQDialog(CreateJobsFromMailQDialog):
-    ''' Create laser jobs with data from mail or the file system. '''
+    ''' Create laser jobs from mail data. '''
 
     def __init__(self,
                  parent: QWidget,
@@ -25,7 +25,6 @@ class CreateLaserJobsFromMailQDialog(CreateJobsFromMailQDialog):
 
         super().__init__(parent,
                          gv,
-                         os.path.join(gv['LOCAL_UI_DIR'], 'import_mail_dialog.ui'),
                          LaserJobTracker(self),
                          valid_msgs,
                          *args,
@@ -84,6 +83,7 @@ class CreateLaserJobsFromMailQDialog(CreateJobsFromMailQDialog):
 
     def collectItemInfo(self):
         ''' Collect material, thickness and amount info. '''
+
         material = self.materialQComboBox.currentText()
         if material == self.new_material_text:
             material = self.newMaterialQLineEdit.text()
@@ -172,24 +172,18 @@ class CreateLaserJobsFromMailQDialog(CreateJobsFromMailQDialog):
 
 
 class CreateLaserJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
-    ''' Ask for file laser file details (material, thickness, amount) and create laser jobs.
-    job_name: List with job names
-    files_global_paths_list: nested lists with global paths for every file in the job.
-    '''
+    ''' Create laser jobs from file system data. '''
 
     def __init__(self, parent, job_name_list: list, files_global_paths_list: list, *args, **kwargs):
 
         super().__init__(parent,
                          gv,
-                         os.path.join(gv['LOCAL_UI_DIR'], 'enter_job_details_dialog.ui'),
                          LaserJobTracker(self),
                          job_name_list,
                          files_global_paths_list,
                          *args, **kwargs)
 
-
         self.skipPushButton.clicked.connect(self.skipJob)
-        self.buttonBox.accepted.connect(self.collectFileInfo)
         self.loadJobContent()
 
 
@@ -262,8 +256,7 @@ class CreateLaserJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
         TimedMessage(gv, self, text=f'Laser job {self.temp_job_name} created')
 
 
-
-    def collectFileInfo(self):
+    def collectItemInfo(self):
         ''' Collect material, thickness and amount info. '''
         material = self.materialQComboBox.currentText()
         if material == self.new_material_text:

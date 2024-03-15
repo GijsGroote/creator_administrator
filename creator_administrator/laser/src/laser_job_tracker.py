@@ -182,7 +182,7 @@ class LaserJobTracker(JobTracker):
 
             
             if job_dict is None:
-                yes_or_no = YesOrNoMessageBox(parent=self.parent(), 
+                yes_or_no = YesOrNoMessageBox(parent=self.parent, 
                                       text=f'SYNCHRONIZE ISSUES!\nJob Tracker and jobs on File System are out of sync!\n\n'\
                                             f'what do you want to do with:\n {job_global_path}?',
                                               yes_button_text='Add to Job Tracker',
@@ -198,11 +198,11 @@ class LaserJobTracker(JobTracker):
                     # TODO: find the material details from the .dxf files first please
                     # add this file to the to tracker
                     print('TODO: add job to tracker')
-                    TimedMessage(parent=self.parent(), gv=gv, text=f'Added {job_dict["job_name"]} to Tracker')
+                    TimedMessage(parent=self.parent, gv=gv, text=f'Added {job_dict["job_name"]} to Tracker')
                 else:
                     # remove that directory
-                    delete_item(self.parent(), job_global_path)
-                    TimedMessage(parent=self.parent(), gv=gv, text=f'removed folder {job_global_path}')
+                    delete_item(self.parent, job_global_path)
+                    TimedMessage(parent=self.parent, gv=gv, text=f'removed folder {job_global_path}')
                     continue
 
             if not self.IsJobDictAndFileSystemInSync(job_dict, job_global_path):
@@ -251,14 +251,14 @@ class LaserJobTracker(JobTracker):
 
             yes_or_no_text += f'\nWhat do you want with these {file_str}?'
 
-            yes_or_no = YesOrNoMessageBox(parent=self.parent(),
+            yes_or_no = YesOrNoMessageBox(parent=self.parent,
                                           text=yes_or_no_text,
                                           yes_button_text='Add to Job Tracker',
                                           no_button_text='Remove from File System')
             if yes_or_no.answer():
 
                 # TODO: get info about this and that
-                file_info_dialog = LaserTrackerFileInfoQDialog(self.parent(),
+                file_info_dialog = LaserTrackerFileInfoQDialog(self.parent,
                                                 [job_dict['job_name']],
                                                 [new_files_list],
                                                 job_dict_list=[job_dict])
@@ -267,14 +267,14 @@ class LaserJobTracker(JobTracker):
 
                     for key, value in new_laser_file_dict.items():
                        job_dict['laser_files'][key] = value
-                    TimedMessage(gv=gv, parent=self.parent(), text=f'Updated laser files for job: {job_dict["job_name"]} in Job Tracker')
+                    TimedMessage(gv=gv, parent=self.parent, text=f'Updated laser files for job: {job_dict["job_name"]} in Job Tracker')
                 else:
-                    TimedMessage(parent=self.parent(), gv=gv, text='Some Error Occured, Job Tracker file and File System still not in Sync')
+                    TimedMessage(parent=self.parent, gv=gv, text='Some Error Occured, Job Tracker file and File System still not in Sync')
 
             else:
                 for file in new_files_list:
-                    delete_item(self.parent(), os.path.join(job_folder_global_path, file))
-                TimedMessage(parent=self.parent(), gv=gv, text=f'Removed {len(new_files_list)} {file_str} from File System')
+                    delete_item(self.parent, os.path.join(job_folder_global_path, file))
+                TimedMessage(parent=self.parent, gv=gv, text=f'Removed {len(new_files_list)} {file_str} from File System')
 
 
         # delete file from job dict if it is not on the file system
@@ -297,7 +297,7 @@ class LaserJobTracker(JobTracker):
 
 
             warning_text += f'\n{is_are_str} removed from the Job Tracker.'
-            WarningQMessageBox(parent=self.parent(), gv=gv, text=warning_text)
+            WarningQMessageBox(parent=self.parent, gv=gv, text=warning_text)
 
         for key in remove_keys:
             job_dict['laser_files'].pop(key)

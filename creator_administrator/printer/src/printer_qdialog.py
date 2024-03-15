@@ -14,7 +14,7 @@ from printer_validate import validate_material_info
 from global_variables import gv
 
 class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
-    ''' Create print jobs with data from mail or the file system. '''
+    ''' Create print jobs from mail data. '''
 
     def __init__(self,
                  parent: QWidget,
@@ -24,7 +24,6 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
 
         super().__init__(parent,
                          gv,
-                         os.path.join(gv['LOCAL_UI_DIR'], 'import_mail_dialog.ui'),
                          PrintJobTracker(self),
                          valid_msgs,
                          *args,
@@ -145,23 +144,18 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
 
 
 class CreatePrintJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
-    '''  TOdo.   '''
+    ''' Create print jobs from file system data. '''
 
     def __init__(self, parent, job_name_list: list, files_global_paths_list: list, *args, **kwargs):
 
 
         super().__init__(parent,
                          gv,
-                         os.path.join(gv['LOCAL_UI_DIR'], 'enter_job_details_dialog.ui'),
                          PrintJobTracker(self),
                          job_name_list,
                          files_global_paths_list,
                          *args, **kwargs)
 
-        self.new_material_text = 'New Material'
-        self.new_materials_list = []
-
-        self.materialQComboBox.currentIndexChanged.connect(self.onMaterialComboboxChanged)
         self.skipPushButton.clicked.connect(self.skipJob)
         self.buttonBox.accepted.connect(self.collectFileInfo)
         self.loadJobContent()

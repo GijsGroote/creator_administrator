@@ -82,7 +82,7 @@ class JobContentQListWidget(ContentQListWidget):
         job_dict = PrintJobTracker(self).getJobDict(job_name)
 
         if job_dict is not None:
-            self.parent().findChild(QLabel).setText(job_dict['dynamic_job_name'])
+            self.parent.findChild(QLabel).setText(job_dict['dynamic_job_name'])
 
             for file in os.listdir(job_dict['job_folder_global_path']):
 

@@ -173,7 +173,7 @@ class OptionsQPushButton(JobsQPushButton):
 
         target_folder_global_path = gv['TODO_DIR_HOME']
         if gv['EMPTY_TODO_DIR_BEFORE_EXPORT']:
-            delete_directory_content(self.parent(), target_folder_global_path)
+            delete_directory_content(self.parent, target_folder_global_path)
 
         if self.parent().parent().objectName() == 'wachtrijMateriaalQStackedWidget':
             material_name = self.getCurrentItemName()
