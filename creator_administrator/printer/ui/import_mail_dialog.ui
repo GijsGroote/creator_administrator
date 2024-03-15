@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>831</width>
-    <height>509</height>
+    <width>834</width>
+    <height>548</height>
    </rect>
   </property>
   <property name="sizePolicy">
    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-    <horstretch>0</horstretch>
+    <horstretch>9</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
@@ -22,12 +22,16 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Import Laser Jobs from Mail</string>
+   <string>Import Print Jobs from Mail</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../figures/logo.ico</normaloff>../../figures/logo.ico</iconset>
   </property>
   <property name="modal">
    <bool>true</bool>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QHBoxLayout" name="horizontalLayout_4">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
@@ -71,13 +75,6 @@
           <widget class="QLabel" name="mailProgressQLabel">
            <property name="text">
             <string>Mail (?/x)</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="attachmentProgressQLabel">
-           <property name="text">
-            <string>Attachment (?/z)</string>
            </property>
           </widget>
          </item>
@@ -173,19 +170,6 @@
         <widget class="QLineEdit" name="newMaterialQLineEdit"/>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="thicknessQLabel">
-         <property name="text">
-          <string>Thickness (mm):</string>
-         </property>
-         <property name="buddy">
-          <cstring>thicknessQLineEdit</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLineEdit" name="thicknessQLineEdit"/>
-       </item>
-       <item row="3" column="0">
         <widget class="QLabel" name="amountQLabel">
          <property name="text">
           <string>Amount:</string>
@@ -195,40 +179,40 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="2" column="1">
         <widget class="QLineEdit" name="amountQLineEdit"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QPushButton" name="skipPushButton">
+         <property name="text">
+          <string>Skip</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDialogButtonBox" name="buttonBox">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QPushButton" name="skipPushButton">
-       <property name="text">
-        <string>Skip</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="sendUnclearMailPushButton">
-       <property name="text">
-        <string>Send Unclear Request Mail</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QDialogButtonBox" name="buttonBox">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="standardButtons">
-        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QLabel" name="thicknessQLabel">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -242,8 +226,6 @@
  <tabstops>
   <tabstop>materialQComboBox</tabstop>
   <tabstop>newMaterialQLineEdit</tabstop>
-  <tabstop>thicknessQLineEdit</tabstop>
-  <tabstop>amountQLineEdit</tabstop>
  </tabstops>
  <resources/>
  <connections>

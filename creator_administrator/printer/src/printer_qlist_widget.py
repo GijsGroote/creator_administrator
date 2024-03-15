@@ -101,4 +101,3 @@ class JobContentQListWidget(ContentQListWidget):
                 item.setText(file)
                 item.setFont(QFont('Cantarell', 14))
                 self.addItem(item)
-

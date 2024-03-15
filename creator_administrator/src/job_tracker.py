@@ -30,7 +30,9 @@ class JobTracker:
     def addJob(self,
                job_name: str,
                main_folder: str,
-               files_dict: dict) -> dict:
+               files_dict: dict,
+               *args,
+               **kwargs) -> dict:
         """ Add a job to the tracker. """
 
     @abc.abstractmethod

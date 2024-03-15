@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Select Files..</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../figures/logo.ico</normaloff>../figures/logo.ico</iconset>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QFormLayout" name="formLayout">

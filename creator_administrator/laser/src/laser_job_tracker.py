@@ -3,7 +3,7 @@ import os
 import re
 from datetime import datetime
 
-from PyQt6.QtWidgets import QDialog
+from PyQt6.QtWidgets import QDialog, QWidget
 from PyQt6.uic import loadUi
 
 from src.directory_functions import delete_item
@@ -20,11 +20,12 @@ class LaserJobTracker(JobTracker):
     use the check_health function to check the file system health based on the job_log.json file
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent: QWidget):
         super().__init__(parent, gv)
 
         self.checkTrackerFileHealth()
         self.job_keys.append(['laserfiles'])
+
 
     def addJob(self,
                job_name: str,

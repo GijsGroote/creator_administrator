@@ -24,6 +24,10 @@
   <property name="windowTitle">
    <string>Creator Administrator</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../figures/logo.ico</normaloff>../../figures/logo.ico</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">

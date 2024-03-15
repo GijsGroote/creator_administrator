@@ -13,7 +13,7 @@ from src.qdialog import FilesSelectQDialog, FolderSelectQDialog
 
 from laser_job_tracker import LaserJobTracker
 from laser_settings_dialog import LaserSettingsQDialog
-from laser_qdialog import LaserImportFromMailQDialog, LaserFileInfoQDialog
+from laser_qdialog import CreateLaserJobsFromFileSystemQDialog, CreateLaserJobsFromMailQDialog
 
 # ensure that win32com is imported after creating an executable with pyinstaller
 # from win32com import client
@@ -46,14 +46,14 @@ class LaserMainWindow(MainWindow):
 
     def handleNewValidMails(self):
         ''' Handle the new mails in the inbox. '''
-        self.threaded_mail_manager = ThreadedMailManager(self, gv, dialog=LaserImportFromMailQDialog)
+        self.threaded_mail_manager = ThreadedMailManager(self, gv, dialog=CreateLaserJobsFromMailQDialog)
         # getValidmails gets mail and triggers openImportFromMailDialog
         self.threaded_mail_manager.getValidMailsFromInbox()
-        
+
 
 
     def openSelectFilesDialog(self):
-        ''' Open dialog to select multiple files. ''' 
+        ''' Open dialog to select multiple files. '''
         dialog = FilesSelectQDialog(self, gv)
 
         if dialog.exec() == 1:
@@ -61,19 +61,19 @@ class LaserMainWindow(MainWindow):
             job_name = dialog.projectNameQLineEdit.text()
 
             if len(files_global_paths) > 0:
-                LaserFileInfoQDialog(self, [job_name], [files_global_paths]).exec()
-            
+                CreateLaserJobsFromFileSystemQDialog(self, [job_name], [files_global_paths]).exec()
+
         self.refreshAllWidgets()
 
     def openSelectFolderDialog(self):
-        ''' Open dialog to select folder with multiple subfolders. ''' 
+        ''' Open dialog to select folder with multiple subfolders. '''
         dialog = FolderSelectQDialog(self, gv)
 
         if dialog.exec() == 1:
             folder_global_path = dialog.selectFolderButton.folder_global_path
             project_name = dialog.projectNameQLineEdit.text()
-            folders_global_paths_list = []
-            jobs_names_list = []
+            files_global_paths_list = []
+            job_name_list = []
 
             if not os.path.exists(folder_global_path):
                 WarningQMessageBox(gv, self, text='<Folder> does not exist')
@@ -98,14 +98,16 @@ class LaserMainWindow(MainWindow):
                             subfolder_contains_laser_file = True
 
                     if subfolder_contains_laser_file:
-                        folders_global_paths_list.append(files_in_subfolder_global_paths)
-                        jobs_names_list.append(project_name+'_'+os.path.basename(subfolder))
+                        files_global_paths_list.append(files_in_subfolder_global_paths)
+                        job_name_list.append(project_name+'_'+os.path.basename(subfolder))
                     else:
                         WarningQMessageBox(gv, self, text=f'No laser file found in {subfolder_global_path}'\
                                 f' skip this subfolder')
-            
-            if len(jobs_names_list) > 0:
-                LaserFileInfoQDialog(self, jobs_names_list, folders_global_paths_list).exec()
+
+            if len(job_name_list) > 0:
+                CreateLaserJobsFromFileSystemQDialog(self,
+                                       job_name_list=job_name_list,
+                                       files_global_paths_list=files_global_paths_list).exec()
 
         self.refreshAllWidgets()
 

@@ -24,6 +24,10 @@
   <property name="windowTitle">
    <string>Import Laser Jobs from Mail</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../figures/logo.ico</normaloff>../../figures/logo.ico</iconset>
+  </property>
   <property name="modal">
    <bool>true</bool>
   </property>

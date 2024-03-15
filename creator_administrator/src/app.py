@@ -1,6 +1,6 @@
 import webbrowser
-import qdarktheme
 from functools import partial
+import qdarktheme
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QShortcut, QKeySequence 

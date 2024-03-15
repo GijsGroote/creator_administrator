@@ -56,7 +56,7 @@ class ThreadedMailManager():
             InfoQMessageBox(parent=self.parent, text='No new valid job request in mail inbox')
 
         else:
-            self.dialog(self.parent, valid_msgs=valid_msgs).exec()
+            self.dialog(parent=self.parent, valid_msgs=valid_msgs).exec()
             self.parent.refreshAllWidgets()
 
             

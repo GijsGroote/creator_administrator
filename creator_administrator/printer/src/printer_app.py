@@ -13,7 +13,7 @@ from src.qdialog import FilesSelectQDialog, FolderSelectQDialog
 
 from printer_job_tracker import PrintJobTracker
 from printer_settings_dialog import PrintSettingsQDialog
-from printer_qdialog import CreatePrintJobsQDialog, PrintFileInfoQDialog
+from printer_qdialog import CreatePrintJobsFromMailQDialog, CreatePrintJobsFromFileSystemQDialog
 
 # ensure that win32com is imported after creating an executable with pyinstaller
 # from win32com import client
@@ -26,7 +26,6 @@ class PrintMainWindow(MainWindow):
         self.valid_msgs = []
         self.threadpool = gv['THREAD_POOL']
 
-        # call job tracker twice to enforce healthy job log
         self.job_tracker = PrintJobTracker(parent=self)
         self.job_tracker.checkHealth()
 
@@ -47,7 +46,7 @@ class PrintMainWindow(MainWindow):
     def handleNewValidMails(self):
         ''' Handle the new mails in the inbox. '''
         
-        self.threaded_mail_manager = ThreadedMailManager(self, gv, dialog=CreatePrintJobsQDialog)
+        self.threaded_mail_manager = ThreadedMailManager(self, gv, dialog=CreatePrintJobsFromMailQDialog)
         # getValidmails gets mail and triggers openImportFromMailDialog
         self.threaded_mail_manager.getValidMailsFromInbox()
         
@@ -62,7 +61,7 @@ class PrintMainWindow(MainWindow):
             job_name = dialog.projectNameQLineEdit.text()
 
             if len(files_global_paths) > 0:
-                PrintFileInfoQDialog(self, [job_name], [files_global_paths]).exec()
+                CreatePrintJobsFromFileSystemQDialog(self, [job_name], [files_global_paths]).exec()
             
         self.refreshAllWidgets()
 
@@ -106,7 +105,7 @@ class PrintMainWindow(MainWindow):
                                 f' skip this subfolder')
             
             if len(jobs_names_list) > 0:
-                PrintFileInfoQDialog(self, jobs_names_list, folders_global_paths_list).exec()
+                CreatePrintJobsFromFileSystemQDialog(self, jobs_names_list, folders_global_paths_list).exec()
 
         self.refreshAllWidgets()
 
@@ -125,7 +124,9 @@ class PrintMainWindow(MainWindow):
         # refresh all print job tabs
         qlist_widgets = self.findChildren(QListWidget)
         for list_widget in qlist_widgets:
-            list_widget.refresh()
+            # TODO: this is done because the list widgets are curretnly weird
+            pass
+            # list_widget.refresh()
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

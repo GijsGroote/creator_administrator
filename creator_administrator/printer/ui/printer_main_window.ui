@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>604</height>
+    <width>769</width>
+    <height>566</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,6 +23,10 @@
   </property>
   <property name="windowTitle">
    <string>Creator Administrator</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../figures/logo.ico</normaloff>../../figures/logo.ico</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="sizePolicy">
@@ -67,7 +71,7 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4">
               <item>
-               <widget class="JobsOverviewQListWidget" name="allJobsQListWidget">
+               <widget class="QListWidget" name="allJobsQListWidget">
                 <property name="font">
                  <font>
                   <pointsize>14</pointsize>
@@ -100,12 +104,12 @@
            </sizepolicy>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="jobsListPage_2">
            <layout class="QVBoxLayout" name="verticalLayout_18">
             <item>
-             <widget class="JobsOverviewQListWidget" name="wachtrijJobsQListWidget"/>
+             <widget class="QListWidget" name="wachtrijJobsQListWidget"/>
             </item>
            </layout>
           </widget>
@@ -154,7 +158,7 @@
                </layout>
               </item>
               <item>
-               <widget class="JobContentQListWidget" name="listWidget_10">
+               <widget class="QListWidget" name="listWidget_10">
                 <property name="toolTip">
                  <string>Shortcut: Esc</string>
                 </property>
@@ -195,14 +199,14 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="AfgekeurdQPushButton" name="pushButton">
+                 <widget class="QPushButton" name="pushButton">
                   <property name="text">
                    <string>Afgekeurd</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="OptionsQPushButton" name="wachtrijOptionsQPushButton">
+                 <widget class="QPushButton" name="wachtrijOptionsQPushButton">
                   <property name="text">
                    <string>Options</string>
                   </property>
@@ -226,12 +230,12 @@
         <item>
          <widget class="QStackedWidget" name="geslicedQStackedWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="jobListPage_3">
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
-             <widget class="JobsOverviewQListWidget" name="geslicedJobsQListWidget">
+             <widget class="QListWidget" name="geslicedJobsQListWidget">
               <property name="font">
                <font>
                 <pointsize>14</pointsize>
@@ -283,7 +287,7 @@
                </layout>
               </item>
               <item>
-               <widget class="JobContentQListWidget" name="listWidget_13"/>
+               <widget class="QListWidget" name="listWidget_13"/>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_24">
@@ -308,7 +312,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="OptionsQPushButton" name="geslicedOptionsQPushButton">
+                 <widget class="QPushButton" name="geslicedOptionsQPushButton">
                   <property name="text">
                    <string>Options</string>
                   </property>
@@ -332,12 +336,12 @@
         <item>
          <widget class="QStackedWidget" name="stackedWidget_2">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="jobListPage_4">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
-             <widget class="JobsOverviewQListWidget" name="printenJobsQListWidget">
+             <widget class="QListWidget" name="printenJobsQListWidget">
               <property name="font">
                <font>
                 <pointsize>14</pointsize>
@@ -389,7 +393,7 @@
                </layout>
               </item>
               <item>
-               <widget class="JobContentQListWidget" name="listWidget_14"/>
+               <widget class="QListWidget" name="listWidget_14"/>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_27">
@@ -411,7 +415,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="OptionsQPushButton" name="printenOptionsQPushButton">
+                 <widget class="QPushButton" name="printenOptionsQPushButton">
                   <property name="text">
                    <string>Options</string>
                   </property>
@@ -435,12 +439,12 @@
         <item>
          <widget class="QStackedWidget" name="verwerktQStackedWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="jobsListPage_5">
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
-             <widget class="JobsOverviewQListWidget" name="verwerktJobsQListWidget"/>
+             <widget class="QListWidget" name="verwerktJobsQListWidget"/>
             </item>
            </layout>
           </widget>
@@ -486,7 +490,7 @@
                </layout>
               </item>
               <item>
-               <widget class="JobContentQListWidget" name="listWidget_8"/>
+               <widget class="QListWidget" name="listWidget_8"/>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_8">
@@ -501,7 +505,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="OptionsQPushButton" name="verwerktOptionsQPushButton">
+                 <widget class="QPushButton" name="verwerktOptionsQPushButton">
                   <property name="text">
                    <string>Options</string>
                   </property>
@@ -531,12 +535,12 @@
         <item>
          <widget class="QStackedWidget" name="afgekeurdQStackedWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="jobsListPage_6">
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <widget class="JobsOverviewQListWidget" name="afgekeurdJobsQListWidget"/>
+             <widget class="QListWidget" name="afgekeurdJobsQListWidget"/>
             </item>
            </layout>
           </widget>
@@ -582,7 +586,7 @@
                </layout>
               </item>
               <item>
-               <widget class="JobContentQListWidget" name="listWidget_9"/>
+               <widget class="QListWidget" name="listWidget_9"/>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_9">
@@ -597,7 +601,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="OptionsQPushButton" name="afgekeurdOptionsQPushButton">
+                 <widget class="QPushButton" name="afgekeurdOptionsQPushButton">
                   <property name="text">
                    <string>Options</string>
                   </property>
@@ -622,7 +626,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>769</width>
      <height>29</height>
     </rect>
    </property>
@@ -740,35 +744,15 @@
    <header>button.h</header>
   </customwidget>
   <customwidget>
-   <class>JobsOverviewQListWidget</class>
-   <extends>QListWidget</extends>
-   <header>printer_qlist_widget.h</header>
+   <class>JobsQTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>tab_widget.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>PrintKlaarQPushButton</class>
    <extends>QPushButton</extends>
    <header>printer_button.h</header>
-  </customwidget>
-  <customwidget>
-   <class>AfgekeurdQPushButton</class>
-   <extends>QPushButton</extends>
-   <header>printer_button.h</header>
-  </customwidget>
-  <customwidget>
-   <class>JobContentQListWidget</class>
-   <extends>QListWidget</extends>
-   <header>printer_qlist_widget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>OptionsQPushButton</class>
-   <extends>QPushButton</extends>
-   <header>printer_button.h</header>
-  </customwidget>
-  <customwidget>
-   <class>JobsQTabWidget</class>
-   <extends>QTabWidget</extends>
-   <header>tab_widget.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
