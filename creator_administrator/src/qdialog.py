@@ -1,10 +1,11 @@
 import os
 import abc
 import webbrowser
-import pkg_resources
 import datetime
+import pkg_resources
 
 from PyQt6.QtWidgets import QDialog, QWidget, QListWidgetItem, QMessageBox
+
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QKeySequence, QShortcut, QFont
 from PyQt6.uic import loadUi
@@ -14,7 +15,7 @@ from src.job_tracker import JobTracker
 
 
 class CreateJobsQDialog(QDialog):
-    ''' Create jobs data from mail or the file system. '''
+    ''' Create jobs from data. '''
 
     def __init__(self,
                  parent: QWidget,
@@ -34,6 +35,12 @@ class CreateJobsQDialog(QDialog):
 
         self.job_counter = 0
         self.make_item_counter = 0
+
+        self.new_material_text = 'New Material'
+        self.new_materials_list = []
+        self.newMaterialQLabel.setHidden(True)
+        self.newMaterialQLineEdit.setHidden(True)
+        self.materialQComboBox.currentIndexChanged.connect(self.onMaterialComboboxChanged)
 
         self.skipPushButton.clicked.connect(self.skipJob)
         self.buttonBox.accepted.connect(self.collectItemInfo)
@@ -78,9 +85,17 @@ class CreateJobsQDialog(QDialog):
             self.make_item_counter = 0
             self.loadContent()
 
+    def onMaterialComboboxChanged(self):
+        ''' Show/hide new material option. '''
+        if self.materialQComboBox.currentText() == self.new_material_text:
+            self.newMaterialQLabel.setHidden(False)
+            self.newMaterialQLineEdit.setHidden(False)
+        else:
+            self.newMaterialQLabel.setHidden(True)
+            self.newMaterialQLineEdit.setHidden(True)
 
 class CreateJobsFromMailQDialog(CreateJobsQDialog):
-    ''' Create jobs from new mail. '''
+    ''' Create jobs from mail data. '''
 
     def __init__(self,
                  parent: QWidget,
@@ -100,7 +115,6 @@ class CreateJobsFromMailQDialog(CreateJobsQDialog):
 
         self.jobs = valid_msgs
         self.mail_manager = MailManager(gv)
-        self.temp_make_items = self.mail_manager.getAttachments(valid_msgs[0])
 
     def loadJobContent(self):
         ''' Load content of mail into dialog. '''
@@ -133,8 +147,7 @@ class CreateJobsFromMailQDialog(CreateJobsQDialog):
 
 
 class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
-    ''' Create jobs files on file system . '''
-
+    ''' Create jobs from file system data. '''
 
     def __init__(self,
                  parent: QWidget,
@@ -179,6 +192,84 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
     @abc.abstractmethod
     def loadItemContent(self):
         ''' Load content of mail item into dialog. '''
+
+
+class SelectQDialog(QDialog):
+    """ Select file dialog. """
+    def __init__(self, parent, gv: dict, ui_global_path: str, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.gv=gv
+
+        loadUi(ui_global_path, self)
+
+        # shortcut on Esc button
+        QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.closeDialog)
+
+    def closeDialog(self):
+        ''' Close the dialog, press cancel. '''
+        self.close()
+
+
+class FilesSelectQDialog(SelectQDialog):
+    """ Select files dialog. """
+    def __init__(self, parent: QWidget, gv: dict, *args, **kwargs):
+        ui_global_path = os.path.join(gv['GLOBAL_UI_DIR'], 'select_files_dialog.ui')
+        super().__init__(parent, gv, ui_global_path, *args, **kwargs)
+
+        self.buttonBox.accepted.connect(self.validate)
+
+    def validate(self):
+
+        if len(self.selectFilesButton.files_global_paths) == 0:
+            dlg = QMessageBox(self)
+            dlg.setText('Select Files')
+            dlg.exec()
+            return
+
+        contains_accepted_extension = False
+        for file_global_path in self.selectFilesButton.files_global_paths:
+            if file_global_path.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
+                contains_accepted_extension = True
+
+        if not contains_accepted_extension:
+            dlg = QMessageBox(self)
+            dlg.setText(f'Selected files should contain one or more files with extension {self.gv["ACCEPTED_EXTENSIONS"]}')
+            dlg.exec()
+            return
+
+        if len(self.projectNameQLineEdit.text()) == 0:
+            dlg = QMessageBox(self)
+            dlg.setText('Provide a Job Name')
+            dlg.exec()
+            return
+
+        self.accept()
+
+
+class FolderSelectQDialog(SelectQDialog):
+    """ Select folder dialog. """
+    def __init__(self, parent: QWidget, gv: dict, *args, **kwargs):
+        ui_global_path = os.path.join(gv['GLOBAL_UI_DIR'], 'select_folders_dialog.ui')
+        super().__init__(parent, gv, ui_global_path, *args, **kwargs)
+
+        self.buttonBox.accepted.connect(self.validate)
+
+    def validate(self):
+
+        if self.selectFolderButton.folder_global_path is None:
+            dlg = QMessageBox(self)
+            dlg.setText('Select a Folder')
+            dlg.exec()
+            return
+
+        if len(self.projectNameQLineEdit.text()) == 0:
+            dlg = QMessageBox(self)
+            dlg.setText('Provide a Project Name')
+            dlg.exec()
+            return
+
+        self.accept()
+
 
 class SelectOptionsQDialog(QDialog):
     ''' Select one of the options. '''
@@ -230,8 +321,11 @@ class SelectOptionsQDialog(QDialog):
         else:
             opt_ql_widget.setCurrentRow(opt_ql_widget.currentRow()-1)
 
+
+
 class AboutDialog(QDialog):
-    """ Import from mail dialog. """
+    """ Display information about creator administrator. """
+
     def __init__(self, parent: QWidget, gv: dict, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
@@ -258,76 +352,3 @@ class AboutDialog(QDialog):
         self.close()
 
 
-class SelectQDialog(QDialog):
-    """ Select file dialog. """
-    def __init__(self, parent, gv: dict, ui_global_path: str, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
-        self.gv=gv
-
-        loadUi(ui_global_path, self)
-
-        # shortcut on Esc button
-        QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.closeDialog)
-
-    def closeDialog(self):
-        ''' Close the dialog, press cancel. '''
-        self.close()
-
-class FilesSelectQDialog(SelectQDialog):
-    """ Select files dialog. """
-    def __init__(self, parent: QWidget, gv: dict, *args, **kwargs):
-        ui_global_path = os.path.join(gv['GLOBAL_UI_DIR'], 'select_files_dialog.ui')
-        super().__init__(parent, gv, ui_global_path, *args, **kwargs)
-
-        self.buttonBox.accepted.connect(self.validate)
-
-    def validate(self):
-
-        if len(self.selectFilesButton.files_global_paths) == 0:
-            dlg = QMessageBox(self)
-            dlg.setText('Select Files')
-            dlg.exec()
-            return
-
-        contains_accepted_extension = False
-        for file_global_path in self.selectFilesButton.files_global_paths:
-            if file_global_path.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
-                contains_accepted_extension = True
-
-        if not contains_accepted_extension:
-            dlg = QMessageBox(self)
-            dlg.setText(f'Selected files should contain one or more files with extension {self.gv["ACCEPTED_EXTENSIONS"]}')
-            dlg.exec()
-            return
-
-        if len(self.projectNameQLineEdit.text()) == 0:
-            dlg = QMessageBox(self)
-            dlg.setText('Provide a Job Name')
-            dlg.exec()
-            return
-
-        self.accept()
-
-class FolderSelectQDialog(SelectQDialog):
-    """ Select folder dialog. """
-    def __init__(self, parent: QWidget, gv: dict, *args, **kwargs):
-        ui_global_path = os.path.join(gv['GLOBAL_UI_DIR'], 'select_folders_dialog.ui')
-        super().__init__(parent, gv, ui_global_path, *args, **kwargs)
-
-        self.buttonBox.accepted.connect(self.validate)
-
-    def validate(self):
-
-        if self.selectFolderButton.folder_global_path is None:
-            dlg = QMessageBox(self)
-            dlg.setText('Select a Folder')
-            dlg.exec()
-            return
-
-        if len(self.projectNameQLineEdit.text()) == 0:
-            dlg = QMessageBox(self)
-            dlg.setText('Provide a Project Name')
-            dlg.exec()
-            return
-
-        self.accept()

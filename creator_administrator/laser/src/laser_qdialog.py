@@ -31,11 +31,7 @@ class CreateLaserJobsFromMailQDialog(CreateJobsFromMailQDialog):
                          *args,
                          **kwargs)
 
-        self.new_material_text = 'New Material'
-        self.new_materials_list = []
-
         self.sendUnclearMailPushButton.clicked.connect(self.sendUnclearRequestMailJob)
-        self.materialQComboBox.currentIndexChanged.connect(self.onMaterialComboboxChanged)
 
         self.loadJobContent()
 
@@ -85,14 +81,6 @@ class CreateLaserJobsFromMailQDialog(CreateJobsFromMailQDialog):
             self.make_item_counter += 1
             self.loadContent()
 
-
-    def onMaterialComboboxChanged(self):
-        if self.materialQComboBox.currentText() == self.new_material_text:
-            self.newMaterialQLabel.setHidden(False)
-            self.newMaterialQLineEdit.setHidden(False)
-        else:
-            self.newMaterialQLabel.setHidden(True)
-            self.newMaterialQLineEdit.setHidden(True)
 
     def collectItemInfo(self):
         ''' Collect material, thickness and amount info. '''
@@ -183,52 +171,6 @@ class CreateLaserJobsFromMailQDialog(CreateJobsFromMailQDialog):
         TimedMessage(gv, self, text=f'Laser job {self.temp_job_name} created')
 
 
-    def loadAttachmentContent(self):
-        ''' Load content of attachment into dialog. '''
-
-        attachment = self.temp_make_items[self.make_item_counter]
-        attachment_name = self.mail_manager.getAttachmentFileName(attachment)
-
-        if attachment_name.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
-            self.attachmentProgressQLabel.setText(f'Attachment ({self.make_item_counter+1}/{len(self.temp_make_items)})')
-            self.attachmentNameQLabel.setText(attachment_name)
-
-            # initially hide option for new material
-            self.newMaterialQLabel.setHidden(True)
-            self.newMaterialQLineEdit.setHidden(True)
-
-            self.materialQComboBox.clear()
-            self.newMaterialQLineEdit.clear()
-            self.thicknessQLineEdit.clear()
-            self.amountQLineEdit.clear()
-
-            materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()).union(self.new_materials_list))
-            self.materialQComboBox.addItems(materials)
-            self.materialQComboBox.addItem(self.new_material_text)
-
-            # guess the material, thickness and amount
-            for material in materials:
-                if material.lower() in attachment_name.lower():
-                    self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(material))
-            match = re.search(r"\d+\.?\d*(?=mm)", attachment_name)
-
-            if match:
-                self.thicknessQLineEdit.setText(match.group())
-
-            match = re.search(r"\d+\.?\d*(?=x_)", attachment_name)
-            if match:
-                self.amountQLineEdit.setText(match.group())
-            else:
-                self.amountQLineEdit.setText('1')
-
-        else:
-            file_global_path = os.path.join(self.temp_job_folder_global_path, attachment_name)
-            self.temp_minor_files_dict[attachment_name] = {'attachment': attachment,
-                                                     'file_global_path': file_global_path}
-            self.make_item_counter += 1
-            self.loadContent()
-
-
 class CreateLaserJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
     ''' Ask for file laser file details (material, thickness, amount) and create laser jobs.
     job_name: List with job names
@@ -246,11 +188,6 @@ class CreateLaserJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
                          *args, **kwargs)
 
 
-
-        self.new_material_text = 'New Material'
-        self.new_materials_list = []
-
-        self.materialQComboBox.currentIndexChanged.connect(self.onMaterialComboboxChanged)
         self.skipPushButton.clicked.connect(self.skipJob)
         self.buttonBox.accepted.connect(self.collectFileInfo)
         self.loadJobContent()
@@ -325,14 +262,6 @@ class CreateLaserJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
         TimedMessage(gv, self, text=f'Laser job {self.temp_job_name} created')
 
 
-
-    def onMaterialComboboxChanged(self):
-        if self.materialQComboBox.currentText() == self.new_material_text:
-            self.newMaterialQLabel.setHidden(False)
-            self.newMaterialQLineEdit.setHidden(False)
-        else:
-            self.newMaterialQLabel.setHidden(True)
-            self.newMaterialQLineEdit.setHidden(True)
 
     def collectFileInfo(self):
         ''' Collect material, thickness and amount info. '''

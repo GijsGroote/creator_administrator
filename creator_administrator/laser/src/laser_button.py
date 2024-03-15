@@ -85,7 +85,7 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
                 done_files = ''
                 for laser_file_dict in self.job_tracker.getJobDict(job_name)['laser_files'].values():
                     done_files += laser_file_dict['file_name']+'\n'
-                InfoQMessageBox(self.parent(), f'For {sender_name} put into Uitgifterek:\n{done_files}')
+                InfoQMessageBox(self.parent, f'For {sender_name} put into Uitgifterek:\n{done_files}')
             
                 if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]):
                     WarningQMessageBox(gv=gv, parent=self, text=f'No Job finished mail send because: No mail file found')

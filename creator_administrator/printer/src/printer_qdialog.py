@@ -30,11 +30,7 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
                          *args,
                          **kwargs)
 
-        self.new_material_text = 'New Material'
-        self.new_materials_list = []
-
         # TODO; settings based on printer profile
-        self.materialQComboBox.currentIndexChanged.connect(self.onMaterialComboboxChanged)
 
         self.loadJobContent()
 
@@ -75,14 +71,6 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
             self.make_item_counter += 1
             self.loadContent()
 
-
-    def onMaterialComboboxChanged(self):
-        if self.materialQComboBox.currentText() == self.new_material_text:
-            self.newMaterialQLabel.setHidden(False)
-            self.newMaterialQLineEdit.setHidden(False)
-        else:
-            self.newMaterialQLabel.setHidden(True)
-            self.newMaterialQLineEdit.setHidden(True)
 
     def collectItemInfo(self):
         ''' Collect material amount info. '''
@@ -189,10 +177,6 @@ class CreatePrintJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
             self.fileProgressQLabel.setText(f'File({self.make_item_counter+1}/{len(self.temp_make_items)})')
             self.fileNameQLabel.setText(file_name)
 
-            # initially hide option for new material
-            self.newMaterialQLabel.setHidden(True)
-            self.newMaterialQLineEdit.setHidden(True)
-
             self.materialQComboBox.clear()
             self.newMaterialQLineEdit.clear()
             self.amountQLineEdit.clear()
@@ -239,14 +223,6 @@ class CreatePrintJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
 
         TimedMessage(gv, self, text=f'Print job {self.temp_job_name} created')
 
-
-    def onMaterialComboboxChanged(self):
-        if self.materialQComboBox.currentText() == self.new_material_text:
-            self.newMaterialQLabel.setHidden(False)
-            self.newMaterialQLineEdit.setHidden(False)
-        else:
-            self.newMaterialQLabel.setHidden(True)
-            self.newMaterialQLineEdit.setHidden(True)
 
     def collectFileInfo(self):
         ''' Collect material and amount info. '''
