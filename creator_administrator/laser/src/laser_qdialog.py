@@ -151,6 +151,8 @@ class CreateLaserJobsFromMailQDialog(CreateJobsFromMailQDialog):
         for attachment_dict in self.temp_store_files_dict.values():
             self.mail_manager.saveAttachment(attachment_dict['attachment'], attachment_dict['file_global_path'])
 
+        self.parent().refreshAllWidgets()
+
         ThreadedMailManager(parent=self, gv=gv).startMailWorker(
                 sender_name=self.temp_sender_name,
                 mail_type='RECEIVED',
@@ -161,6 +163,7 @@ class CreateLaserJobsFromMailQDialog(CreateJobsFromMailQDialog):
                 sender_mail_receive_time=sender_mail_receive_time)
 
         TimedMessage(gv, self, text=f'Laser job {self.temp_job_name} created')
+
 
 
 class CreateLaserJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):

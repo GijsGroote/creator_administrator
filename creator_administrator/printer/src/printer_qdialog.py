@@ -6,7 +6,6 @@ from PyQt6.QtWidgets import QWidget
 from src.qdialog import CreateJobsFromMailQDialog, CreateJobsFromFileSystemQDialog
 from src.qmessagebox import TimedMessage
 from src.threaded_mail_manager import ThreadedMailManager
-from src.directory_functions import copy_item
 
 from printer_job_tracker import PrintJobTracker
 from printer_validate import validate_material_info
@@ -61,7 +60,6 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
             self.amountQLineEdit.setText(match.group())
         else:
             self.amountQLineEdit.setText('1')
-
 
 
     def collectItemInfo(self):
@@ -123,7 +121,9 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
 
         # save the attachments
         for attachment_dict in self.temp_store_files_dict.values():
-            self.mail_manager.saveAttachment(attachment_dict['attachment'], attachment_dict['file_global_path'])
+            self.mail_manager.saveAttachment(attachment_dict['attachment'], attachment_dict['target_file_global_path'])
+
+        self.parent().refreshAllWidgets()
 
         ThreadedMailManager(parent=self, gv=gv).startMailWorker(
                 sender_name=self.temp_sender_name,

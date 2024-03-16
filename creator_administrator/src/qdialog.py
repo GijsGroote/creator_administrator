@@ -122,32 +122,28 @@ class CreateJobsFromMailQDialog(CreateJobsQDialog):
         ''' Load content of mail into dialog. '''
 
         job_msg = self.jobs[self.job_counter]
-        self.temp_make_items = self.mail_manager.getAttachments(job_msg)
+        # self.temp_make_items = self.mail_manager.getAttachments(job_msg)
         self.temp_sender_name = self.mail_manager.getSenderName(job_msg)
 
         self.temp_job_name = self.job_tracker.makeJobNameUnique(self.temp_sender_name)
         self.temp_job_folder_name = str(datetime.date.today().strftime('%d-%m'))+'_'+self.temp_job_name
         self.temp_job_folder_global_path = os.path.join(os.path.join(self.gv['JOBS_DIR_HOME'], self.temp_job_folder_name))
 
-        temp_make_items = []
-        self.temp_store_files_dict = {}
-
+        self.temp_make_items = []
         self.temp_make_files_dict = {}
         self.temp_store_files_dict = {}
 
-        attachment = self.temp_make_items[self.make_item_counter]
-        attachment_name = self.mail_manager.getAttachmentFileName(attachment)
+        # attachment = self.temp_make_items[self.make_item_counter]
+        # attachment_name = self.mail_manager.getAttachmentFileName(attachment)
 
         for attachment in self.mail_manager.getAttachments(job_msg):
-            attachment_file_name = self.mail_manager.getAttachmentFileName(attachment)
-            if attachment_file_name.endswith(self.gv['ACCEPTED_EXTENSIONS']):
-                temp_make_items.append(attachment)
+            attachment_name = self.mail_manager.getAttachmentFileName(attachment)
+            if attachment_name.endswith(self.gv['ACCEPTED_EXTENSIONS']):
+                self.temp_make_items.append(attachment)
             else:
                 target_file_global_path = os.path.join(self.temp_job_folder_global_path, attachment_name)
                 self.temp_store_files_dict[attachment_name] = {'attachment': attachment,
                                              'target_file_global_path': target_file_global_path}
-
-        self.temp_make_items = temp_make_items
 
         self.mailFromQLabel.setText(self.temp_sender_name)
         self.mailProgressQLabel.setText(f'Mail ({self.job_counter+1}/{len(self.jobs)})')
@@ -231,6 +227,7 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
 
         self.temp_make_items = temp_make_items
 
+        print(f"setting name to {self.temp_job_name}")
         self.jobNameQLabel.setText(self.temp_job_name)
         self.jobProgressQLabel.setText(f'Job ({self.job_counter+1}/{len(self.jobs)})')
 
@@ -257,6 +254,8 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
 
         for item_dict in self.temp_store_files_dict.values():
             copy_item(item_dict['source_file_global_path'], item_dict['target_file_global_path'])
+
+        self.parent().refreshAllWidgets()
 
         TimedMessage(self.gv, self, text=f'Print job {self.temp_job_name} created')
 

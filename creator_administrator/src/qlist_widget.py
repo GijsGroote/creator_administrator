@@ -6,12 +6,10 @@ from PyQt6.QtGui import QKeySequence, QShortcut, QFont
 from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QLabel, QWidget
 
 from src.directory_functions import open_file
-from src.tab_widget import JobsQTabWidget
 from src.job_tracker import JobTracker
 
 class OverviewQListWidget(QListWidget):
-    ''' Overview of multiple items in a list. In most subclasses
-    these items are job folders. '''
+    ''' Overview of multiple items in a list. '''
 
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
@@ -21,22 +19,11 @@ class OverviewQListWidget(QListWidget):
 
         self.itemDoubleClicked.connect(self.itemIsDoubleClicked)
 
-    def refresh(self):
-        ''' Refresh displayed items. '''
-        self.clear()
-        self.initialize(self.getItemNames())
-
     def displayItem(self, item_name: str):
         ''' Display the job content page. '''
         self.parent().parent().setCurrentIndex(1)
-        # find child QListWidget finds the JobContentQListWidget
+        # find the JobContentQListWidget by searching for QListWidget (search for JobContentQListWidget returns None)
         self.parent().parent().currentWidget().findChild(QListWidget).loadContent(item_name)
-
-
-    def storeObjectNameInit(self):
-        ''' Store the object name and initialize. '''
-        self.object_name = self.objectName()
-        self.initialize(self.getItemNames())
 
     def initialize(self, item_names: list):
         ''' Initialize with list of items. '''
@@ -71,6 +58,7 @@ class OverviewQListWidget(QListWidget):
                 300, 20) 
 
     def itemEnterPressed(self):
+        ''' Handle press on current item. '''
         current_item = self.currentItem()
         if current_item is not None:
             self.displayItem(current_item.data(1))
@@ -81,15 +69,15 @@ class OverviewQListWidget(QListWidget):
         self.displayItem(clicked_item.data(1))
 
     @abc.abstractmethod
-    def getItemNames(self) -> list:
-        ''' Return a list of names or tuples. '''
+    def refresh(self):
+        ''' Initialise the list widget with jobs. '''
 
 class ContentQListWidget(QListWidget):
+    ''' Content . '''
 
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.current_item_name = None
-
 
         # shortcut for the Enter button
         QShortcut(QKeySequence(Qt.Key.Key_Return), self).activated.connect(self.itemEnterPressed)

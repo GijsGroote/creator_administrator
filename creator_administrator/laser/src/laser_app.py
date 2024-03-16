@@ -123,7 +123,6 @@ class LaserMainWindow(MainWindow):
 
     def refreshAllWidgets(self):
         ''' Refresh the widgets. '''
-        # refresh all laser job tabs
         qlist_widgets = self.findChildren(QListWidget)
         for list_widget in qlist_widgets:
             list_widget.refresh()

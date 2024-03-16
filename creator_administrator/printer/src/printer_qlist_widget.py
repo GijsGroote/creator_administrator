@@ -78,7 +78,6 @@ class PrintGeslicedJobsOverviewQListWidget(OverviewQListWidget):
         self.initialize(PrintJobTracker(self).getStaticAndDynamicJobNamesWithStatus('GESLICED'))
 
 
-
 class PrintPrintenJobsOverviewQListWidget(OverviewQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):

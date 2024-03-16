@@ -78,6 +78,13 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QLabel" name="attachmentProgressQLabel">
+           <property name="text">
+            <string>Attachment (?/y)</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
       </layout>
@@ -206,13 +213,6 @@
       </layout>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QLabel" name="thicknessQLabel">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>

@@ -107,7 +107,7 @@ class PrintMainWindow(MainWindow):
             if len(jobs_names_list) > 0:
                 CreatePrintJobsFromFileSystemQDialog(self, jobs_names_list, folders_global_paths_list).exec()
 
-        self.refreshAllWidgets()
+        # self.refreshAllWidgets()
 
     def openEditSettingsDialog(self):
         ''' Open dialog to edit the settings. '''
@@ -121,12 +121,9 @@ class PrintMainWindow(MainWindow):
 
     def refreshAllWidgets(self):
         ''' Refresh the widgets. '''
-        # refresh all print job tabs
         qlist_widgets = self.findChildren(QListWidget)
         for list_widget in qlist_widgets:
-            # TODO: this is done because the list widgets are curretnly weird
-            pass
-            # list_widget.refresh()
+            list_widget.refresh()
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
