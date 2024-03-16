@@ -26,7 +26,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../figures/logo.ico</normaloff>../../figures/logo.ico</iconset>
+    <normaloff>../../../../../figures/logo.ico</normaloff>../../../../../figures/logo.ico</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="sizePolicy">
@@ -201,14 +201,14 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="AfgekeurdQPushButton" name="pushButton_4">
+                   <widget class="LaserAfgekeurdQPushButton" name="pushButton_4">
                     <property name="text">
                      <string>Afgekeurd</string>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="OptionsQPushButton" name="wachtrijOptionsQPushButton">
+                   <widget class="LaserOptionsQPushButton" name="wachtrijOptionsQPushButton">
                     <property name="text">
                      <string>Options</string>
                     </property>
@@ -312,7 +312,7 @@
                </widget>
               </item>
               <item>
-               <widget class="OptionsQPushButton" name="wachtrijMateriaalOptionsQPushButton">
+               <widget class="LaserOptionsQPushButton" name="wachtrijMateriaalOptionsQPushButton">
                 <property name="text">
                  <string>Options</string>
                 </property>
@@ -400,7 +400,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="OptionsQPushButton" name="verwerktOptionsQPushButton">
+                 <widget class="LaserOptionsQPushButton" name="verwerktOptionsQPushButton">
                   <property name="text">
                    <string>Options</string>
                   </property>
@@ -496,7 +496,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="OptionsQPushButton" name="afgekeurdOptionsQPushButton">
+                 <widget class="LaserOptionsQPushButton" name="afgekeurdOptionsQPushButton">
                   <property name="text">
                    <string>Options</string>
                   </property>
@@ -655,12 +655,7 @@
    <header>laser_button.h</header>
   </customwidget>
   <customwidget>
-   <class>AfgekeurdQPushButton</class>
-   <extends>QPushButton</extends>
-   <header>laser_button.h</header>
-  </customwidget>
-  <customwidget>
-   <class>OptionsQPushButton</class>
+   <class>LaserAfgekeurdQPushButton</class>
    <extends>QPushButton</extends>
    <header>laser_button.h</header>
   </customwidget>
@@ -698,6 +693,11 @@
    <class>LaserAfgekeurdJobsOverviewQListWidget</class>
    <extends>QListWidget</extends>
    <header>laser_qlist_widget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LaserOptionsQPushButton</class>
+   <extends>QPushButton</extends>
+   <header>laser_button.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

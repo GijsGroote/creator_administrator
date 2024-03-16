@@ -44,6 +44,12 @@ class MainWindow(QMainWindow):
         if event.key() == Qt.Key.Key_Return:
                 self.jobsQTabWidget.currentWidget().findChild(QStackedWidget).currentWidget().findChild(QListWidget).itemEnterPressed()
 
+    def refreshAllWidgets(self):
+        ''' Refresh the widgets. '''
+        qlist_widgets = self.findChildren(QListWidget)
+        for list_widget in qlist_widgets:
+            list_widget.refresh()
+
 
     def openAboutDialog(self):
         ''' Open About Dialog. '''

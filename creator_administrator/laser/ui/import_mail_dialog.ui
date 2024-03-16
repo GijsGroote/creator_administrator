@@ -81,7 +81,7 @@
          <item>
           <widget class="QLabel" name="attachmentProgressQLabel">
            <property name="text">
-            <string>Attachment (?/z)</string>
+            <string>Attachment (?/y)</string>
            </property>
           </widget>
          </item>

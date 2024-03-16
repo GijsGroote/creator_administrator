@@ -121,11 +121,6 @@ class LaserMainWindow(MainWindow):
         self.refreshAllWidgets()
         TimedMessage(gv=gv, parent=self, text='System Healthy ;)')
 
-    def refreshAllWidgets(self):
-        ''' Refresh the widgets. '''
-        qlist_widgets = self.findChildren(QListWidget)
-        for list_widget in qlist_widgets:
-            list_widget.refresh()
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

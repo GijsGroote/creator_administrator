@@ -26,7 +26,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../../../../../../../figures/logo.ico</normaloff>../../../../../../../../figures/logo.ico</iconset>
+    <normaloff>../../../../../../../../../../../figures/logo.ico</normaloff>../../../../../../../../../../../figures/logo.ico</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="sizePolicy">
@@ -186,7 +186,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="PrintKlaarQPushButton" name="pushButton_3">
+                 <widget class="GeslicedQPushButton" name="pushButton_3">
                   <property name="toolTip">
                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Ctrl+k&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
@@ -199,14 +199,14 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="pushButton">
+                 <widget class="PrintAfgekeurdQPushButton" name="pushButton">
                   <property name="text">
                    <string>Afgekeurd</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="wachtrijOptionsQPushButton">
+                 <widget class="PrintOptionsQPushButton" name="wachtrijOptionsQPushButton">
                   <property name="text">
                    <string>Options</string>
                   </property>
@@ -302,7 +302,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="backPushButton_10">
+                 <widget class="PrintAangezetQPushButton" name="backPushButton_10">
                   <property name="toolTip">
                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Esc&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
@@ -312,7 +312,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="geslicedOptionsQPushButton">
+                 <widget class="PrintOptionsQPushButton" name="geslicedOptionsQPushButton">
                   <property name="text">
                    <string>Options</string>
                   </property>
@@ -415,7 +415,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="printenOptionsQPushButton">
+                 <widget class="PrintOptionsQPushButton" name="printenOptionsQPushButton">
                   <property name="text">
                    <string>Options</string>
                   </property>
@@ -505,7 +505,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="verwerktOptionsQPushButton">
+                 <widget class="PrintOptionsQPushButton" name="verwerktOptionsQPushButton">
                   <property name="text">
                    <string>Options</string>
                   </property>
@@ -601,7 +601,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="afgekeurdOptionsQPushButton">
+                 <widget class="PrintOptionsQPushButton" name="afgekeurdOptionsQPushButton">
                   <property name="text">
                    <string>Options</string>
                   </property>
@@ -788,6 +788,26 @@
    <class>PrintJobContentQListWidget</class>
    <extends>QListWidget</extends>
    <header>printer_qlist_widget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>PrintOptionsQPushButton</class>
+   <extends>QPushButton</extends>
+   <header>printer_button.h</header>
+  </customwidget>
+  <customwidget>
+   <class>PrintAangezetQPushButton</class>
+   <extends>QPushButton</extends>
+   <header>printer_button.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GeslicedQPushButton</class>
+   <extends>QPushButton</extends>
+   <header>printer_button.h</header>
+  </customwidget>
+  <customwidget>
+   <class>PrintAfgekeurdQPushButton</class>
+   <extends>QPushButton</extends>
+   <header>printer_button.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
