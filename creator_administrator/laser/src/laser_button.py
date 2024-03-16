@@ -71,7 +71,7 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
             job_name = self.job_tracker.fileGlobalPathToJobName(file_global_path)
 
             # material done, mark it done
-            self.job_tracker.markLaserFileAsDone(job_name=job_name,
+            self.job_tracker.markFileAsDone(job_name=job_name,
                                                  file_global_path=file_global_path,
                                                  done=True)
 
@@ -83,7 +83,7 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
                 sender_name = self.job_tracker.jobNameToSenderName(job_name)
                 job_folder_global_path = self.job_tracker.getJobFolderGlobalPathFromJobName(job_name)
                 done_files = ''
-                for laser_file_dict in self.job_tracker.getJobDict(job_name)['laser_files'].values():
+                for laser_file_dict in self.job_tracker.getJobDict(job_name)['make_files'].values():
                     done_files += laser_file_dict['file_name']+'\n'
                 InfoQMessageBox(self.parent, f'For {sender_name} put into Uitgifterek:\n{done_files}')
             
@@ -239,7 +239,7 @@ class OptionsQPushButton(JobsQPushButton):
                 copy_item(file_global_path, os.path.join(target_folder_global_path, file_name))
         else:
             job_name = self.getCurrentItemName()
-            laser_file_dict =  LaserJobTracker(self).getLaserFilesDict(job_name)
+            laser_file_dict =  LaserJobTracker(self).getMakeFilesDict(job_name)
                        
             for file_key, file_dict in laser_file_dict.items():
                 source_item_global_path = file_dict['file_global_path']

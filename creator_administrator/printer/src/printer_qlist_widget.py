@@ -1,58 +1,41 @@
-import os
+from PyQt6.QtWidgets import QStackedWidget, QTabWidget, QWidget
 
-from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import QStackedWidget, QListWidgetItem, QLabel, QTabWidget
+from src.qlist_widget import OverviewQListWidget, JobContentQListWidget
+from printer_job_tracker import PrintJobTracker 
 
-from src.qlist_widget import OverviewQListWidget, ContentQListWidget
-from printer_job_tracker import PrintJobTracker
+class PrintAllJobsOverviewQListWidget(OverviewQListWidget):
 
-class JobsOverviewQListWidget(OverviewQListWidget):
+    def __init__(self, parent: QWidget, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
 
-    def __init__(self, *args, **kwargs):
-        OverviewQListWidget.__init__(self, *args, **kwargs)
-
-        self.object_name = None
+        self.job_tracker = PrintJobTracker(self)
 
         self.widget_names ={'WACHTRIJ':
                                 {'QStackedWidget': 'wachtrijQStackedWidget',
                                  'tab_widget_position': 1},
-                            'VERWERKT':
-                                {'QStackedWidget': 'verwerktQStackedWidget',
+                            'GESLICED':
+                                {'QStackedWidget': 'geslicedQStackedWidget',
+                                 'tab_widget_position': 2},
+                            'AAN_HET_PRINTEN':
+                                {'QStackedWidget': 'printenQStackedWidget',
                                  'tab_widget_position': 3},
+                            'VERWERKT':
+                                {'QStackedWidget': 'printenQStackedWidget',
+                                 'tab_widget_position': 4},
                             'AFGEKEURD':
                                 {'QStackedWidget': 'afgekeurdQStackedWidget',
-                                 'tab_widget_position': 4}}
+                                 'tab_widget_position': 5}}
+        self.refresh()
 
-        # initialize
-        self.objectNameChanged.connect(self.storeObjectNameInit)
+    def refresh(self):
+        ''' Initialise the list widget with jobs. '''
+        self.clear()
+        self.initialize(self.job_tracker.getAllStaticAndDynamicJobNames())
 
-
-    def getItemNames(self) -> list[tuple]:
-        ''' Return a list of tuples containing:
-                first the short unique job name
-                second the informative dynamic job name '''
-
-        job_tracker = PrintJobTracker(self)
-        if self.object_name == 'allJobsQListWidget':
-            return job_tracker.getAllStaticAndDynamicJobNames()
-        if self.object_name == 'wachtrijJobsQListWidget':
-            return job_tracker.getStaticAndDynamicJobNamesWithStatus('WACHTRIJ')
-        if self.object_name == 'geslicedJobsQListWidget':
-            return job_tracker.getStaticAndDynamicJobNamesWithStatus('GESLICED')
-        if self.object_name == 'printenJobsQListWidget':
-            return job_tracker.getStaticAndDynamicJobNamesWithStatus('AAN_HET_PRINTEN')
-        if self.object_name == 'verwerktJobsQListWidget':
-            return job_tracker.getStaticAndDynamicJobNamesWithStatus('VERWERKT')
-        if self.object_name == 'afgekeurdJobsQListWidget':
-            return job_tracker.getStaticAndDynamicJobNamesWithStatus('AFGEKEURD')
-
-        raise ValueError(f'could not find jobs for {self.objectName()}')
-
-
-    def displayItem(self, job_name: str):
+    def displayItem(self, item_name: str):
         ''' Display the job page and load content for the highlighted job. '''
 
-        job_status = PrintJobTracker(self).getJobDict(job_name)['status']
+        job_status = self.job_tracker.getJobDict(item_name)['status']
 
         # find QStackedWidget for job_status
         stacked_widget = self.window().findChild(
@@ -60,7 +43,7 @@ class JobsOverviewQListWidget(OverviewQListWidget):
                 self.widget_names[job_status]['QStackedWidget'])
 
         # load job into JobContentQListWidget
-        stacked_widget.findChild(JobContentQListWidget).loadContent(job_name)
+        stacked_widget.findChild(JobContentQListWidget).loadContent(item_name)
 
         # show jobPage in stackedWidget
         stacked_widget.setCurrentIndex(1)
@@ -69,35 +52,73 @@ class JobsOverviewQListWidget(OverviewQListWidget):
         tab_widget = self.window().findChild(QTabWidget, 'jobsQTabWidget')
         tab_widget.setCurrentIndex(self.widget_names[job_status]['tab_widget_position'])
 
+class PrintWachtrijJobsOverviewQListWidget(OverviewQListWidget):
 
-class JobContentQListWidget(ContentQListWidget):
+    def __init__(self, parent: QWidget, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
 
-    def __init__(self, *args, **kwargs):
-        ContentQListWidget.__init__(self, *args, **kwargs)
+        self.refresh()
 
-    def loadContent(self, job_name):
+    def refresh(self):
+        ''' Initialise the list widget with jobs. '''
         self.clear()
-        self.current_item_name = job_name
+        self.initialize(PrintJobTracker(self).getStaticAndDynamicJobNamesWithStatus('WACHTRIJ'))
 
-        job_dict = PrintJobTracker(self).getJobDict(job_name)
 
-        if job_dict is not None:
-            self.parent.findChild(QLabel).setText(job_dict['dynamic_job_name'])
+class PrintGeslicedJobsOverviewQListWidget(OverviewQListWidget):
 
-            for file in os.listdir(job_dict['job_folder_global_path']):
+    def __init__(self, parent: QWidget, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
 
-                item = QListWidgetItem()
-                item.setData(1, os.path.join(
-                    job_dict['job_folder_global_path'], file))
+        self.refresh()
 
-                # check if it is a print file, indicate if it is done with an emoticon
-                for print_file_dict in [val for key,val in job_dict['print_files'].items() if file in key]:
-                    # ☑️✅✔️❎
-                    if print_file_dict['done']:
-                        file ='✅ '+file
-                    else:
-                        file ='❎ '+file
+    def refresh(self):
+        ''' Initialise the list widget with jobs. '''
+        self.clear()
+        self.initialize(PrintJobTracker(self).getStaticAndDynamicJobNamesWithStatus('GESLICED'))
 
-                item.setText(file)
-                item.setFont(QFont('Cantarell', 14))
-                self.addItem(item)
+
+
+class PrintPrintenJobsOverviewQListWidget(OverviewQListWidget):
+
+    def __init__(self, parent: QWidget, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        self.refresh()
+
+    def refresh(self):
+        ''' Initialise the list widget with jobs. '''
+        self.clear()
+        self.initialize(PrintJobTracker(self).getStaticAndDynamicJobNamesWithStatus('AAN_HET_PRINTEN'))
+
+
+class PrintVerwerktJobsOverviewQListWidget(OverviewQListWidget):
+
+    def __init__(self, parent: QWidget, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        self.refresh()
+
+    def refresh(self):
+        ''' Initialise the list widget with jobs. '''
+        self.clear()
+        self.initialize(PrintJobTracker(self).getStaticAndDynamicJobNamesWithStatus('VERWERKT'))
+
+
+class PrintAfgekeurdJobsOverviewQListWidget(OverviewQListWidget):
+
+    def __init__(self, parent: QWidget, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        self.refresh()
+
+    def refresh(self):
+        ''' Initialise the list widget with jobs. '''
+        self.clear()
+        self.initialize(PrintJobTracker(self).getStaticAndDynamicJobNamesWithStatus('AFGEKEURD'))
+
+class PrintJobContentQListWidget(JobContentQListWidget):
+
+    def __init__(self, parent: QWidget, *args, **kwargs):
+        super().__init__(parent, PrintJobTracker(self), *args, **kwargs)
+

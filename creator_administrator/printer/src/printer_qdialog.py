@@ -40,35 +40,28 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         attachment = self.temp_make_items[self.make_item_counter]
         attachment_name = self.mail_manager.getAttachmentFileName(attachment)
 
-        if attachment_name.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
-            self.attachmentProgressQLabel.setText(f'Attachment ({self.make_item_counter+1}/{len(self.temp_make_items)})')
-            self.attachmentNameQLabel.setText(attachment_name)
+        self.attachmentProgressQLabel.setText(f'Attachment ({self.make_item_counter+1}/{len(self.temp_make_items)})')
+        self.attachmentNameQLabel.setText(attachment_name)
 
-            # initially hide option for new material
-            self.newMaterialQLabel.setHidden(True)
-            self.newMaterialQLineEdit.setHidden(True)
+        # initially hide option for new material
+        self.newMaterialQLabel.setHidden(True)
+        self.newMaterialQLineEdit.setHidden(True)
 
-            self.materialQComboBox.clear()
-            self.newMaterialQLineEdit.clear()
-            self.amountQLineEdit.clear()
+        self.materialQComboBox.clear()
+        self.newMaterialQLineEdit.clear()
+        self.amountQLineEdit.clear()
 
-            materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()).union(self.new_materials_list))
-            self.materialQComboBox.addItems(materials)
-            self.materialQComboBox.addItem(self.new_material_text)
+        materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()).union(self.new_materials_list))
+        self.materialQComboBox.addItems(materials)
+        self.materialQComboBox.addItem(self.new_material_text)
 
-            # guess the amount
-            match = re.search(r"\d+\.?\d*(?=x_)", attachment_name)
-            if match:
-                self.amountQLineEdit.setText(match.group())
-            else:
-                self.amountQLineEdit.setText('1')
-
+        # guess the amount
+        match = re.search(r"\d+\.?\d*(?=x_)", attachment_name)
+        if match:
+            self.amountQLineEdit.setText(match.group())
         else:
-            file_global_path = os.path.join(self.temp_job_folder_global_path, attachment_name)
-            self.temp_store_files_dict[attachment_name] = {'attachment': attachment,
-                                                     'file_global_path': file_global_path}
-            self.make_item_counter += 1
-            self.loadContent()
+            self.amountQLineEdit.setText('1')
+
 
 
     def collectItemInfo(self):
@@ -103,13 +96,15 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
                             'material': material,
                             'amount': amount,
                             'done': False}
+
         self.temp_store_files_dict[file_name] = {'attachment': attachment,
-                                                     'file_global_path': file_global_path}
+                                                 'target_file_global_path': file_global_path}
         self.make_item_counter += 1
         self.loadContent()
 
     def createJob(self):
         """ Create a print job. """
+
         msg = self.jobs[self.job_counter]
         sender_mail_adress = self.mail_manager.getEmailAddress(msg)
         sender_mail_receive_time = self.mail_manager.getSenderMailReceiveTime(msg)
@@ -157,7 +152,6 @@ class CreatePrintJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
                          *args, **kwargs)
 
         self.skipPushButton.clicked.connect(self.skipJob)
-        self.buttonBox.accepted.connect(self.collectFileInfo)
         self.loadJobContent()
 
 
@@ -167,58 +161,26 @@ class CreatePrintJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
         file_global_path = self.temp_make_items[self.make_item_counter]
         file_name = os.path.basename(file_global_path)
 
-        if file_name.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
-            self.fileProgressQLabel.setText(f'File({self.make_item_counter+1}/{len(self.temp_make_items)})')
-            self.fileNameQLabel.setText(file_name)
+        self.fileProgressQLabel.setText(f'File({self.make_item_counter+1}/{len(self.temp_make_items)})')
+        self.fileNameQLabel.setText(file_name)
 
-            self.materialQComboBox.clear()
-            self.newMaterialQLineEdit.clear()
-            self.amountQLineEdit.clear()
+        self.materialQComboBox.clear()
+        self.newMaterialQLineEdit.clear()
+        self.amountQLineEdit.clear()
 
-            materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()).union(self.new_materials_list))
-            self.materialQComboBox.addItems(materials)
-            self.materialQComboBox.addItem(self.new_material_text)
+        materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()).union(self.new_materials_list))
+        self.materialQComboBox.addItems(materials)
+        self.materialQComboBox.addItem(self.new_material_text)
 
-            # guess the amount
-            match = re.search(r"\d+\.?\d*(?=x_)", file_name)
-            if match:
-                self.amountQLineEdit.setText(match.group())
-            else:
-                self.amountQLineEdit.setText('1')
-
+        # guess the amount
+        match = re.search(r"\d+\.?\d*(?=x_)", file_name)
+        if match:
+            self.amountQLineEdit.setText(match.group())
         else:
-            file_global_path = os.path.join(self.temp_job_folder_global_path, file_name)
-            self.temp_store_files_dict[file_name] = {'source_file_global_path': file_global_path,
-                                             'target_file_global_path': self.temp_make_items[self.make_item_counter]}
-
-            if self.make_item_counter+1 >= len(self.jobs):
-                self.createPrintJob()
-                self.job_counter += 1
-
-                if self.job_counter >= len(self.jobs):
-                    self.loadJobContent()
-            else:
-                self.loadItemContent()
+            self.amountQLineEdit.setText('1')
 
 
-    def createJob(self):
-        """ Create a print job. """
-
-        self.job_tracker.addJob(self.temp_job_name,
-                                'no sender name',
-                                self.temp_job_folder_global_path,
-                                self.temp_make_files_dict)
-
-        if not os.path.exists(self.temp_job_folder_global_path):
-            os.mkdir(self.temp_job_folder_global_path)
-
-        for item_dict in self.temp_store_files_dict.values():
-            copy_item(item_dict['source_file_global_path'], item_dict['target_file_global_path'])
-
-        TimedMessage(gv, self, text=f'Print job {self.temp_job_name} created')
-
-
-    def collectFileInfo(self):
+    def collectItemInfo(self):
         ''' Collect material and amount info. '''
         material = self.materialQComboBox.currentText()
         if material == self.new_material_text:
@@ -252,20 +214,3 @@ class CreatePrintJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
                                              'target_file_global_path': target_file_global_path}
         self.make_item_counter += 1
         self.loadContent()
-
-    def createPrintJob(self):
-        """ Create a print job. """
-
-        self.job_tracker.addJob(self.temp_job_name,
-                                'No Sender Name',
-                                self.temp_job_folder_global_path,
-                                self.temp_laser_cut_files_dict)
-
-        if not os.path.exists(self.temp_job_folder_global_path):
-            os.mkdir(self.temp_job_folder_global_path)
-
-        # save the attachments
-        for file_dict in self.temp_files_dict.values():
-            copy_item(file_dict['source_file_global_path'], file_dict['target_file_global_path'])
-
-        TimedMessage(gv, self, text=f"Print job {self.temp_job_name} created")

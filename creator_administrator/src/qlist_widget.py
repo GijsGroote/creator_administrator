@@ -1,10 +1,13 @@
+import os
 import abc
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QKeySequence, QShortcut, QFont
-from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QLabel
+from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QLabel, QWidget
 
-from src.directory_functions import open_file, open_folder
+from src.directory_functions import open_file
+from src.tab_widget import JobsQTabWidget
+from src.job_tracker import JobTracker
 
 class OverviewQListWidget(QListWidget):
     ''' Overview of multiple items in a list. In most subclasses
@@ -22,6 +25,13 @@ class OverviewQListWidget(QListWidget):
         ''' Refresh displayed items. '''
         self.clear()
         self.initialize(self.getItemNames())
+
+    def displayItem(self, item_name: str):
+        ''' Display the job content page. '''
+        self.parent().parent().setCurrentIndex(1)
+        # find child QListWidget finds the JobContentQListWidget
+        self.parent().parent().currentWidget().findChild(QListWidget).loadContent(item_name)
+
 
     def storeObjectNameInit(self):
         ''' Store the object name and initialize. '''
@@ -74,10 +84,6 @@ class OverviewQListWidget(QListWidget):
     def getItemNames(self) -> list:
         ''' Return a list of names or tuples. '''
 
-    @abc.abstractmethod
-    def displayItem(self, *args):
-        ''' Display the item page and load its content for the highlighted job. '''
-
 class ContentQListWidget(QListWidget):
 
     def __init__(self, parent, *args, **kwargs):
@@ -107,3 +113,37 @@ class ContentQListWidget(QListWidget):
     @abc.abstractmethod
     def loadContent(self, item_name):
         ''' load the content. '''
+
+class JobContentQListWidget(ContentQListWidget):
+
+    def __init__(self, parent: QWidget, job_tracker: JobTracker, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        self.job_tracker = job_tracker
+
+    def loadContent(self, item_name):
+        self.clear()
+        self.current_item_name = item_name
+
+        job_dict = self.job_tracker.getJobDict(item_name)
+
+        if job_dict is not None:
+            self.parent().findChild(QLabel).setText(job_dict['dynamic_job_name'])
+
+            for file in os.listdir(job_dict['job_folder_global_path']):
+
+                item = QListWidgetItem()
+                item.setData(1, os.path.join(
+                    job_dict['job_folder_global_path'], file))
+
+                # check if it is a laser file, indicate if it is done with an emoticon
+                for laser_file_dict in [val for key,val in job_dict['make_files'].items() if file in key]:
+                    # ☑️✅✔️❎
+                    if laser_file_dict['done']:
+                        file ='✅ '+file
+                    else:
+                        file ='❎ '+file
+
+                item.setText(file)
+                item.setFont(QFont('Cantarell', 14))
+                self.addItem(item)

@@ -185,7 +185,7 @@ class OptionsQPushButton(JobsQPushButton):
                 copy_item(file_global_path, os.path.join(target_folder_global_path, file_name))
         else:
             job_name = self.getCurrentItemName()
-            print_file_dict =  PrintJobTracker(self).getPrintFilesDict(job_name)
+            print_file_dict =  PrintJobTracker(self).getMakeFilesDict(job_name)
                        
             for file_key, file_dict in print_file_dict.items():
                 source_item_global_path = file_dict['file_global_path']

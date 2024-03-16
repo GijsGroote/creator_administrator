@@ -26,7 +26,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../figures/logo.ico</normaloff>../../figures/logo.ico</iconset>
+    <normaloff>../../../../../../../../figures/logo.ico</normaloff>../../../../../../../../figures/logo.ico</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="sizePolicy">
@@ -71,7 +71,7 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4">
               <item>
-               <widget class="QListWidget" name="allJobsQListWidget">
+               <widget class="PrintAllJobsOverviewQListWidget" name="allJobsQListWidget">
                 <property name="font">
                  <font>
                   <pointsize>14</pointsize>
@@ -104,12 +104,12 @@
            </sizepolicy>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="jobsListPage_2">
            <layout class="QVBoxLayout" name="verticalLayout_18">
             <item>
-             <widget class="QListWidget" name="wachtrijJobsQListWidget"/>
+             <widget class="PrintWachtrijJobsOverviewQListWidget" name="wachtrijJobsQListWidget"/>
             </item>
            </layout>
           </widget>
@@ -158,7 +158,7 @@
                </layout>
               </item>
               <item>
-               <widget class="QListWidget" name="listWidget_10">
+               <widget class="PrintJobContentQListWidget" name="listWidget_10">
                 <property name="toolTip">
                  <string>Shortcut: Esc</string>
                 </property>
@@ -230,12 +230,12 @@
         <item>
          <widget class="QStackedWidget" name="geslicedQStackedWidget">
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="jobListPage_3">
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
-             <widget class="QListWidget" name="geslicedJobsQListWidget">
+             <widget class="PrintGeslicedJobsOverviewQListWidget" name="geslicedJobsQListWidget">
               <property name="font">
                <font>
                 <pointsize>14</pointsize>
@@ -287,7 +287,7 @@
                </layout>
               </item>
               <item>
-               <widget class="QListWidget" name="listWidget_13"/>
+               <widget class="PrintJobContentQListWidget" name="listWidget_13"/>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_24">
@@ -334,14 +334,14 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_12">
         <item>
-         <widget class="QStackedWidget" name="stackedWidget_2">
+         <widget class="QStackedWidget" name="printenQStackedWidget">
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="jobListPage_4">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
-             <widget class="QListWidget" name="printenJobsQListWidget">
+             <widget class="PrintPrintenJobsOverviewQListWidget" name="printenJobsQListWidget">
               <property name="font">
                <font>
                 <pointsize>14</pointsize>
@@ -393,7 +393,7 @@
                </layout>
               </item>
               <item>
-               <widget class="QListWidget" name="listWidget_14"/>
+               <widget class="PrintJobContentQListWidget" name="listWidget_14"/>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_27">
@@ -439,12 +439,12 @@
         <item>
          <widget class="QStackedWidget" name="verwerktQStackedWidget">
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="jobsListPage_5">
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
-             <widget class="QListWidget" name="verwerktJobsQListWidget"/>
+             <widget class="PrintVerwerktJobsOverviewQListWidget" name="verwerktJobsQListWidget"/>
             </item>
            </layout>
           </widget>
@@ -490,7 +490,7 @@
                </layout>
               </item>
               <item>
-               <widget class="QListWidget" name="listWidget_8"/>
+               <widget class="PrintJobContentQListWidget" name="listWidget_8"/>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_8">
@@ -535,12 +535,12 @@
         <item>
          <widget class="QStackedWidget" name="afgekeurdQStackedWidget">
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="jobsListPage_6">
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <widget class="QListWidget" name="afgekeurdJobsQListWidget"/>
+             <widget class="PrintAfgekeurdJobsOverviewQListWidget" name="afgekeurdJobsQListWidget"/>
             </item>
            </layout>
           </widget>
@@ -586,7 +586,7 @@
                </layout>
               </item>
               <item>
-               <widget class="QListWidget" name="listWidget_9"/>
+               <widget class="PrintJobContentQListWidget" name="listWidget_9"/>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_9">
@@ -753,6 +753,41 @@
    <class>PrintKlaarQPushButton</class>
    <extends>QPushButton</extends>
    <header>printer_button.h</header>
+  </customwidget>
+  <customwidget>
+   <class>PrintAllJobsOverviewQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>printer_qlist_widget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>PrintWachtrijJobsOverviewQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>printer_qlist_widget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>PrintGeslicedJobsOverviewQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>printer_qlist_widget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>PrintPrintenJobsOverviewQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>printer_qlist_widget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>PrintVerwerktJobsOverviewQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>printer_qlist_widget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>PrintAfgekeurdJobsOverviewQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>printer_qlist_widget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>PrintJobContentQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>printer_qlist_widget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

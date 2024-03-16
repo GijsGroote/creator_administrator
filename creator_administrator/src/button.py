@@ -19,17 +19,10 @@ class JobsQPushButton(QPushButton):
 
 
     def refreshAllQListWidgets(self):
-
         self.parent().parent().setCurrentIndex(0)    # show list of jobs in tabs
-        print(f"this should be tabs {self.parent().parent().objectName()}")
-
-        print(f"well well well , could you refresh//")
 
         qlist_widgets = self.parent().window().findChildren(OverviewQListWidget)
-        print(f"the widgets  {self.window().objectName()} found with windws {qlist_widgets}")
-
         qlist_widgets = self.parent().parent().parent().findChildren(OverviewQListWidget)
-        print(f"the widget found {self.parent().parent().parent().objectName()} as {qlist_widgets}")
         # qlist_widgets = self.parent().parent().parent().findChildren(JobsOverviewQListWidget)
 
         # refresh all QListWidgets that contain jobs

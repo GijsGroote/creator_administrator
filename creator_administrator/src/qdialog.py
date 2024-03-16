@@ -12,6 +12,8 @@ from PyQt6.uic import loadUi
 
 from src.mail_manager import MailManager
 from src.job_tracker import JobTracker
+from src.qmessagebox import TimedMessage
+from src.directory_functions import copy_item
 
 
 class CreateJobsQDialog(QDialog):
@@ -120,19 +122,35 @@ class CreateJobsFromMailQDialog(CreateJobsQDialog):
         ''' Load content of mail into dialog. '''
 
         job_msg = self.jobs[self.job_counter]
-
         self.temp_make_items = self.mail_manager.getAttachments(job_msg)
         self.temp_sender_name = self.mail_manager.getSenderName(job_msg)
-
-        self.temp_make_files_dict = {}
-        self.temp_store_files_dict = {}
-
-        self.mailFromQLabel.setText(self.temp_sender_name)
-        self.mailProgressQLabel.setText(f'Mail ({self.job_counter+1}/{len(self.jobs)})')
 
         self.temp_job_name = self.job_tracker.makeJobNameUnique(self.temp_sender_name)
         self.temp_job_folder_name = str(datetime.date.today().strftime('%d-%m'))+'_'+self.temp_job_name
         self.temp_job_folder_global_path = os.path.join(os.path.join(self.gv['JOBS_DIR_HOME'], self.temp_job_folder_name))
+
+        temp_make_items = []
+        self.temp_store_files_dict = {}
+
+        self.temp_make_files_dict = {}
+        self.temp_store_files_dict = {}
+
+        attachment = self.temp_make_items[self.make_item_counter]
+        attachment_name = self.mail_manager.getAttachmentFileName(attachment)
+
+        for attachment in self.mail_manager.getAttachments(job_msg):
+            attachment_file_name = self.mail_manager.getAttachmentFileName(attachment)
+            if attachment_file_name.endswith(self.gv['ACCEPTED_EXTENSIONS']):
+                temp_make_items.append(attachment)
+            else:
+                target_file_global_path = os.path.join(self.temp_job_folder_global_path, attachment_name)
+                self.temp_store_files_dict[attachment_name] = {'attachment': attachment,
+                                             'target_file_global_path': target_file_global_path}
+
+        self.temp_make_items = temp_make_items
+
+        self.mailFromQLabel.setText(self.temp_sender_name)
+        self.mailProgressQLabel.setText(f'Mail ({self.job_counter+1}/{len(self.jobs)})')
 
         mail_body = self.mail_manager.getMailBody(job_msg)
         if isinstance(mail_body, bytes):
@@ -156,11 +174,9 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
                  job_name_list,
                  files_global_paths_list,
                  *args,
+                 update_existing_job=False,
+                 job_dict_list=None,
                  **kwargs):
-
-        assert len(job_name_list) == len(files_global_paths_list),\
-            f'length of job name list: {len(job_name_list)} should'\
-            f'be equal to the files_global_path_list: {len(files_global_paths_list)}'
 
         super().__init__(parent,
                          gv,
@@ -169,29 +185,80 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
                          *args,
                          **kwargs)
 
+        assert len(job_name_list) == len(files_global_paths_list),\
+            f'job_name_list and files_global_paths_list are not equal length {len(job_name_list)} and {len(files_global_paths_list)}'
+
+        if update_existing_job:
+            assert job_dict_list is not None, 'job_dict_list is None'
+            assert len(job_dict_list) == len(job_name_list),\
+                f'job_dict_list and job_name_list are not equal length {len(job_dict_list)} and {len(job_name_list)}'
+
         self.jobs = job_name_list
         self.files_global_paths_list = files_global_paths_list
+        self.update_existing_job = update_existing_job
+        self.job_dict_list = job_dict_list
 
     def loadJobContent(self):
-        ''' Load content of mail into dialog. '''
+        ''' Load content into dialog. '''
 
-        self.temp_job_name = self.job_tracker.makeJobNameUnique(self.jobs[self.job_counter])
-        self.temp_make_items = self.files_global_paths_list[self.job_counter]
+        if self.update_existing_job:
+            self.temp_job_name = self.jobs[self.job_counter]
+            self.temp_job_dict = self.job_dict_list[self.job_counter]
 
-        self.temp_make_files_dict = {}
+            self.temp_make_files_dict = self.temp_job_dict['make_files']
+            self.temp_job_folder_name = os.path.basename(self.temp_job_dict['job_folder_global_path'])
+            self.temp_job_folder_global_path = self.temp_job_dict['job_folder_global_path']
+
+        else:
+            self.temp_job_name = self.job_tracker.makeJobNameUnique(self.jobs[self.job_counter])
+            self.temp_job_dict = None
+            self.temp_make_files_dict = {}
+
+            self.temp_job_folder_name = str(datetime.date.today().strftime('%d-%m'))+'_'+self.temp_job_name
+            self.temp_job_folder_global_path = os.path.join(os.path.join(self.gv['JOBS_DIR_HOME'], self.temp_job_folder_name))
+
+        temp_make_items = []
         self.temp_store_files_dict = {}
+
+        for file_global_path in self.files_global_paths_list[self.job_counter]:
+            if file_global_path.endswith(self.gv['ACCEPTED_EXTENSIONS']):
+                temp_make_items.append(file_global_path)
+            else:
+                store_file_name = os.path.basename(file_global_path)
+                target_file_global_path = os.path.join(self.temp_job_folder_global_path, store_file_name)
+                self.temp_store_files_dict[store_file_name] = {'source_file_global_path': file_global_path,
+                                             'target_file_global_path': target_file_global_path}
+
+        self.temp_make_items = temp_make_items
 
         self.jobNameQLabel.setText(self.temp_job_name)
         self.jobProgressQLabel.setText(f'Job ({self.job_counter+1}/{len(self.jobs)})')
 
-        self.temp_job_folder_name = str(datetime.date.today().strftime('%d-%m'))+'_'+self.temp_job_name
-        self.temp_job_folder_global_path = os.path.join(os.path.join(self.gv['JOBS_DIR_HOME'], self.temp_job_folder_name))
         self.loadItemContent()
 
     @abc.abstractmethod
     def loadItemContent(self):
         ''' Load content of mail item into dialog. '''
 
+    def createJob(self):
+        """ Create a job. """
+
+        if self.temp_job_dict is None:
+            self.job_tracker.addJob(self.temp_job_name,
+                                    'no sender name',
+                                    self.temp_job_folder_global_path,
+                                    self.temp_make_files_dict)
+        else:
+            self.job_tracker.updateJob(self.temp_job_dict['job_name'], self.temp_job_dict)
+
+
+        if not os.path.exists(self.temp_job_folder_global_path):
+            os.mkdir(self.temp_job_folder_global_path)
+
+        for item_dict in self.temp_store_files_dict.values():
+            copy_item(item_dict['source_file_global_path'], item_dict['target_file_global_path'])
+
+        TimedMessage(self.gv, self, text=f'Print job {self.temp_job_name} created')
 
 class SelectQDialog(QDialog):
     """ Select file dialog. """
