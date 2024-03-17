@@ -35,7 +35,7 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <layout class="QHBoxLayout" name="horizontalLayout_7">
     <item>
      <widget class="JobsQTabWidget" name="jobsQTabWidget">
       <property name="sizePolicy">
@@ -194,7 +194,20 @@
                    <string>Gesliced</string>
                   </property>
                   <property name="shortcut">
-                   <string>Ctrl+K</string>
+                   <string>Ctrl+G</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="PrintAangezetQPushButton" name="pushButton_4">
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Ctrl+k&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                  <property name="text">
+                   <string>Print Aangezet</string>
+                  </property>
+                  <property name="shortcut">
+                   <string>Ctrl+P</string>
                   </property>
                  </widget>
                 </item>
@@ -309,6 +322,9 @@
                   <property name="text">
                    <string>Print Aangezet</string>
                   </property>
+                  <property name="shortcut">
+                   <string>Ctrl+P</string>
+                  </property>
                  </widget>
                 </item>
                 <item>
@@ -411,6 +427,9 @@
                  <widget class="PrintKlaarQPushButton" name="afgekeurdOptionsQPushButton_6">
                   <property name="text">
                    <string>Print Klaar</string>
+                  </property>
+                  <property name="shortcut">
+                   <string>Ctrl+K</string>
                   </property>
                  </widget>
                 </item>

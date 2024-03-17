@@ -113,6 +113,7 @@ class JobContentQListWidget(ContentQListWidget):
         self.clear()
         self.current_item_name = item_name
 
+
         job_dict = self.job_tracker.getJobDict(item_name)
 
         if job_dict is not None:

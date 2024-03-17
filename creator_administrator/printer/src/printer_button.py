@@ -5,8 +5,9 @@ from PyQt6.QtWidgets import QWidget
 
 from src.button import JobsQPushButton, OptionsQPushButton
 from src.directory_functions import delete_directory_content, copy_item
-from src.qmessagebox import TimedMessage, WarningQMessageBox
+from src.qmessagebox import TimedMessage, WarningQMessageBox, YesOrNoMessageBox 
 from src.threaded_mail_manager import ThreadedMailManager
+from src.qdialog import SelectOptionsQDialog
 
 from global_variables import gv
 from printer_job_tracker import PrintJobTracker
@@ -20,8 +21,22 @@ class GeslicedQPushButton(JobsQPushButton):
         self.clicked.connect(self.on_click)
 
     def on_click(self):
-        ''' TODO '''
-        pass
+        ''' Update Job status to GESLICED. '''
+
+        job_name = self.getCurrentItemName()
+        job_tracker = PrintJobTracker(self)
+
+        gcode_files = [gcode_file for
+                       gcode_file in os.listdir(job_tracker.getJobFolderGlobalPathFromJobName(job_name))
+                       if gcode_file.lower().endswith('.gcode')]
+
+        if len(gcode_files) == 0:
+            WarningQMessageBox(self, gv, 'warning! no .gcode files detected, slice .stl files first')
+
+        else:
+            job_tracker.updateJobStatus(job_name, 'GESLICED')
+            self.window().refreshAllWidgets()
+            self.parent().parent().setCurrentIndex(0)
 
 class PrintAangezetQPushButton(JobsQPushButton):
 
@@ -30,8 +45,49 @@ class PrintAangezetQPushButton(JobsQPushButton):
         self.clicked.connect(self.on_click)
 
     def on_click(self):
-        ''' TODO '''
-        pass
+        ''' Update Job status to AAN_HET_PRINTEN. '''
+
+        job_name = self.getCurrentItemName()
+        job_tracker = PrintJobTracker(self)
+
+        job_folder_global_path = job_tracker.getJobFolderGlobalPathFromJobName(job_name)
+        gcode_files_name_and_global_path = []
+
+        for job_file in os.listdir(job_folder_global_path):
+            if job_file.endswith('.gcode'):
+                gcode_files_name_and_global_path.append((job_file, os.path.join(job_folder_global_path, job_file), 'done'))
+
+
+        if len(gcode_files_name_and_global_path) <= 1:
+            job_tracker.updateJobStatus(job_name, 'AAN_HET_PRINTEN')
+            self.window().refreshAllWidgets()
+            self.parent().parent().setCurrentIndex(0)
+
+        elif len(gcode_files_name_and_global_path) > 1:
+
+            if YesOrNoMessageBox(self, text=f"Is the entire print job printing/printed?").answer(): 
+                job_tracker.updateJobStatus(job_name, 'AAN_HET_PRINTEN')
+                self.window().refreshAllWidgets()
+                self.parent().parent().setCurrentIndex(0)
+
+            else:
+                dialog = SelectOptionsQDialog(self, gv, gcode_files_name_and_global_path, question='Select which .gcode files should be printed later')
+
+                if dialog.exec() == 1:
+                    selected_gcode_global_path = []
+                    for item in dialog.optionsQListWidget.selectedItems():
+                        selected_gcode_global_path.append(item.data(1))
+
+                    if len(selected_gcode_global_path) == len(gcode_files_name_and_global_path):
+                        # all gcode should be printed later, do nothing
+                        return
+                    else:
+                        # split the print job
+
+
+
+
+
 
 
 class PrintKlaarQPushButton(JobsQPushButton):
@@ -42,6 +98,8 @@ class PrintKlaarQPushButton(JobsQPushButton):
         self.clicked.connect(self.on_click)
  
     def on_click(self):
+        ''' Update Job status to VERWERKT. '''
+
         job_name = self.getCurrentItemName()
         job_tracker = PrintJobTracker(self)
         
@@ -70,6 +128,8 @@ class PrintAfgekeurdQPushButton(JobsQPushButton):
         self.threadpool = gv['THREAD_POOL']
 
     def on_click(self):
+        ''' Update Job status to AFGEKEURD. '''
+
         job_name = self.getCurrentItemName()
         job_tracker = PrintJobTracker(self)
         job_tracker.updateJobStatus(job_name, 'AFGEKEURD')
@@ -99,30 +159,29 @@ class PrintOptionsQPushButton(OptionsQPushButton):
 
         mail_menu = None
 
+        self.menu.addAction('Open in File Explorer', self.openInFileExplorer)
+        self.menu.addAction('Delete Job', self.deleteJob)
+
         if self.object_name == 'wachtrijOptionsQPushButton':
-            self.menu.addAction('Open in File Explorer', self.openInFileExplorer)
             mail_menu = self.menu.addMenu('Send Mail')
-            self.menu.addAction('Delete Job', self.deleteJob)
+            self.menu.addAction('Move to Verwerkt', self.moveJobToVerwerkt)
 
         elif self.object_name == 'geslicedOptionsQPushButton':
-            pass
+            self.menu.addAction('Move to Wachtrij', self.moveJobToWachtrij)
 
         elif self.object_name == 'printenOptionsQPushButton':
-            pass
+            self.menu.addAction('Move to Wachtrij', self.moveJobToWachtrij)
+            self.menu.addAction('Move to Gesliced', self.moveJobToGesliced)
 
         elif self.object_name == 'verwerktOptionsQPushButton':
             self.menu.addAction('Move to Wachtrij', self.moveJobToWachtrij)
             self.menu.addAction('Move to Afgekeurd', self.moveJobToAfgekeurd)
             mail_menu = self.menu.addMenu('Send Mail')
-            self.menu.addAction('Open in File Explorer', self.openInFileExplorer)
-            self.menu.addAction('Delete Job', self.deleteJob)
 
         elif self.object_name == 'afgekeurdOptionsQPushButton':
             self.menu.addAction('Move to Wachtrij', self.moveJobToWachtrij)
             self.menu.addAction('Move to Verwerkt', self.moveJobToVerwerkt)
             mail_menu = self.menu.addMenu('Send Mail')
-            self.menu.addAction('Open in File Explorer', self.openInFileExplorer)
-            self.menu.addAction('Delete Job', self.deleteJob)
 
         else:
             raise ValueError(f'could not identify {self.object_name}')
@@ -134,6 +193,8 @@ class PrintOptionsQPushButton(OptionsQPushButton):
 
         self.setMenu(self.menu)
 
+    def moveJobToGesliced(self):
+        self.moveJobTo('GESLICED')
 
     def copyMakeFilesTo(self):
         '''Copy the make files from a job to the todo folder. '''

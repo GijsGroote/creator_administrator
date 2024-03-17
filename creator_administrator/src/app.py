@@ -34,6 +34,8 @@ class MainWindow(QMainWindow):
         # shortcut to close the application
         QShortcut(QKeySequence("Ctrl+Q"), self).activated.connect(self.close)
 
+        QShortcut(QKeySequence("Ctrl+R"), self).activated.connect(self.refreshAllWidgets)
+
     
 
     def keyPressEvent(self, event):

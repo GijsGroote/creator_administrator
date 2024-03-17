@@ -339,12 +339,13 @@ class FolderSelectQDialog(SelectQDialog):
 class SelectOptionsQDialog(QDialog):
     ''' Select one of the options. '''
 
-    def __init__(self, parent: QWidget, gv: dict, options: list, *args, **kwargs):
+    def __init__(self, parent: QWidget, gv: dict, options: list, *args, question='Select Options',  **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.gv = gv
 
 
-        loadUi(os.path.join(self.gv['GLOBAL_UI_DIR'], 'select_done_dialog.ui'), self)
+        loadUi(os.path.join(self.gv['GLOBAL_UI_DIR'], 'select_options_dialog.ui'), self)
+        self.label.setText(question)
 
         # shortcuts on arrow keys
         QShortcut(QKeySequence(Qt.Key.Key_Up), self).activated.connect(self.toPreviousRow)

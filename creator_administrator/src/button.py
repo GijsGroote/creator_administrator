@@ -14,7 +14,7 @@ class JobsQPushButton(QPushButton):
     ''' Parent class for all buttons that update job status
             such as laser klaar, gesliced. '''
 
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent: QWidget, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
     def getCurrentItemName(self) -> str:
@@ -60,6 +60,8 @@ class OptionsQPushButton(JobsQPushButton):
         self.job_tracker.markAllFilesAsDone(job_name=job_name,
                                                  done=False)
         self.moveJobTo('WACHTRIJ')
+        self.window().refreshAllWidgets()
+        self.parent().parent().setCurrentIndex(0)
 
     def moveJobToAfgekeurd(self):
         self.moveJobTo('AFGEKEURD')
@@ -71,6 +73,7 @@ class OptionsQPushButton(JobsQPushButton):
         job_name = self.getCurrentItemName()
         self.job_tracker.updateJobStatus(job_name, new_status)
         self.window().refreshAllWidgets()
+        self.parent().parent().setCurrentIndex(0)
 
     def openInFileExplorer(self):
         job_folder_global_path = self.job_tracker.getJobDict(

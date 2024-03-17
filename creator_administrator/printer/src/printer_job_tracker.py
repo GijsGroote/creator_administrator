@@ -22,6 +22,7 @@ class PrintJobTracker(JobTracker):
 
     def __init__(self, parent):
         super().__init__(parent, gv)
+        self.job_keys.append('split_job')
 
         self.checkTrackerFileHealth()
 
@@ -55,7 +56,8 @@ class PrintJobTracker(JobTracker):
                             'dynamic_job_name': str(datetime.now().strftime("%d-%m"))+'_'+job_name,
                             'status': status,
                             'created_on_date': str(datetime.now().strftime("%d-%m-%Y")),
-                            'make_files': make_files}
+                            'make_files': make_files,
+                            'split_job': False}
 
             if sender_mail_adress is not None:
                 add_job_dict['sender_mail_adress'] = str(sender_mail_adress)

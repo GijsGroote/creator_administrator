@@ -76,7 +76,7 @@ class PrintMainWindow(MainWindow):
             jobs_names_list = []
 
             if not os.path.exists(folder_global_path):
-                WarningQMessageBox(gv, self, text='<Folder> does not exist')
+                WarningQMessageBox(self, gv, text='<Folder> does not exist')
                 return
 
             for subfolder in os.listdir(folder_global_path):
@@ -89,7 +89,7 @@ class PrintMainWindow(MainWindow):
                     for item in os.listdir(subfolder_global_path):
                         item_global_path = os.path.join(subfolder_global_path, item)
                         if os.path.isdir(item_global_path):
-                            WarningQMessageBox(gv, self, text=f'{subfolder_global_path} contains a folder '\
+                            WarningQMessageBox(self, gv, text=f'{subfolder_global_path} contains a folder '\
                                 f'{item_global_path} which is skipped' )
                             continue
 
@@ -101,7 +101,7 @@ class PrintMainWindow(MainWindow):
                         folders_global_paths_list.append(files_in_subfolder_global_paths)
                         jobs_names_list.append(project_name+'_'+os.path.basename(subfolder))
                     else:
-                        WarningQMessageBox(gv, self, text=f'No print file found in {subfolder_global_path}'\
+                        WarningQMessageBox(self, gv, text=f'No print file found in {subfolder_global_path}'\
                                 f' skip this subfolder')
             
             if len(jobs_names_list) > 0:

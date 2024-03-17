@@ -50,7 +50,7 @@ class ThreadedMailManager():
 
         if len(warnings) != 0:
             for warning in warnings:
-                WarningQMessageBox(self.gv, self.parent, text=warning)
+                WarningQMessageBox(self.parent, self.gv, text=warning)
 
         if len(valid_msgs) == 0:
             InfoQMessageBox(parent=self.parent, text='No new valid job request in mail inbox')
