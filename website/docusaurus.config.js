@@ -8,12 +8,11 @@ import {themes as prismThemes} from 'prism-react-renderer';
 
 const makerName = "GijsGroote";
 const repoName = "creator_administrator";
-// const baseUrl = /${projectName}/`;
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Creator Administrator',
-  tagline: 'Making stuff is cool',
+  tagline: 'Dinosaurs are cool',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
@@ -24,8 +23,8 @@ const config = {
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: `/${makerName}/`, // Usually your GitHub org/user name.
-  projectName: `/${repoName}/`, // Usually your repo name.
+  organizationName: 'facebook', // Usually your GitHub org/user name.
+  projectName: 'docusaurus', // Usually your repo name.
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -47,8 +46,7 @@ const config = {
           sidebarPath: './sidebars.js',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/${makerName}/${repoName}',
+                    editUrl: `https://github.com/${makerName}/${repoName}/tree/main/`,
         },
         theme: {
           customCss: './src/css/custom.css',
@@ -75,8 +73,9 @@ const config = {
             position: 'left',
             label: 'Tutorial',
           },
+          {to: '/blog', label: 'Blog', position: 'left'},
           {
-            href: 'https://github.com/GijsGroote/creator_administrator',
+            href: 'https://github.com/facebook/docusaurus',
             label: 'GitHub',
             position: 'right',
           },
@@ -116,12 +115,12 @@ const config = {
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/GijsGroote/creator_administrator',
+                href: 'https://github.com/facebook/docusaurus',
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Creator Administrator, Inc. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
       },
       prism: {
         theme: prismThemes.github,
