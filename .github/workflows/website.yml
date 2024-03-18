@@ -1,6 +1,7 @@
 #name: Repo Website
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on: [push]
+# (...)
 jobs:
   deploy:
     environment:
@@ -8,7 +9,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-     - name: Checkout
+      - name: Checkout
         uses: actions/checkout@v3
       # 👇 Build steps
       - name: Set up Node.js
