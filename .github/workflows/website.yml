@@ -11,13 +11,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       # 👇 Build steps
+      - name: change directory
+        run: cd website/
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
           cache: npm
-      - name: change directory
-        run: cd website/
       - name: Install dependencies
         run: npm install 
       - name: Build
