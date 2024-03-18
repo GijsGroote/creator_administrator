@@ -8,20 +8,18 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+     - name: Checkout
         uses: actions/checkout@v3
       # 👇 Build steps
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          cache: npm
+          cache: yarn
       - name: Install dependencies
-        run: npm install 
-      - name: change directory
-        run: cd website/
+        run: yarn install --frozen-lockfile --non-interactive
       - name: Build
-        run: npm run start
+        run: yarn build
       # 👆 Build steps
       - name: Setup Pages
         uses: actions/configure-pages@v3
