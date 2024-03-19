@@ -207,8 +207,6 @@ class PrintJobTracker(JobTracker):
                         job_dict['sender_mail_adress'] = MailManager(gv).getEmailAddress(mail_item_list[0])
                         job_dict['sender_mail_receive_time'] = MailManager(gv).getSenderMailReceiveTime(mail_item_list[0])
 
-                        print(f"jaja job_dict {job_dict}")
-
                     job_dict_list.append(job_dict)
 
                 from printer_qdialog import CreatePrintJobsFromFileSystemQDialog
@@ -232,9 +230,10 @@ class PrintJobTracker(JobTracker):
     def addNewFilestoTrackerFile(self):
         self.readTrackerFile()
 
-        for job_folder_global_path in os.listdir(gv['JOBS_DIR_HOME']):
+        for job_folder_name in os.listdir(gv['JOBS_DIR_HOME']):
+            job_folder_global_path = os.path.join(gv['JOBS_DIR_HOME'], job_folder_name)
 
-            job_dict = self.jobGlobalPathToTrackerJobDict(self.tracker_dict, job_folder_global_path)
+            job_key, job_dict = self.jobGlobalPathToTrackerJobDict(self.tracker_dict, job_folder_global_path)
 
             # check if jobs are incomplete and must be repaired
             if not self.IsJobDictAndFileSystemInSync(job_dict, job_folder_global_path):
@@ -243,9 +242,10 @@ class PrintJobTracker(JobTracker):
         self.writeTrackerFile()
 
 
-
     def IsJobDictAndFileSystemInSync(self, job_dict, job_folder_global_path):
         ''' Check if all files are in both the tracker and the file system. '''
+        print(f"jaja {job_dict}")
+
         file_system_print_file_names = [file_name for file_name in os.listdir(job_folder_global_path) if file_name.lower().endswith(gv['ACCEPTED_EXTENSIONS'])]
         tracker_print_file_names = [os.path.basename(print_file_dict['file_global_path']) for print_file_dict in job_dict['make_files'].values()]
 

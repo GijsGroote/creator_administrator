@@ -39,39 +39,34 @@ class JobTracker:
         """ Add a job to the tracker. """
 
     def readTrackerFile(self):
-
+        ''' Read the tracker file. '''
         with open(self.tracker_file_path, 'r' ) as tracker_file:
             self.tracker_dict = json.load(tracker_file)
 
     def writeTrackerFile(self):
-
+        ''' Write the tracker file. '''
         with open(self.tracker_file_path, 'w' ) as tracker_file:
             json.dump(self.tracker_dict, tracker_file, indent=4)
 
     def deleteJob(self, job_name: str):
         """ Delete a job from the job tracker. """
 
-        with open(self.tracker_file_path, 'r' ) as tracker_file:
-            tracker_dict = json.load(tracker_file)
+        self.readTrackerFile()
 
-        deleted_job_dict = tracker_dict.pop(job_name)
+        deleted_job_dict = self.tracker_dict.pop(job_name)
         delete_item(self.parent, deleted_job_dict['job_folder_global_path'])
-        
-        with open(self.tracker_file_path, 'w' ) as tracker_file:
-            json.dump(tracker_dict, tracker_file, indent=4)
+
+        self.writeTrackerFile()
 
     def updateJob(self, job_name: str, job_dict: dict):
         ''' Update an existing job. '''
 
-        with open(self.tracker_file_path, 'r' ) as tracker_file:
-            tracker_dict = json.load(tracker_file)
+        self.readTrackerFile()
 
-        assert job_name in tracker_dict, f'could not find {job_name} in tracker dict'
-        tracker_dict[job_name] = job_dict
-        
-        with open(self.tracker_file_path, 'w' ) as tracker_file:
-            json.dump(tracker_dict, tracker_file, indent=4)
+        assert job_name in self.tracker_dict, f'could not find {job_name} in tracker dict'
+        self.tracker_dict[job_name] = job_dict
 
+        self.writeTrackerFile()
 
 
     @abc.abstractmethod
@@ -81,23 +76,22 @@ class JobTracker:
     def createTrackerFile(self):
         """ Create the file that tracks jobs. """
         if os.path.exists(self.tracker_backup_file_path):
-            if YesOrNoMessageBox(self.parent, text=f"Backup file detected at: {self.tracker_backup_file_path}, do you want to restore it (Y/n)?").answer(): 
+            if YesOrNoMessageBox(self.parent, text=f"Backup file detected at: {self.tracker_backup_file_path}, do you want to restore it (Y/n)?").answer():
                 os.rename(self.tracker_backup_file_path, self.tracker_file_path)
-                InfoQMessageBox(self.parent, "Backup restored!") 
+                InfoQMessageBox(self.parent, "Backup restored!")
                 return
 
-        with open(self.tracker_file_path, 'w' ) as tracker_file:
+        with open(self.tracker_file_path, 'r' ) as tracker_file:
             json.dump({}, tracker_file, indent=4)
 
-        InfoQMessageBox(self.parent, text='New job tracker file created') 
+        InfoQMessageBox(self.parent, text='New job tracker file created')
 
     def checkTrackerFileHealth(self):
         if not os.path.exists(self.tracker_file_path):
             self.createTrackerFile()
 
         try:
-            with open(self.tracker_file_path, 'r' ) as tracker_file:
-                json.load(tracker_file)
+            self.readTrackerFile()
         except json.decoder.JSONDecodeError:
             if os.path.isfile(self.tracker_backup_file_path):
                 if YesOrNoMessageBox(self.parent, 'Do you want to restore the backup tracker file (Y/n)?'):
@@ -117,47 +111,41 @@ class JobTracker:
             shutil.copy(self.tracker_file_path, self.tracker_backup_file_path)
         except FileExistsError:
             os.remove(self.tracker_backup_file_path)
-            shutil.copy(self.tracker_file_path, self.tracker_backup_file_path)    
+            shutil.copy(self.tracker_file_path, self.tracker_backup_file_path)
 
     def updateJobStatus(self, job_name: str, new_job_status: str):
         ''' Update status of a job. '''
 
-        with open(self.tracker_file_path, 'r' ) as tracker_file:
-            tracker_dict = json.load(tracker_file)
+        self.readTrackerFile()
 
-        tracker_dict[job_name]['status'] = new_job_status
+        self.tracker_dict[job_name]['status'] = new_job_status
 
-        with open(self.tracker_file_path, 'w' ) as tracker_file:
-            json.dump(tracker_dict, tracker_file, indent=4)
+        self.writeTrackerFile()
 
     def markAllFilesAsDone(self, job_name: str, done: bool):
         ''' Update all laser files to done. '''
         assert job_name is not None, 'Job name is None'
         assert isinstance(done, bool), 'done is not a boolean'
 
-        with open(self.tracker_file_path, 'r' ) as tracker_file:
-            tracker_dict = json.load(tracker_file)
+        self.readTrackerFile()
 
-        for file_dict in tracker_dict[job_name]['make_files'].values():
+        for file_dict in self.tracker_dict[job_name]['make_files'].values():
             file_dict['done'] = done
 
-        with open(self.tracker_file_path, 'w' ) as tracker_file:
-            json.dump(tracker_dict, tracker_file, indent=4)
+        self.writeTrackerFile()
 
     def markFileAsDone(self, job_name: str, file_global_path: str, done: bool):
         ''' Update laser file to done. '''
         assert job_name is not None, 'Job name is None'
         assert isinstance(done, bool), 'done is not a boolean'
 
-        with open(self.tracker_file_path, 'r' ) as tracker_file:
-            tracker_dict = json.load(tracker_file)
+        self.readTrackerFile()
 
-        for file_dict in tracker_dict[job_name]['make_files'].values():
+        for file_dict in self.tracker_dict[job_name]['make_files'].values():
             if file_dict['file_global_path']==file_global_path:
                 file_dict['done'] = done
 
-        with open(self.tracker_file_path, 'w' ) as tracker_file:
-            json.dump(tracker_dict, tracker_file, indent=4)
+        self.writeTrackerFile()
 
 
     def isJobOld(self, created_on_date: str) -> bool:
@@ -169,89 +157,79 @@ class JobTracker:
 
     def getJobDict(self, job_name: str) -> dict:
         ''' Return the job dict from a job name. '''
-        
-        with open(self.tracker_file_path, 'r' ) as tracker_file:
-            tracker_file = json.load(tracker_file)
 
-        if job_name in tracker_file:
-            return tracker_file[job_name]
+        self.readTrackerFile()
+
+        if job_name in self.tracker_dict:
+            return self.tracker_dict[job_name]
         return None
 
     def getJobFolderGlobalPathFromJobName(self, job_name: str) -> str:
         ''' Return the job folder global path from the job name. '''
-        with open(self.tracker_file_path, 'r' ) as tracker_file:
-            tracker_dict = json.load(tracker_file)
+        self.readTrackerFile()
 
-        return tracker_dict[job_name]['job_folder_global_path']
+        return self.tracker_dict[job_name]['job_folder_global_path']
 
     def getMakeFilesDict(self, job_name) -> dict:
         ''' Return the make files. '''
 
-        with open(self.tracker_file_path, 'r' ) as tracker_file:
-            tracker_dict = json.load(tracker_file)
-        return tracker_dict[job_name]['make_files']
+        self.readTrackerFile()
+
+        return self.tracker_dict[job_name]['make_files']
 
     def getStaticAndDynamicJobNamesWithStatus(self, status: str) -> list[tuple]:
         ''' Return a list containing all dynamic job names that have a given status '''
 
-        with open(self.tracker_file_path, 'r' ) as tracker_file:
-            tracker_dict = json.load(tracker_file)
+        self.readTrackerFile()
 
-        return [(job_name, job_dict['dynamic_job_name']) for job_name, job_dict in tracker_dict.items() if job_dict['status'] == status]
+        return [(job_name, job_dict['dynamic_job_name']) for job_name, job_dict in self.tracker_dict.items() if job_dict['status'] == status]
 
     def getAllStaticAndDynamicJobNames(self) -> list[tuple]:
         ''' Return a list containing all dynamic job names. '''
 
-        with open(self.tracker_file_path, 'r' ) as tracker_file:
-            tracker_dict = json.load(tracker_file)
-
-        return [(job_name, job_dict['dynamic_job_name']) for job_name, job_dict in tracker_dict.items()]
+        self.readTrackerFile()
+        return [(job_name, job_dict['dynamic_job_name']) for job_name, job_dict in self.tracker_dict.items()]
 
 
     def getNumberOfJobsWithStatus(self, status_list: list) -> int:
         """ Return the number of jobs that have a certain status. """
 
-        with open(self.tracker_file_path, 'r' ) as tracker_file:
-            tracker_dict = json.load(tracker_file)
-
-        return len([job_key for job_key, job_value in tracker_dict.items() if job_value['status'] in status_list])
-
+        self.readTrackerFile()
+        return len([job_key for job_key, job_value in self.tracker_dict.items() if job_value['status'] in status_list])
 
     def fileGlobalPathToJobName(self, file_global_path: str) -> str:
         ''' Return a job name from a file. '''
-        with open(self.tracker_file_path, 'r' ) as tracker_file:
-            tracker_dict = json.load(tracker_file)
+        self.readTrackerFile()
 
         job_name = None
-        for job_dict in tracker_dict.values():
+        for job_dict in self.tracker_dict.values():
             for print_file_dict in job_dict['make_files'].values():
                 if print_file_dict['file_global_path'] == file_global_path:
                     job_name = job_dict['job_name']
         return job_name
 
-    def isJobDone(self, job_name: str) -> bool: 
+    def isJobDone(self, job_name: str) -> bool:
         ''' Return boolean indicating if a job is done. '''
-        with open(self.tracker_file_path, 'r' ) as tracker_file:
-            tracker_dict = json.load(tracker_file)
+        self.readTrackerFile()
 
-        return all(file_dict['done'] for file_dict in tracker_dict[job_name]['make_files'].values())
+        return all(file_dict['done'] for file_dict in self.tracker_dict[job_name]['make_files'].values())
 
     def getMakeFilesString(self, job_name: str) -> str:
         ''' Return a sting representation of all make files. '''
 
-        with open(self.tracker_file_path, 'r' ) as tracker_file:
-            tracker_dict = json.load(tracker_file)
+        self.readTrackerFile()
 
         return_string = ""
-        for file_dict in tracker_dict[job_name]['make_files'].values():
+        for file_dict in self.tracker_dict[job_name]['make_files'].values():
             return_string += f'{file_dict["file_name"]}\n'
 
         return return_string
 
     def jobNameToSenderName(self, job_name: str):
         ''' Return Sender name from job name. '''
-        with open(self.tracker_file_path, 'r' ) as tracker_file:
-            return json.load(tracker_file)[job_name]['sender_name']
+        self.readTrackerFile()
+
+        return self.tracker_dict[job_name]['sender_name']
 
     def makeJobNameUnique(self, job_name: str) -> str:
         ''' Make the job name unique.
@@ -264,10 +242,9 @@ class JobTracker:
         max_job_number = 0
         does_job_name_exist = False
 
-        with open(self.tracker_file_path, 'r' ) as tracker_file:
-            tracker_dict = json.load(tracker_file)
+        self.readTrackerFile()
 
-        for job_dict in tracker_dict.values():
+        for job_dict in self.tracker_dict.values():
 
             match_job_number= re.search(rf'{job_name}_\((\d+)\)$', job_dict['job_name'])
             if job_name == job_dict['job_name']:
@@ -284,7 +261,7 @@ class JobTracker:
                 return job_name + '_(1)'
             return job_name
         return job_name + '_(' + str(max_job_number + 1) + ')'
-    
+
     def jobGlobalPathToTrackerJobDict(self, tracker_dict: dict, job_folder_global_path: str) -> tuple:
         """ If exists, return job name and data from tracker dictionary
         corresponding to the print job with name print_job_folder_name. """
