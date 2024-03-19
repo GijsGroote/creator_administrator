@@ -25,6 +25,17 @@ def copy_item(source_dir_global: str, target_dir_global: str):
         
 def delete_item(parent: QWidget, item_global_path: str):
     """ Delete the file from the file system. """
+
+    # TODO: import gv into this function
+    if sys.platform == 'linux':
+        data_dir_home = os.path.join(os.path.expanduser('~'), '.creator_administrator')
+    elif sys.platform == 'win32':
+        data_dir_home = os.path.join(os.getenv('LOCALAPPDATA'), 'Creator Administrator')
+    else: 
+        raise ValueError(f'This software does not work for platform: {sys.platform}')
+
+    assert item_global_path.startswith(data_dir_home), f'Can only delete files/folders in DATA_DIR_HOME, not in {item_global_path}'
+
     if os.path.exists(item_global_path):
         try:
             if os.path.isdir(item_global_path):

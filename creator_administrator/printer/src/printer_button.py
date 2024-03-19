@@ -83,14 +83,14 @@ class PrintAangezetQPushButton(JobsQPushButton):
                         return
                     else:
                         # split the print job
-
-
+                        pass
 
 
 
 
 
 class PrintKlaarQPushButton(JobsQPushButton):
+    ''' TODO. '''
 
     def __init__(self, *args, parent=None, **kwargs):
         super().__init__(parent, *args, **kwargs)

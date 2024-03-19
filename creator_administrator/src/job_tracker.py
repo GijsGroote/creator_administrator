@@ -38,6 +38,16 @@ class JobTracker:
                status='WACHTRIJ') -> dict:
         """ Add a job to the tracker. """
 
+    def readTrackerFile(self):
+
+        with open(self.tracker_file_path, 'r' ) as tracker_file:
+            self.tracker_dict = json.load(tracker_file)
+
+    def writeTrackerFile(self):
+
+        with open(self.tracker_file_path, 'w' ) as tracker_file:
+            json.dump(self.tracker_dict, tracker_file, indent=4)
+
     def deleteJob(self, job_name: str):
         """ Delete a job from the job tracker. """
 
