@@ -184,6 +184,7 @@ class CreateLaserJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
 
     def loadItemContent(self):
         ''' Load content local file into dialog. '''
+        print(f"make ites {self.temp_make_items}")
 
         file_global_path = self.temp_make_items[self.make_item_counter]
         file_name = os.path.basename(file_global_path)

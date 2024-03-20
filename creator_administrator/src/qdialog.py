@@ -185,6 +185,7 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
                          job_tracker,
                          *args,
                          **kwargs)
+        print(f"what is in fileglobalpathlist {files_global_paths_list}")
 
         assert len(job_name_list) == len(files_global_paths_list),\
             f'job_name_list and files_global_paths_list are not equal length {len(job_name_list)} and {len(files_global_paths_list)}'
@@ -203,12 +204,18 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
         ''' Load content into dialog. '''
 
         if self.update_existing_job:
+
             self.temp_job_name = self.jobs[self.job_counter]
             self.temp_job_dict = self.job_dict_list[self.job_counter]
 
             self.temp_make_files_dict = self.temp_job_dict['make_files']
             self.temp_job_folder_name = os.path.basename(self.temp_job_dict['job_folder_global_path'])
             self.temp_job_folder_global_path = self.temp_job_dict['job_folder_global_path']
+
+            print(f"ha {self.job_dict_list[self.job_counter]['make_files']}")
+            if len(self.temp_job_dict['make_files']) == 0:
+                self.createJob()
+                self.job_counter += 1
 
         else:
             self.temp_job_name = self.job_tracker.makeJobNameUnique(self.jobs[self.job_counter])
@@ -220,6 +227,8 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
 
         temp_make_items = []
         self.temp_store_files_dict = {}
+
+        print(f"here? {self.files_global_paths_list}")
 
         for file_global_path in self.files_global_paths_list[self.job_counter]:
             if file_global_path.endswith(self.gv['ACCEPTED_EXTENSIONS']):

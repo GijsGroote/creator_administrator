@@ -94,7 +94,3 @@ class PrintJobTracker(JobTracker):
         self.addNewFilestoTrackerFile(CreatePrintJobsFromFileSystemQDialog)
 
         self.makeBackup()
-
-
-
-    

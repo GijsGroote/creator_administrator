@@ -378,8 +378,12 @@ class JobTracker:
                 job_dict_list = []
 
                 for job_name, job_folder_global_path in zip(job_names_no_dates, job_folder_not_in_tracker_global_paths):
+                    print(f"dit {os.listdir(job_folder_global_path)} because {job_name} and {job_folder_global_path}")
+                    job_folders = os.listdir(job_folder_global_path)
 
                     file_global_path_list.append(os.listdir(job_folder_global_path))
+                    # DEZE GAAT FOU
+                    print(f"filegdskljgfsdklfjdksl {file_global_path_list}")
 
                     job_dict = {'job_name': job_name,
                                 'job_folder_global_path': job_folder_global_path,
@@ -401,6 +405,8 @@ class JobTracker:
                         self.tracker_dict[job_dict['job_name']] = job_dict
 
                 self.writeTrackerFile()
+
+                print(f"hey hoh {file_global_path_list}")
                 
                 dialog = create_jobs_from_file_system_dialog(self.parent,
                                           job_names_no_dates,
@@ -448,7 +454,6 @@ class JobTracker:
                 new_make_files = []
                 for file in valid_file_names:
                     if not any([os.path.basename(print_file_dict['file_global_path'])==file for print_file_dict in job_dict['make_files'].values()]):
-                        print(f"why would you append? {file}")
                         new_make_files.append(os.path.join(job_folder_global_path, file))
 
                 # add/delete new files
@@ -472,6 +477,8 @@ class JobTracker:
                                                   yes_button_text='Add to Job Tracker',
                                                   no_button_text='Remove from File System')
                     if yes_or_no.answer():
+
+                        print(f"create new jobs with make files {new_make_files}")
 
                         create_jobs_from_file_system_dialog(self.parent,
                                                         [job_dict['job_name']],
