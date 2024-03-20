@@ -11,6 +11,8 @@ import subprocess
 from PyQt6.QtWidgets import QWidget
 from src.qmessagebox import  ErrorQMessageBox
 
+
+
 def copy_item(source_dir_global: str, target_dir_global: str):
     """ Copy directory and subdirectories recursively. """
 

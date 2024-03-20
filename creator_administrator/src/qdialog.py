@@ -53,6 +53,11 @@ class CreateJobsQDialog(QDialog):
 
     def loadContent(self):
         ''' Load content into the dialog. '''
+
+        if len(self.temp_make_items) == 0:
+            self.createJob()
+            self.job_counter += 1
+
         if self.make_item_counter >= len(self.temp_make_items):
             self.createJob()
             self.job_counter += 1
@@ -241,22 +246,32 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
 
         if self.update_existing_job:
 
+            # temp_job_dict given? then a job exist on FS and only the tracker should be updated
+
             self.temp_job_dict['make_files'] = self.temp_make_files_dict
             self.job_tracker.updateJob(self.temp_job_dict['job_name'], self.temp_job_dict)
+
+            # Rename files to name in tracker file
+            for file_name in os.listdir(self.temp_job_dict['job_folder_global_path']):
+                if file_name.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
+                    for file_dict in self.temp_make_files_dict.values():
+                        if file_dict['file_name'].endswith(file_name):
+                            print(f"rename {file_name}")
+                            os.rename(os.path.join(
+                            self.temp_job_dict['job_folder_global_path'], file_name), file_dict['file_global_path'])
+
 
             TimedMessage(self.gv, self, text=f'Updated job: {self.temp_job_name}')
         else:
             self.job_tracker.addJob(self.temp_job_name,
                                     self.temp_job_folder_global_path,
-                                    self.temp_make_files_dict,
-                                    self.temp_job_dict)
-            # temp_job_dict given? then a job exist on FS and only the tracker should be updated
-            if self.temp_job_dict is not None:
-                if not os.path.exists(self.temp_job_folder_global_path):
-                    os.mkdir(self.temp_job_folder_global_path)
+                                    self.temp_make_files_dict)
 
-                for item_dict in self.temp_store_files_dict.values():
-                    copy_item(item_dict['source_file_global_path'], item_dict['target_file_global_path'])
+            if not os.path.exists(self.temp_job_folder_global_path):
+                os.mkdir(self.temp_job_folder_global_path)
+
+            for item_dict in self.temp_store_files_dict.values():
+                copy_item(item_dict['source_file_global_path'], item_dict['target_file_global_path'])
 
             TimedMessage(self.gv, self, text=f'Created job: {self.temp_job_name}')
 

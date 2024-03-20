@@ -137,7 +137,6 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         TimedMessage(gv, self, text=f'Created {self.temp_job_name}')
 
 
-
 class CreatePrintJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
     ''' Create print jobs from file system data. '''
 

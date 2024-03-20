@@ -14,7 +14,8 @@ from unidecode import unidecode
 from PyQt6.QtWidgets import QWidget
 
 from src.directory_functions import delete_item
-from src.qmessagebox import YesOrNoMessageBox, InfoQMessageBox
+from src.qmessagebox import YesOrNoMessageBox, InfoQMessageBox, TimedMessage, WarningQMessageBox
+from src.mail_manager import MailManager
 
 class JobTracker:
 
@@ -40,8 +41,14 @@ class JobTracker:
 
     def readTrackerFile(self):
         ''' Read the tracker file. '''
+        
         with open(self.tracker_file_path, 'r' ) as tracker_file:
             self.tracker_dict = json.load(tracker_file)
+        # print(f"\nread these files per print job")
+        # for job_dict in self.tracker_dict.values():
+        #     print(f"job dictname {job_dict['job_name']}")
+        #     for mat_dict in job_dict['make_files'].values():
+        #         print(f"material name {mat_dict['file_name']}")
 
     def writeTrackerFile(self):
         ''' Write the tracker file. '''
@@ -273,3 +280,221 @@ class JobTracker:
     def getNumberOfJobsInQueue(self) -> int:
         ''' Return the number of jobs with status WACHTRIJ. '''
         return self.getNumberOfJobsWithStatus(['WACHTRIJ'])
+
+
+
+    def deleteOldJobs(self):
+        ''' Delete the old jobs from tracker and file system. '''
+
+        self.readTrackerFile()
+
+        # remove old jobs
+        n_old_jobs = 0
+        for job_key, job_dict in self.tracker_dict.items():
+            if self.isJobOld(job_dict['created_on_date']) and job_dict['status'] != 'WACHTRIJ':
+                n_old_jobs += 1
+                self.deleteJob(job_key)
+
+        if n_old_jobs > 0:
+            TimedMessage(gv=self.gv, parent=self.parent, text=f'Removed {str(n_old_jobs)} old jobs')
+
+        self.writeTrackerFile()
+
+    def deleteNonExitentJobsFromTrackerFile(self):
+        ''' Delete the jobs from tracker file that cannot be found on the file system. '''
+
+        self.readTrackerFile()
+
+        # find non existent jobs
+        non_existent_job_keys = []
+        for job_key, job_dict in self.tracker_dict.items():
+            if not os.path.exists(job_dict['job_folder_global_path']):
+                non_existent_job_keys.append(job_key)
+
+        # delete non existent jobs from tracker file
+        [self.tracker_dict.pop(key) for key in non_existent_job_keys]
+
+        self.writeTrackerFile()
+
+    def deleteNonExitentFilesFromTrackerFile(self):
+        ''' Delete job files from tracker file that cannot be found on the file system. '''
+        self.readTrackerFile()
+
+        for job_dict in self.tracker_dict.values():
+            temp_remove_keys = []
+            # find non existent make files
+            for file_key, file_dict in job_dict['make_files'].items():
+                if not os.path.exists(file_dict['file_global_path']):
+                    temp_remove_keys.append(file_key)
+            # delete non existent make files from tracker file
+            [job_dict['make_files'].pop(key) for key in temp_remove_keys]
+
+        self.writeTrackerFile()
+
+    def addNewJobstoTrackerFile(self, create_jobs_from_file_system_dialog):
+        ''' 
+        Synchronize job on file system and tracker file by either:
+            * adding the job to the tracker file.
+            or
+            * removing the job folder from file system.
+         '''
+
+        self.readTrackerFile()
+
+        # find job on file system that are not in the tracker file
+        job_folder_not_in_tracker_global_paths = []
+        for job_folder_global_path in os.listdir(self.gv['JOBS_DIR_HOME']):
+            if not any([job_dict['job_folder_global_path'] == os.path.join(self.gv['JOBS_DIR_HOME'], job_folder_global_path) for job_dict in self.tracker_dict.values()]):
+                job_folder_not_in_tracker_global_paths.append(os.path.join(self.gv['JOBS_DIR_HOME'], job_folder_global_path))
+
+        if len(job_folder_not_in_tracker_global_paths) > 0:
+
+            # remove date from the job folder names
+            job_names_str = ''
+            job_names_no_dates = []
+            for job_folder_global_path in job_folder_not_in_tracker_global_paths:
+                job_names_str += os.path.basename(job_folder_global_path) + '\n'
+                match = re.search(r'^\d{2}-\d{2}_(.*)$', os.path.basename(job_folder_global_path))
+
+                if match:
+                    job_names_no_dates.append(match.group(1))
+                else:
+                    job_names_no_dates.append(os.path.basename(job_folder_global_path))
+
+            if len(job_folder_not_in_tracker_global_paths) <= 1:
+               is_or_are = 'is'
+               folder_s = 'folder'
+            else:
+               is_or_are = 'are'
+               folder_s = 'folders'
+
+            if YesOrNoMessageBox(parent=self.parent,
+                              text=f'OH NO, SYNCHRONIZE ISSUES!\nThere {is_or_are} {len(job_folder_not_in_tracker_global_paths)} print job '\
+                                  f'{folder_s} that are not in the Job Tracker.\n\nHow do you want to to sync: \n{job_names_str}',
+                              yes_button_text='Add files to Job Tracker',
+                             no_button_text='Remove files from File System').answer():
+
+                file_global_path_list = []
+                job_dict_list = []
+
+                for job_name, job_folder_global_path in zip(job_names_no_dates, job_folder_not_in_tracker_global_paths):
+
+                    file_global_path_list.append(os.listdir(job_folder_global_path))
+
+                    job_dict = {'job_name': job_name,
+                                'job_folder_global_path': job_folder_global_path,
+                                'make_files': {},
+                                'status': 'WACHTRIJ',
+                                'created_on_date': str(datetime.now().strftime("%d-%m-%Y")),
+                                'dynamic_job_name': str(datetime.now().strftime("%d-%m"))+'_'+job_name}
+
+                    mail_item_list = [os.path.join(job_folder_global_path, file) for file in os.listdir(job_folder_global_path) if file.endswith(('.eml', '.msg'))]
+                    if len(mail_item_list) > 0:
+
+                        job_dict['sender_name'] = MailManager(self.gv).getSenderName(mail_item_list[0])
+                        job_dict['sender_mail_adress'] = MailManager(self.gv).getEmailAddress(mail_item_list[0])
+                        job_dict['sender_mail_receive_time'] = MailManager(self.gv).getSenderMailReceiveTime(mail_item_list[0])
+
+                    job_dict_list.append(job_dict)
+
+                    if job_dict['job_name'] not in self.tracker_dict:
+                        self.tracker_dict[job_dict['job_name']] = job_dict
+
+                self.writeTrackerFile()
+                
+                dialog = create_jobs_from_file_system_dialog(self.parent,
+                                          job_names_no_dates,
+                                          file_global_path_list,
+                                          update_existing_job=True,
+                                          job_dict_list=job_dict_list)
+
+                if dialog.exec() == 1:
+                    TimedMessage(parent=self.parent, gv=self.gv, text=f'Added {len(job_folder_not_in_tracker_global_paths)} jobs to the Job Tracker.')
+
+                else:
+                     WarningQMessageBox(parent=self.parent, gv=self.gv, text='System not healthy!')
+
+
+            else:
+                for job_folder_global_path in job_folder_not_in_tracker_global_paths:
+                    delete_item(self.parent, job_folder_global_path)
+                TimedMessage(parent=self.parent, gv=self.gv, text=f'Deleted {len(job_folder_not_in_tracker_global_paths)} job folders from File System.')
+
+
+    def addNewFilestoTrackerFile(self, create_jobs_from_file_system_dialog):
+        ''' 
+        Synchronize job files on file system and tracker file by either:
+            * adding the job files to the tracker file.
+            or
+            * removing the job files from file system.
+         '''
+        self.readTrackerFile()
+
+        for job_folder_name in os.listdir(self.gv['JOBS_DIR_HOME']):
+            job_folder_global_path = os.path.join(self.gv['JOBS_DIR_HOME'], job_folder_name)
+
+
+            job_key, job_dict = self.jobGlobalPathToTrackerJobDict(self.tracker_dict, job_folder_global_path)
+
+            if job_dict is None:
+                continue
+
+            # check if jobs are incomplete and must be repaired
+            if not self.IsJobDictAndFileSystemInSync(job_dict, job_folder_global_path):
+
+
+                valid_file_names = [file_name for file_name in os.listdir(job_folder_global_path) if file_name.lower().endswith(self.gv['ACCEPTED_EXTENSIONS'])]
+
+                new_make_files = []
+                for file in valid_file_names:
+                    if not any([os.path.basename(print_file_dict['file_global_path'])==file for print_file_dict in job_dict['make_files'].values()]):
+                        print(f"why would you append? {file}")
+                        new_make_files.append(os.path.join(job_folder_global_path, file))
+
+                # add/delete new files
+                if len(new_make_files) > 0:
+
+                    if len(new_make_files)==1:
+                        file_or_files = 'file'
+                        this_or_these = 'this'
+                    else:
+                        file_or_files = 'files'
+                        this_or_these = 'these'
+
+                    yes_or_no_text = f'New {file_or_files} detected for job {job_dict["job_name"]}:\n'
+                    for file in new_make_files:
+                        yes_or_no_text += f'{os.path.basename(file)}\n'
+
+                    yes_or_no_text += f'\nWhat do you want with {this_or_these} {file_or_files}?'
+
+                    yes_or_no = YesOrNoMessageBox(parent=self.parent,
+                                                  text=yes_or_no_text,
+                                                  yes_button_text='Add to Job Tracker',
+                                                  no_button_text='Remove from File System')
+                    if yes_or_no.answer():
+
+                        create_jobs_from_file_system_dialog(self.parent,
+                                                        [job_dict['job_name']],
+                                                        [new_make_files],
+                                                        update_existing_job=True,
+                                                        job_dict_list=[job_dict]).exec()
+
+                    else:
+                        for file in new_make_files:
+                            delete_item(self.parent, os.path.join(job_folder_global_path, file))
+                        TimedMessage(parent=self.parent, gv=self.gv, text=f'Removed {len(new_make_files)} {file_or_files} from File System')
+
+
+
+    def IsJobDictAndFileSystemInSync(self, job_dict, job_folder_global_path):
+        ''' Check for a job if all files are in both the tracker and the file system. '''
+
+        file_system_print_file_names = [file_name for file_name in os.listdir(job_folder_global_path) if file_name.lower().endswith(self.gv['ACCEPTED_EXTENSIONS'])]
+        tracker_print_file_names = [os.path.basename(print_file_dict['file_global_path']) for print_file_dict in job_dict['make_files'].values()]
+
+        if len(file_system_print_file_names) != len(tracker_print_file_names):
+            return False
+        for i in range(len(file_system_print_file_names)):
+            if file_system_print_file_names[i] != tracker_print_file_names[i]:
+                return False
+        return True
