@@ -45,7 +45,6 @@ class JobTracker:
 
     def writeTrackerFile(self):
         ''' Write the tracker file. '''
-        print(f"writing to tracker file: {self.tracker_dict}")
         with open(self.tracker_file_path, 'w' ) as tracker_file:
             json.dump(self.tracker_dict, tracker_file, indent=4)
 
