@@ -81,7 +81,7 @@ class JobTracker:
                 InfoQMessageBox(self.parent, "Backup restored!")
                 return
 
-        with open(self.tracker_file_path, 'r' ) as tracker_file:
+        with open(self.tracker_file_path, 'w' ) as tracker_file:
             json.dump({}, tracker_file, indent=4)
 
         InfoQMessageBox(self.parent, text='New job tracker file created')

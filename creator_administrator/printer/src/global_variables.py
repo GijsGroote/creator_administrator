@@ -180,7 +180,6 @@ sys.path.append(gv['GLOBAL_UI_DIR'])
 sys.path.append(gv['LOCAL_UI_DIR'])
 
 gv['FIGURES_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'], 'figures')
-
 gv['THREAD_POOL'] = QThreadPool() # the one and only threadpool
 
 

@@ -9,6 +9,7 @@ mail_item: openen .msg file or .eml file, or a string (directory path, dir conta
 import os
 import sys
 import re
+import shutil
 import time
 import http.client as httplib
 from unidecode import unidecode
@@ -301,7 +302,7 @@ class MailManager():
                 return mail_item
 
             if isinstance(mail_item, str):
-                return self.outlook.OpenSharedItem(mail_file_global_path)
+                return self.outlook.OpenSharedItem(self.getMailGlobalPathFromFolder(mail_item))
 
         if sys.platform == 'linux':
             if isinstance(mail_item, email.message.Message):
