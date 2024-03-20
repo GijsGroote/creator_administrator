@@ -227,7 +227,6 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
 
         self.temp_make_items = temp_make_items
 
-        print(f"setting name to {self.temp_job_name}")
         self.jobNameQLabel.setText(self.temp_job_name)
         self.jobProgressQLabel.setText(f'Job ({self.job_counter+1}/{len(self.jobs)})')
 
@@ -240,24 +239,28 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
     def createJob(self):
         """ Create a job. """
 
-        if self.temp_job_dict is None:
-            self.job_tracker.addJob(self.temp_job_name,
-                                    'no sender name',
-                                    self.temp_job_folder_global_path,
-                                    self.temp_make_files_dict)
-        else:
+        if self.update_existing_job:
+
+            self.temp_job_dict['make_files'] = self.temp_make_files_dict
             self.job_tracker.updateJob(self.temp_job_dict['job_name'], self.temp_job_dict)
 
+            TimedMessage(self.gv, self, text=f'Updated job: {self.temp_job_name}')
+        else:
+            self.job_tracker.addJob(self.temp_job_name,
+                                    self.temp_job_folder_global_path,
+                                    self.temp_make_files_dict,
+                                    self.temp_job_dict)
+            # temp_job_dict given? then a job exist on FS and only the tracker should be updated
+            if self.temp_job_dict is not None:
+                if not os.path.exists(self.temp_job_folder_global_path):
+                    os.mkdir(self.temp_job_folder_global_path)
 
-        if not os.path.exists(self.temp_job_folder_global_path):
-            os.mkdir(self.temp_job_folder_global_path)
+                for item_dict in self.temp_store_files_dict.values():
+                    copy_item(item_dict['source_file_global_path'], item_dict['target_file_global_path'])
 
-        for item_dict in self.temp_store_files_dict.values():
-            copy_item(item_dict['source_file_global_path'], item_dict['target_file_global_path'])
+            TimedMessage(self.gv, self, text=f'Created job: {self.temp_job_name}')
 
         self.parent().refreshAllWidgets()
-
-        TimedMessage(self.gv, self, text=f'Print job {self.temp_job_name} created')
 
 class SelectQDialog(QDialog):
     """ Select file dialog. """

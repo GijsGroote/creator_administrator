@@ -30,9 +30,9 @@ class JobTracker:
     @abc.abstractmethod
     def addJob(self,
                job_name: str,
-               sender_name,
                job_folder_global_path: str,
                make_files: dict,
+               sender_name=None,
                sender_mail_adress=None,
                sender_mail_receive_time=None,
                status='WACHTRIJ') -> dict:
@@ -45,6 +45,7 @@ class JobTracker:
 
     def writeTrackerFile(self):
         ''' Write the tracker file. '''
+        print(f"writing to tracker file: {self.tracker_dict}")
         with open(self.tracker_file_path, 'w' ) as tracker_file:
             json.dump(self.tracker_dict, tracker_file, indent=4)
 

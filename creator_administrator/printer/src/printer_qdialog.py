@@ -108,9 +108,9 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         sender_mail_receive_time = self.mail_manager.getSenderMailReceiveTime(msg)
 
         self.job_tracker.addJob(self.temp_job_name,
-                                self.temp_sender_name,
                                 self.temp_job_folder_global_path,
                                 self.temp_make_files_dict,
+                                sender_name=self.temp_sender_name,
                                 sender_mail_adress=sender_mail_adress,
                                 sender_mail_receive_time=sender_mail_receive_time)
 
@@ -134,7 +134,7 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
                 sender_mail_adress=sender_mail_adress,
                 sender_mail_receive_time=sender_mail_receive_time)
 
-        TimedMessage(gv, self, text=f'Print job {self.temp_job_name} created')
+        TimedMessage(gv, self, text=f'Created {self.temp_job_name}')
 
 
 
