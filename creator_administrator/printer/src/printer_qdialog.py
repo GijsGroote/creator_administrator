@@ -156,6 +156,7 @@ class CreatePrintJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
 
     def loadItemContent(self):
         ''' Load content local file into dialog. '''
+        assert not len(self.temp_make_items) == 0, 'make_files_items contains no items'
 
         file_global_path = self.temp_make_items[self.make_item_counter]
         file_name = os.path.basename(file_global_path)

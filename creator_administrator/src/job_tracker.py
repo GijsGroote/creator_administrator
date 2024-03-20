@@ -44,11 +44,6 @@ class JobTracker:
         
         with open(self.tracker_file_path, 'r' ) as tracker_file:
             self.tracker_dict = json.load(tracker_file)
-        # print(f"\nread these files per print job")
-        # for job_dict in self.tracker_dict.values():
-        #     print(f"job dictname {job_dict['job_name']}")
-        #     for mat_dict in job_dict['make_files'].values():
-        #         print(f"material name {mat_dict['file_name']}")
 
     def writeTrackerFile(self):
         ''' Write the tracker file. '''
@@ -71,6 +66,15 @@ class JobTracker:
         self.readTrackerFile()
 
         assert job_name in self.tracker_dict, f'could not find {job_name} in tracker dict'
+        self.tracker_dict[job_name] = job_dict
+
+        self.writeTrackerFile()
+
+    def addJobDict(self, job_name: str, job_dict: dict):
+        ''' Add a job dict to tracker file. '''
+
+        self.readTrackerFile()
+
         self.tracker_dict[job_name] = job_dict
 
         self.writeTrackerFile()
@@ -282,7 +286,6 @@ class JobTracker:
         return self.getNumberOfJobsWithStatus(['WACHTRIJ'])
 
 
-
     def deleteOldJobs(self):
         ''' Delete the old jobs from tracker and file system. '''
 
@@ -378,12 +381,8 @@ class JobTracker:
                 job_dict_list = []
 
                 for job_name, job_folder_global_path in zip(job_names_no_dates, job_folder_not_in_tracker_global_paths):
-                    print(f"dit {os.listdir(job_folder_global_path)} because {job_name} and {job_folder_global_path}")
-                    job_folders = os.listdir(job_folder_global_path)
 
                     file_global_path_list.append(os.listdir(job_folder_global_path))
-                    # DEZE GAAT FOU
-                    print(f"filegdskljgfsdklfjdksl {file_global_path_list}")
 
                     job_dict = {'job_name': job_name,
                                 'job_folder_global_path': job_folder_global_path,
@@ -406,19 +405,43 @@ class JobTracker:
 
                 self.writeTrackerFile()
 
-                print(f"hey hoh {file_global_path_list}")
-                
-                dialog = create_jobs_from_file_system_dialog(self.parent,
-                                          job_names_no_dates,
-                                          file_global_path_list,
-                                          update_existing_job=True,
-                                          job_dict_list=job_dict_list)
+                # check for jobs with no make files, add them.
+                del_job_names = []
+                del_files_global_paths = []
+                del_job_dicts = []
 
-                if dialog.exec() == 1:
-                    TimedMessage(parent=self.parent, gv=self.gv, text=f'Added {len(job_folder_not_in_tracker_global_paths)} jobs to the Job Tracker.')
+                for job_name, files_global_paths, job_dict in zip(job_names_no_dates, file_global_path_list, job_dict_list):
+                    print(f"files_global_paths {files_global_paths}")
+                    make_files_global_paths = [file_path for file_path in files_global_paths if file_path.endswith(self.gv['ACCEPTED_EXTENSIONS'])]
+                    if len(make_files_global_paths) == 0:
 
-                else:
-                     WarningQMessageBox(parent=self.parent, gv=self.gv, text='System not healthy!')
+                        self.addJobDict(job_name, job_dict)
+
+                        del_job_names.append(job_name)
+                        del_files_global_paths.append(files_global_paths)
+                        del_job_dicts.append(job_dict)
+
+                # remove job with no make files
+                for del_job_name, del_files_global_path, del_job_dict in zip(del_job_names, del_files_global_paths, del_job_dicts):
+                    job_names_no_dates.remove(del_job_name)
+                    file_global_path_list.remove(del_files_global_path)
+                    job_dict_list.remove(del_job_dict)
+
+                TimedMessage(parent=self.parent, gv=self.gv, text=f'Added {len(del_job_names)} jobs to the Job Tracker.')
+
+                if len(job_names_no_dates) > 0:
+
+                    dialog = create_jobs_from_file_system_dialog(self.parent,
+                                              job_names_no_dates,
+                                              file_global_path_list,
+                                              update_existing_job=True,
+                                              job_dict_list=job_dict_list)
+
+                    if dialog.exec() == 1:
+                        TimedMessage(parent=self.parent, gv=self.gv, text=f'Added {len(job_folder_not_in_tracker_global_paths)} jobs to the Job Tracker.')
+
+                    else:
+                         WarningQMessageBox(parent=self.parent, gv=self.gv, text='System not healthy!')
 
 
             else:
@@ -478,7 +501,6 @@ class JobTracker:
                                                   no_button_text='Remove from File System')
                     if yes_or_no.answer():
 
-                        print(f"create new jobs with make files {new_make_files}")
 
                         create_jobs_from_file_system_dialog(self.parent,
                                                         [job_dict['job_name']],

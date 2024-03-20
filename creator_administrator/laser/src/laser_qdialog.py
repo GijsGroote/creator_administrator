@@ -149,7 +149,7 @@ class CreateLaserJobsFromMailQDialog(CreateJobsFromMailQDialog):
 
         # save the attachments
         for attachment_dict in self.temp_store_files_dict.values():
-            self.mail_manager.saveAttachment(attachment_dict['attachment'], attachment_dict['file_global_path'])
+            self.mail_manager.saveAttachment(attachment_dict['attachment'], attachment_dict['target_file_global_path'])
 
         self.parent().refreshAllWidgets()
 
@@ -184,7 +184,8 @@ class CreateLaserJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
 
     def loadItemContent(self):
         ''' Load content local file into dialog. '''
-        print(f"make ites {self.temp_make_items}")
+
+        assert not len(self.temp_make_items) == 0, 'make_files_items contains no items'
 
         file_global_path = self.temp_make_items[self.make_item_counter]
         file_name = os.path.basename(file_global_path)

@@ -29,7 +29,15 @@ class CreateJobsQDialog(QDialog):
 
         super().__init__(parent, *args, **kwargs)
 
+
+
         loadUi(ui_global_path, self)
+
+        # no more jobs, then, close dialog
+        if len(self.jobs) == 0:
+            print(f"HEWHEHEHEHE STOP!")
+            self.closeDialog()
+
 
         self.gv=gv
         self.job_tracker = job_tracker
@@ -50,13 +58,14 @@ class CreateJobsQDialog(QDialog):
         # shortcut on Esc button
         QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.close)
 
+    def closeDialog(self):
+        print(f"now we close")
+        self.close()
+
+
 
     def loadContent(self):
         ''' Load content into the dialog. '''
-
-        if len(self.temp_make_items) == 0:
-            self.createJob()
-            self.job_counter += 1
 
         if self.make_item_counter >= len(self.temp_make_items):
             self.createJob()
@@ -160,6 +169,7 @@ class CreateJobsFromMailQDialog(CreateJobsQDialog):
         self.mailQWebEngineView.setHtml(mail_body)
         self.loadItemContent()
 
+
     @abc.abstractmethod
     def loadItemContent(self):
         ''' Load content of mail item into dialog. '''
@@ -179,26 +189,30 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
                  job_dict_list=None,
                  **kwargs):
 
+
+        assert len(job_name_list) == len(files_global_paths_list),\
+            f'job_name_list and files_global_paths_list are not equal length {len(job_name_list)} and {len(files_global_paths_list)}'
+
+        if update_existing_job:
+
+            assert job_dict_list is not None, 'job_dict_list is None'
+            assert len(job_dict_list) == len(job_name_list),\
+                f'job_dict_list and job_name_list are not equal length {len(job_dict_list)} and {len(job_name_list)}'
+
+
+        self.jobs = job_name_list
+        self.files_global_paths_list = files_global_paths_list
+        self.update_existing_job = update_existing_job
+        self.job_dict_list = job_dict_list
+
         super().__init__(parent,
                          gv,
                          os.path.join(gv['LOCAL_UI_DIR'], 'enter_job_details_dialog.ui'),
                          job_tracker,
                          *args,
                          **kwargs)
-        print(f"what is in fileglobalpathlist {files_global_paths_list}")
 
-        assert len(job_name_list) == len(files_global_paths_list),\
-            f'job_name_list and files_global_paths_list are not equal length {len(job_name_list)} and {len(files_global_paths_list)}'
 
-        if update_existing_job:
-            assert job_dict_list is not None, 'job_dict_list is None'
-            assert len(job_dict_list) == len(job_name_list),\
-                f'job_dict_list and job_name_list are not equal length {len(job_dict_list)} and {len(job_name_list)}'
-
-        self.jobs = job_name_list
-        self.files_global_paths_list = files_global_paths_list
-        self.update_existing_job = update_existing_job
-        self.job_dict_list = job_dict_list
 
     def loadJobContent(self):
         ''' Load content into dialog. '''
@@ -212,11 +226,6 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
             self.temp_job_folder_name = os.path.basename(self.temp_job_dict['job_folder_global_path'])
             self.temp_job_folder_global_path = self.temp_job_dict['job_folder_global_path']
 
-            print(f"ha {self.job_dict_list[self.job_counter]['make_files']}")
-            if len(self.temp_job_dict['make_files']) == 0:
-                self.createJob()
-                self.job_counter += 1
-
         else:
             self.temp_job_name = self.job_tracker.makeJobNameUnique(self.jobs[self.job_counter])
             self.temp_job_dict = None
@@ -228,7 +237,6 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
         temp_make_items = []
         self.temp_store_files_dict = {}
 
-        print(f"here? {self.files_global_paths_list}")
 
         for file_global_path in self.files_global_paths_list[self.job_counter]:
             if file_global_path.endswith(self.gv['ACCEPTED_EXTENSIONS']):
@@ -241,10 +249,20 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
 
         self.temp_make_items = temp_make_items
 
-        self.jobNameQLabel.setText(self.temp_job_name)
-        self.jobProgressQLabel.setText(f'Job ({self.job_counter+1}/{len(self.jobs)})')
 
-        self.loadItemContent()
+        # filter job containing no make files
+        if (self.update_existing_job and len(self.temp_job_dict['make_files']) == 0) or\
+            (not self.update_existing_job and len(temp_make_items) == 0):
+            print(f"detected empty make files create job with no makefiles")
+            self.createJob()
+            self.job_counter += 1
+            self.loadJobContent()
+        else:
+
+            self.jobNameQLabel.setText(self.temp_job_name)
+            self.jobProgressQLabel.setText(f'Job ({self.job_counter+1}/{len(self.jobs)})')
+
+            self.loadItemContent()
 
     @abc.abstractmethod
     def loadItemContent(self):
@@ -265,7 +283,6 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
                 if file_name.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
                     for file_dict in self.temp_make_files_dict.values():
                         if file_dict['file_name'].endswith(file_name):
-                            print(f"rename {file_name}")
                             os.rename(os.path.join(
                             self.temp_job_dict['job_folder_global_path'], file_name), file_dict['file_global_path'])
 
