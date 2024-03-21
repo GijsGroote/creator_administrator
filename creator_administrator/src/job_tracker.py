@@ -413,6 +413,7 @@ class JobTracker:
 
                 # check for jobs with no make files, add them.
                 job_names_no_make_files = []
+                job_names_no_make_files_str = ''
 
                 for counter, (job_name, files_global_paths, job_dict) in enumerate(
                         zip(copy.copy(job_names_no_dates), copy.copy(file_global_path_list), copy.copy(job_dict_list))):
@@ -426,14 +427,20 @@ class JobTracker:
                         file_global_path_list.remove(files_global_paths)
                         job_dict_list.remove(job_dict)
                         job_names_no_make_files.append(job_name)
+                        job_names_no_make_files_str += f'\n{job_name}'
 
                     else:
                         file_global_path_list[counter] = make_files_global_paths
 
 
                 if len(job_names_no_make_files) > 0:
-                    TimedMessage(parent=self.parent,
-                             gv=self.gv, text=f'Added {len(job_names_no_make_files)} jobs to the Job Tracker.')
+                    if len(job_names_no_make_files) == 1:
+                        job_or_jobs = 'job'
+                    else:
+                        job_or_jobs = 'jobs'
+
+                    InfoQMessageBox(parent=self.parent,
+                             gv=self.gv, text=f'Added {len(job_names_no_make_files)} {job_or_jobs} to the Job Tracker that contain no files to make: {job_names_no_make_files_str}')
 
                 if len(job_names_no_dates) > 0:
 

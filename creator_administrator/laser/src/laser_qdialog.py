@@ -6,7 +6,6 @@ from PyQt6.QtWidgets import QWidget
 from src.qdialog import CreateJobsFromMailQDialog, CreateJobsFromFileSystemQDialog
 from src.qmessagebox import TimedMessage
 from src.threaded_mail_manager import ThreadedMailManager
-from src.directory_functions import copy_item
 
 from laser_job_tracker import LaserJobTracker
 from laser_validate import validate_material_info
