@@ -9,6 +9,7 @@ mail_item: openen .msg file or .eml file, or a string (directory path, dir conta
 import os
 import sys
 import re
+import shutil
 import time
 import http.client as httplib
 from unidecode import unidecode
@@ -89,7 +90,7 @@ class MailManager():
                 warnings.append('No internet connection detected')
 
             temp_folder_global_path = os.path.join(self.gv['DATA_DIR_HOME'], 'TEMP')
-            delete_directory_content(None, temp_folder_global_path)
+            delete_directory_content(None, self.gv, temp_folder_global_path)
 
             for message in self.inbox.Items:
                 if self.gv['ONLY_UNREAD_MAIL']:
@@ -238,58 +239,70 @@ class MailManager():
                     return mail_file.get_payload(decode=True)
 
 
-    def getEmailAddress(self, msg) -> str:
+    def getEmailAddress(self, mail_item) -> str:
         """ Return the email adress. """
-        if sys.platform == 'win32':
-            msg = self.mailItemToMailFile(msg)
+        mail_file = self.mailItemToMailFile(mail_item)
 
-            if msg.Class==43:
-                if msg.SenderEmailType=='EX':
-                    if msg.Sender.GetExchangeUser() is not None:
-                        return msg.Sender.GetExchangeUser().PrimarySmtpAddress
-                    return msg.Sender.GetExchangeDistributionList().PrimarySmtpAddress
-                return msg.SenderEmailAddress
+        if sys.platform == 'win32':
+
+            if mail_file.Class==43:
+                if mail_file.SenderEmailType=='EX':
+                    if mail_file.Sender.GetExchangeUser() is not None:
+                        return mail_file.Sender.GetExchangeUser().PrimarySmtpAddress
+                    return mail_file.Sender.GetExchangeDistributionList().PrimarySmtpAddress
+                return mail_file.SenderEmailAddress
 
             raise ValueError("Could not get email adress")
 
         if sys.platform == 'linux':
-            return email.message_from_bytes(msg[0][1]).get('From')
-        
-    def getSenderMailReceiveTime(self, mail_file) -> str:
-        ''' Return the time a mail was received. '''
-        if sys.platform == 'win32':
-            msg = self.mailItemToMailFile(mail_file)       
-            return str(msg.ReceivedTime)
-        if sys.platform == 'linux':
-            return parsedate_to_datetime(email.message_from_bytes(mail_file[0][1])['date'])
 
-    def getSenderName(self, msg) -> str:
-        """ Return the senders name. """
+            mail_name_long = mail_file.get('From')
+            match = re.search(r'<(.*?)>', mail_name_long)
+            if match:
+                return str(match.group(1))
+            raise ValueError(f'Could not convert {mail_name_long} to mail adress')
+
+        
+    def getSenderMailReceiveTime(self, mail_item) -> str:
+        ''' Return the time a mail was received. '''
+
+        mail_file = self.mailItemToMailFile(mail_item)       
+
         if sys.platform == 'win32':
-            msg = self.mailItemToMailFile(msg)         
+            return str(mail_file.ReceivedTime)
+
+        if sys.platform == 'linux':
+            return str(mail_file['date'])
+
+    def getSenderName(self, mail_item) -> str:
+        """ Return the senders name. """
+
+        mail_file = self.mailItemToMailFile(mail_item)         
+
+        if sys.platform == 'win32':
             
-            return str(msg.Sender)
+            return str(mail_file.Sender)
      
         if sys.platform == 'linux':
-            if isinstance(msg, str):
-                eml_file_global_path = self.getMailGlobalPathFromFolder(msg)
-                with open(eml_file_global_path, 'rb') as file:
-                    msg = email.message_from_binary_file(file, policy=default)
-            else:
-                msg = email.message_from_bytes(msg[0][1])
+            # if isinstance(msg, str):
+            #     eml_file_global_path = self.getMailGlobalPathFromFolder(msg)
+            #     with open(eml_file_global_path, 'rb') as file:
+            #         msg = email.message_from_binary_file(file, policy=default)
+            # else:
+            #     msg = email.message_from_bytes(msg[0][1])
 
-            return self.mailToName(msg.get('From'))
+            return self.mailToName(mail_file.get('From'))
 
     def mailItemToMailFile(self, mail_item):
         ''' Return Msg from global path to mail.msg. '''
 
-        if isinstance(mail_item, str):
-            mail_file_global_path = self.getMailGlobalPathFromFolder(mail_item)
 
         if sys.platform == 'win32':
             if isinstance(mail_item, client.CDispatch):
                 return mail_item
-            return self.outlook.OpenSharedItem(mail_file_global_path)
+
+            if isinstance(mail_item, str):
+                return self.outlook.OpenSharedItem(self.getMailGlobalPathFromFolder(mail_item))
 
         if sys.platform == 'linux':
             if isinstance(mail_item, email.message.Message):
@@ -298,8 +311,9 @@ class MailManager():
             if isinstance(mail_item, list):
                 return email.message_from_bytes(mail_item[0][1])
 
-            with open(mail_file_global_path, 'rb') as file:
-                return email.message_from_binary_file(file, policy=default)
+            if isinstance(mail_item, str):
+                with open(self.getMailGlobalPathFromFolder(mail_item), 'rb') as file:
+                    return email.message_from_binary_file(file, policy=default)
 
         raise ValueError('Could not parse mail_item of type {type(mail_item)} to a mail_file')
 
@@ -418,7 +432,6 @@ class MailManager():
         if sys.platform == 'linux':
 
             eml = self.mailItemToMailFile(mail_item)
-
 
             original_sender_mail_long = eml.get('From')
             original_sender_mail = parseaddr(original_sender_mail_long)[1]

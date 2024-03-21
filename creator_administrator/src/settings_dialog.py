@@ -76,7 +76,7 @@ class SettingsQDialog(QDialog):
         if self.validateAll():
             # save and restart application
             self.saveSettings()
-            TimedMessage(self.gv, self, 'Settings saved, Restarting Creator Administrator.')
+            TimedMessage(self, self.gv, 'Settings saved, Restarting Creator Administrator.')
             self.close()
             self.parent().close()
             subprocess.call("python " + '"'+f'{os.path.join(self.gv["REPO_DIR_HOME"], "laser/src/laser_app.py")}'+'"', shell=True)

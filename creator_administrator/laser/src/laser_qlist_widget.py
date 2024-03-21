@@ -1,18 +1,16 @@
-import os
-
 from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import QStackedWidget, QListWidgetItem, QLabel, QTabWidget
+from PyQt6.QtWidgets import QStackedWidget, QListWidgetItem, QLabel, QTabWidget, QWidget
 
-from src.qlist_widget import OverviewQListWidget, ContentQListWidget
+from src.qlist_widget import OverviewQListWidget, ContentQListWidget, JobContentQListWidget
 from convert import split_material_name
 from laser_job_tracker import LaserJobTracker
 
-class JobsOverviewQListWidget(OverviewQListWidget):
+class LaserAllJobsOverviewQListWidget(OverviewQListWidget):
 
-    def __init__(self, *args, **kwargs):
-        OverviewQListWidget.__init__(self, *args, **kwargs)
+    def __init__(self, parent: QWidget, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
 
-        self.object_name = None
+        self.job_tracker = LaserJobTracker(self)
 
         self.widget_names ={'WACHTRIJ':
                                 {'QStackedWidget': 'wachtrijQStackedWidget',
@@ -23,33 +21,17 @@ class JobsOverviewQListWidget(OverviewQListWidget):
                             'AFGEKEURD':
                                 {'QStackedWidget': 'afgekeurdQStackedWidget',
                                  'tab_widget_position': 4}}
+        self.refresh()
 
-        # initialize
-        self.objectNameChanged.connect(self.storeObjectNameInit)
+    def refresh(self):
+        ''' Initialise the list widget with jobs. '''
+        self.clear()
+        self.initialize(self.job_tracker.getAllStaticAndDynamicJobNames())
 
-
-    def getItemNames(self) -> list[tuple]:
-        ''' Return a list of tuples containing:
-                first the short unique job name
-                second the informative dynamic job name '''
-
-        job_tracker = LaserJobTracker(self)
-        if self.object_name == 'allJobsQListWidget':
-            return job_tracker.getAllStaticAndDynamicJobNames()
-        if self.object_name == 'wachtrijJobsQListWidget':
-            return job_tracker.getStaticAndDynamicJobNamesWithStatus('WACHTRIJ')
-        if self.object_name == 'verwerktJobsQListWidget':
-            return job_tracker.getStaticAndDynamicJobNamesWithStatus('VERWERKT')
-        if self.object_name == 'afgekeurdJobsQListWidget':
-            return job_tracker.getStaticAndDynamicJobNamesWithStatus('AFGEKEURD')
-
-        raise ValueError(f'could not find jobs for {self.objectName()}')
-
-
-    def displayItem(self, job_name: str):
+    def displayItem(self, item_name: str):
         ''' Display the job page and load content for the highlighted job. '''
 
-        job_status = LaserJobTracker(self).getJobDict(job_name)['status']
+        job_status = self.job_tracker.getJobDict(item_name)['status']
 
         # find QStackedWidget for job_status
         stacked_widget = self.window().findChild(
@@ -57,7 +39,7 @@ class JobsOverviewQListWidget(OverviewQListWidget):
                 self.widget_names[job_status]['QStackedWidget'])
 
         # load job into JobContentQListWidget
-        stacked_widget.findChild(JobContentQListWidget).loadContent(job_name)
+        stacked_widget.findChild(JobContentQListWidget).loadContent(item_name)
 
         # show jobPage in stackedWidget
         stacked_widget.setCurrentIndex(1)
@@ -66,44 +48,22 @@ class JobsOverviewQListWidget(OverviewQListWidget):
         tab_widget = self.window().findChild(QTabWidget, 'jobsQTabWidget')
         tab_widget.setCurrentIndex(self.widget_names[job_status]['tab_widget_position'])
 
+class LaserWachtrijJobsOverviewQListWidget(OverviewQListWidget):
 
-class JobContentQListWidget(ContentQListWidget):
+    def __init__(self, parent: QWidget, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
 
-    def __init__(self, *args, **kwargs):
-        ContentQListWidget.__init__(self, *args, **kwargs)
+        self.refresh()
 
-    def loadContent(self, job_name):
+    def refresh(self):
+        ''' Initialise the list widget with jobs. '''
         self.clear()
-        self.current_item_name = job_name
+        self.initialize(LaserJobTracker(self).getStaticAndDynamicJobNamesWithStatus('WACHTRIJ'))
 
-        job_dict = LaserJobTracker(self).getJobDict(job_name)
+class LaserMaterialOverviewQListWidget(OverviewQListWidget):
 
-        if job_dict is not None:
-            self.parent().findChild(QLabel).setText(job_dict['dynamic_job_name'])
-
-            for file in os.listdir(job_dict['job_folder_global_path']):
-
-                item = QListWidgetItem()
-                item.setData(1, os.path.join(
-                    job_dict['job_folder_global_path'], file))
-
-                # check if it is a laser file, indicate if it is done with an emoticon
-                for laser_file_dict in [val for key,val in job_dict['laser_files'].items() if file in key]:
-                    # ☑️✅✔️❎
-                    if laser_file_dict['done']:
-                        file ='✅ '+file
-                    else:
-                        file ='❎ '+file
-
-                item.setText(file)
-                item.setFont(QFont('Cantarell', 14))
-                self.addItem(item)
-
-
-class MaterialOverviewQListWidget(OverviewQListWidget):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, parent: QWidget, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
 
         self.initialize(self.getItemNames())
 
@@ -128,18 +88,49 @@ class MaterialOverviewQListWidget(OverviewQListWidget):
         stacked_widget.setCurrentIndex(1)
 
 
-class MaterialContentQListWidget(ContentQListWidget):
 
-    def __init__(self, *args, **kwargs):
-        ContentQListWidget.__init__(self, *args, **kwargs)
+class LaserVerwerktJobsOverviewQListWidget(OverviewQListWidget):
 
-    def loadContent(self, material_name):
+    def __init__(self, parent: QWidget, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        self.refresh()
+
+    def refresh(self):
+        ''' Initialise the list widget with jobs. '''
         self.clear()
-        self.current_item_name = material_name
+        self.initialize(LaserJobTracker(self).getStaticAndDynamicJobNamesWithStatus('VERWERKT'))
 
-        self.parent().findChild(QLabel, 'materialQLabel').setText(material_name)
 
-        material, thickness = split_material_name(material_name)
+class LaserAfgekeurdJobsOverviewQListWidget(OverviewQListWidget):
+
+    def __init__(self, parent: QWidget, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        self.refresh()
+
+    def refresh(self):
+        ''' Initialise the list widget with jobs. '''
+        self.clear()
+        self.initialize(LaserJobTracker(self).getStaticAndDynamicJobNamesWithStatus('AFGEKEURD'))
+
+class LaserJobContentQListWidget(JobContentQListWidget):
+
+    def __init__(self, parent: QWidget, *args, **kwargs):
+        super().__init__(parent, LaserJobTracker(self), *args, **kwargs)
+
+class LaserMaterialContentQListWidget(ContentQListWidget):
+
+    def __init__(self, parent: QWidget, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+    def loadContent(self, item_name):
+        self.clear()
+        self.current_item_name = item_name
+
+        self.parent().findChild(QLabel, 'materialQLabel').setText(item_name)
+
+        material, thickness = split_material_name(item_name)
 
         laser_file_info_list = LaserJobTracker(
                 self).getLaserFilesWithMaterialThicknessInfo(material, thickness)
@@ -156,4 +147,3 @@ class MaterialContentQListWidget(ContentQListWidget):
 
             item.setFont(QFont('Cantarell', 14))
             self.addItem(item)
-

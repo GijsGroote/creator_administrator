@@ -107,6 +107,7 @@ disable=
     fixme,
     cyclic-import,
     import-error,
+    unspecified-encoding
 
 
 [REPORTS]
@@ -361,7 +362,7 @@ ignored-classes=SQLObject, optparse.Values, thread._local, _thread._local
 # List of members which are set dynamically and missed by pylint inference
 # system, and so shouldn't trigger E1101 when accessed. Python regular
 # expressions are accepted.
-generated-members=REQUEST,acl_users,aq_parent,argparse.Namespace
+generated-members=REQUEST,acl_users,aq_parent,argparse.Namespace,make_item_counter,job_counter
 
 # List of decorators that create context managers from functions, such as
 # contextlib.contextmanager.
@@ -522,6 +523,7 @@ overgeneral-exceptions=builtins.BaseException
 
 
 [TYPING]
+
 
 # Set to ``no`` if the app / library does **NOT** need to support runtime
 # introspection of type annotations. If you use type annotations

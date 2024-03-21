@@ -16,11 +16,22 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Select files that are done</string>
+   <string>Select Options</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../figures/logo.ico</normaloff>../figures/logo.ico</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Select/deselect the options:</string>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QListWidget" name="optionsQListWidget">
        <property name="selectionMode">

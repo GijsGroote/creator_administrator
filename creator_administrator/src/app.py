@@ -1,6 +1,6 @@
 import webbrowser
-import qdarktheme
 from functools import partial
+import qdarktheme
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QShortcut, QKeySequence 
@@ -8,6 +8,7 @@ from PyQt6.QtWidgets import QMainWindow, QListWidget, QStackedWidget
 from PyQt6.uic import loadUi
 
 from src.qdialog import AboutDialog
+from src.qmessagebox import TimedMessage
 
 class MainWindow(QMainWindow):
 
@@ -34,6 +35,8 @@ class MainWindow(QMainWindow):
         # shortcut to close the application
         QShortcut(QKeySequence("Ctrl+Q"), self).activated.connect(self.close)
 
+        QShortcut(QKeySequence("Ctrl+R"), self).activated.connect(self.refreshAllWidgets)
+
     
 
     def keyPressEvent(self, event):
@@ -43,6 +46,19 @@ class MainWindow(QMainWindow):
         # function the currenlty displayed item
         if event.key() == Qt.Key.Key_Return:
                 self.jobsQTabWidget.currentWidget().findChild(QStackedWidget).currentWidget().findChild(QListWidget).itemEnterPressed()
+
+    def checkHealth(self):
+        ''' Check health with tracker file. '''
+        self.job_tracker.checkHealth()
+        self.refreshAllWidgets()
+        if self.job_tracker.system_healthy:
+            TimedMessage(self, self.gv, 'System Healthy 😊!')
+
+    def refreshAllWidgets(self):
+        ''' Refresh the widgets. '''
+        qlist_widgets = self.findChildren(QListWidget)
+        for list_widget in qlist_widgets:
+            list_widget.refresh()
 
 
     def openAboutDialog(self):

@@ -13,9 +13,9 @@ class ThreadedMailManager():
     '''
 
     def __init__(self, parent, gv: dict, dialog=None):
-        self.gv=gv
+        self.gv = gv
         self.thread_pool = gv['THREAD_POOL']
-        self.parent= parent
+        self.parent = parent
         self.dialog = dialog # dialog to open with data retrieved on another thread
         self.worker = None
 
@@ -50,13 +50,13 @@ class ThreadedMailManager():
 
         if len(warnings) != 0:
             for warning in warnings:
-                WarningQMessageBox(self.gv, self.parent, text=warning)
+                WarningQMessageBox(self.parent, self.gv, text=warning)
 
         if len(valid_msgs) == 0:
             InfoQMessageBox(parent=self.parent, text='No new valid job request in mail inbox')
 
         else:
-            self.dialog(self.parent, valid_msgs).exec()
+            self.dialog(parent=self.parent, valid_msgs=valid_msgs).exec()
             self.parent.refreshAllWidgets()
 
             
@@ -76,7 +76,7 @@ class ThreadedMailManager():
         mail_item=MailManager(self.gv).getMailGlobalPathFromFolder(job_dict['job_folder_global_path'])
 
         if mail_type=='RECEIVED':
-            template_content=JobTracker(parent=self.parent(), gv=self.gv).getNumberOfJobsInQueue()
+            template_content=JobTracker(parent=self.parent, gv=self.gv).getNumberOfJobsInQueue()
         else:
             template_content={}
 
@@ -166,7 +166,7 @@ class ThreadedMailManager():
         self.success_message = success_message
         self.error_message = error_message
 
-        self.loading_dialog = LoadingQDialog(self.parent().parent().parent().parent().parent().parent(), 
+        self.loading_dialog = LoadingQDialog(self.parent.parent().parent().parent().parent().parent(), 
                                              self.gv, 
                                              text='Send the Outlook popup reply, it can be behind other windows')
         
@@ -261,17 +261,17 @@ class ThreadedMailManager():
     def displaySuccessMessage(self):
         ''' Display a confirmation message to the user. '''
         if self.success_message is not None:
-            TimedMessage(self.gv, parent=self.parent, text=self.success_message)
+            TimedMessage(self.parent, self.gv, self.success_message)
 
     def handleMailError(self, exc: Exception):
         ''' Handle the mail Error. '''
         assert isinstance(exc, Exception), f'Expected type Exception, received type: {type(exc)}'
-       
+
         if isinstance(exc, ConnectionError):
             ErrorQMessageBox(
                     self.parent,
                     text=f'Connection Error {self.error_message}: {str(exc)}')
         else:
             ErrorQMessageBox(
-                    self.parent(),
+                    self.parent,
                     text=f'Error Occured {self.error_message}: {str(exc)}')

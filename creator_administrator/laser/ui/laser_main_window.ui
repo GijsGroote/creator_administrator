@@ -24,6 +24,10 @@
   <property name="windowTitle">
    <string>Creator Administrator</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../../../../figures/logo.ico</normaloff>../../../../../figures/logo.ico</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -67,7 +71,7 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4">
               <item>
-               <widget class="JobsOverviewQListWidget" name="allJobsQListWidget">
+               <widget class="LaserAllJobsOverviewQListWidget" name="allJobsQListWidget">
                 <property name="font">
                  <font>
                   <pointsize>14</pointsize>
@@ -107,7 +111,7 @@
             <widget class="QWidget" name="jobsListPage_2">
              <layout class="QHBoxLayout" name="horizontalLayout_4">
               <item>
-               <widget class="JobsOverviewQListWidget" name="wachtrijJobsQListWidget"/>
+               <widget class="LaserWachtrijJobsOverviewQListWidget" name="wachtrijJobsQListWidget"/>
               </item>
              </layout>
             </widget>
@@ -156,7 +160,7 @@
                  </layout>
                 </item>
                 <item>
-                 <widget class="JobContentQListWidget" name="listWidget_10">
+                 <widget class="LaserJobContentQListWidget" name="listWidget_10">
                   <property name="toolTip">
                    <string>Shortcut: Esc</string>
                   </property>
@@ -197,14 +201,14 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="AfgekeurdQPushButton" name="pushButton_4">
+                   <widget class="LaserAfgekeurdQPushButton" name="pushButton_4">
                     <property name="text">
                      <string>Afgekeurd</string>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="OptionsQPushButton" name="wachtrijOptionsQPushButton">
+                   <widget class="LaserOptionsQPushButton" name="wachtrijOptionsQPushButton">
                     <property name="text">
                      <string>Options</string>
                     </property>
@@ -238,7 +242,7 @@
           <widget class="QWidget" name="jobsListPage_3">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
-             <widget class="MaterialOverviewQListWidget" name="wachtrijMateriaalJobsQListWidget"/>
+             <widget class="LaserMaterialOverviewQListWidget" name="wachtrijMateriaalJobsQListWidget"/>
             </item>
            </layout>
           </widget>
@@ -284,7 +288,7 @@
                </layout>
               </item>
               <item>
-               <widget class="MaterialContentQListWidget" name="listWidget_7"/>
+               <widget class="LaserMaterialContentQListWidget" name="listWidget_7"/>
               </item>
              </layout>
             </item>
@@ -308,7 +312,7 @@
                </widget>
               </item>
               <item>
-               <widget class="OptionsQPushButton" name="wachtrijMateriaalOptionsQPushButton">
+               <widget class="LaserOptionsQPushButton" name="wachtrijMateriaalOptionsQPushButton">
                 <property name="text">
                  <string>Options</string>
                 </property>
@@ -335,7 +339,7 @@
           <widget class="QWidget" name="jobsListPage_4">
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
-             <widget class="JobsOverviewQListWidget" name="verwerktJobsQListWidget"/>
+             <widget class="LaserVerwerktJobsOverviewQListWidget" name="verwerktJobsQListWidget"/>
             </item>
            </layout>
           </widget>
@@ -381,7 +385,7 @@
                </layout>
               </item>
               <item>
-               <widget class="JobContentQListWidget" name="listWidget_8"/>
+               <widget class="LaserJobContentQListWidget" name="listWidget_8"/>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_8">
@@ -396,7 +400,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="OptionsQPushButton" name="verwerktOptionsQPushButton">
+                 <widget class="LaserOptionsQPushButton" name="verwerktOptionsQPushButton">
                   <property name="text">
                    <string>Options</string>
                   </property>
@@ -431,7 +435,7 @@
           <widget class="QWidget" name="jobsListPage_5">
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <widget class="JobsOverviewQListWidget" name="afgekeurdJobsQListWidget"/>
+             <widget class="LaserAfgekeurdJobsOverviewQListWidget" name="afgekeurdJobsQListWidget"/>
             </item>
            </layout>
           </widget>
@@ -477,7 +481,7 @@
                </layout>
               </item>
               <item>
-               <widget class="JobContentQListWidget" name="listWidget_9"/>
+               <widget class="LaserJobContentQListWidget" name="listWidget_9"/>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_9">
@@ -492,7 +496,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="OptionsQPushButton" name="afgekeurdOptionsQPushButton">
+                 <widget class="LaserOptionsQPushButton" name="afgekeurdOptionsQPushButton">
                   <property name="text">
                    <string>Options</string>
                   </property>
@@ -635,9 +639,10 @@
    <header>button.h</header>
   </customwidget>
   <customwidget>
-   <class>JobsOverviewQListWidget</class>
-   <extends>QListWidget</extends>
-   <header>laser_qlist_widget.h</header>
+   <class>JobsQTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>tab_widget.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>LaserKlaarQPushButton</class>
@@ -650,35 +655,49 @@
    <header>laser_button.h</header>
   </customwidget>
   <customwidget>
-   <class>AfgekeurdQPushButton</class>
+   <class>LaserAfgekeurdQPushButton</class>
    <extends>QPushButton</extends>
    <header>laser_button.h</header>
   </customwidget>
   <customwidget>
-   <class>JobContentQListWidget</class>
+   <class>LaserMaterialOverviewQListWidget</class>
    <extends>QListWidget</extends>
    <header>laser_qlist_widget.h</header>
   </customwidget>
   <customwidget>
-   <class>OptionsQPushButton</class>
+   <class>LaserMaterialContentQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>laser_qlist_widget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LaserWachtrijJobsOverviewQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>laser_qlist_widget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LaserJobContentQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>laser_qlist_widget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LaserAllJobsOverviewQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>laser_qlist_widget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LaserVerwerktJobsOverviewQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>laser_qlist_widget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LaserAfgekeurdJobsOverviewQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>laser_qlist_widget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LaserOptionsQPushButton</class>
    <extends>QPushButton</extends>
    <header>laser_button.h</header>
-  </customwidget>
-  <customwidget>
-   <class>JobsQTabWidget</class>
-   <extends>QTabWidget</extends>
-   <header>tab_widget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>MaterialOverviewQListWidget</class>
-   <extends>QListWidget</extends>
-   <header>laser_qlist_widget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>MaterialContentQListWidget</class>
-   <extends>QListWidget</extends>
-   <header>laser_qlist_widget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

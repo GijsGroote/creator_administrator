@@ -45,7 +45,7 @@ class InfoQMessageBox(QMessageBox):
 
 class WarningQMessageBox(QMessageBox):
 
-    def __init__(self, gv: dict, parent: QWidget, text: str, *args, **kwargs):
+    def __init__(self, parent: QWidget, gv: dict, text: str, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         if gv['DISPLAY_WARNING_MESSAGES']:
@@ -68,7 +68,7 @@ class ErrorQMessageBox(QMessageBox):
 class TimedMessage(QDialog):
     ''' Short message that can only be clicked away. '''
 
-    def __init__(self, gv: dict, parent: QWidget, text: str):
+    def __init__(self, parent: QWidget, gv: dict, text: str):
         super().__init__(parent)
 
         if gv['DISPLAY_TEMP_MESSAGES']:

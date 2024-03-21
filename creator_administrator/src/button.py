@@ -1,37 +1,21 @@
 import os
+import abc
 
-# from PyQt6 import *
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QShortcut, QKeySequence 
-from PyQt6.QtWidgets import QPushButton, QFileDialog, QLabel
+from PyQt6.QtGui import QShortcut, QKeySequence
+from PyQt6.QtWidgets import QPushButton, QFileDialog, QMenu, QWidget
 
-from src.mail_manager import MailManager
+from src.directory_functions import open_folder
 from src.qlist_widget import ContentQListWidget
-from src.qmessagebox import TimedMessage
-
-from laser_qlist_widget import OverviewQListWidget
+from src.job_tracker import JobTracker
 
 
 class JobsQPushButton(QPushButton):
     ''' Parent class for all buttons that update job status
             such as laser klaar, gesliced. '''
 
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent: QWidget, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
-
-
-    def refreshAllQListWidgets(self):
-
-        self.parent().parent().setCurrentIndex(0)        # show list of jobs in tabs
-
-        # for qstacked_widget in qstacked_widgets:
-            # qstacked_widget.setCurrentIndex(0)
-
-        qlist_widgets = self.window().findChildren(OverviewQListWidget)
-        # refresh all QListWidgets that contain jobs
-        for list_widget in qlist_widgets:
-            list_widget.refresh()
-
 
     def getCurrentItemName(self) -> str:
         content_qlist_widget = self.parent().findChild(ContentQListWidget)
@@ -39,36 +23,90 @@ class JobsQPushButton(QPushButton):
         if content_qlist_widget is not None:
             return content_qlist_widget.current_item_name
 
-    def sendFinishedMail(self, gv: dict, job_name: str, job_folder_global_path: str):
-        ''' send please come pick up your job mail. '''
-        mail_manager = MailManager(gv)
-        msg_file_global_path = mail_manager.getMailGlobalPathFromFolder(job_folder_global_path)
 
-        if msg_file_global_path is not None:
-            # send finished mail on a seperate thread
-            mail_manager.replyToEmailFromFileUsingTemplate(
-                    msg_file_path=msg_file_global_path,
-                    template_file_name="FINISHED_MAIL_TEMPLATE",
-                    template_content={},
-                    popup_reply=False)
-            
-            TimedMessage(gv, parent=self, text=f"Job Finished mail was sent to {job_name}")
+class OptionsQPushButton(JobsQPushButton):
 
-        else:
-            TimedMessage(gv, parent=self, text=f"No .msg file detected, no Pickup mail was sent to {job_name}")
+    def __init__(self, parent: QWidget, gv: dict, job_tracker: JobTracker, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
 
-    
+        self.job_tracker = job_tracker
+
+        self.menu = QMenu()
+
+        # self.object_name = self.objectName()
+
+        copy_todo_action = self.menu.addAction('Copy Files to TODO folder', self.copyMakeFilesTo)
+        copy_todo_action.setToolTip('Shortcut: Ctrl+T')
+
+        QShortcut(QKeySequence('Ctrl+T'), self).activated.connect(self.copyMakeFilesTo)
+        self.menu.setToolTipsVisible(True)
+
+        if gv['DARK_THEME']:
+            self.menu.setStyleSheet("""QToolTip {
+                           background-color: black;
+                           color: white;
+                           border: black solid 1px
+                           }""")
+
+        # This is a trick because self.objectName() is not known for few milisecs
+        self.objectNameChanged.connect(self.initialize)
+
+    @abc.abstractmethod
+    def initialize(self):
+        ''' Initialize button. '''
+
+    def moveJobToWachtrij(self):
+        job_name = self.getCurrentItemName()
+        self.job_tracker.markAllFilesAsDone(job_name=job_name,
+                                                 done=False)
+        self.moveJobTo('WACHTRIJ')
+        self.window().refreshAllWidgets()
+        self.parent().parent().setCurrentIndex(0)
+
+    def moveJobToAfgekeurd(self):
+        self.moveJobTo('AFGEKEURD')
+
+    def moveJobToVerwerkt(self):
+        self.moveJobTo('VERWERKT')
+
+    def moveJobTo(self, new_status):
+        job_name = self.getCurrentItemName()
+        self.job_tracker.updateJobStatus(job_name, new_status)
+        self.window().refreshAllWidgets()
+        self.parent().parent().setCurrentIndex(0)
+
+    def openInFileExplorer(self):
+        job_folder_global_path = self.job_tracker.getJobDict(
+                self.getCurrentItemName())['job_folder_global_path']
+        open_folder(job_folder_global_path)
+
+    def deleteJob(self):
+        job_name = self.getCurrentItemName()
+        self.job_tracker.deleteJob(job_name)
+
+        self.window().refreshAllWidgets()
+
+        # show list of jobs in tabs
+        self.parent().parent().setCurrentIndex(0)
+
+
+    @abc.abstractmethod
+    def copyMakeFilesTo(self):
+        '''Copy the make files from a job to the todo folder. '''
+
+
 class BackQPushButton(QPushButton):
 
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.clicked.connect(self.on_click)
- 
+
         # shortcut on Esc button
         QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.on_click)
 
     def on_click(self):
-        self.parent().parent().setCurrentIndex(0) 
+        self.parent().parent().setCurrentIndex(0)
+
 
 class SelectFilesQPushButton(QPushButton):
     ''' Select multiple files from file system. '''
@@ -86,18 +124,15 @@ class SelectFilesQPushButton(QPushButton):
             'Select Files',
             os.path.expanduser('~'),
             'All Files (*)')
-        self.files_global_paths.extend(files_paths)
 
-        selected_files_str = 'Selected Files:\n'
+        self.files_global_paths = list(dict.fromkeys(self.files_global_paths + files_paths))
+
+        selected_files_str = 'Selected Files:'
+
         for file_global_path in self.files_global_paths:
-            selected_files_str += f'{os.path.basename(file_global_path)}, '
-        selected_files_str = selected_files_str[:-2]
+            selected_files_str += f'\n{os.path.basename(file_global_path)}'
 
-        files_global_path_label = self.parent().findChild(QLabel, 'filesGlobalPathQLabel')
-
-        if len(self.files_global_paths) > 0 and files_global_path_label is not None:
-            files_global_path_label.setText(selected_files_str)
-            files_global_path_label.show()
+        self.setText(selected_files_str)
 
 class SelectFileQPushButton(QPushButton):
     ''' Select a single file from file system. '''
@@ -106,7 +141,7 @@ class SelectFileQPushButton(QPushButton):
         super().__init__(parent, *args, **kwargs)
         self.clicked.connect(self.on_click)
 
-        self.start_dir_global_path = os.path.expanduser('~')     
+        self.start_dir_global_path = os.path.expanduser('~')
         self.file_global_path = None
 
     def setStartingDirectory(self, start_dir_global_path: str):
@@ -129,7 +164,6 @@ class SelectFileQPushButton(QPushButton):
         self.file_global_path = file_path
 
 
-
 class SelectFolderQPushButton(QPushButton):
     ''' Select a folder from file system. '''
 
@@ -137,7 +171,7 @@ class SelectFolderQPushButton(QPushButton):
         super().__init__(parent, *args, **kwargs)
         self.folder_global_path = None
         self.clicked.connect(self.on_click)
-        self.start_dir_global_path = os.path.expanduser('~')  
+        self.start_dir_global_path = os.path.expanduser('~')
 
     def setStartingDirectory(self, start_dir_global_path: str):
         ''' Set the starting directory. '''
