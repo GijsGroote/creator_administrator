@@ -211,7 +211,7 @@ class PrintOptionsQPushButton(OptionsQPushButton):
             target_item_global_path = os.path.join(target_folder_global_path, file_key)
             copy_item(source_item_global_path, target_item_global_path)
 
-        TimedMessage(gv=gv, parent=self, text='Copied Files to TODO folder')
+        TimedMessage(parent=self, gv=gv, text='Copied Files to TODO folder')
 
     def sendMail(self, mail_type: str):
         ''' Send a mail. '''

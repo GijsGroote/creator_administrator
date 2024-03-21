@@ -134,7 +134,7 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
                 sender_mail_adress=sender_mail_adress,
                 sender_mail_receive_time=sender_mail_receive_time)
 
-        TimedMessage(gv, self, text=f'Created {self.temp_job_name}')
+        TimedMessage(self, gv, f'Created {self.temp_job_name}')
 
 
 class CreatePrintJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):

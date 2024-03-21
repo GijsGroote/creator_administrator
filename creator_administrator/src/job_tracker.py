@@ -301,7 +301,7 @@ class JobTracker:
                 self.deleteJob(job_key)
 
         if n_old_jobs > 0:
-            TimedMessage(gv=self.gv, parent=self.parent, text=f'Removed {str(n_old_jobs)} old jobs')
+            TimedMessage(parent=self.parent, gv=self.gv, text=f'Removed {str(n_old_jobs)} old jobs')
 
         self.writeTrackerFile()
 

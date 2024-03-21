@@ -27,7 +27,7 @@ class PrintMainWindow(MainWindow):
         self.threadpool = gv['THREAD_POOL']
 
         self.job_tracker = PrintJobTracker(parent=self)
-        self.job_tracker.checkHealth()
+        self.checkHealth()
 
         self.refreshAllWidgets()
 
@@ -112,12 +112,6 @@ class PrintMainWindow(MainWindow):
     def openEditSettingsDialog(self):
         ''' Open dialog to edit the settings. '''
         PrintSettingsQDialog(self, gv).exec()
-
-    def checkHealth(self):
-        ''' Check health with tracker file. '''
-        PrintJobTracker(self).checkHealth()
-        self.refreshAllWidgets()
-        TimedMessage(gv=gv, parent=self, text='System Healthy ;)')
 
     def refreshAllWidgets(self):
         ''' Refresh the widgets. '''

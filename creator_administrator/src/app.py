@@ -8,6 +8,7 @@ from PyQt6.QtWidgets import QMainWindow, QListWidget, QStackedWidget
 from PyQt6.uic import loadUi
 
 from src.qdialog import AboutDialog
+from src.qmessagebox import TimedMessage
 
 class MainWindow(QMainWindow):
 
@@ -45,6 +46,12 @@ class MainWindow(QMainWindow):
         # function the currenlty displayed item
         if event.key() == Qt.Key.Key_Return:
                 self.jobsQTabWidget.currentWidget().findChild(QStackedWidget).currentWidget().findChild(QListWidget).itemEnterPressed()
+
+    def checkHealth(self):
+        ''' Check health with tracker file. '''
+        self.job_tracker.checkHealth()
+        self.refreshAllWidgets()
+        TimedMessage(self, self.gv, 'System Healthy 😊!')
 
     def refreshAllWidgets(self):
         ''' Refresh the widgets. '''

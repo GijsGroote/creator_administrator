@@ -261,14 +261,12 @@ class ThreadedMailManager():
     def displaySuccessMessage(self):
         ''' Display a confirmation message to the user. '''
         if self.success_message is not None:
-            TimedMessage(self.gv, parent=self.parent, text=self.success_message)
+            TimedMessage(self.parent, self.gv, self.success_message)
 
     def handleMailError(self, exc: Exception):
         ''' Handle the mail Error. '''
         assert isinstance(exc, Exception), f'Expected type Exception, received type: {type(exc)}'
 
-        raise exc
-       
         if isinstance(exc, ConnectionError):
             ErrorQMessageBox(
                     self.parent,

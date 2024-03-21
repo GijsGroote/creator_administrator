@@ -161,7 +161,7 @@ class CreateLaserJobsFromMailQDialog(CreateJobsFromMailQDialog):
                 sender_mail_adress=sender_mail_adress,
                 sender_mail_receive_time=sender_mail_receive_time)
 
-        TimedMessage(gv, self, text=f'Laser job {self.temp_job_name} created')
+        TimedMessage(self, gv, text=f'Laser job {self.temp_job_name} created')
 
 
 

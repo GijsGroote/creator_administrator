@@ -117,9 +117,8 @@ class LaserMainWindow(MainWindow):
 
     def checkHealth(self):
         ''' Check health with tracker file. '''
-        LaserJobTracker(self).checkHealth()
+        self.job_tracker.checkHealth()
         self.refreshAllWidgets()
-        TimedMessage(gv=gv, parent=self, text='System Healthy 😊')
 
 
 if __name__ == '__main__':

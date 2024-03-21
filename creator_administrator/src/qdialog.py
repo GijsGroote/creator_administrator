@@ -261,7 +261,7 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
                             self.temp_job_dict['job_folder_global_path'], file_name), file_dict['file_global_path'])
 
 
-            TimedMessage(self.gv, self, text=f'Updated job: {self.temp_job_name}')
+            TimedMessage(self, self.gv, text=f'Updated job: {self.temp_job_name}')
         else:
             self.job_tracker.addJob(self.temp_job_name,
                                     self.temp_job_folder_global_path,
@@ -273,7 +273,7 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
             for item_dict in self.temp_store_files_dict.values():
                 copy_item(item_dict['source_file_global_path'], item_dict['target_file_global_path'])
 
-            TimedMessage(self.gv, self, text=f'Created job: {self.temp_job_name}')
+            TimedMessage(self, self.gv, text=f'Created job: {self.temp_job_name}')
 
         self.parent().refreshAllWidgets()
 
