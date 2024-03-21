@@ -29,6 +29,7 @@ class JobTracker:
         self.tracker_backup_file_path = gv['TRACKER_FILE_PATH'].replace("job_log.json",
                                         "job_log_backup.json")
 
+
     @abc.abstractmethod
     def addJob(self,
                job_name: str,
@@ -440,7 +441,7 @@ class JobTracker:
                         job_or_jobs = 'jobs'
 
                     InfoQMessageBox(parent=self.parent,
-                             gv=self.gv, text=f'Added {len(job_names_no_make_files)} {job_or_jobs} to the Job Tracker that contain no files to make: {job_names_no_make_files_str}')
+                             text=f'Added {len(job_names_no_make_files)} {job_or_jobs} to the Job Tracker that contain no files to make: {job_names_no_make_files_str}')
 
                 if len(job_names_no_dates) > 0:
 
@@ -452,18 +453,19 @@ class JobTracker:
                                               job_dict_list=job_dict_list)
 
                     if dialog.exec() == 1:
-                        TimedMessage(parent=self.parent, gv=self.gv,
-                                 text=f'Added {len(job_folder_not_in_tracker_global_paths)} jobs to the Job Tracker.')
+                        InfoQMessageBox(parent=self.parent,
+                                text=f'Added {len(job_folder_not_in_tracker_global_paths)} jobs to the Job Tracker.')
 
                     else:
-                         WarningQMessageBox(parent=self.parent, gv=self.gv, text='System not healthy!')
+                         WarningQMessageBox(parent=self.parent, gv=self.gv, text='System not healthy 😟!')
+                         self.system_healthy = False
 
 
             else:
                 for job_folder_global_path in job_folder_not_in_tracker_global_paths:
                     delete_item(self.parent, self.gv, job_folder_global_path)
 
-                TimedMessage(parent=self.parent, gv=self.gv,
+                InfoQMessageBox(parent=self.parent,
                              text=f'Deleted {len(job_folder_not_in_tracker_global_paths)} job folders from File System.')
 
 
@@ -522,18 +524,27 @@ class JobTracker:
                     if yes_or_no.answer():
 
 
-                        create_jobs_from_file_system_dialog(self.parent,
+                        dialog = create_jobs_from_file_system_dialog(self.parent,
                                                         [job_dict['job_name']],
                                                         [new_make_files],
                                                         update_existing_job=True,
-                                                        job_dict_list=[job_dict]).exec()
+                                                        job_dict_list=[job_dict])
+
+                        if dialog.exec() == 1:
+                            InfoQMessageBox(parent=self.parent,
+                                        text=f'Added {len(new_make_files)} new {file_or_files} to Job:  {job_dict["job_name"]}.')
+
+                        else:
+                             WarningQMessageBox(parent=self.parent, gv=self.gv, text='System not healthy 😟!')
+                             self.system_healthy = False
+
 
                     else:
                         for file in new_make_files:
                             delete_item(self.parent, self.gv,
                                         os.path.join(job_folder_global_path, file))
 
-                        TimedMessage(parent=self.parent, gv=self.gv,
+                        InfoQMessageBox(parent=self.parent, 
                              text=f'Removed {len(new_make_files)} {file_or_files} from File System')
 
 

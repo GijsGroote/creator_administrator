@@ -51,7 +51,8 @@ class MainWindow(QMainWindow):
         ''' Check health with tracker file. '''
         self.job_tracker.checkHealth()
         self.refreshAllWidgets()
-        TimedMessage(self, self.gv, 'System Healthy 😊!')
+        if self.job_tracker.system_healthy:
+            TimedMessage(self, self.gv, 'System Healthy 😊!')
 
     def refreshAllWidgets(self):
         ''' Refresh the widgets. '''

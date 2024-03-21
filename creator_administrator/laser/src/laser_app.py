@@ -29,7 +29,6 @@ class LaserMainWindow(MainWindow):
         # call job tracker twice to enforce healthy job log
         self.job_tracker = LaserJobTracker(parent=self)
         self.job_tracker.checkHealth()
-
         self.refreshAllWidgets()
 
 
@@ -115,10 +114,6 @@ class LaserMainWindow(MainWindow):
         ''' Open dialog to edit the settings. '''
         LaserSettingsQDialog(self, gv).exec()
 
-    def checkHealth(self):
-        ''' Check health with tracker file. '''
-        self.job_tracker.checkHealth()
-        self.refreshAllWidgets()
 
 
 if __name__ == '__main__':

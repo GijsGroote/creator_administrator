@@ -76,6 +76,8 @@ class PrintJobTracker(JobTracker):
     def checkHealth(self):
         """ Synchonize job tracker and files on file system. """
 
+        self.system_healthy = True
+
         self.checkTrackerFileHealth()
 
         # create jobs_folder if it does not yet exist 

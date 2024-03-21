@@ -27,8 +27,7 @@ class PrintMainWindow(MainWindow):
         self.threadpool = gv['THREAD_POOL']
 
         self.job_tracker = PrintJobTracker(parent=self)
-        self.checkHealth()
-
+        self.job_tracker.checkHealth()
         self.refreshAllWidgets()
 
 
