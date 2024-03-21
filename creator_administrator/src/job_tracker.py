@@ -5,6 +5,7 @@ Job tracker, a backup to check and repair the actual files on the file system.
 import sys
 import json
 import shutil
+import copy
 import os
 import abc
 import re
@@ -41,7 +42,7 @@ class JobTracker:
 
     def readTrackerFile(self):
         ''' Read the tracker file. '''
-        
+
         with open(self.tracker_file_path, 'r' ) as tracker_file:
             self.tracker_dict = json.load(tracker_file)
 
@@ -87,7 +88,8 @@ class JobTracker:
     def createTrackerFile(self):
         """ Create the file that tracks jobs. """
         if os.path.exists(self.tracker_backup_file_path):
-            if YesOrNoMessageBox(self.parent, text=f"Backup file detected at: {self.tracker_backup_file_path}, do you want to restore it (Y/n)?").answer():
+            if YesOrNoMessageBox(self.parent,
+                                 text=f"Backup file detected at: {self.tracker_backup_file_path}, do you want to restore it (Y/n)?").answer():
                 os.rename(self.tracker_backup_file_path, self.tracker_file_path)
                 InfoQMessageBox(self.parent, "Backup restored!")
                 return
@@ -105,11 +107,13 @@ class JobTracker:
             self.readTrackerFile()
         except json.decoder.JSONDecodeError:
             if os.path.isfile(self.tracker_backup_file_path):
-                if YesOrNoMessageBox(self.parent, 'Do you want to restore the backup tracker file (Y/n)?'):
+                if YesOrNoMessageBox(self.parent,
+                             'Do you want to restore the backup tracker file (Y/n)?'):
                     os.remove(self.tracker_file_path)
                     os.rename(self.tracker_backup_file_path, self.tracker_file_path)
 
-            elif YesOrNoMessageBox(self.parent, 'Do you want to create a new empty tracker file (Y/n)?'):
+            elif YesOrNoMessageBox(self.parent,
+                           'Do you want to create a new empty tracker file (Y/n)?'):
                 with open(self.tracker_file_path, 'w' ) as tracker_file:
                     json.dump({}, tracker_file, indent=4)
             else:
@@ -134,7 +138,7 @@ class JobTracker:
         self.writeTrackerFile()
 
     def markAllFilesAsDone(self, job_name: str, done: bool):
-        ''' Update all laser files to done. '''
+        ''' Update all make files to done. '''
         assert job_name is not None, 'Job name is None'
         assert isinstance(done, bool), 'done is not a boolean'
 
@@ -146,7 +150,7 @@ class JobTracker:
         self.writeTrackerFile()
 
     def markFileAsDone(self, job_name: str, file_global_path: str, done: bool):
-        ''' Update laser file to done. '''
+        ''' Update make file to done. '''
         assert job_name is not None, 'Job name is None'
         assert isinstance(done, bool), 'done is not a boolean'
 
@@ -157,7 +161,6 @@ class JobTracker:
                 file_dict['done'] = done
 
         self.writeTrackerFile()
-
 
     def isJobOld(self, created_on_date: str) -> bool:
         """ Check if the job is old. """
@@ -214,8 +217,8 @@ class JobTracker:
 
         job_name = None
         for job_dict in self.tracker_dict.values():
-            for print_file_dict in job_dict['make_files'].values():
-                if print_file_dict['file_global_path'] == file_global_path:
+            for make_file_dict in job_dict['make_files'].values():
+                if make_file_dict['file_global_path'] == file_global_path:
                     job_name = job_dict['job_name']
         return job_name
 
@@ -264,8 +267,7 @@ class JobTracker:
             if match_job_number:
                 does_job_name_exist = True
                 job_number = int(match_job_number.group(1))
-                if job_number > max_job_number:
-                    max_job_number = job_number
+                max_job_number = max(job_number, max_job_number)
 
         if max_job_number == 0:
             if does_job_name_exist:
@@ -273,13 +275,13 @@ class JobTracker:
             return job_name
         return job_name + '_(' + str(max_job_number + 1) + ')'
 
-    def jobGlobalPathToTrackerJobDict(self, tracker_dict: dict, job_folder_global_path: str) -> tuple:
+    def jobGlobalPathToTrackerJobDict(self, tracker_dict: dict, job_folder_global_path: str) -> dict:
         """ If exists, return job name and data from tracker dictionary
-        corresponding to the print job with name print_job_folder_name. """
-        for job_key, job_dict in tracker_dict.items():
+        corresponding to the job with name job_folder_global_path. """
+        for job_dict in tracker_dict.values():
             if job_folder_global_path == job_dict['job_folder_global_path']:
-                return job_key, job_dict
-        return None, None
+                return job_dict
+        return None
 
     def getNumberOfJobsInQueue(self) -> int:
         ''' Return the number of jobs with status WACHTRIJ. '''
@@ -315,7 +317,8 @@ class JobTracker:
                 non_existent_job_keys.append(job_key)
 
         # delete non existent jobs from tracker file
-        [self.tracker_dict.pop(key) for key in non_existent_job_keys]
+        for key in non_existent_job_keys:
+            self.tracker_dict.pop(key) 
 
         self.writeTrackerFile()
 
@@ -329,13 +332,15 @@ class JobTracker:
             for file_key, file_dict in job_dict['make_files'].items():
                 if not os.path.exists(file_dict['file_global_path']):
                     temp_remove_keys.append(file_key)
+
             # delete non existent make files from tracker file
-            [job_dict['make_files'].pop(key) for key in temp_remove_keys]
+            for key in temp_remove_keys:
+                job_dict['make_files'].pop(key) 
 
         self.writeTrackerFile()
 
-    def addNewJobstoTrackerFile(self, create_jobs_from_file_system_dialog):
-        ''' 
+    def addNewJobstoTrackerFile(self, create_jobs_from_file_system_dialog): # pylint: disable=too-complex
+        '''
         Synchronize job on file system and tracker file by either:
             * adding the job to the tracker file.
             or
@@ -347,7 +352,8 @@ class JobTracker:
         # find job on file system that are not in the tracker file
         job_folder_not_in_tracker_global_paths = []
         for job_folder_global_path in os.listdir(self.gv['JOBS_DIR_HOME']):
-            if not any([job_dict['job_folder_global_path'] == os.path.join(self.gv['JOBS_DIR_HOME'], job_folder_global_path) for job_dict in self.tracker_dict.values()]):
+            if not any([job_dict['job_folder_global_path'] == os.path.join(self.gv['JOBS_DIR_HOME'], job_folder_global_path) for job_dict in self.tracker_dict.values()]): # pylint: disable=use-a-generator
+
                 job_folder_not_in_tracker_global_paths.append(os.path.join(self.gv['JOBS_DIR_HOME'], job_folder_global_path))
 
         if len(job_folder_not_in_tracker_global_paths) > 0:
@@ -372,9 +378,9 @@ class JobTracker:
                folder_s = 'folders'
 
             if YesOrNoMessageBox(parent=self.parent,
-                              text=f'OH NO, SYNCHRONIZE ISSUES!\nThere {is_or_are} {len(job_folder_not_in_tracker_global_paths)} print job '\
-                                  f'{folder_s} that are not in the Job Tracker.\n\nHow do you want to to sync: \n{job_names_str}',
-                              yes_button_text='Add files to Job Tracker',
+                  text=f'OH NO, SYNCHRONIZE ISSUES!\nThere {is_or_are} {len(job_folder_not_in_tracker_global_paths)} job '\
+                      f'{folder_s} that are not in the Job Tracker.\n\nHow do you want to to sync: \n{job_names_str}',
+                  yes_button_text='Add files to Job Tracker',
                              no_button_text='Remove files from File System').answer():
 
                 file_global_path_list = []
@@ -406,30 +412,31 @@ class JobTracker:
                 self.writeTrackerFile()
 
                 # check for jobs with no make files, add them.
-                del_job_names = []
-                del_files_global_paths = []
-                del_job_dicts = []
+                job_names_no_make_files = []
 
-                for job_name, files_global_paths, job_dict in zip(job_names_no_dates, file_global_path_list, job_dict_list):
-                    print(f"files_global_paths {files_global_paths}")
-                    make_files_global_paths = [file_path for file_path in files_global_paths if file_path.endswith(self.gv['ACCEPTED_EXTENSIONS'])]
+                for counter, (job_name, files_global_paths, job_dict) in enumerate(
+                        zip(copy.copy(job_names_no_dates), copy.copy(file_global_path_list), copy.copy(job_dict_list))):
+
+                    make_files_global_paths = [file_path for file_path
+                                           in files_global_paths if file_path.endswith(self.gv['ACCEPTED_EXTENSIONS'])]
+
                     if len(make_files_global_paths) == 0:
-
                         self.addJobDict(job_name, job_dict)
+                        job_names_no_dates.remove(job_name)
+                        file_global_path_list.remove(files_global_paths)
+                        job_dict_list.remove(job_dict)
+                        job_names_no_make_files.append(job_name)
 
-                        del_job_names.append(job_name)
-                        del_files_global_paths.append(files_global_paths)
-                        del_job_dicts.append(job_dict)
+                    else:
+                        file_global_path_list[counter] = make_files_global_paths
 
-                # remove job with no make files
-                for del_job_name, del_files_global_path, del_job_dict in zip(del_job_names, del_files_global_paths, del_job_dicts):
-                    job_names_no_dates.remove(del_job_name)
-                    file_global_path_list.remove(del_files_global_path)
-                    job_dict_list.remove(del_job_dict)
 
-                TimedMessage(parent=self.parent, gv=self.gv, text=f'Added {len(del_job_names)} jobs to the Job Tracker.')
+                if len(job_names_no_make_files) > 0:
+                    TimedMessage(parent=self.parent,
+                             gv=self.gv, text=f'Added {len(job_names_no_make_files)} jobs to the Job Tracker.')
 
                 if len(job_names_no_dates) > 0:
+
 
                     dialog = create_jobs_from_file_system_dialog(self.parent,
                                               job_names_no_dates,
@@ -438,7 +445,8 @@ class JobTracker:
                                               job_dict_list=job_dict_list)
 
                     if dialog.exec() == 1:
-                        TimedMessage(parent=self.parent, gv=self.gv, text=f'Added {len(job_folder_not_in_tracker_global_paths)} jobs to the Job Tracker.')
+                        TimedMessage(parent=self.parent, gv=self.gv,
+                                 text=f'Added {len(job_folder_not_in_tracker_global_paths)} jobs to the Job Tracker.')
 
                     else:
                          WarningQMessageBox(parent=self.parent, gv=self.gv, text='System not healthy!')
@@ -446,12 +454,14 @@ class JobTracker:
 
             else:
                 for job_folder_global_path in job_folder_not_in_tracker_global_paths:
-                    delete_item(self.parent, self,gv job_folder_global_path)
-                TimedMessage(parent=self.parent, gv=self.gv, text=f'Deleted {len(job_folder_not_in_tracker_global_paths)} job folders from File System.')
+                    delete_item(self.parent, self.gv, job_folder_global_path)
+
+                TimedMessage(parent=self.parent, gv=self.gv,
+                             text=f'Deleted {len(job_folder_not_in_tracker_global_paths)} job folders from File System.')
 
 
-    def addNewFilestoTrackerFile(self, create_jobs_from_file_system_dialog):
-        ''' 
+    def addNewFilestoTrackerFile(self, create_jobs_from_file_system_dialog): # pylint: disable=too-complex
+        '''
         Synchronize job files on file system and tracker file by either:
             * adding the job files to the tracker file.
             or
@@ -463,7 +473,8 @@ class JobTracker:
             job_folder_global_path = os.path.join(self.gv['JOBS_DIR_HOME'], job_folder_name)
 
 
-            job_key, job_dict = self.jobGlobalPathToTrackerJobDict(self.tracker_dict, job_folder_global_path)
+            job_dict = self.jobGlobalPathToTrackerJobDict(
+                    self.tracker_dict, job_folder_global_path)
 
             if job_dict is None:
                 continue
@@ -472,11 +483,13 @@ class JobTracker:
             if not self.IsJobDictAndFileSystemInSync(job_dict, job_folder_global_path):
 
 
-                valid_file_names = [file_name for file_name in os.listdir(job_folder_global_path) if file_name.lower().endswith(self.gv['ACCEPTED_EXTENSIONS'])]
+                valid_file_names = [file_name for file_name in os.listdir(
+                    job_folder_global_path) if file_name.lower().endswith(self.gv['ACCEPTED_EXTENSIONS'])]
 
                 new_make_files = []
                 for file in valid_file_names:
-                    if not any([os.path.basename(print_file_dict['file_global_path'])==file for print_file_dict in job_dict['make_files'].values()]):
+                    if not any([os.path.basename( # pylint: disable=use-a-generator
+                        make_file_dict['file_global_path'])==file for make_file_dict in job_dict['make_files'].values()]):
                         new_make_files.append(os.path.join(job_folder_global_path, file))
 
                 # add/delete new files
@@ -510,20 +523,26 @@ class JobTracker:
 
                     else:
                         for file in new_make_files:
-                            delete_item(self.parent, self.gv, os.path.join(job_folder_global_path, file))
-                        TimedMessage(parent=self.parent, gv=self.gv, text=f'Removed {len(new_make_files)} {file_or_files} from File System')
+                            delete_item(self.parent, self.gv,
+                                        os.path.join(job_folder_global_path, file))
+
+                        TimedMessage(parent=self.parent, gv=self.gv,
+                             text=f'Removed {len(new_make_files)} {file_or_files} from File System')
 
 
 
     def IsJobDictAndFileSystemInSync(self, job_dict, job_folder_global_path):
         ''' Check for a job if all files are in both the tracker and the file system. '''
 
-        file_system_print_file_names = [file_name for file_name in os.listdir(job_folder_global_path) if file_name.lower().endswith(self.gv['ACCEPTED_EXTENSIONS'])]
-        tracker_print_file_names = [os.path.basename(print_file_dict['file_global_path']) for print_file_dict in job_dict['make_files'].values()]
+        file_system_file_names = [file_name for file_name in os.listdir(
+            job_folder_global_path) if file_name.lower().endswith(self.gv['ACCEPTED_EXTENSIONS'])]
 
-        if len(file_system_print_file_names) != len(tracker_print_file_names):
+        tracker_file_names = [os.path.basename(
+            file_dict['file_global_path']) for file_dict in job_dict['make_files'].values()]
+
+        if len(file_system_file_names) != len(tracker_file_names):
             return False
-        for i in range(len(file_system_print_file_names)):
-            if file_system_print_file_names[i] != tracker_print_file_names[i]:
-                return False
+        if not any(file_system_file_name==tracker_file_name for 
+                   file_system_file_name, tracker_file_name in zip(file_system_file_names, tracker_file_names)):
+            return False
         return True

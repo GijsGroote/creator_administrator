@@ -107,6 +107,7 @@ disable=
     fixme,
     cyclic-import,
     import-error,
+    unspecified-encoding
 
 
 [REPORTS]

@@ -33,12 +33,6 @@ class CreateJobsQDialog(QDialog):
 
         loadUi(ui_global_path, self)
 
-        # no more jobs, then, close dialog
-        if len(self.jobs) == 0:
-            print(f"HEWHEHEHEHE STOP!")
-            self.closeDialog()
-
-
         self.gv=gv
         self.job_tracker = job_tracker
         self.threadpool = gv['THREAD_POOL']
@@ -57,11 +51,6 @@ class CreateJobsQDialog(QDialog):
 
         # shortcut on Esc button
         QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.close)
-
-    def closeDialog(self):
-        print(f"now we close")
-        self.close()
-
 
 
     def loadContent(self):
@@ -136,7 +125,6 @@ class CreateJobsFromMailQDialog(CreateJobsQDialog):
         ''' Load content of mail into dialog. '''
 
         job_msg = self.jobs[self.job_counter]
-        # self.temp_make_items = self.mail_manager.getAttachments(job_msg)
         self.temp_sender_name = self.mail_manager.getSenderName(job_msg)
 
         self.temp_job_name = self.job_tracker.makeJobNameUnique(self.temp_sender_name)
@@ -146,9 +134,6 @@ class CreateJobsFromMailQDialog(CreateJobsQDialog):
         self.temp_make_items = []
         self.temp_make_files_dict = {}
         self.temp_store_files_dict = {}
-
-        # attachment = self.temp_make_items[self.make_item_counter]
-        # attachment_name = self.mail_manager.getAttachmentFileName(attachment)
 
         for attachment in self.mail_manager.getAttachments(job_msg):
             attachment_name = self.mail_manager.getAttachmentFileName(attachment)
@@ -249,20 +234,10 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
 
         self.temp_make_items = temp_make_items
 
+        self.jobNameQLabel.setText(self.temp_job_name)
+        self.jobProgressQLabel.setText(f'Job ({self.job_counter+1}/{len(self.jobs)})')
 
-        # filter job containing no make files
-        if (self.update_existing_job and len(self.temp_job_dict['make_files']) == 0) or\
-            (not self.update_existing_job and len(temp_make_items) == 0):
-            print(f"detected empty make files create job with no makefiles")
-            self.createJob()
-            self.job_counter += 1
-            self.loadJobContent()
-        else:
-
-            self.jobNameQLabel.setText(self.temp_job_name)
-            self.jobProgressQLabel.setText(f'Job ({self.job_counter+1}/{len(self.jobs)})')
-
-            self.loadItemContent()
+        self.loadItemContent()
 
     @abc.abstractmethod
     def loadItemContent(self):
@@ -274,7 +249,6 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
         if self.update_existing_job:
 
             # temp_job_dict given? then a job exist on FS and only the tracker should be updated
-
             self.temp_job_dict['make_files'] = self.temp_make_files_dict
             self.job_tracker.updateJob(self.temp_job_dict['job_name'], self.temp_job_dict)
 
