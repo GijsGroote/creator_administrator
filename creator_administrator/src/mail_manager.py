@@ -90,7 +90,7 @@ class MailManager():
                 warnings.append('No internet connection detected')
 
             temp_folder_global_path = os.path.join(self.gv['DATA_DIR_HOME'], 'TEMP')
-            delete_directory_content(None, temp_folder_global_path)
+            delete_directory_content(None, self.gv, temp_folder_global_path)
 
             for message in self.inbox.Items:
                 if self.gv['ONLY_UNREAD_MAIL']:

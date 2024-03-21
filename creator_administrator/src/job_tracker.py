@@ -56,7 +56,7 @@ class JobTracker:
         self.readTrackerFile()
 
         deleted_job_dict = self.tracker_dict.pop(job_name)
-        delete_item(self.parent, deleted_job_dict['job_folder_global_path'])
+        delete_item(self.parent, self.gv, deleted_job_dict['job_folder_global_path'])
 
         self.writeTrackerFile()
 
@@ -446,7 +446,7 @@ class JobTracker:
 
             else:
                 for job_folder_global_path in job_folder_not_in_tracker_global_paths:
-                    delete_item(self.parent, job_folder_global_path)
+                    delete_item(self.parent, self,gv job_folder_global_path)
                 TimedMessage(parent=self.parent, gv=self.gv, text=f'Deleted {len(job_folder_not_in_tracker_global_paths)} job folders from File System.')
 
 
@@ -510,7 +510,7 @@ class JobTracker:
 
                     else:
                         for file in new_make_files:
-                            delete_item(self.parent, os.path.join(job_folder_global_path, file))
+                            delete_item(self.parent, self.gv, os.path.join(job_folder_global_path, file))
                         TimedMessage(parent=self.parent, gv=self.gv, text=f'Removed {len(new_make_files)} {file_or_files} from File System')
 
 

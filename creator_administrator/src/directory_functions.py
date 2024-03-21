@@ -25,18 +25,10 @@ def copy_item(source_dir_global: str, target_dir_global: str):
     else:
         shutil.copy(source_dir_global, target_dir_global)
         
-def delete_item(parent: QWidget, item_global_path: str):
+def delete_item(parent: QWidget, gv: dict, item_global_path: str):
     """ Delete the file from the file system. """
 
-    # TODO: import gv into this function
-    if sys.platform == 'linux':
-        data_dir_home = os.path.join(os.path.expanduser('~'), '.creator_administrator')
-    elif sys.platform == 'win32':
-        data_dir_home = os.path.join(os.getenv('LOCALAPPDATA'), 'Creator Administrator')
-    else: 
-        raise ValueError(f'This software does not work for platform: {sys.platform}')
-
-    assert item_global_path.startswith(data_dir_home), f'Can only delete files/folders in DATA_DIR_HOME, not in {item_global_path}'
+    assert item_global_path.startswith((gv['DATA_DIR_HOME'], gv['TODO_DIR_HOME'])), f'Can only delete files in subdirectoreis of DATA_DIR_HOME or TODO_DIR_HOME.\nCannot delete {item_global_path}'
 
     if os.path.exists(item_global_path):
         try:
@@ -48,10 +40,10 @@ def delete_item(parent: QWidget, item_global_path: str):
         except PermissionError as exc:
             ErrorQMessageBox(parent, text=f'Error Occured: {str(exc)}')
 
-def delete_directory_content(parent: QWidget, folder_global_path: str):
+def delete_directory_content(parent: QWidget, gv: dict, folder_global_path: str):
         ''' Delete all contents of a folder. '''
         for item in os.listdir(folder_global_path):
-            delete_item(parent, os.path.join(folder_global_path, item))
+            delete_item(parent, gv, os.path.join(folder_global_path, item))
 
 def open_file(file_global_path: str):
     ''' Open a folder in the default file explorer. '''

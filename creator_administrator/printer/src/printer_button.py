@@ -201,7 +201,7 @@ class PrintOptionsQPushButton(OptionsQPushButton):
     
         target_folder_global_path = gv['TODO_DIR_HOME']
         if gv['EMPTY_TODO_DIR_BEFORE_EXPORT']:
-            delete_directory_content(self.parent, target_folder_global_path)
+            delete_directory_content(self.parent, gv, target_folder_global_path)
 
         job_name = self.getCurrentItemName()
         print_file_dict =  self.job_tracker.getMakeFilesDict(job_name)
