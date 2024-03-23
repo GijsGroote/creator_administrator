@@ -6,7 +6,7 @@ on:
       - main
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -46,6 +46,8 @@ jobs:
       - name: Deploy to Github Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        environment:
+          name: github-pages
 
        
 
