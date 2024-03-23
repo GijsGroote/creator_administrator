@@ -16,8 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        shell: bash
         working-directory: ./website
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -26,6 +26,8 @@ jobs:
         with:
           node-version: 18
           cache: yarn
+          cache-dependency-path: website/package-lock.json
+
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
