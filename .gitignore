@@ -1,11 +1,11 @@
-# node_modules/*
+node_modules/*
 
-# # ignore pyinstaller build files
-# # build/
-# # build/*
-# dist/
-# dist/*
-# *.spec
+# ignore pyinstaller build files
+build/
+build/*
+dist/
+dist/*
+*.spec
 
 # ignore inno setup files
 *.iss
@@ -72,4 +72,4 @@ venv/
 *blx.bib
 .bak 
 .mtc
-# build/
+build/
