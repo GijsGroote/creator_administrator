@@ -13,10 +13,10 @@ const config: Config = {
 
   // Set the production url of your site here
   // url: `https://${organizationName}.github.io`,
-  url: 'https://GijsGroote.github.io/creator_administrator/',
+  url: 'https://GijsGroote.github.io/',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  baseUrl: '/creator_administrator/',
   trailingSlash: false,
 
   // GitHub pages deployment config.
