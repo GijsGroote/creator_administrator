@@ -9,7 +9,7 @@ const projectName= "creator_administrator";
 const config: Config = {
   title: 'Creator Administrator',
   tagline: 'Making stuff is cool',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/logo.icon',
 
   // Set the production url of your site here
   url: `https://${organizationName}.github.io`,
@@ -24,7 +24,7 @@ const config: Config = {
   projectName: `${projectName}`, // Usually your repo name.
 
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  onBrokenMarkdownLinks: 'throw',
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -58,17 +58,17 @@ const config: Config = {
       title: 'My Site',
       logo: {
         alt: 'My Site Logo',
-        src: 'img/logo.svg',
+        src: 'img/logo.ico',
       },
       items: [
         {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: 'Documentation',
         },
         {
-          href: 'https://github.com/facebook/docusaurus',
+          href: 'https://github.com/GijsGroote/creator_administrator',
           label: 'GitHub',
           position: 'right',
         },
@@ -76,28 +76,6 @@ const config: Config = {
     },
     footer: {
       style: 'dark',
-      links: [
-        {
-          title: 'Docs',
-          items: [
-            {
-              label: 'Tutorial',
-              to: '/docs/intro',
-            },
-          ],
-        },
-        {
-        },
-        {
-          title: 'More',
-          items: [
-            {
-              label: 'GitHub',
-              href: 'https://github.com/GijsGroote/creator_administrator',
-            },
-          ],
-        },
-      ],
       copyright: `Copyright © ${new Date().getFullYear()} Creator Administrator, Inc. Built with Docusaurus.`,
     },
     prism: {

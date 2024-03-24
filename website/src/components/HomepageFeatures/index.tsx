@@ -10,32 +10,32 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'Automate Mailing',
+    Svg: require('@site/static/img/outlook.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Creator Administator automatically sends customizable emails when
+        an maker request is created, a request is finished or when a request 
+        is unclear.
       </>
     ),
   },
   {
     title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    Svg: require('@site/static/img/logo.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+      Creator Administrator keeps track of all makers request. Keeping track of 
+      a requests status and progress. By doing so you can focus on making stuff. 
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'For 3D Printers and Laser Cutters',
+    Svg: require('@site/static/img/hammer_wrench.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Intended for handling many 3D printing requests to then print with your 3D printers. Or to handle many requests for a laser cutting machine. 
       </>
     ),
   },
