@@ -26,7 +26,8 @@ class MainWindow(QMainWindow):
         self.gv = gv
 
 
-        self.openDocumentationAction.triggered.connect(partial(webbrowser.open, 'https://github.com/GijsGroote/creator_administrator/tree/main/creator_administrator/doc'))
+        self.openDocumentationAction.triggered.connect(
+                partial(webbrowser.open, 'https://gijsgroote.github.io/creator_administrator/docs/intro/'))
 
         self.reportaBugAction.triggered.connect(partial(webbrowser.open, 'https://github.com/GijsGroote/creator_administrator/issues'))
         self.actionAbout.triggered.connect(self.openAboutDialog)

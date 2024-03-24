@@ -65,3 +65,21 @@ Creator Administartor, laser cut application:
 
 ![Docusaurus logo](/img/laser_app.png)
 
+## TODO: update images above to windows images and make test shortcut tip below
+
+
+poetry env info -p 
+gives the python env + the path toward the script, and vio
+```md
+:::tip Create a Shortcut
+
+Use this awesome feature option
+
+:::
+
+:::danger Take care
+
+This action is dangerous
+
+:::
+```

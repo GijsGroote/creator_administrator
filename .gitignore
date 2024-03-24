@@ -1,5 +1,7 @@
 node_modules/*
 
+*.bat
+
 # ignore pyinstaller build files
 build/
 build/*
