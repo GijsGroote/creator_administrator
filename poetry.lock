@@ -193,37 +193,6 @@ files = [
 ]
 
 [[package]]
-name = "pyqt6-webengine"
-version = "6.6.0"
-description = "Python bindings for the Qt WebEngine framework"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "PyQt6_WebEngine-6.6.0-cp37-abi3-macosx_10_14_universal2.whl", hash = "sha256:cb7793f06525ca054fcc6039afd93e23b82228b880d0b1301ce635f7f3ed2edf"},
-    {file = "PyQt6_WebEngine-6.6.0-cp37-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:fded35fba636c4916fec84aa7c6840ad2e75d211462feb3e966f9545a59d56e6"},
-    {file = "PyQt6_WebEngine-6.6.0-cp37-abi3-win_amd64.whl", hash = "sha256:9d542738ed6e11c1978ce59035c07627def7c63eef0f59581d327f01209141bc"},
-    {file = "PyQt6_WebEngine-6.6.0.tar.gz", hash = "sha256:d50b984c3f85e409e692b156132721522d4e8cf9b6c25e0cf927eea2dfb39487"},
-]
-
-[package.dependencies]
-PyQt6 = ">=6.2.0"
-PyQt6-sip = ">=13.4,<14"
-PyQt6-WebEngine-Qt6 = ">=6.6.0"
-
-[[package]]
-name = "pyqt6-webengine-qt6"
-version = "6.6.2"
-description = "The subset of a Qt installation needed by PyQt6-WebEngine."
-optional = false
-python-versions = "*"
-files = [
-    {file = "PyQt6_WebEngine_Qt6-6.6.2-py3-none-macosx_10_14_x86_64.whl", hash = "sha256:27b1b6a6f4ea115b3dd300d2df906d542009d9eb0e62b05e6b7cb85dfe68e9c3"},
-    {file = "PyQt6_WebEngine_Qt6-6.6.2-py3-none-macosx_11_0_arm64.whl", hash = "sha256:f2364dfa3a6e751ead71b7ba759081be677fcf1c6bbd8a2a2a250eb5f06432e8"},
-    {file = "PyQt6_WebEngine_Qt6-6.6.2-py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:3da4db9ddd984b647d0b79fa10fc6cf65364dfe283cd702b12cb7164be2307cd"},
-    {file = "PyQt6_WebEngine_Qt6-6.6.2-py3-none-win_amd64.whl", hash = "sha256:5d6f3ae521115cee77fea22b0248e7b219995390b951b51e4d519aef9c304ca8"},
-]
-
-[[package]]
 name = "pyqtdarktheme"
 version = "2.1.0"
 description = "Flat dark theme for PySide and PyQt."
@@ -312,4 +281,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "533e19ed18989f31abfcffa5fb8b64ee45d88eb14b7c6bc433b5564c95c1e13d"
+content-hash = "011dc0d971320bb62b8db06fe2f30e8f663e3faf989963cd0bc62e6364822329"

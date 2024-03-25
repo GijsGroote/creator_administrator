@@ -150,7 +150,8 @@ class CreateJobsFromMailQDialog(CreateJobsQDialog):
         if isinstance(mail_body, bytes):
             mail_body = mail_body.decode('utf-8')
 
-        self.mailQWebEngineView.setHtml(mail_body)
+        self.mailBodyLabel.setText(mail_body)
+        # self.mailQWebEngineView.setHtml(mail_body)
         self.loadItemContent()
 
 

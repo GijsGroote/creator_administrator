@@ -90,17 +90,23 @@
       </layout>
      </item>
      <item>
-      <widget class="QWebEngineView" name="mailQWebEngineView">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+      <widget class="Line" name="line_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
-       <property name="url">
-        <url>
-         <string>about:blank</string>
-        </url>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="mailBodyLabel">
+       <property name="text">
+        <string>mailBodyLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
@@ -236,13 +242,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QWebEngineView</class>
-   <extends>QWidget</extends>
-   <header location="global">QtWebEngineWidgets/QWebEngineView</header>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>materialQComboBox</tabstop>
   <tabstop>newMaterialQLineEdit</tabstop>
