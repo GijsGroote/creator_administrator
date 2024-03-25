@@ -135,9 +135,9 @@ class CreateLaserJobsFromMailQDialog(CreateJobsFromMailQDialog):
         sender_mail_receive_time = self.mail_manager.getSenderMailReceiveTime(msg)
 
         self.job_tracker.addJob(self.temp_job_name,
-                                self.temp_sender_name,
                                 self.temp_job_folder_global_path,
                                 self.temp_make_files_dict,
+                                sender_name=self.temp_sender_name,
                                 sender_mail_adress=sender_mail_adress,
                                 sender_mail_receive_time=sender_mail_receive_time)
 
