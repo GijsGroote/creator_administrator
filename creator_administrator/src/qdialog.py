@@ -136,7 +136,7 @@ class CreateJobsFromMailQDialog(CreateJobsQDialog):
 
         for attachment in self.mail_manager.getAttachments(job_msg):
             attachment_name = self.mail_manager.getAttachmentFileName(attachment)
-            if attachment_name.endswith(self.gv['ACCEPTED_EXTENSIONS']):
+            if attachment_name.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
                 self.temp_make_items.append(attachment)
             else:
                 target_file_global_path = os.path.join(self.temp_job_folder_global_path, attachment_name)
@@ -151,7 +151,6 @@ class CreateJobsFromMailQDialog(CreateJobsQDialog):
             mail_body = mail_body.decode('utf-8')
 
         self.mailBodyLabel.setText(mail_body)
-        # self.mailQWebEngineView.setHtml(mail_body)
         self.loadItemContent()
 
 
