@@ -1,7 +1,9 @@
+import os
 import webbrowser
 from functools import partial
 import qdarktheme
 
+from PyQt6 import QtGui
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QShortcut, QKeySequence 
 from PyQt6.QtWidgets import QMainWindow, QListWidget, QStackedWidget
@@ -15,6 +17,8 @@ class MainWindow(QMainWindow):
     def __init__(self, ui_global_path: str, gv: dict, *args, **kwargs):
         super().__init__(*args, **kwargs)
         loadUi(ui_global_path, self)
+
+        self.setWindowIcon(QtGui.QIcon(os.path.join(gv['FIGURES_DIR_HOME'], 'logo.ico')))
         if gv['DARK_THEME']:
             qdarktheme.setup_theme()
             self.setStyleSheet("""QToolTip { 
