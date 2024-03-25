@@ -82,12 +82,13 @@ class CreateJobsQDialog(QDialog):
 
     def skipJob(self):
         ''' Skip a job and go to the next. '''
-        if self.make_item_counter+1 >= len(self.jobs):
+        self.job_counter += 1
+        self.make_item_counter = 0
+
+        if self.job_counter >= len(self.jobs):
             self.accept()
         else:
-            self.job_counter += 1
-            self.make_item_counter = 0
-            self.loadContent()
+            self.loadJobContent()
 
     def onMaterialComboboxChanged(self):
         ''' Show/hide new material option. '''

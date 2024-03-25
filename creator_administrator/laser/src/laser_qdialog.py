@@ -124,7 +124,7 @@ class CreateLaserJobsFromMailQDialog(CreateJobsFromMailQDialog):
                 mail_item=msg,
                 move_mail_to_verwerkt=True,
                 sender_mail_adress=self.mail_manager.getEmailAddress(msg),
-                sender_mail_receive_time=self.mail_manager.getSenderMailReceiveTime(msg))
+                sender_mail_receive_time=self.mail_manager.getSenderMailReceiveTime(msg))   
 
         self.skipJob()
 

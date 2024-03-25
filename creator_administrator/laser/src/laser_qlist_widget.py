@@ -1,5 +1,5 @@
 from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import QStackedWidget, QListWidgetItem, QLabel, QTabWidget, QWidget
+from PyQt6.QtWidgets import QStackedWidget, QListWidgetItem, QLabel, QTabWidget, QWidget, QListWidget
 
 from src.qlist_widget import OverviewQListWidget, ContentQListWidget, JobContentQListWidget
 from convert import split_material_name
@@ -83,7 +83,7 @@ class LaserMaterialOverviewQListWidget(OverviewQListWidget):
                 QStackedWidget,
                 'wachtrijMateriaalQStackedWidget')
 
-        stacked_widget.findChild(MaterialContentQListWidget).loadContent(material_name)
+        stacked_widget.findChild(ContentQListWidget).loadContent(material_name)
         # show materialPage in stackedWidget
         stacked_widget.setCurrentIndex(1)
 
