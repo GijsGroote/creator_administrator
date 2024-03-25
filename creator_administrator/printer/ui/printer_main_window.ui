@@ -188,7 +188,7 @@
                 <item>
                  <widget class="GeslicedQPushButton" name="pushButton_3">
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Ctrl+k&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Ctrl+G&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="text">
                    <string>Gesliced</string>
@@ -201,13 +201,13 @@
                 <item>
                  <widget class="PrintAangezetQPushButton" name="pushButton_4">
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Ctrl+k&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Ctrl+A&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="text">
                    <string>Print Aangezet</string>
                   </property>
                   <property name="shortcut">
-                   <string>Ctrl+P</string>
+                   <string>Ctrl+A</string>
                   </property>
                  </widget>
                 </item>
@@ -317,13 +317,13 @@
                 <item>
                  <widget class="PrintAangezetQPushButton" name="backPushButton_10">
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Esc&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Ctrl+A&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="text">
                    <string>Print Aangezet</string>
                   </property>
                   <property name="shortcut">
-                   <string>Ctrl+P</string>
+                   <string>Ctrl+A</string>
                   </property>
                  </widget>
                 </item>
@@ -425,6 +425,9 @@
                 </item>
                 <item>
                  <widget class="PrintKlaarQPushButton" name="afgekeurdOptionsQPushButton_6">
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Ctrl+K&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
                   <property name="text">
                    <string>Print Klaar</string>
                   </property>

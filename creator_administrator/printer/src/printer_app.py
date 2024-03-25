@@ -1,7 +1,7 @@
 import sys
 import os
 
-from PyQt6 import QtWidgets
+from PyQt6 import QtWidgets, QtGui
 from PyQt6.QtWidgets import QListWidget
 
 from global_variables import gv
@@ -121,5 +121,7 @@ class PrintMainWindow(MainWindow):
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     printer_window = PrintMainWindow()
+
+    printer_window.setWindowIcon(QtGui.QIcon(os.path.join(gv['FIGURES_DIR_HOME'], 'logo.ico')))
     printer_window.show()
     app.exec()

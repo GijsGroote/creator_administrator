@@ -1,22 +1,18 @@
 import sys
 import os
 
-from PyQt6 import QtWidgets
-from PyQt6.QtWidgets import QListWidget
+from PyQt6 import QtWidgets, QtGui
 
 from global_variables import gv
 
 from src.app import MainWindow
-from src.qmessagebox import WarningQMessageBox, TimedMessage
+from src.qmessagebox import WarningQMessageBox
 from src.threaded_mail_manager import ThreadedMailManager
 from src.qdialog import FilesSelectQDialog, FolderSelectQDialog
 
 from laser_job_tracker import LaserJobTracker
 from laser_settings_dialog import LaserSettingsQDialog
 from laser_qdialog import CreateLaserJobsFromFileSystemQDialog, CreateLaserJobsFromMailQDialog
-
-# ensure that win32com is imported after creating an executable with pyinstaller
-# from win32com import client
 
 class LaserMainWindow(MainWindow):
     def __init__(self, *args, **kwargs):
@@ -114,10 +110,9 @@ class LaserMainWindow(MainWindow):
         ''' Open dialog to edit the settings. '''
         LaserSettingsQDialog(self, gv).exec()
 
-
-
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     laser_window = LaserMainWindow()
+    laser_window.setWindowIcon(QtGui.QIcon(os.path.join(gv['FIGURES_DIR_HOME'], 'logo.ico')))
     laser_window.show()
     app.exec()
