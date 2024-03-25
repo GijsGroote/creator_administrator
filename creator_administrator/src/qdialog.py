@@ -30,7 +30,6 @@ class CreateJobsQDialog(QDialog):
         super().__init__(parent, *args, **kwargs)
 
 
-
         loadUi(ui_global_path, self)
 
         self.gv=gv
