@@ -63,8 +63,8 @@ class MainWindow(QMainWindow):
         ''' Refresh the widgets. '''
         qlist_widgets = self.findChildren(QListWidget)
         for list_widget in qlist_widgets:
+            print(f'what i syour name? {list_widget.objectName()}')
             list_widget.refresh()
-
 
     def openAboutDialog(self):
         ''' Open About Dialog. '''
