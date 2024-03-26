@@ -1,22 +1,21 @@
 import sys
 import os
 
-from PyQt6 import QtWidgets, QtGui
-from PyQt6.QtWidgets import QListWidget
+from PyQt6 import QtWidgets
 
 from global_variables import gv
 
 from src.app import MainWindow
-from src.qmessagebox import WarningQMessageBox, TimedMessage
+from src.qmessagebox import WarningQMessageBox
 from src.threaded_mail_manager import ThreadedMailManager
 from src.qdialog import FilesSelectQDialog, FolderSelectQDialog
 
 from printer_job_tracker import PrintJobTracker
 from printer_settings_dialog import PrintSettingsQDialog
-from printer_qdialog import CreatePrintJobsFromMailQDialog, CreatePrintJobsFromFileSystemQDialog
-
-# ensure that win32com is imported after creating an executable with pyinstaller
-# from win32com import client
+from printer_qdialog import (
+        CreatePrintJobsFromMailQDialog,
+        CreatePrintJobsFromFileSystemQDialog,
+        PrintSearchJobDialog)
 
 class PrintMainWindow(MainWindow):
     def __init__(self, *args, **kwargs):
@@ -106,22 +105,18 @@ class PrintMainWindow(MainWindow):
             if len(jobs_names_list) > 0:
                 CreatePrintJobsFromFileSystemQDialog(self, jobs_names_list, folders_global_paths_list).exec()
 
-        # self.refreshAllWidgets()
 
     def openEditSettingsDialog(self):
         ''' Open dialog to edit the settings. '''
         PrintSettingsQDialog(self, gv).exec()
 
-    def refreshAllWidgets(self):
-        ''' Refresh the widgets. '''
-        qlist_widgets = self.findChildren(QListWidget)
-        for list_widget in qlist_widgets:
-            list_widget.refresh()
+    def openSearchJobDialog(self):
+        ''' Open the search job dialog. '''
+        PrintSearchJobDialog(self).exec()
+
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     printer_window = PrintMainWindow()
-
-    printer_window.setWindowIcon(QtGui.QIcon(os.path.join(gv['FIGURES_DIR_HOME'], 'logo.ico')))
     printer_window.show()
     app.exec()

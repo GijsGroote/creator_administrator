@@ -1,4 +1,5 @@
 import os
+import abc
 import webbrowser
 from functools import partial
 import qdarktheme
@@ -40,6 +41,7 @@ class MainWindow(QMainWindow):
         # shortcut to close the application
         QShortcut(QKeySequence("Ctrl+Q"), self).activated.connect(self.close)
 
+        QShortcut(QKeySequence("Ctrl+F"), self).activated.connect(self.openSearchJobDialog)
         QShortcut(QKeySequence("Ctrl+R"), self).activated.connect(self.refreshAllWidgets)
 
     
@@ -58,6 +60,12 @@ class MainWindow(QMainWindow):
         self.refreshAllWidgets()
         if self.job_tracker.system_healthy:
             TimedMessage(self, self.gv, 'System Healthy 😊!')
+
+    
+    @abc.abstractmethod
+    def openSearchJobDialog(self):
+        ''' Open the search job dialog. '''
+
 
     def refreshAllWidgets(self):
         ''' Refresh the widgets. '''

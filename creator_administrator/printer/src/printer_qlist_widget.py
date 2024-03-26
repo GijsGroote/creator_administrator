@@ -32,6 +32,11 @@ class PrintAllJobsOverviewQListWidget(OverviewQListWidget):
         self.clear()
         self.initialize(self.job_tracker.getAllStaticAndDynamicJobNames())
 
+    def refreshWithMatch(self, match_str: str):
+        ''' Initialise with all jobs that match match_str. '''
+        self.clear()
+        self.initialize(self.job_tracker.getAllStaticAndDynamicJobNamesThatMatch(match_str))
+
     def displayItem(self, item_name: str):
         ''' Display the job page and load content for the highlighted job. '''
 

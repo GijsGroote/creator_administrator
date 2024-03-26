@@ -1,5 +1,5 @@
 from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import QStackedWidget, QListWidgetItem, QLabel, QTabWidget, QWidget, QListWidget
+from PyQt6.QtWidgets import QStackedWidget, QListWidgetItem, QLabel, QTabWidget, QWidget
 
 from src.qlist_widget import OverviewQListWidget, ContentQListWidget, JobContentQListWidget
 from convert import split_material_name
@@ -27,6 +27,11 @@ class LaserAllJobsOverviewQListWidget(OverviewQListWidget):
         ''' Initialise the list widget with jobs. '''
         self.clear()
         self.initialize(self.job_tracker.getAllStaticAndDynamicJobNames())
+
+    def refreshWithMatch(self, match_str: str):
+        ''' Initialise with all jobs that match match_str. '''
+        self.clear()
+        self.initialize(self.job_tracker.getAllStaticAndDynamicJobNamesThatMatch(match_str))
 
     def displayItem(self, item_name: str):
         ''' Display the job page and load content for the highlighted job. '''

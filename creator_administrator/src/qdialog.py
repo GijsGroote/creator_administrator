@@ -291,6 +291,27 @@ class SelectQDialog(QDialog):
     def closeDialog(self):
         ''' Close the dialog, press cancel. '''
         self.close()
+    
+class SearchJobDialog(QDialog):
+    ''' Search all existing jobs in a dialog. '''
+    def __init__(self, parent: QWidget, ui_global_path: str, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        loadUi(ui_global_path, self)
+
+        self.searchLineEdit.textChanged.connect(self.refreshSearch)
+
+        QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.closeDialog)
+
+    def refreshSearch(self):
+        ''' Add the matching jobs to the qlistwidget. '''
+        self.listWidget.refreshWithMatch(self.searchLineEdit.text())
+
+    def closeDialog(self):
+        ''' Close the dialog, press cancel. '''
+        self.close()
+
+
 
 
 class FilesSelectQDialog(SelectQDialog):
@@ -404,7 +425,6 @@ class SelectOptionsQDialog(QDialog):
             opt_ql_widget.setCurrentRow(opt_ql_widget.count()-1)
         else:
             opt_ql_widget.setCurrentRow(opt_ql_widget.currentRow()-1)
-
 
 
 class AboutDialog(QDialog):
