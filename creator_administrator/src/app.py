@@ -12,6 +12,7 @@ from PyQt6.uic import loadUi
 
 from src.qdialog import AboutDialog
 from src.qmessagebox import TimedMessage
+from src.qlist_widget import JobContentQListWidget, ContentQListWidget
 
 class MainWindow(QMainWindow):
 
@@ -36,23 +37,21 @@ class MainWindow(QMainWindow):
 
         self.reportaBugAction.triggered.connect(partial(webbrowser.open, 'https://github.com/GijsGroote/creator_administrator/issues'))
         self.actionAbout.triggered.connect(self.openAboutDialog)
+        self.searchJobsAction.triggered.connect(self.openSearchJobDialog)
+        self.refreshJobsAction.triggered.connect(self.refreshAllWidgets)
 
 
         # shortcut to close the application
         QShortcut(QKeySequence("Ctrl+Q"), self).activated.connect(self.close)
 
-        QShortcut(QKeySequence("Ctrl+F"), self).activated.connect(self.openSearchJobDialog)
-        QShortcut(QKeySequence("Ctrl+R"), self).activated.connect(self.refreshAllWidgets)
 
-    
+    # def keyPressEvent(self, event):
+    #     ''' Handle shortcuts on main window. '''
 
-    def keyPressEvent(self, event):
-        ''' Handle shortcuts on main window. '''
-
-        # go through GUI structure to call the itemEnterPressed
-        # function the currenlty displayed item
-        if event.key() == Qt.Key.Key_Return:
-                self.jobsQTabWidget.currentWidget().findChild(QStackedWidget).currentWidget().findChild(QListWidget).itemEnterPressed()
+    #     # go through GUI structure to call the itemEnterPressed
+    #     # function the currenlty displayed item
+    #     if event.key() == Qt.Key.Key_Return:
+    #             self.jobsQTabWidget.currentWidget().findChild(QStackedWidget).currentWidget().findChild(QListWidget).itemEnterPressed()
 
     def checkHealth(self):
         ''' Check health with tracker file. '''
@@ -69,6 +68,9 @@ class MainWindow(QMainWindow):
         ''' Refresh the widgets. '''
         qlist_widgets = self.findChildren(QListWidget)
         for list_widget in qlist_widgets:
+            # if isinstance(list_widget, JobContentQListWidget) or\
+            #     isinstance(list_widget, ContentQListWidget):
+            # TODO: why does this specic one lil widget not refresh, and who is it????
             list_widget.refresh()
 
     def openAboutDialog(self):

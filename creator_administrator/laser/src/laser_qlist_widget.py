@@ -98,6 +98,11 @@ class LaserMaterialOverviewQListWidget(OverviewQListWidget):
         # show materialPage in stackedWidget
         stacked_widget.setCurrentIndex(1)
 
+    def refresh(self):
+        ''' Initialise the material list widget. '''
+        self.clear()
+        self.initialize(self.getItemNames())
+
 
 
 class LaserVerwerktJobsOverviewQListWidget(OverviewQListWidget):

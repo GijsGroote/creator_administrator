@@ -11,11 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Search Jobs</string>
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../figures/logo.ico</normaloff>../../figures/logo.ico</iconset>
+    <normaloff>../../../../../figures/logo.ico</normaloff>../../../../../figures/logo.ico</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>

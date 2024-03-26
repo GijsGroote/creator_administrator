@@ -545,9 +545,11 @@
      <string>Help</string>
     </property>
     <addaction name="openDocumentationAction"/>
-    <addaction name="reportaBugAction"/>
+    <addaction name="searchJobsAction"/>
+    <addaction name="refreshJobsAction"/>
     <addaction name="separator"/>
     <addaction name="actionAbout"/>
+    <addaction name="reportaBugAction"/>
    </widget>
    <addaction name="createJobsMenu"/>
    <addaction name="menuSettings"/>
@@ -631,8 +633,29 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compares jobs on file system with jobs in tracker file.&lt;/p&gt;&lt;p&gt;Synchronizes/Repair if they  if they are out of sync.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </action>
+  <action name="searchJobsAction">
+   <property name="text">
+    <string>Search Jobs</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="refreshJobsAction">
+   <property name="text">
+    <string>Refresh Jobs</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>LaserAllJobsOverviewQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>laser_qlist_widget.h</header>
+  </customwidget>
   <customwidget>
    <class>BackQPushButton</class>
    <extends>QPushButton</extends>
@@ -676,11 +699,6 @@
   </customwidget>
   <customwidget>
    <class>LaserJobContentQListWidget</class>
-   <extends>QListWidget</extends>
-   <header>laser_qlist_widget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>LaserAllJobsOverviewQListWidget</class>
    <extends>QListWidget</extends>
    <header>laser_qlist_widget.h</header>
   </customwidget>
