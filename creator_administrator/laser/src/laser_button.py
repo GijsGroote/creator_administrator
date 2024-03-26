@@ -94,6 +94,7 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
                             mail_type='FINISHED',
                             mail_item=job_folder_global_path)
 
+        
         self.window().refreshAllWidgets()
         self.parent().parent().setCurrentIndex(0)
 
