@@ -39,7 +39,9 @@ class LaserAllJobsOverviewQListWidget(OverviewQListWidget):
         job_status = self.job_tracker.getJobDict(item_name)['status']
 
         # find QStackedWidget for job_status
-        stacked_widget = self.window().findChild(
+        print(self.parent())
+        print(self.parent().objectName())
+        stacked_widget = self.parent().window().findChild(
                 QStackedWidget,
                 self.widget_names[job_status]['QStackedWidget'])
 

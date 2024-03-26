@@ -286,12 +286,9 @@ class SelectQDialog(QDialog):
         loadUi(ui_global_path, self)
 
         # shortcut on Esc button
-        QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.closeDialog)
+        QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.close)
 
-    def closeDialog(self):
-        ''' Close the dialog, press cancel. '''
-        self.close()
-    
+
 class SearchJobDialog(QDialog):
     ''' Search all existing jobs in a dialog. '''
     def __init__(self, parent: QWidget, ui_global_path: str, *args, **kwargs):
@@ -301,17 +298,48 @@ class SearchJobDialog(QDialog):
 
         self.searchLineEdit.textChanged.connect(self.refreshSearch)
 
-        QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.closeDialog)
+        QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.close)
+        QShortcut(QKeySequence(Qt.Key.Key_Return), self).activated.connect(self.itemEnterPressed)
+        self.listWidget.itemDoubleClicked.connect(self.itemIsDoubleClicked)
+
+        QShortcut(QKeySequence(Qt.Key.Key_Down), self).activated.connect(self.toNextRow)
+        QShortcut(QKeySequence(Qt.Key.Key_Up), self).activated.connect(self.toPreviousRow)
+        QShortcut(QKeySequence('Ctrl+n'), self).activated.connect(self.toNextRow)
+        QShortcut(QKeySequence('Ctrl+p'), self).activated.connect(self.toPreviousRow)
+
+    def itemEnterPressed(self):
+        ''' Handle press on current item. '''
+        current_item = self.listWidget.currentItem()
+        if current_item is not None:
+            self.displayItem(current_item.data(1))
+
+    def itemIsDoubleClicked(self, job_name):
+        ''' Display the content of the item clicked. '''
+        self.displayItem(job_name.data(1))
+    
+    @abc.abstractclassmethod
+    def displayItem(self, job_name: str):
+        ''' Display the job page and load content for the highlighted job. '''
 
     def refreshSearch(self):
         ''' Add the matching jobs to the qlistwidget. '''
         self.listWidget.refreshWithMatch(self.searchLineEdit.text())
 
-    def closeDialog(self):
-        ''' Close the dialog, press cancel. '''
-        self.close()
+    def toNextRow(self):
+        widget = self.listWidget
 
+        if widget.currentRow() == widget.count()-1:
+            widget.setCurrentRow(0)
+        else:
+            widget.setCurrentRow(widget.currentRow()+1)
 
+    def toPreviousRow(self):
+        widget = self.listWidget
+
+        if widget.currentRow() == 0:
+            widget.setCurrentRow(widget.count()-1)
+        else:
+            widget.setCurrentRow(widget.currentRow()-1)
 
 
 class FilesSelectQDialog(SelectQDialog):
@@ -445,14 +473,9 @@ class AboutDialog(QDialog):
 
 
         # shortcut on Esc button
-        QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.closeDialog)
+        QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.close)
 
     def openGithubInBrowser(self, _):
         ''' Open Github in browser. '''
         webbrowser.open('https://github.com/GijsGroote/creator_administrator/')
-
-    def closeDialog(self):
-        ''' Close the dialog, press cancel. '''
-        self.close()
-
 
