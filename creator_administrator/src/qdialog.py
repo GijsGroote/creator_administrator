@@ -294,32 +294,18 @@ class SearchJobDialog(QDialog):
     def __init__(self, parent: QWidget, ui_global_path: str, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
+
         loadUi(ui_global_path, self)
 
         self.searchLineEdit.textChanged.connect(self.refreshSearch)
-
         QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.close)
-        QShortcut(QKeySequence(Qt.Key.Key_Return), self).activated.connect(self.itemEnterPressed)
-        self.listWidget.itemDoubleClicked.connect(self.itemIsDoubleClicked)
+
+        self.listWidget.main_window = parent.window()
 
         QShortcut(QKeySequence(Qt.Key.Key_Down), self).activated.connect(self.toNextRow)
         QShortcut(QKeySequence(Qt.Key.Key_Up), self).activated.connect(self.toPreviousRow)
         QShortcut(QKeySequence('Ctrl+n'), self).activated.connect(self.toNextRow)
         QShortcut(QKeySequence('Ctrl+p'), self).activated.connect(self.toPreviousRow)
-
-    def itemEnterPressed(self):
-        ''' Handle press on current item. '''
-        current_item = self.listWidget.currentItem()
-        if current_item is not None:
-            self.displayItem(current_item.data(1))
-
-    def itemIsDoubleClicked(self, job_name):
-        ''' Display the content of the item clicked. '''
-        self.displayItem(job_name.data(1))
-    
-    @abc.abstractclassmethod
-    def displayItem(self, job_name: str):
-        ''' Display the job page and load content for the highlighted job. '''
 
     def refreshSearch(self):
         ''' Add the matching jobs to the qlistwidget. '''

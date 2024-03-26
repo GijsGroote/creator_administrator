@@ -61,17 +61,14 @@ class MainWindow(QMainWindow):
         if self.job_tracker.system_healthy:
             TimedMessage(self, self.gv, 'System Healthy 😊!')
 
-    
     @abc.abstractmethod
     def openSearchJobDialog(self):
         ''' Open the search job dialog. '''
-
 
     def refreshAllWidgets(self):
         ''' Refresh the widgets. '''
         qlist_widgets = self.findChildren(QListWidget)
         for list_widget in qlist_widgets:
-            print(f'what i syour name? {list_widget.objectName()}')
             list_widget.refresh()
 
     def openAboutDialog(self):

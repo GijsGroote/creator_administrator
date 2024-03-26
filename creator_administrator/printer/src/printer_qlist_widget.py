@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QStackedWidget, QTabWidget, QWidget
+from PyQt6.QtWidgets import QStackedWidget, QTabWidget, QWidget, QDialog
 
 from src.qlist_widget import OverviewQListWidget, JobContentQListWidget
 from printer_job_tracker import PrintJobTracker 
@@ -37,13 +37,26 @@ class PrintAllJobsOverviewQListWidget(OverviewQListWidget):
         self.clear()
         self.initialize(self.job_tracker.getAllStaticAndDynamicJobNamesThatMatch(match_str))
 
+    def refreshWithMatch(self, match_str: str):
+        ''' Initialise with all jobs that match match_str. '''
+        self.clear()
+        self.initialize(self.job_tracker.getAllStaticAndDynamicJobNamesThatMatch(match_str))
+
     def displayItem(self, item_name: str):
         ''' Display the job page and load content for the highlighted job. '''
 
         job_status = self.job_tracker.getJobDict(item_name)['status']
 
+
+        main_window = self.parent().window()
+
+        # A dialog with this list in it embedded should set self.main_window
+        if isinstance(main_window, QDialog):
+            main_window = self.main_window
+            self.window().close() # close dialog
+
         # find QStackedWidget for job_status
-        stacked_widget = self.window().findChild(
+        stacked_widget = main_window.findChild(
                 QStackedWidget,
                 self.widget_names[job_status]['QStackedWidget'])
 
@@ -54,7 +67,7 @@ class PrintAllJobsOverviewQListWidget(OverviewQListWidget):
         stacked_widget.setCurrentIndex(1)
 
         # show job_status tabWidget
-        tab_widget = self.window().findChild(QTabWidget, 'jobsQTabWidget')
+        tab_widget = main_window.findChild(QTabWidget, 'jobsQTabWidget')
         tab_widget.setCurrentIndex(self.widget_names[job_status]['tab_widget_position'])
 
 class PrintWachtrijJobsOverviewQListWidget(OverviewQListWidget):

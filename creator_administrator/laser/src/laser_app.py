@@ -112,7 +112,6 @@ class LaserMainWindow(MainWindow):
 
     def openSearchJobDialog(self):
         ''' Open the search job dialog. '''
-        print(f"haha")
         LaserSearchJobDialog(self).exec()
 
 if __name__ == '__main__':
