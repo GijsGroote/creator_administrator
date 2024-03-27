@@ -33,7 +33,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QListWidget" name="optionsQListWidget">
+      <widget class="OptionsQListWidget" name="optionsQListWidget">
        <property name="selectionMode">
         <enum>QAbstractItemView::MultiSelection</enum>
        </property>
@@ -56,6 +56,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>OptionsQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>qlist_widget</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

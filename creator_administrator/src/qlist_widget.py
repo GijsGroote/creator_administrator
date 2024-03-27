@@ -139,3 +139,14 @@ class JobContentQListWidget(ContentQListWidget):
                 item.setText(file)
                 item.setFont(QFont('Cantarell', 14))
                 self.addItem(item)
+
+
+class OptionsQListWidget(QListWidget):
+    ''' Content . '''
+
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+    # Do nothing for options QlistWidget refresh (but is should be callable)
+    def refresh(self):
+        pass

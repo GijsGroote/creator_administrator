@@ -68,9 +68,6 @@ class MainWindow(QMainWindow):
         ''' Refresh the widgets. '''
         qlist_widgets = self.findChildren(QListWidget)
         for list_widget in qlist_widgets:
-            # if isinstance(list_widget, JobContentQListWidget) or\
-            #     isinstance(list_widget, ContentQListWidget):
-            # TODO: why does this specic one lil widget not refresh, and who is it????
             list_widget.refresh()
 
     def openAboutDialog(self):
