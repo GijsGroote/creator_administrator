@@ -1,7 +1,7 @@
 import os
+import abc
 import sys
 import json
-import subprocess
 from functools import partial
 # from PyQt6.QtGui import *
 from PyQt6.QtWidgets import QWidget, QDialog
@@ -79,7 +79,7 @@ class SettingsQDialog(QDialog):
             TimedMessage(self, self.gv, 'Settings saved, Restarting Creator Administrator.')
             self.close()
             self.parent().close()
-            subprocess.call("python " + '"'+f'{os.path.join(self.gv["REPO_DIR_HOME"], "laser/src/laser_app.py")}'+'"', shell=True)
+            self.restartApp()
 
 
     def validateAll(self) -> bool:
@@ -233,8 +233,6 @@ class SettingsQDialog(QDialog):
         widget.setStyleSheet(f'background-color: {self.gv["BAD_COLOR_RGBA"]};')
         return False
 
-
-
     def checkIsDirectory(self, widget: QWidget) -> bool:
         if not os.path.isdir(widget.folder_global_path):
             widget.setStyleSheet(f'background-color: {self.gv["BAD_COLOR_RGBA"]};')
@@ -242,3 +240,8 @@ class SettingsQDialog(QDialog):
 
         widget.setStyleSheet(f'background-color: {self.gv["GOOD_COLOR_RGBA"]};')
         return True
+
+    @abc.abstractmethod
+    def restartApp(self):
+        ''' Restart the application. '''
+

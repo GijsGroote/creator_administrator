@@ -1,4 +1,6 @@
 import os
+import subprocess
+
 from src.settings_dialog import SettingsQDialog
 
 class LaserSettingsQDialog(SettingsQDialog):
@@ -8,3 +10,9 @@ class LaserSettingsQDialog(SettingsQDialog):
         super().__init__(parent, ui_global_path, gv, *args, **kwargs)
 
     # TODO: add settings specific for the lasers here
+
+    def restartApp(self):
+        ''' Restart the application. '''
+        subprocess.call("python " + '"'+
+            f'{os.path.join(self.gv["REPO_DIR_HOME"], "laser/src/laser_app.py")}'
+                        +'"', shell=True)

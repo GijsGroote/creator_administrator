@@ -140,6 +140,15 @@ class JobTracker:
 
         self.writeTrackerFile()
 
+    def updateDynamicJobName(self, job_name: str, new_dynamic_job_name: str):
+        ''' Update the dynamic job name of a job. '''
+
+        self.readTrackerFile()
+
+        self.tracker_dict[job_name]['dynamic_job_name'] = new_dynamic_job_name 
+
+        self.writeTrackerFile()
+
     def markAllFilesAsDone(self, job_name: str, done: bool):
         ''' Update all make files to done. '''
         assert job_name is not None, 'Job name is None'

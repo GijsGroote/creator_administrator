@@ -44,15 +44,6 @@ class MainWindow(QMainWindow):
         # shortcut to close the application
         QShortcut(QKeySequence("Ctrl+Q"), self).activated.connect(self.close)
 
-
-    # def keyPressEvent(self, event):
-    #     ''' Handle shortcuts on main window. '''
-
-    #     # go through GUI structure to call the itemEnterPressed
-    #     # function the currenlty displayed item
-    #     if event.key() == Qt.Key.Key_Return:
-    #             self.jobsQTabWidget.currentWidget().findChild(QStackedWidget).currentWidget().findChild(QListWidget).itemEnterPressed()
-
     def checkHealth(self):
         ''' Check health with tracker file. '''
         self.job_tracker.checkHealth()

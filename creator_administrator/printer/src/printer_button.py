@@ -11,6 +11,7 @@ from src.qdialog import SelectOptionsQDialog
 
 from global_variables import gv
 from printer_job_tracker import PrintJobTracker
+from convert import gcode_files_to_max_print_time, get_date_from_dynamic_job_name
 
 
 
@@ -26,8 +27,11 @@ class GeslicedQPushButton(JobsQPushButton):
         job_name = self.getCurrentItemName()
         job_tracker = PrintJobTracker(self)
 
+
+        job_dict =  job_tracker.getJobDict(job_name)
+
         gcode_files = [gcode_file for
-                       gcode_file in os.listdir(job_tracker.getJobFolderGlobalPathFromJobName(job_name))
+                       gcode_file in os.listdir(job_dict['job_folder_global_path'])
                        if gcode_file.lower().endswith('.gcode')]
 
         if len(gcode_files) == 0:
@@ -35,8 +39,22 @@ class GeslicedQPushButton(JobsQPushButton):
 
         else:
             job_tracker.updateJobStatus(job_name, 'GESLICED')
-            self.window().refreshAllWidgets()
-            self.parent().parent().setCurrentIndex(0)
+
+            # Rename GCODE 
+            for gcode_file in gcode_files:
+                try:
+                    os.rename(os.path.join(job_dict['job_folder_global_path'], gcode_file),
+                              os.path.join(job_dict['job_folder_global_path'],
+                                   job_dict['job_name']+ '_' + gcode_file))
+                except Exception:
+                    pass # simply do not rename then
+        
+        job_tracker.updateDynamicJobName(job_name,
+                  get_date_from_dynamic_job_name(job_dict['dynamic_job_name'])+
+                  gcode_files_to_max_print_time(gcode_files)+job_name)
+
+        self.window().refreshAllWidgets()
+        self.parent().parent().setCurrentIndex(0)
 
 class PrintAangezetQPushButton(JobsQPushButton):
 

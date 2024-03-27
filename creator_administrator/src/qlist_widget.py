@@ -1,5 +1,6 @@
 import os
 import abc
+from operator import itemgetter
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QKeySequence, QShortcut, QFont
@@ -16,9 +17,7 @@ class OverviewQListWidget(QListWidget):
 
         # shortcut on the Enter key
         QShortcut(QKeySequence(Qt.Key.Key_Return), self).activated.connect(self.itemEnterPressed)
-
         self.itemDoubleClicked.connect(self.itemIsDoubleClicked)
-
 
     # Some child classes overwrite this function
     def displayItem(self, item_name: str):
@@ -36,7 +35,10 @@ class OverviewQListWidget(QListWidget):
             self.parent().no_items_label.show()
         else:
             self.parent().no_items_label.hide()
-            
+
+        
+        item_names = sorted(item_names, key=itemgetter(1))
+
         for item_name in item_names:
 
             item = QListWidgetItem()
