@@ -135,6 +135,10 @@ class LaserJobContentQListWidget(JobContentQListWidget):
     def __init__(self, parent: QWidget, *args, **kwargs):
         super().__init__(parent, LaserJobTracker(self), *args, **kwargs)
 
+    def refresh(self):
+
+        print(f' I am a LaserJobsContentList')
+
 class LaserMaterialContentQListWidget(ContentQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
