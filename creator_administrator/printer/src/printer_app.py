@@ -15,8 +15,6 @@ from printer_job_tracker import PrintJobTracker
 from printer_settings_dialog import PrintSettingsQDialog
 from printer_qdialog import CreatePrintJobsFromMailQDialog, CreatePrintJobsFromFileSystemQDialog
 
-# ensure that win32com is imported after creating an executable with pyinstaller
-# from win32com import client
 
 class PrintMainWindow(MainWindow):
     def __init__(self, *args, **kwargs):
@@ -92,7 +90,7 @@ class PrintMainWindow(MainWindow):
                                 f'{item_global_path} which is skipped' )
                             continue
 
-                        if item_global_path.endswith(gv['ACCEPTED_EXTENSIONS']):
+                        if item_global_path.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
                             files_in_subfolder_global_paths.append(item_global_path)
                             subfolder_contains_print_file = True
 
