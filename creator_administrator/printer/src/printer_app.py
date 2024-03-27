@@ -12,15 +12,11 @@ from src.qdialog import FilesSelectQDialog, FolderSelectQDialog
 
 from printer_job_tracker import PrintJobTracker
 from printer_settings_dialog import PrintSettingsQDialog
-<<<<<<< HEAD
-from printer_qdialog import CreatePrintJobsFromMailQDialog, CreatePrintJobsFromFileSystemQDialog
 
-=======
 from printer_qdialog import (
         CreatePrintJobsFromMailQDialog,
         CreatePrintJobsFromFileSystemQDialog,
         PrintSearchJobDialog)
->>>>>>> 83dcd19371dfeba2fa8edab7590696dbdeaaadd7
 
 class PrintMainWindow(MainWindow):
     def __init__(self, *args, **kwargs):
