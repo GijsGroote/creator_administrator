@@ -3,7 +3,7 @@ import re
 
 from PyQt6.QtWidgets import QWidget
 
-from src.qdialog import CreateJobsFromMailQDialog, CreateJobsFromFileSystemQDialog
+from src.qdialog import CreateJobsFromMailQDialog, CreateJobsFromFileSystemQDialog, SearchJobDialog
 from src.qmessagebox import TimedMessage
 from src.threaded_mail_manager import ThreadedMailManager
 
@@ -134,7 +134,7 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
                 sender_mail_adress=sender_mail_adress,
                 sender_mail_receive_time=sender_mail_receive_time)
 
-        TimedMessage(self, gv, f'Created {self.temp_job_name}')
+        TimedMessage(self, gv, f'Created Job: {self.temp_job_name}')
 
 
 class CreatePrintJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
@@ -214,3 +214,12 @@ class CreatePrintJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
                                              'target_file_global_path': target_file_global_path}
         self.make_item_counter += 1
         self.loadContent()
+
+class PrintSearchJobDialog(SearchJobDialog):
+    ''' Search all existing jobs in a dialog. '''
+    def __init__(self, parent: QWidget, *args, **kwargs):
+        ui_global_path = os.path.join(gv['LOCAL_UI_DIR'], 'search_job_dialog.ui')
+        super().__init__(parent, ui_global_path, *args, **kwargs)
+
+
+

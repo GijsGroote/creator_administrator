@@ -33,7 +33,6 @@ class OptionsQPushButton(JobsQPushButton):
 
         self.menu = QMenu()
 
-        # self.object_name = self.objectName()
 
         copy_todo_action = self.menu.addAction('Copy Files to TODO folder', self.copyMakeFilesTo)
         copy_todo_action.setToolTip('Shortcut: Ctrl+T')

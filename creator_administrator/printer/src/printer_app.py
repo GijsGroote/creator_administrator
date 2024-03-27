@@ -2,19 +2,25 @@ import sys
 import os
 
 from PyQt6 import QtWidgets
-from PyQt6.QtWidgets import QListWidget
 
 from global_variables import gv
 
 from src.app import MainWindow
-from src.qmessagebox import WarningQMessageBox, TimedMessage
+from src.qmessagebox import WarningQMessageBox
 from src.threaded_mail_manager import ThreadedMailManager
 from src.qdialog import FilesSelectQDialog, FolderSelectQDialog
 
 from printer_job_tracker import PrintJobTracker
 from printer_settings_dialog import PrintSettingsQDialog
+<<<<<<< HEAD
 from printer_qdialog import CreatePrintJobsFromMailQDialog, CreatePrintJobsFromFileSystemQDialog
 
+=======
+from printer_qdialog import (
+        CreatePrintJobsFromMailQDialog,
+        CreatePrintJobsFromFileSystemQDialog,
+        PrintSearchJobDialog)
+>>>>>>> 83dcd19371dfeba2fa8edab7590696dbdeaaadd7
 
 class PrintMainWindow(MainWindow):
     def __init__(self, *args, **kwargs):
@@ -104,17 +110,15 @@ class PrintMainWindow(MainWindow):
             if len(jobs_names_list) > 0:
                 CreatePrintJobsFromFileSystemQDialog(self, jobs_names_list, folders_global_paths_list).exec()
 
-        # self.refreshAllWidgets()
 
     def openEditSettingsDialog(self):
         ''' Open dialog to edit the settings. '''
         PrintSettingsQDialog(self, gv).exec()
 
-    def refreshAllWidgets(self):
-        ''' Refresh the widgets. '''
-        qlist_widgets = self.findChildren(QListWidget)
-        for list_widget in qlist_widgets:
-            list_widget.refresh()
+    def openSearchJobDialog(self):
+        ''' Open the search job dialog. '''
+        PrintSearchJobDialog(self).exec()
+
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

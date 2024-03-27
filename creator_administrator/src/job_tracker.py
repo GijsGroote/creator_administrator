@@ -73,6 +73,7 @@ class JobTracker:
 
         self.writeTrackerFile()
 
+
     def addJobDict(self, job_name: str, job_dict: dict):
         ''' Add a job dict to tracker file. '''
 
@@ -199,6 +200,15 @@ class JobTracker:
         self.readTrackerFile()
 
         return [(job_name, job_dict['dynamic_job_name']) for job_name, job_dict in self.tracker_dict.items() if job_dict['status'] == status]
+
+
+    def getAllStaticAndDynamicJobNamesThatMatch(self, match_str: str) -> list[tuple]:
+        ''' Return a list containing all dynamic job names that match. '''
+
+        self.readTrackerFile()
+        return [(job_name, job_dict['dynamic_job_name']) for 
+                job_name, job_dict in self.tracker_dict.items() if match_str.lower() in job_name.lower()]
+
 
     def getAllStaticAndDynamicJobNames(self) -> list[tuple]:
         ''' Return a list containing all dynamic job names. '''

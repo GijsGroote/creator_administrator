@@ -19,8 +19,11 @@ class OverviewQListWidget(QListWidget):
 
         self.itemDoubleClicked.connect(self.itemIsDoubleClicked)
 
+
+    # Some child classes overwrite this function
     def displayItem(self, item_name: str):
         ''' Display the job content page. '''
+
         self.parent().parent().setCurrentIndex(1)
         # find the JobContentQListWidget by searching for QListWidget (search for JobContentQListWidget returns None)
         self.parent().parent().currentWidget().findChild(QListWidget).loadContent(item_name)

@@ -12,7 +12,7 @@ from src.qdialog import FilesSelectQDialog, FolderSelectQDialog
 
 from laser_job_tracker import LaserJobTracker
 from laser_settings_dialog import LaserSettingsQDialog
-from laser_qdialog import CreateLaserJobsFromFileSystemQDialog, CreateLaserJobsFromMailQDialog
+from laser_qdialog import CreateLaserJobsFromFileSystemQDialog, CreateLaserJobsFromMailQDialog, LaserSearchJobDialog
 
 class LaserMainWindow(MainWindow):
     def __init__(self, *args, **kwargs):
@@ -110,7 +110,9 @@ class LaserMainWindow(MainWindow):
         ''' Open dialog to edit the settings. '''
         LaserSettingsQDialog(self, gv).exec()
 
-
+    def openSearchJobDialog(self):
+        ''' Open the search job dialog. '''
+        LaserSearchJobDialog(self).exec()
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

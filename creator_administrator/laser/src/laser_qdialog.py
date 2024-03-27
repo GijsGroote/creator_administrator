@@ -1,11 +1,16 @@
 import os
 import re
 
-from PyQt6.QtWidgets import QWidget
+from PyQt6.QtWidgets import QWidget,  QStackedWidget, QTabWidget
 
-from src.qdialog import CreateJobsFromMailQDialog, CreateJobsFromFileSystemQDialog
+from src.qdialog import CreateJobsFromMailQDialog, CreateJobsFromFileSystemQDialog, SearchJobDialog
+from src.qlist_widget import JobContentQListWidget
 from src.qmessagebox import TimedMessage
 from src.threaded_mail_manager import ThreadedMailManager
+
+
+
+
 
 from laser_job_tracker import LaserJobTracker
 from laser_validate import validate_material_info
@@ -257,3 +262,43 @@ class CreateLaserJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
                                              'target_file_global_path': target_file_global_path}
         self.make_item_counter += 1
         self.loadContent()
+
+class LaserSearchJobDialog(SearchJobDialog):
+    ''' Search all existing jobs in a dialog. '''
+
+    def __init__(self, parent: QWidget, *args, **kwargs):
+        ui_global_path = os.path.join(gv['LOCAL_UI_DIR'], 'search_job_dialog.ui')
+
+        super().__init__(parent, ui_global_path, *args, **kwargs)
+
+        self.widget_names ={'WACHTRIJ':
+                        {'QStackedWidget': 'wachtrijQStackedWidget',
+                            'tab_widget_position': 1},
+                    'VERWERKT':
+                        {'QStackedWidget': 'verwerktQStackedWidget',
+                            'tab_widget_position': 3},
+                    'AFGEKEURD':
+                        {'QStackedWidget': 'afgekeurdQStackedWidget',
+                            'tab_widget_position': 4}}
+
+    def displayItem(self, job_name: str):
+        ''' Display the job page and load content for the highlighted job. '''
+
+        job_status = LaserJobTracker(self).getJobDict(job_name)['status']
+
+        # find QStackedWidget for job_status
+        stacked_widget = self.window().findChild(
+                QStackedWidget,
+                self.widget_names[job_status]['QStackedWidget'])
+
+        # load job into JobContentQListWidget
+        stacked_widget.findChild(JobContentQListWidget).loadContent(job_name)
+
+        # show jobPage in stackedWidget
+        stacked_widget.setCurrentIndex(1)
+
+        # show job_status tabWidget
+        tab_widget = self.window().findChild(QTabWidget, 'jobsQTabWidget')
+        tab_widget.setCurrentIndex(self.widget_names[job_status]['tab_widget_position'])
+
+        self.close()

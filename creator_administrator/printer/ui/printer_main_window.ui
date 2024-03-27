@@ -188,7 +188,7 @@
                 <item>
                  <widget class="GeslicedQPushButton" name="pushButton_3">
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Ctrl+k&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Ctrl+G&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="text">
                    <string>Gesliced</string>
@@ -201,13 +201,13 @@
                 <item>
                  <widget class="PrintAangezetQPushButton" name="pushButton_4">
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Ctrl+k&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Ctrl+A&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="text">
                    <string>Print Aangezet</string>
                   </property>
                   <property name="shortcut">
-                   <string>Ctrl+P</string>
+                   <string>Ctrl+A</string>
                   </property>
                  </widget>
                 </item>
@@ -317,13 +317,13 @@
                 <item>
                  <widget class="PrintAangezetQPushButton" name="backPushButton_10">
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Esc&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Ctrl+A&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="text">
                    <string>Print Aangezet</string>
                   </property>
                   <property name="shortcut">
-                   <string>Ctrl+P</string>
+                   <string>Ctrl+A</string>
                   </property>
                  </widget>
                 </item>
@@ -425,6 +425,9 @@
                 </item>
                 <item>
                  <widget class="PrintKlaarQPushButton" name="afgekeurdOptionsQPushButton_6">
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Ctrl+K&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
                   <property name="text">
                    <string>Print Klaar</string>
                   </property>
@@ -669,9 +672,11 @@
      <string>Help</string>
     </property>
     <addaction name="openDocumentationAction"/>
-    <addaction name="reportaBugAction"/>
+    <addaction name="searchJobsAction"/>
+    <addaction name="refreshJobsAction"/>
     <addaction name="separator"/>
     <addaction name="actionAbout"/>
+    <addaction name="reportaBugAction"/>
    </widget>
    <addaction name="createJobsMenu"/>
    <addaction name="menuSettings"/>
@@ -755,8 +760,29 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compares jobs on file system with jobs in tracker file.&lt;/p&gt;&lt;p&gt;Synchronizes/Repair if they  if they are out of sync.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </action>
+  <action name="searchJobsAction">
+   <property name="text">
+    <string>Search Jobs</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="refreshJobsAction">
+   <property name="text">
+    <string>Refresh Jobs</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>PrintAllJobsOverviewQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>printer_qlist_widget.h</header>
+  </customwidget>
   <customwidget>
    <class>BackQPushButton</class>
    <extends>QPushButton</extends>
@@ -772,11 +798,6 @@
    <class>PrintKlaarQPushButton</class>
    <extends>QPushButton</extends>
    <header>printer_button.h</header>
-  </customwidget>
-  <customwidget>
-   <class>PrintAllJobsOverviewQListWidget</class>
-   <extends>QListWidget</extends>
-   <header>printer_qlist_widget.h</header>
   </customwidget>
   <customwidget>
    <class>PrintWachtrijJobsOverviewQListWidget</class>

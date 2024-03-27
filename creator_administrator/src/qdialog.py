@@ -286,11 +286,46 @@ class SelectQDialog(QDialog):
         loadUi(ui_global_path, self)
 
         # shortcut on Esc button
-        QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.closeDialog)
+        QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.close)
 
-    def closeDialog(self):
-        ''' Close the dialog, press cancel. '''
-        self.close()
+
+class SearchJobDialog(QDialog):
+    ''' Search all existing jobs in a dialog. '''
+    def __init__(self, parent: QWidget, ui_global_path: str, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+
+        loadUi(ui_global_path, self)
+
+        self.searchLineEdit.textChanged.connect(self.refreshSearch)
+        QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.close)
+
+        self.listWidget.main_window = parent.window()
+
+        QShortcut(QKeySequence(Qt.Key.Key_Down), self).activated.connect(self.toNextRow)
+        QShortcut(QKeySequence(Qt.Key.Key_Up), self).activated.connect(self.toPreviousRow)
+        QShortcut(QKeySequence('Ctrl+n'), self).activated.connect(self.toNextRow)
+        QShortcut(QKeySequence('Ctrl+p'), self).activated.connect(self.toPreviousRow)
+
+    def refreshSearch(self):
+        ''' Add the matching jobs to the qlistwidget. '''
+        self.listWidget.refreshWithMatch(self.searchLineEdit.text())
+
+    def toNextRow(self):
+        widget = self.listWidget
+
+        if widget.currentRow() == widget.count()-1:
+            widget.setCurrentRow(0)
+        else:
+            widget.setCurrentRow(widget.currentRow()+1)
+
+    def toPreviousRow(self):
+        widget = self.listWidget
+
+        if widget.currentRow() == 0:
+            widget.setCurrentRow(widget.count()-1)
+        else:
+            widget.setCurrentRow(widget.currentRow()-1)
 
 
 class FilesSelectQDialog(SelectQDialog):
@@ -406,7 +441,6 @@ class SelectOptionsQDialog(QDialog):
             opt_ql_widget.setCurrentRow(opt_ql_widget.currentRow()-1)
 
 
-
 class AboutDialog(QDialog):
     """ Display information about creator administrator. """
 
@@ -425,14 +459,9 @@ class AboutDialog(QDialog):
 
 
         # shortcut on Esc button
-        QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.closeDialog)
+        QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.close)
 
     def openGithubInBrowser(self, _):
         ''' Open Github in browser. '''
         webbrowser.open('https://github.com/GijsGroote/creator_administrator/')
-
-    def closeDialog(self):
-        ''' Close the dialog, press cancel. '''
-        self.close()
-
 
