@@ -12,6 +12,7 @@ from src.qdialog import FilesSelectQDialog, FolderSelectQDialog
 
 from printer_job_tracker import PrintJobTracker
 from printer_settings_dialog import PrintSettingsQDialog
+
 from printer_qdialog import (
         CreatePrintJobsFromMailQDialog,
         CreatePrintJobsFromFileSystemQDialog,
@@ -91,7 +92,7 @@ class PrintMainWindow(MainWindow):
                                 f'{item_global_path} which is skipped' )
                             continue
 
-                        if item_global_path.endswith(gv['ACCEPTED_EXTENSIONS']):
+                        if item_global_path.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
                             files_in_subfolder_global_paths.append(item_global_path)
                             subfolder_contains_print_file = True
 
