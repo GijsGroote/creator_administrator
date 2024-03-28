@@ -146,6 +146,8 @@ class CreateJobsFromMailQDialog(CreateJobsQDialog):
 
         self.mailFromQLabel.setText(self.temp_sender_name)
         self.mailProgressQLabel.setText(f'Mail ({self.job_counter+1}/{len(self.jobs)})')
+        self.subjectQLabel.setText(self.mail_manager.getMailSubject(job_msg))
+
 
         mail_body = self.mail_manager.getMailBody(job_msg)
         if isinstance(mail_body, bytes):

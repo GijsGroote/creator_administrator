@@ -31,57 +31,89 @@
   <property name="modal">
    <bool>true</bool>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Mail From: </string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="mailFromQLabel">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:20pt;&quot;&gt;mail_name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout">
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
-          <widget class="QLabel" name="mailProgressQLabel">
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Mail From: </string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="mailFromQLabel">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:20pt;&quot;&gt;mail_name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <widget class="QLabel" name="mailProgressQLabel">
+             <property name="text">
+              <string>Mail (?/x)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="attachmentProgressQLabel">
+             <property name="text">
+              <string>Attachment (?/y)</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="label_3">
            <property name="text">
-            <string>Mail (?/x)</string>
+            <string>Subject:   </string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="attachmentProgressQLabel">
+          <widget class="QLabel" name="subjectQLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
-            <string>Attachment (?/y)</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:20pt;&quot;&gt;subject&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>
@@ -107,7 +139,7 @@
           <x>0</x>
           <y>0</y>
           <width>1013</width>
-          <height>353</height>
+          <height>310</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_5">

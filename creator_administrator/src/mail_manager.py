@@ -293,6 +293,20 @@ class MailManager():
 
             return self.mailToName(mail_file.get('From'))
 
+    def getMailSubject(self, mail_item) -> str:
+        ''' Return the subject from mail file. '''
+
+        mail_file = self.mailItemToMailFile(mail_item)         
+
+        if sys.platform == 'win32':
+            return str(mail_file.Subject)
+
+     
+        if sys.platform == 'linux':
+
+            return mail_file.get('Subject')
+
+
     def mailItemToMailFile(self, mail_item):
         ''' Return Msg from global path to mail.msg. '''
 
