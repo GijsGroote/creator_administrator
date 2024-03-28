@@ -101,6 +101,10 @@ class EmailManager:
             if attachment.FileName.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
                 job_file_count += 1
 
+            # the next two lines are to allow the course BM41155 to send GCODE to us directly
+            if attachment.FileName.lower().endswith('.gcode') and attachment.FileName.lower().startswith('bm41155_'):
+                job_file_count += 1
+
         if job_file_count == 0:
             return False, f'no {gv["ACCEPTED_EXTENSIONS"]} attachment found'
 

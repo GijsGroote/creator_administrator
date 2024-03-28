@@ -31,8 +31,7 @@ def create_print_job(job_name: str, msg) -> str:
     # Save the .stl files
     for attachment in msg.Attachments:
         print(f'Downloaded file: {attachment.FileName.lower()}')
-        if attachment.FileName.lower().endswith(gv['ACCEPTED_EXTENSIONS']):
-            attachment.SaveAsFile(os.path.join(print_job_global_path, attachment.FileName))
+        attachment.SaveAsFile(os.path.join(print_job_global_path, attachment.FileName))
 
     python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'afgekeurd.py'), job_name)
     python_to_batch(gv, os.path.join(gv['FUNCTIONS_DIR_HOME'], 'gesliced.py'), job_name)
