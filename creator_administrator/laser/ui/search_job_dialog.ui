@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>549</width>
+    <height>426</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Search Jobs</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../../../../figures/logo.ico</normaloff>../../../../../figures/logo.ico</iconset>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLineEdit" name="searchLineEdit"/>
+     </item>
+     <item>
+      <widget class="LaserAllJobsOverviewQListWidget" name="listWidget"/>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LaserAllJobsOverviewQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>laser_qlist_widget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
