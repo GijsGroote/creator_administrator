@@ -45,7 +45,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="allJobsTab">
        <attribute name="title">
@@ -779,11 +779,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>PrintAllJobsOverviewQListWidget</class>
-   <extends>QListWidget</extends>
-   <header>printer_qlist_widget.h</header>
-  </customwidget>
-  <customwidget>
    <class>BackQPushButton</class>
    <extends>QPushButton</extends>
    <header>button.h</header>
@@ -793,6 +788,11 @@
    <extends>QTabWidget</extends>
    <header>tab_widget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PrintAllJobsOverviewQListWidget</class>
+   <extends>QListWidget</extends>
+   <header>printer_qlist_widget.h</header>
   </customwidget>
   <customwidget>
    <class>PrintKlaarQPushButton</class>

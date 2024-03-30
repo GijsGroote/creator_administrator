@@ -1,7 +1,8 @@
 from PyQt6.QtWidgets import QStackedWidget, QTabWidget, QWidget, QDialog
 
-from src.qlist_widget import OverviewQListWidget, JobContentQListWidget
 from printer_job_tracker import PrintJobTracker 
+
+from src.qlist_widget import OverviewQListWidget, JobContentQListWidget
 
 class PrintAllJobsOverviewQListWidget(OverviewQListWidget):
 
@@ -20,7 +21,7 @@ class PrintAllJobsOverviewQListWidget(OverviewQListWidget):
                                 {'QStackedWidget': 'printenQStackedWidget',
                                  'tab_widget_position': 3},
                             'VERWERKT':
-                                {'QStackedWidget': 'printenQStackedWidget',
+                                {'QStackedWidget': 'verwerktQStackedWidget',
                                  'tab_widget_position': 4},
                             'AFGEKEURD':
                                 {'QStackedWidget': 'afgekeurdQStackedWidget',
@@ -37,16 +38,10 @@ class PrintAllJobsOverviewQListWidget(OverviewQListWidget):
         self.clear()
         self.initialize(self.job_tracker.getAllStaticAndDynamicJobNamesThatMatch(match_str))
 
-    def refreshWithMatch(self, match_str: str):
-        ''' Initialise with all jobs that match match_str. '''
-        self.clear()
-        self.initialize(self.job_tracker.getAllStaticAndDynamicJobNamesThatMatch(match_str))
-
     def displayItem(self, item_name: str):
         ''' Display the job page and load content for the highlighted job. '''
 
         job_status = self.job_tracker.getJobDict(item_name)['status']
-
 
         main_window = self.parent().window()
 
