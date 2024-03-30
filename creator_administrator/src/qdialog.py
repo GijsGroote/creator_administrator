@@ -296,7 +296,6 @@ class SearchJobDialog(QDialog):
     def __init__(self, parent: QWidget, ui_global_path: str, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
-
         loadUi(ui_global_path, self)
 
         self.searchLineEdit.textChanged.connect(self.refreshSearch)
@@ -409,6 +408,8 @@ class SelectOptionsQDialog(QDialog):
         # shortcuts on VIM motions
         QShortcut(QKeySequence('k'), self).activated.connect(self.toPreviousRow)
         QShortcut(QKeySequence('j'), self).activated.connect(self.toNextRow)
+        QShortcut(QKeySequence('Ctrl+p'), self).activated.connect(self.toPreviousRow)
+        QShortcut(QKeySequence('Ctrol+n'), self).activated.connect(self.toNextRow)
 
         for (option, option_data, done) in options:
 

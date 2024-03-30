@@ -20,6 +20,8 @@ class JobsQTabWidget(QTabWidget):
         QShortcut(QKeySequence('l'), self).activated.connect(self.toRightTab)
         QShortcut(QKeySequence('k'), self).activated.connect(self.toPreviousRow)
         QShortcut(QKeySequence('j'), self).activated.connect(self.toNextRow)
+        QShortcut(QKeySequence('Ctrl+p'), self).activated.connect(self.toPreviousRow)
+        QShortcut(QKeySequence('Ctrl+n'), self).activated.connect(self.toNextRow)
 
     def toRightTab(self):
         if self.currentIndex() == self.count()-1:
