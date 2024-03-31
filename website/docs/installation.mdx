@@ -1,0 +1,104 @@
+---
+sidebar_position: 2
+---
+
+# Install
+
+
+Get started by **cloning the repository**, Open the CMD and paste the following:
+
+```bash
+git clone git@github.com:GijsGroote/creator_administrator.git
+```
+
+Make sure that the following programs are present on your machine.
+
+- [python](https://www.python.org/downloads/) version 3.10 or 3.11
+- [poetry](https://python-poetry.org/docs/) version 1.8.2 or above
+- [Outlook](https://microsoft-outlook.en.softonic.com/?ex=RAMP-1768.2) the 2019 version
+
+
+## Install the dependencies
+
+Change directory to the github repository folder:
+
+```bash
+cd creator_administrator
+```
+
+Create a new Poetry environment and install the dependencies for Creator Administartor:
+
+```bash
+poetry install
+```
+
+Enter the Poetry environment:
+
+```bash
+poetry shell
+```
+
+## Run the Application
+
+To start the 3D print application, run:
+```bash
+python creator_administrator/printer/src/printer_app.py 
+```
+
+To start the laser cut application, run:
+```bash
+python creator_administrator/laser/src/laser_app.py 
+```
+
+:::note note 
+
+When first running Creator Administrator, you'll see the message:
+
+___tracker file created___
+
+Press 'ok' to launch Creator Administrator.
+
+:::
+
+Creator Administartor, 3D print application:
+
+![Docusaurus logo](/img/printer_start_screen.png)
+
+Creator Administartor, laser cut application:
+
+![Docusaurus logo](/img/laser_start_screen.png)
+
+
+## Opening with a Shortcut 
+:::tip My tip
+
+Create a shortcut to open Creator Administrator.
+
+:::
+
+### Create Batch files
+The shortcut should point toward a Batch files, create them by running
+```
+python create_batch_files.py
+```
+
+Make sure your CMD is in the Creator Administrator root directory which contains create_batch_files.py.
+
+Two new files batch will appear called laser_app.bat and printer_app.bat.
+
+### Shortcut toward Batch file
+
+- Right click on Desktop and choose *create a shortcut*
+- Navigate toward the batch files and select the printer_app.bat or laser_app.bat
+- (optionally) Choose a fancy name for the icon
+- (optionally) Choose a fancy icon for the shortcut
+
+:::note note
+
+When Creator Administrator is opened via a shortcut toward a Batch file, a CMD opens additionally to Creator Administrator. You can ignore and minimize this CMD, closing it however also closes Creator Administrator.
+
+:::
+
+That's it! Congradulations, you can now start Creator administrator by dubble clicking on the shortcut.
+
+

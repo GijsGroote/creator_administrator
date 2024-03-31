@@ -1,0 +1,85 @@
+---
+sidebar_position: 3
+---
+
+# Tutorial - General
+
+In this General tutorial examples will be given in de 3D printer application.
+
+## Creating Jobs
+There are three methods to create jobs; import from mail, select files or select folders.
+
+### Import from Mail
+Search the default inbox for mails that contains the accepted extensions (you can modify the accepted extensions in the settings). If there exists a mail that contains an attachment with an accepted extension, a dialog will open where you can check and confirm to create a job. 
+
+TODO: image import dialog
+
+
+### Select Files
+Create a job with files that are stored locally on the computer.
+
+
+### Select Folder
+Creating multiple jobs with files that are stored locally on the computer or via USB stick. Make sure to select a \<FOLDER\> that contains subfolders that contain the files to make:
+
+```bash
+└───<FOLDER>
+      ├───<SUBFOLDER_1>
+      │  ├───file
+      │  └───another_file
+      └───<SUBFOLDER_2>
+             ├───file
+             └───another_file
+```
+
+:::note note
+
+No automatic mails will be send when creating jobs with the select files or select folder methods. This is because the is no email adress collected when creating the jobs.
+
+:::
+
+
+## Moving Around
+
+To walk through jobs use the arrow keys or the VIM key-bindings h, j, k, l, Ctrl+n and Ctrl+p.
+
+| Key / Shortcut | Action |
+|--------|-----------------|
+| Arrow down, j, Ctrl+n | Move one job down |
+| Arrow up, k, Ctrl+p | Move one job up |
+| Arrow left, h | Move to the left |
+| Arrow right, l | Move to the right |
+
+:::tip tip
+
+If you really want to be fast in handling job request, use the VIM keybindings, avoid the arrow keys, this is the way.
+
+:::
+
+
+## Custom Mails
+
+todo: explain these custom mails
+
+
+
+## Shortcuts
+|Shortcut| Action | Remember by |
+|--------|-----------------|-----------------|
+| Ctrl+m | Create Jobs from mails | 'm' stands for mail |
+| Ctrl+i | Create Job by Importing Files | 'i' stands for import |
+| Ctrl+r | Refresh all Jobs | 'r' stands for refresh |
+| Ctrl+f | Open the Find Job Dialog | 'f' stands for find |
+| Ctrl+q | Close the Program | 'q' stands for quit |
+| Esc    | Close a Dialog / Popup | 'Esc' universally is the closing key |
+
+The above shortcut list is general; additional, application-specific shortcuts for 3D printing or laser cutting are listed in upcoming sections.
+
+
+## Job Tracker File
+
+todoo
+
+sync
+
+check health
