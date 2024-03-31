@@ -2,6 +2,8 @@ from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import QStackedWidget, QListWidgetItem, QLabel, QTabWidget, QWidget, QDialog
 
 from src.qlist_widget import OverviewQListWidget, ContentQListWidget, JobContentQListWidget
+
+from global_variables import gv
 from convert import split_material_name
 from laser_job_tracker import LaserJobTracker
 
@@ -134,6 +136,8 @@ class LaserJobContentQListWidget(JobContentQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
         super().__init__(parent, LaserJobTracker(self), *args, **kwargs)
+
+        self.gv = gv
 
 class LaserMaterialContentQListWidget(ContentQListWidget):
 

@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QStackedWidget, QTabWidget, QWidget, QDialog
 
 from printer_job_tracker import PrintJobTracker 
+from global_variables import gv
 
 from src.qlist_widget import OverviewQListWidget, JobContentQListWidget
 
@@ -133,4 +134,7 @@ class PrintJobContentQListWidget(JobContentQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
         super().__init__(parent, PrintJobTracker(self), *args, **kwargs)
+
+        self.gv = gv
+
 

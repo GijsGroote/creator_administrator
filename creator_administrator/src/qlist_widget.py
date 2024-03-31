@@ -2,12 +2,38 @@ import os
 import abc
 from operator import itemgetter
 
-from PyQt6.QtCore import Qt, QUrl
-from PyQt6.QtGui import QKeySequence, QShortcut, QFont, QDrag
+from PyQt6.QtCore import Qt, QUrl, QMimeData, QSize
+from PyQt6.QtGui import QKeySequence, QShortcut, QFont, QDrag, QPixmap, QPainter, QColor
 from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QLabel, QWidget, QAbstractItemView
 
 from src.directory_functions import open_file
 from src.job_tracker import JobTracker
+
+
+class ContentQListWidgetItem(QListWidgetItem):
+    ''' Item to add to QListWidget. '''
+
+    def __init__(self, parent, item_dict: dict, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+            
+        assert os.path.exists(item_dict['file_global_path']),\
+            f'item global path {item_dict["file_global_path"]} does not exists'
+
+
+        if 'done' in item_dict:
+            if item_dict['done']:
+                self.setText('✅ '+item_dict['file_name'])
+            else:
+                self.setText('❎ '+item_dict['file_name'])
+        else:
+            self.setText(item_dict['file_name'])
+
+
+        self.setData(1, item_dict['file_global_path'])
+        self.setFont(QFont('Cantarell', 14))
+
+    def size(self):
+        return QSize(150, 40)
 
 class OverviewQListWidget(QListWidget):
     ''' Overview of multiple items in a list. '''
@@ -119,18 +145,41 @@ class JobContentQListWidget(ContentQListWidget):
 
 
     def startDrag(self, event):
-
+        ''' Start dragging an item. '''
         drag = QDrag(self)
-        current_item = self.currentItem()
+
+        self.current_item = self.currentItem()
+        
+        if self.current_item is None:
+            return
 
         indexes = self.selectedIndexes()
 
         mime = self.model().mimeData(indexes)
-        mime.setUrls([QUrl.fromLocalFile(current_item.data(1))])
+        mime.setUrls([QUrl.fromLocalFile(self.current_item.data(1))])
 
+        label = QLabel(self.current_item.text(), self)
+        width = label.fontMetrics().boundingRect(label.text()).width()
+
+        pixmap = QPixmap(width+25, 50)
+        
+        # Create a QPainter object
+        painter = QPainter(pixmap)
+        if self.gv['DARK_THEME']:
+            pixmap.fill(QColor('black'))
+            painter.setPen(QColor('white'))
+        else: 
+            pixmap.fill()
+        
+        # Set font properties
+        painter.drawText(pixmap.rect(), 0x0080, '   '+self.current_item.text())
+        
+        # End painting
+        painter.end()
+            
+        drag.setPixmap(pixmap)
         drag.setMimeData(mime)
         drag.exec(event)
-
 
     def loadContent(self, item_name):
         self.clear()
@@ -143,29 +192,18 @@ class JobContentQListWidget(ContentQListWidget):
 
             for file_name in os.listdir(job_dict['job_folder_global_path']):
 
-                item = QListWidgetItem(self)
-
-                item.setData(1, os.path.join(job_dict['job_folder_global_path'], file_name))
-                item.setFont(QFont('Cantarell', 14))
-
                 make_file_dict_list = [val for key,val in job_dict['make_files'].items() if file_name in key]
-                
                 if len(make_file_dict_list) == 0:
-                    item.setText(file_name)
-
+                    item = ContentQListWidgetItem(self, {'file_name': file_name,
+                             'file_global_path': os.path.join(job_dict['job_folder_global_path'], file_name)})
                 elif len(make_file_dict_list) == 1:
-
-                    item_dict = make_file_dict_list[0]
-
-                    if item_dict['done']:
-                        item.setText('✅ '+file_name)
-                    else:
-                        item.setText('❎ '+file_name)
-
+                    item = ContentQListWidgetItem(self, make_file_dict_list[0])
                 else:
                     raise ValueError(f'make_file_dict_list should be of length 0 or 1, not {len(make_file_dict_list)}')
 
                 self.addItem(item)
+
+
 
 class OptionsQListWidget(QListWidget):
     ''' Content . '''
