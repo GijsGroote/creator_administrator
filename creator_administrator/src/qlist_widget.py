@@ -2,7 +2,7 @@ import os
 import abc
 from operator import itemgetter
 
-from PyQt6.QtCore import Qt, QUrl, QMimeData, QSize
+from PyQt6.QtCore import Qt, QUrl, QSize
 from PyQt6.QtGui import QKeySequence, QShortcut, QFont, QDrag, QPixmap, QPainter, QColor
 from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QLabel, QWidget, QAbstractItemView
 
