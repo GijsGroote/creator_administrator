@@ -2,9 +2,9 @@ import os
 import abc
 from operator import itemgetter
 
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QKeySequence, QShortcut, QFont
-from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QLabel, QWidget
+from PyQt6.QtCore import Qt, QUrl
+from PyQt6.QtGui import QKeySequence, QShortcut, QFont, QDrag
+from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QLabel, QWidget, QAbstractItemView
 
 from src.directory_functions import open_file
 from src.job_tracker import JobTracker
@@ -78,7 +78,7 @@ class OverviewQListWidget(QListWidget):
         ''' Initialise the list widget with jobs. '''
 
 class ContentQListWidget(QListWidget):
-    ''' Content . '''
+    ''' Keep content in a list widget. '''
 
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
@@ -103,6 +103,7 @@ class ContentQListWidget(QListWidget):
         ''' Double click on a file (or item) to open it. '''
         open_file(clicked_file.data(1))
 
+
     @abc.abstractmethod
     def loadContent(self, item_name):
         ''' load the content. '''
@@ -114,34 +115,57 @@ class JobContentQListWidget(ContentQListWidget):
 
         self.job_tracker = job_tracker
 
+        self.setDragDropMode(QAbstractItemView.DragDropMode.DragDrop)
+
+
+    def startDrag(self, event):
+
+        drag = QDrag(self)
+        current_item = self.currentItem()
+
+        indexes = self.selectedIndexes()
+
+        mime = self.model().mimeData(indexes)
+        mime.setUrls([QUrl.fromLocalFile(current_item.data(1))])
+
+        drag.setMimeData(mime)
+        drag.exec(event)
+
+
     def loadContent(self, item_name):
         self.clear()
         self.current_item_name = item_name
-
 
         job_dict = self.job_tracker.getJobDict(item_name)
 
         if job_dict is not None:
             self.parent().findChild(QLabel).setText(job_dict['dynamic_job_name'])
 
-            for file in os.listdir(job_dict['job_folder_global_path']):
+            for file_name in os.listdir(job_dict['job_folder_global_path']):
 
-                item = QListWidgetItem()
-                item.setData(1, os.path.join(
-                    job_dict['job_folder_global_path'], file))
+                item = QListWidgetItem(self)
 
-                # check if it is a laser file, indicate if it is done with an emoticon
-                for laser_file_dict in [val for key,val in job_dict['make_files'].items() if file in key]:
-                    # ☑️✅✔️❎
-                    if laser_file_dict['done']:
-                        file ='✅ '+file
-                    else:
-                        file ='❎ '+file
-
-                item.setText(file)
+                item.setData(1, os.path.join(job_dict['job_folder_global_path'], file_name))
                 item.setFont(QFont('Cantarell', 14))
-                self.addItem(item)
 
+                make_file_dict_list = [val for key,val in job_dict['make_files'].items() if file_name in key]
+                
+                if len(make_file_dict_list) == 0:
+                    item.setText(file_name)
+
+                elif len(make_file_dict_list) == 1:
+
+                    item_dict = make_file_dict_list[0]
+
+                    if item_dict['done']:
+                        item.setText('✅ '+file_name)
+                    else:
+                        item.setText('❎ '+file_name)
+
+                else:
+                    raise ValueError(f'make_file_dict_list should be of length 0 or 1, not {len(make_file_dict_list)}')
+
+                self.addItem(item)
 
 class OptionsQListWidget(QListWidget):
     ''' Content . '''
