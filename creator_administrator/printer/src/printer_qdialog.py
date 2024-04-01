@@ -142,7 +142,6 @@ class CreatePrintJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
 
     def __init__(self, parent, job_name_list: list, files_global_paths_list: list, *args, **kwargs):
 
-
         super().__init__(parent,
                          gv,
                          PrintJobTracker(self),
@@ -152,7 +151,6 @@ class CreatePrintJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
 
         self.skipPushButton.clicked.connect(self.skipJob)
         self.loadJobContent()
-
 
     def loadItemContent(self):
         ''' Load content local file into dialog. '''
