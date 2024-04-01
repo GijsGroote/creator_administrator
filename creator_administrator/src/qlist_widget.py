@@ -178,8 +178,9 @@ class JobContentQListWidget(ContentQListWidget):
         painter.end()
             
         drag.setPixmap(pixmap)
-        drag.setMimeData(mime)
-        drag.exec(event)
+        drag.setMimeData(mime)        
+        drag.exec(Qt.DropAction.CopyAction)
+
 
     def loadContent(self, item_name):
         self.clear()
