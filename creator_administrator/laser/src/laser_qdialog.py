@@ -8,10 +8,6 @@ from src.qlist_widget import JobContentQListWidget
 from src.qmessagebox import TimedMessage
 from src.threaded_mail_manager import ThreadedMailManager
 
-
-
-
-
 from laser_job_tracker import LaserJobTracker
 from laser_validate import validate_material_info
 
@@ -271,7 +267,6 @@ class LaserSearchJobDialog(SearchJobDialog):
 
         super().__init__(parent, ui_global_path, *args, **kwargs)
 
-        self.widget_names = gv['TAB_QSTACK_POSITIONS']
 
     def displayItem(self, job_name: str):
         ''' Display the job page and load content for the highlighted job. '''
@@ -281,7 +276,7 @@ class LaserSearchJobDialog(SearchJobDialog):
         # find QStackedWidget for job_status
         stacked_widget = self.window().findChild(
                 QStackedWidget,
-                self.widget_names[job_status]['QStackedWidget'])
+                gv['TAB_QSTACK_POSITIONS'][job_status]['QStackedWidget'])
 
         # load job into JobContentQListWidget
         stacked_widget.findChild(JobContentQListWidget).loadContent(job_name)
@@ -291,6 +286,6 @@ class LaserSearchJobDialog(SearchJobDialog):
 
         # show job_status tabWidget
         tab_widget = self.window().findChild(QTabWidget, 'jobsQTabWidget')
-        tab_widget.setCurrentIndex(self.widget_names[job_status]['tab_widget_position'])
+        tab_widget.setCurrentIndex(gv['TAB_QSTACK_POSITIONS'][job_status]['tab_widget_position'])
 
         self.close()
