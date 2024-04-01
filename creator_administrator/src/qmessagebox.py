@@ -74,7 +74,7 @@ class TimedMessage(QDialog):
         if gv['DISPLAY_TEMP_MESSAGES']:
             loadUi(os.path.join(gv['GLOBAL_UI_DIR'], 'timed_message_dialog.ui'), self)
             self.textLabel.setText(text)
-            self.progressBar.setStyleSheet("""
+            self.progressBar.setStyleSheet('''
                 QProgressBar {
                  background-color: #C0C6CA;
                  border: 0px;
@@ -85,7 +85,7 @@ class TimedMessage(QDialog):
                  background: #7D94B0;
                  width:5px
                 }
-                """)
+                ''')
 
             self.runner = ProgressBarRunner()
             self.runner.signals.progress.connect(self.progressBar.setValue)

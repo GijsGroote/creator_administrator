@@ -5,14 +5,12 @@ from functools import partial
 import qdarktheme
 
 from PyQt6 import QtGui
-from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QShortcut, QKeySequence 
-from PyQt6.QtWidgets import QMainWindow, QListWidget, QStackedWidget
+from PyQt6.QtWidgets import QMainWindow, QListWidget
 from PyQt6.uic import loadUi
 
 from src.qdialog import AboutDialog
 from src.qmessagebox import TimedMessage
-from src.qlist_widget import JobContentQListWidget, ContentQListWidget
 
 class MainWindow(QMainWindow):
 
@@ -23,11 +21,11 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QtGui.QIcon(os.path.join(gv['FIGURES_DIR_HOME'], 'logo.ico')))
         if gv['DARK_THEME']:
             qdarktheme.setup_theme()
-            self.setStyleSheet("""QToolTip { 
+            self.setStyleSheet('''QToolTip { 
                            background-color: black; 
                            color: white; 
                            border: black solid 1px
-                           }""")
+                           }''')
             
         self.gv = gv
 
@@ -42,7 +40,7 @@ class MainWindow(QMainWindow):
 
 
         # shortcut to close the application
-        QShortcut(QKeySequence("Ctrl+Q"), self).activated.connect(self.close)
+        QShortcut(QKeySequence('Ctrl+Q'), self).activated.connect(self.close)
 
     def checkHealth(self):
         ''' Check health with tracker file. '''

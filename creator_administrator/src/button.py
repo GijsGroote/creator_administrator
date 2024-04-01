@@ -19,9 +19,10 @@ class JobsQPushButton(QPushButton):
 
     def getCurrentItemName(self) -> str:
         content_qlist_widget = self.parent().findChild(ContentQListWidget)
+        if content_qlist_widget is None:
+            raise ValueError('ContentQListWidget is None which should be impossible')
 
-        if content_qlist_widget is not None:
-            return content_qlist_widget.current_item_name
+        return content_qlist_widget.current_item_name
 
 
 class OptionsQPushButton(JobsQPushButton):
@@ -41,11 +42,11 @@ class OptionsQPushButton(JobsQPushButton):
         self.menu.setToolTipsVisible(True)
 
         if gv['DARK_THEME']:
-            self.menu.setStyleSheet("""QToolTip {
+            self.menu.setStyleSheet('''QToolTip {
                            background-color: black;
                            color: white;
                            border: black solid 1px
-                           }""")
+                           }''')
 
         # This is a trick because self.objectName() is not known for few milisecs
         self.objectNameChanged.connect(self.initialize)
@@ -56,8 +57,7 @@ class OptionsQPushButton(JobsQPushButton):
 
     def moveJobToWachtrij(self):
         job_name = self.getCurrentItemName()
-        self.job_tracker.markAllFilesAsDone(job_name=job_name,
-                                                 done=False)
+        self.job_tracker.markFilesAsDone(job_name=job_name, done=False, all_files_done=True)
         self.moveJobTo('WACHTRIJ')
         self.window().refreshAllWidgets()
         self.parent().parent().setCurrentIndex(0)
@@ -70,7 +70,7 @@ class OptionsQPushButton(JobsQPushButton):
 
     def moveJobTo(self, new_status):
         job_name = self.getCurrentItemName()
-        self.job_tracker.updateJobStatus(job_name, new_status)
+        self.job_tracker.updateJobKey('status', job_name, new_status)
         self.window().refreshAllWidgets()
         self.parent().parent().setCurrentIndex(0)
 

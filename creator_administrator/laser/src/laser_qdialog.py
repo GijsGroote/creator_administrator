@@ -65,7 +65,7 @@ class CreateLaserJobsFromMailQDialog(CreateJobsFromMailQDialog):
         for material in materials:
             if material.lower() in attachment_name.lower():
                 self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(material))
-        match = re.search(r"\d+\.?\d*(?=mm)", attachment_name)
+        match = re.search(r'\d+\.?\d*(?=mm)', attachment_name)
 
         if match:
             self.thicknessQLineEdit.setText(match.group())
@@ -134,7 +134,7 @@ class CreateLaserJobsFromMailQDialog(CreateJobsFromMailQDialog):
         self.skipJob()
 
     def createJob(self):
-        """ Create a laser job. """
+        ''' Create a laser job. '''
         msg = self.jobs[self.job_counter]
         sender_mail_adress = self.mail_manager.getEmailAddress(msg)
         sender_mail_receive_time = self.mail_manager.getSenderMailReceiveTime(msg)
@@ -162,7 +162,7 @@ class CreateLaserJobsFromMailQDialog(CreateJobsFromMailQDialog):
                 mail_type='RECEIVED',
                 mail_item=msg,
                 move_mail_to_verwerkt=True,
-                template_content= {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
+                template_content= {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsWithStatus(['WACHTRIJ'])},
                 sender_mail_adress=sender_mail_adress,
                 sender_mail_receive_time=sender_mail_receive_time)
 
@@ -271,15 +271,7 @@ class LaserSearchJobDialog(SearchJobDialog):
 
         super().__init__(parent, ui_global_path, *args, **kwargs)
 
-        self.widget_names ={'WACHTRIJ':
-                        {'QStackedWidget': 'wachtrijQStackedWidget',
-                            'tab_widget_position': 1},
-                    'VERWERKT':
-                        {'QStackedWidget': 'verwerktQStackedWidget',
-                            'tab_widget_position': 3},
-                    'AFGEKEURD':
-                        {'QStackedWidget': 'afgekeurdQStackedWidget',
-                            'tab_widget_position': 4}}
+        self.widget_names = gv['TAB_QSTACK_POSITIONS']
 
     def displayItem(self, job_name: str):
         ''' Display the job page and load content for the highlighted job. '''

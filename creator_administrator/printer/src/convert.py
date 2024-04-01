@@ -11,7 +11,7 @@ def get_date_from_dynamic_job_name(dynamic_job_name: str) -> str:
     return ''
 
 def gcode_files_to_max_print_time(gcode_files: list[str]) -> str:
-    """ Get the maximum print time from list of gcode files. """
+    ''' Get the maximum print time from list of gcode files. '''
     max_print_time = ""
     max_print_hours = 0
     max_print_minutes = 0

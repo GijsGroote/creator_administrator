@@ -9,11 +9,11 @@ from src.job_tracker import JobTracker
 
 
 class PrintJobTracker(JobTracker):
-    """
+    '''
     Before changing files on file system, change the job_log.json
 
     use the check_health function to check the file system health based on the job_log.json file
-    """
+    '''
 
     def __init__(self, parent: QWidget):
         super().__init__(parent, gv)
@@ -30,11 +30,13 @@ class PrintJobTracker(JobTracker):
                sender_mail_receive_time=None,
                status='WACHTRIJ',
                job_dict=None) -> dict:
-        """ Add a job to the tracker. """
+        ''' Add a job to the tracker. '''
 
         self.readTrackerFile()
 
         if job_dict is not None:
+            assert job_name is not None, 'updating a job dict, job_name cannot be None'
+            assert job_name in self.tracker_dict, f'could not find {job_name} in tracker_dict'
             add_job_dict = job_dict
         else:
 
@@ -74,7 +76,7 @@ class PrintJobTracker(JobTracker):
         return materials
 
     def checkHealth(self):
-        """ Synchonize job tracker and files on file system. """
+        ''' Synchonize job tracker and files on file system. '''
 
         self.system_healthy = True
 
@@ -90,8 +92,8 @@ class PrintJobTracker(JobTracker):
         self.deleteNonExitentFilesFromTrackerFile()
 
         # import here, importing at begin of file creates a circular import error
+        # pylint: disable=import-outside-toplevel
         from printer_qdialog import CreatePrintJobsFromFileSystemQDialog
-
         self.addNewJobstoTrackerFile(CreatePrintJobsFromFileSystemQDialog)
         self.addNewFilestoTrackerFile(CreatePrintJobsFromFileSystemQDialog)
 

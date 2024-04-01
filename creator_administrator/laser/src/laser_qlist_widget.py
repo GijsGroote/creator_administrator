@@ -14,26 +14,17 @@ class LaserAllJobsOverviewQListWidget(OverviewQListWidget):
 
         self.job_tracker = LaserJobTracker(self)
 
-        self.widget_names ={'WACHTRIJ':
-                                {'QStackedWidget': 'wachtrijQStackedWidget',
-                                 'tab_widget_position': 1},
-                            'VERWERKT':
-                                {'QStackedWidget': 'verwerktQStackedWidget',
-                                 'tab_widget_position': 3},
-                            'AFGEKEURD':
-                                {'QStackedWidget': 'afgekeurdQStackedWidget',
-                                 'tab_widget_position': 4}}
         self.refresh()
 
     def refresh(self):
         ''' Initialise the list widget with jobs. '''
         self.clear()
-        self.initialize(self.job_tracker.getAllStaticAndDynamicJobNames())
+        self.initialize(self.job_tracker.getStaticAndDynamicJobNames())
 
     def refreshWithMatch(self, match_str: str):
         ''' Initialise with all jobs that match match_str. '''
         self.clear()
-        self.initialize(self.job_tracker.getAllStaticAndDynamicJobNamesThatMatch(match_str))
+        self.initialize(self.job_tracker.getStaticAndDynamicJobNames(filter_jobs_on='match', filter_str=match_str))
 
     def displayItem(self, item_name: str):
         ''' Display the job page and load content for the highlighted job. '''
@@ -50,7 +41,7 @@ class LaserAllJobsOverviewQListWidget(OverviewQListWidget):
         # find QStackedWidget for job_status
         stacked_widget = main_window.findChild(
                 QStackedWidget,
-                self.widget_names[job_status]['QStackedWidget'])
+                gv['TAB_QSTACK_POSITIONS'][job_status]['QStackedWidget'])
 
         # load job into JobContentQListWidget
         stacked_widget.findChild(JobContentQListWidget).loadContent(item_name)
@@ -60,7 +51,7 @@ class LaserAllJobsOverviewQListWidget(OverviewQListWidget):
 
         # show job_status tabWidget
         tab_widget = main_window.findChild(QTabWidget, 'jobsQTabWidget')
-        tab_widget.setCurrentIndex(self.widget_names[job_status]['tab_widget_position'])
+        tab_widget.setCurrentIndex(gv['TAB_QSTACK_POSITIONS'][job_status]['tab_widget_position'])
 
 class LaserWachtrijJobsOverviewQListWidget(OverviewQListWidget):
 
@@ -72,7 +63,8 @@ class LaserWachtrijJobsOverviewQListWidget(OverviewQListWidget):
     def refresh(self):
         ''' Initialise the list widget with jobs. '''
         self.clear()
-        self.initialize(LaserJobTracker(self).getStaticAndDynamicJobNamesWithStatus('WACHTRIJ'))
+        self.initialize(LaserJobTracker(self).getStaticAndDynamicJobNames(
+            filter_jobs_on='status', filter_str='WACHTRIJ'))
 
 class LaserMaterialOverviewQListWidget(OverviewQListWidget):
 
@@ -117,7 +109,8 @@ class LaserVerwerktJobsOverviewQListWidget(OverviewQListWidget):
     def refresh(self):
         ''' Initialise the list widget with jobs. '''
         self.clear()
-        self.initialize(LaserJobTracker(self).getStaticAndDynamicJobNamesWithStatus('VERWERKT'))
+        self.initialize(LaserJobTracker(self).getStaticAndDynamicJobNames(
+            filter_jobs_on='status', filter_str='VERWERKT'))
 
 
 class LaserAfgekeurdJobsOverviewQListWidget(OverviewQListWidget):
@@ -130,7 +123,8 @@ class LaserAfgekeurdJobsOverviewQListWidget(OverviewQListWidget):
     def refresh(self):
         ''' Initialise the list widget with jobs. '''
         self.clear()
-        self.initialize(LaserJobTracker(self).getStaticAndDynamicJobNamesWithStatus('AFGEKEURD'))
+        self.initialize(LaserJobTracker(self).getStaticAndDynamicJobNames(
+            filter_jobs_on='status', filter_str='AFGEKEURD'))
 
 class LaserJobContentQListWidget(JobContentQListWidget):
 
@@ -141,8 +135,7 @@ class LaserJobContentQListWidget(JobContentQListWidget):
 
 class LaserMaterialContentQListWidget(ContentQListWidget):
 
-    def __init__(self, parent: QWidget, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
+    # no init method required if it does not add anything
 
     def loadContent(self, item_name):
         self.clear()

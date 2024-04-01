@@ -10,11 +10,11 @@ from src.job_tracker import JobTracker
 from global_variables import gv
 
 class LaserJobTracker(JobTracker):
-    """
+    '''
     Before changing files on file system, change the job_log.json
 
     use the check_health function to check the file system health based on the job_log.json file
-    """
+    '''
 
     def __init__(self, parent: QWidget):
         super().__init__(parent, gv)
@@ -31,19 +31,20 @@ class LaserJobTracker(JobTracker):
                sender_mail_receive_time=None,
                status='WACHTRIJ',
                job_dict=None) -> dict:
-        """ Add a job to the tracker. """
+        ''' Add a job to the tracker. '''
 
-        with open(self.tracker_file_path, 'r' ) as tracker_file:
-            tracker_dict = json.load(tracker_file)
+        self.readTrackerFile()
 
         if job_dict is not None: 
-            # Save new make_files for existing job
-            assert job_name in tracker_dict, f'could not find {job_name} in tracker_dict'
-            job_dict['make_files'] = make_files
+
+            # update existing job
+            assert job_name is not None, 'updating a job dict, job_name cannot be None'
+            assert job_name in self.tracker_dict, f'could not find {job_name} in tracker_dict'
             add_job_dict = job_dict
 
         else:
-            # Create new job
+
+            # create new job
             job_name = self.makeJobNameUnique(job_name)
 
             add_job_dict = {'job_name': job_name,
@@ -59,10 +60,9 @@ class LaserJobTracker(JobTracker):
             if sender_mail_receive_time is not None:
                 add_job_dict['sender_mail_receive_time'] = str(sender_mail_receive_time)
 
-        tracker_dict[job_name] = add_job_dict
+        self.tracker_dict[job_name] = add_job_dict
 
-        with open(self.tracker_file_path, 'w' ) as tracker_file:
-            json.dump(tracker_dict, tracker_file, indent=4)
+        self.writeTrackerFile()
 
     def getExistingMaterials(self) -> set:
         ''' Return all materials that exist in the jobs with a wachtrij status. '''
@@ -112,7 +112,7 @@ class LaserJobTracker(JobTracker):
 
 
     def checkHealth(self):
-        """ Synchonize job tracker and files on file system. """
+        ''' Synchonize job tracker and files on file system. '''
 
         self.system_healthy = True
 
@@ -128,6 +128,7 @@ class LaserJobTracker(JobTracker):
         self.deleteNonExitentFilesFromTrackerFile()
 
         # import here, importing at begin of file creates a circular import error
+        # pylint: disable=import-outside-toplevel
         from laser_qdialog import CreateLaserJobsFromFileSystemQDialog
 
         self.addNewJobstoTrackerFile(CreateLaserJobsFromFileSystemQDialog)

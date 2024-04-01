@@ -1,6 +1,6 @@
-"""
+'''
 Global variables/Settings specific for the computer managing the printer machine.
-"""
+'''
 
 import json
 import os

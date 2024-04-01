@@ -246,13 +246,13 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
         ''' Load content of mail item into dialog. '''
 
     def createJob(self):
-        """ Create a job. """
+        ''' Create a job. '''
 
         if self.update_existing_job:
 
             # temp_job_dict given? then a job exist on FS and only the tracker should be updated
             self.temp_job_dict['make_files'] = self.temp_make_files_dict
-            self.job_tracker.updateJob(self.temp_job_dict['job_name'], self.temp_job_dict)
+            self.job_tracker.addJob(self.temp_job_dict['job_name'], None, None,  job_dict=self.temp_job_dict)
 
             # Rename files to name in tracker file
             for file_name in os.listdir(self.temp_job_dict['job_folder_global_path']):
@@ -280,7 +280,7 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
         self.parent().refreshAllWidgets()
 
 class SelectQDialog(QDialog):
-    """ Select file dialog. """
+    ''' Select file dialog. '''
     def __init__(self, parent, gv: dict, ui_global_path: str, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.gv=gv
@@ -330,7 +330,7 @@ class SearchJobDialog(QDialog):
 
 
 class FilesSelectQDialog(SelectQDialog):
-    """ Select files dialog. """
+    ''' Select files dialog. '''
     def __init__(self, parent: QWidget, gv: dict, *args, **kwargs):
         ui_global_path = os.path.join(gv['GLOBAL_UI_DIR'], 'select_files_dialog.ui')
         super().__init__(parent, gv, ui_global_path, *args, **kwargs)
@@ -366,7 +366,7 @@ class FilesSelectQDialog(SelectQDialog):
 
 
 class FolderSelectQDialog(SelectQDialog):
-    """ Select folder dialog. """
+    ''' Select folder dialog. '''
     def __init__(self, parent: QWidget, gv: dict, *args, **kwargs):
         ui_global_path = os.path.join(gv['GLOBAL_UI_DIR'], 'select_folders_dialog.ui')
         super().__init__(parent, gv, ui_global_path, *args, **kwargs)
@@ -445,7 +445,7 @@ class SelectOptionsQDialog(QDialog):
 
 
 class AboutDialog(QDialog):
-    """ Display information about creator administrator. """
+    ''' Display information about creator administrator. '''
 
     def __init__(self, parent: QWidget, gv: dict, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)

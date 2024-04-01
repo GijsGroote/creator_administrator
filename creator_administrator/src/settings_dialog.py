@@ -3,10 +3,10 @@ import abc
 import sys
 import json
 from functools import partial
-# from PyQt6.QtGui import *
+
 from PyQt6.QtWidgets import QWidget, QDialog
-# from PyQt6.QtCore import *
 from PyQt6.uic import loadUi
+
 from src.directory_functions import shorten_folder_name
 from src.qmessagebox import WarningQMessageBox, TimedMessage
 
@@ -19,6 +19,10 @@ class SettingsQDialog(QDialog):
         loadUi(ui_global_path, self)
         self.gv = gv
         self.buttonBox.accepted.connect(self.applySettings)
+        self.loadSettings(gv)
+
+    def loadSettings(self, gv: dict):
+        ''' Load the existing settings. '''
 
         self.daysToKeepJobsLineEdit.setText(str(gv['DAYS_TO_KEEP_JOBS']))
         self.daysToKeepJobsLineEdit.textChanged.connect(partial(self.checkInt, self.daysToKeepJobsLineEdit))
@@ -31,31 +35,24 @@ class SettingsQDialog(QDialog):
         self.acceptedMaterialsLineEdit.textChanged.connect(
                 partial(self.checkMaterialTuple, self.acceptedMaterialsLineEdit))
 
-        if gv['DARK_THEME']:
-            self.darkModeCheckBox.setChecked(True)
 
-        if gv['DISPLAY_TEMP_MESSAGES']:
-            self.dispTempMessageCheckBox.setChecked(True)
+        for variable_name, check_box in (('DARK_THEME', self.darkModeCheckBox),
+                                     ('DISPLAY_TEMP_MESSAGES', self.dispTempMessageCheckBox),
+                                     ('DISPLAY_WARNING_MESSAGES', self.dispWarnMessageCheckBox),
+                                     ('ONLY_UNREAD_MAIL', self.onlyUnreadMailCheckBox),
+                                     ('MOVE_MAILS_TO_VERWERKT_FOLDER', self.moveMailToVerwerktCheckBox),
+                                     ('SEND_MAILS_ON_SEPERATE_THREAD', self.sendMailThreadedCheckBox),
+                                     ('EMPTY_TODO_DIR_BEFORE_EXPORT', self.emptyTodoDirCheckBox),
+                                     ('DARK_THEME', self.darkModeCheckBox)):
 
-        if gv['DISPLAY_WARNING_MESSAGES']:
-            self.dispWarnMessageCheckBox.setChecked(True)
+            if gv[variable_name]:
+                check_box.setChecked(True)
 
-        if gv['ONLY_UNREAD_MAIL']:
-            self.onlyUnreadMailCheckBox.setChecked(True)
 
-        if gv['MOVE_MAILS_TO_VERWERKT_FOLDER']:
-            self.moveMailToVerwerktCheckBox.setChecked(True)
-
-        if gv['SEND_MAILS_ON_SEPERATE_THREAD']:
-            self.sendMailThreadedCheckBox.setChecked(True)
-
-        if gv['EMPTY_TODO_DIR_BEFORE_EXPORT']:
-            self.emptyTodoDirCheckBox.setChecked(True)
-
-        for template_name, widget_button in [('RECEIVED_MAIL_TEMPLATE', self.selectReceivedTemplateButton),
+        for template_name, widget_button in (('RECEIVED_MAIL_TEMPLATE', self.selectReceivedTemplateButton),
                                              ('UNCLEAR_MAIL_TEMPLATE', self.selectUnclearTemplateButton),
                                              ('FINISHED_MAIL_TEMPLATE', self.selectFinishedTemplateButton),
-                                             ('DECLINED_MAIL_TEMPLATE', self.selectDeclinedTemplateButton)]:
+                                             ('DECLINED_MAIL_TEMPLATE', self.selectDeclinedTemplateButton)):
             if template_name in gv:
                 widget_button.setStartingDirectory(os.path.dirname(gv[template_name]))
                 widget_button.setText(shorten_folder_name(gv[template_name], 45))
@@ -63,8 +60,8 @@ class SettingsQDialog(QDialog):
             widget_button.clicked.connect(partial(self.checkHTML, widget_button))
 
 
-        for folder_name, widget_button in [('DATA_DIR_HOME', self.selectDataDirectoryButton),
-                                           ('TODO_DIR_HOME', self.selectTodoDirectoryButton)]:
+        for folder_name, widget_button in (('DATA_DIR_HOME', self.selectDataDirectoryButton),
+                                           ('TODO_DIR_HOME', self.selectTodoDirectoryButton)):
             widget_button.setStartingDirectory(gv[folder_name])
             widget_button.setText(shorten_folder_name(gv[folder_name], 45))
             widget_button.folder_global_path = gv[folder_name]
@@ -112,10 +109,10 @@ class SettingsQDialog(QDialog):
             f'Todo Directory {self.selectTodoDirectoryButton.folder_global_path} is not a directory'),
          ]
 
-        for template_name, widget_button in [('RECEIVED_MAIL_TEMPLATE', self.selectReceivedTemplateButton),
+        for template_name, widget_button in (('RECEIVED_MAIL_TEMPLATE', self.selectReceivedTemplateButton),
                                              ('UNCLEAR_MAIL_TEMPLATE', self.selectUnclearTemplateButton),
                                              ('FINISHED_MAIL_TEMPLATE', self.selectFinishedTemplateButton),
-                                             ('DECLINED_MAIL_TEMPLATE', self.selectDeclinedTemplateButton)]:
+                                             ('DECLINED_MAIL_TEMPLATE', self.selectDeclinedTemplateButton)):
             if widget_button.file_global_path is not None:
                 check_and_warnings.append(
                     (not os.path.exists(widget_button.file_global_path),
@@ -123,7 +120,6 @@ class SettingsQDialog(QDialog):
 
                 check_and_warnings.append((not (self.checkHTML(widget_button)),
                 f'Template {template_name} should be an HTML file and is {widget_button.file_global_path}'))
-
 
 
         # check input values
@@ -244,4 +240,3 @@ class SettingsQDialog(QDialog):
     @abc.abstractmethod
     def restartApp(self):
         ''' Restart the application. '''
-

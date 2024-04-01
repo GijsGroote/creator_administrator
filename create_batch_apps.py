@@ -5,7 +5,7 @@ import subprocess
 if __name__ == '__main__':
 
     # Run the command and capture its output
-    poetry_python_path = subprocess.check_output("poetry env info -p", shell=True, text=True).strip()
+    poetry_python_path = subprocess.check_output('poetry env info -p', shell=True, text=True).strip()
 
     with open('laser_app.bat', 'w') as file:
         file.write(rf'''@echo off

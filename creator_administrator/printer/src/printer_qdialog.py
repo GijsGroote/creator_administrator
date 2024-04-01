@@ -101,7 +101,7 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         self.loadContent()
 
     def createJob(self):
-        """ Create a print job. """
+        ''' Create a print job. '''
 
         msg = self.jobs[self.job_counter]
         sender_mail_adress = self.mail_manager.getEmailAddress(msg)
@@ -130,7 +130,7 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
                 mail_type='RECEIVED',
                 mail_item=msg,
                 move_mail_to_verwerkt=True,
-                template_content= {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsInQueue()},
+                template_content= {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsWithStatus(['WACHTRIJ'])},
                 sender_mail_adress=sender_mail_adress,
                 sender_mail_receive_time=sender_mail_receive_time)
 

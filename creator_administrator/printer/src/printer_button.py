@@ -28,7 +28,7 @@ class GeslicedQPushButton(JobsQPushButton):
         job_tracker = PrintJobTracker(self)
 
 
-        job_dict =  job_tracker.getJobDict(job_name)
+        job_dict =  job_tracker.obDict(job_name)
 
         gcode_files = [gcode_file for
                        gcode_file in os.listdir(job_dict['job_folder_global_path'])
@@ -38,7 +38,7 @@ class GeslicedQPushButton(JobsQPushButton):
             WarningQMessageBox(self, gv, 'warning! no .gcode files detected, slice .stl files first')
 
         else:
-            job_tracker.updateJobStatus(job_name, 'GESLICED')
+            job_tracker.updateJobKey('status', job_name, 'GESLICED')
 
             # Rename GCODE 
             for gcode_file in gcode_files:
@@ -49,7 +49,7 @@ class GeslicedQPushButton(JobsQPushButton):
                 except Exception:
                     pass # simply do not rename then
         
-        job_tracker.updateDynamicJobName(job_name,
+        job_tracker.updateJobKey('status', job_name,
                   get_date_from_dynamic_job_name(job_dict['dynamic_job_name'])+
                   gcode_files_to_max_print_time(gcode_files)+job_name)
 
@@ -68,7 +68,7 @@ class PrintAangezetQPushButton(JobsQPushButton):
         job_name = self.getCurrentItemName()
         job_tracker = PrintJobTracker(self)
 
-        job_folder_global_path = job_tracker.getJobFolderGlobalPathFromJobName(job_name)
+        job_folder_global_path = job_tracker.getJobValue('job_folder_global_path', job_name)
         gcode_files_name_and_global_path = []
 
         for job_file in os.listdir(job_folder_global_path):
@@ -77,14 +77,14 @@ class PrintAangezetQPushButton(JobsQPushButton):
 
 
         if len(gcode_files_name_and_global_path) <= 1:
-            job_tracker.updateJobStatus(job_name, 'AAN_HET_PRINTEN')
+            job_tracker.updateJobKey('status', job_name, 'AAN_HET_PRINTEN')
             self.window().refreshAllWidgets()
             self.parent().parent().setCurrentIndex(0)
 
         elif len(gcode_files_name_and_global_path) > 1:
 
-            if YesOrNoMessageBox(self, text=f"Is the entire print job printing/printed?").answer(): 
-                job_tracker.updateJobStatus(job_name, 'AAN_HET_PRINTEN')
+            if YesOrNoMessageBox(self, text="Is the entire print job printing/printed?").answer(): 
+                job_tracker.updateJobKey('status', job_name, 'AAN_HET_PRINTEN')
                 self.window().refreshAllWidgets()
                 self.parent().parent().setCurrentIndex(0)
 
@@ -121,15 +121,15 @@ class PrintKlaarQPushButton(JobsQPushButton):
         job_name = self.getCurrentItemName()
         job_tracker = PrintJobTracker(self)
         
-        job_folder_global_path = job_tracker.getJobFolderGlobalPathFromJobName(job_name)
-        job_tracker.updateJobStatus(job_name, 'VERWERKT')
-        job_tracker.markAllFilesAsDone(job_name=job_name, done=True)
+        job_folder_global_path = job_tracker.getJobValue('job_folder_global_path', job_name)
+        job_tracker.updateJobKey('status', job_name, 'VERWERKT')
+        job_tracker.markFilesAsDone(job_name=job_name, done=True, all_files_done=True)
 
-        sender_name = job_tracker.jobNameToSenderName(job_name)
+        sender_name = job_tracker.obValue('sender_name', job_name)
         self.window().refreshAllWidgets()
         self.parent().parent().setCurrentIndex(0)
 
-        if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]):
+        if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]): # pylint: disable=use-a-generator
             WarningQMessageBox(gv=gv, parent=self, text='No Job finished mail send because: No mail file found')
         else:
             ThreadedMailManager(parent=self, gv=gv).startMailWorker(
@@ -150,16 +150,16 @@ class PrintAfgekeurdQPushButton(JobsQPushButton):
 
         job_name = self.getCurrentItemName()
         job_tracker = PrintJobTracker(self)
-        job_tracker.updateJobStatus(job_name, 'AFGEKEURD')
+        job_tracker.updateJobKey('status', job_name, 'AFGEKEURD')
         self.window().refreshAllWidgets()
         self.parent().parent().setCurrentIndex(0)
 
-        job_folder_global_path = job_tracker.getJobFolderGlobalPathFromJobName(job_name)
+        job_folder_global_path = job_tracker.getJobValue('job_folder_global_path', job_name)
 
-        if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]):
+        if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]): # pylint: disable=use-a-generator
                     WarningQMessageBox(gv=gv, parent=self, text='No Afgekeurd mail send because: No mail file found')
         else:
-            sender_name = job_tracker.jobNameToSenderName(job_name)
+            sender_name = job_tracker.obValue('sender_name', job_name)
 
             ThreadedMailManager(parent=self, gv=gv).startDeclinedMailWorker(
                 success_message=f'Job declined mail send to {sender_name}',
@@ -222,7 +222,7 @@ class PrintOptionsQPushButton(OptionsQPushButton):
             delete_directory_content(self.parent, gv, target_folder_global_path)
 
         job_name = self.getCurrentItemName()
-        print_file_dict =  self.job_tracker.getMakeFilesDict(job_name)
+        print_file_dict =  self.job_tracker.obValue('make_files', job_name)
                    
         for file_key, file_dict in print_file_dict.items():
             source_item_global_path = file_dict['file_global_path']
@@ -235,13 +235,13 @@ class PrintOptionsQPushButton(OptionsQPushButton):
         ''' Send a mail. '''
         job_name = self.getCurrentItemName()
 
-        job_dict = PrintJobTracker(parent=self).getJobDict(job_name)
+        job_dict = PrintJobTracker(parent=self).obDict(job_name)
 
         if job_dict is None:
             WarningQMessageBox(gv=gv, parent=self, text='No mail send because: Job Name could not be found')
             return
 
-        if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_dict['job_folder_global_path'])]):
+        if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_dict['job_folder_global_path'])]): # pylint: disable=use-a-generator
             WarningQMessageBox(gv=gv, parent=self, text='No Job finished mail send because: No mail file found')
             return
 

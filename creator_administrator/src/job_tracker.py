@@ -1,7 +1,3 @@
-"""
-Job tracker, a backup to check and repair the actual files on the file system.
-"""
-
 import sys
 import json
 import shutil
@@ -19,6 +15,13 @@ from src.qmessagebox import YesOrNoMessageBox, InfoQMessageBox, TimedMessage, Wa
 from src.mail_manager import MailManager
 
 class JobTracker:
+    '''
+    Job tracker, serving two purposes:
+
+    * storing additional info on the jobs.
+    * a backup to check and repair the files on the file system.
+
+    '''
 
     def __init__(self, parent: QWidget, gv: dict):
         self.gv = gv
@@ -40,7 +43,7 @@ class JobTracker:
                sender_mail_receive_time=None,
                status='WACHTRIJ',
                job_dict=None) -> dict:
-        """ Add a job to the tracker. """
+        ''' Add a job to the tracker. '''
 
     def readTrackerFile(self):
         ''' Read the tracker file. '''
@@ -54,7 +57,7 @@ class JobTracker:
             json.dump(self.tracker_dict, tracker_file, indent=4)
 
     def deleteJob(self, job_name: str):
-        """ Delete a job from the job tracker. """
+        ''' Delete a job from the job tracker. '''
 
         self.readTrackerFile()
 
@@ -63,36 +66,16 @@ class JobTracker:
 
         self.writeTrackerFile()
 
-    def updateJob(self, job_name: str, job_dict: dict):
-        ''' Update an existing job. '''
-
-        self.readTrackerFile()
-
-        assert job_name in self.tracker_dict, f'could not find {job_name} in tracker dict'
-        self.tracker_dict[job_name] = job_dict
-
-        self.writeTrackerFile()
-
-
-    def addJobDict(self, job_name: str, job_dict: dict):
-        ''' Add a job dict to tracker file. '''
-
-        self.readTrackerFile()
-
-        self.tracker_dict[job_name] = job_dict
-
-        self.writeTrackerFile()
-
-
     @abc.abstractmethod
     def checkHealth(self):
-        """ Check and repair system. """
+        ''' Check and repair system. '''
 
     def createTrackerFile(self):
-        """ Create the file that tracks jobs. """
+        ''' Create the file that tracks jobs. '''
         if os.path.exists(self.tracker_backup_file_path):
             if YesOrNoMessageBox(self.parent,
-                                 text=f"Backup file detected at: {self.tracker_backup_file_path}, do you want to restore it (Y/n)?").answer():
+                     text=f"Backup file detected at: {self.tracker_backup_file_path}'\
+                         ', do you want to restore it?").answer():
                 os.rename(self.tracker_backup_file_path, self.tracker_file_path)
                 InfoQMessageBox(self.parent, "Backup restored!")
                 return
@@ -124,58 +107,46 @@ class JobTracker:
                 sys.exit(0)
 
     def makeBackup(self):
-        """ Make a backup of the tracker file. """
+        ''' Make a backup of the tracker file. '''
         try:
             shutil.copy(self.tracker_file_path, self.tracker_backup_file_path)
         except FileExistsError:
             os.remove(self.tracker_backup_file_path)
             shutil.copy(self.tracker_file_path, self.tracker_backup_file_path)
 
-    def updateJobStatus(self, job_name: str, new_job_status: str):
-        ''' Update status of a job. '''
+    def updateJobKey(self, job_key: str, job_name: str, new_value: str):
+        ''' Update job key with a new value. '''
 
         self.readTrackerFile()
 
-        self.tracker_dict[job_name]['status'] = new_job_status
+        assert job_name in self.tracker_dict, f'{job_name} not found in tracker dict'
+        assert job_key in self.job_keys, f'job key {job_key} is not an existing job key'
+        assert job_key in self.tracker_dict[job_name], f'{job_key} not found in job {job_name}'
+
+        self.tracker_dict[job_name][job_key] = new_value
 
         self.writeTrackerFile()
 
-    def updateDynamicJobName(self, job_name: str, new_dynamic_job_name: str):
-        ''' Update the dynamic job name of a job. '''
+    def markFilesAsDone(self, job_name: str, file_global_path: str, done: bool, all_files_done=False):
+        ''' Update one or all make files to done. '''
 
         self.readTrackerFile()
 
-        self.tracker_dict[job_name]['dynamic_job_name'] = new_dynamic_job_name 
-
-        self.writeTrackerFile()
-
-    def markAllFilesAsDone(self, job_name: str, done: bool):
-        ''' Update all make files to done. '''
         assert job_name is not None, 'Job name is None'
         assert isinstance(done, bool), 'done is not a boolean'
+        assert job_name in self.tracker_dict, f'job name {job_name} not found in tracker dict'
 
-        self.readTrackerFile()
-
-        for file_dict in self.tracker_dict[job_name]['make_files'].values():
-            file_dict['done'] = done
-
-        self.writeTrackerFile()
-
-    def markFileAsDone(self, job_name: str, file_global_path: str, done: bool):
-        ''' Update make file to done. '''
-        assert job_name is not None, 'Job name is None'
-        assert isinstance(done, bool), 'done is not a boolean'
-
-        self.readTrackerFile()
 
         for file_dict in self.tracker_dict[job_name]['make_files'].values():
-            if file_dict['file_global_path']==file_global_path:
+            if all_files_done:
                 file_dict['done'] = done
+            elif file_dict['file_global_path']==file_global_path:
+                    file_dict['done'] = done
 
         self.writeTrackerFile()
 
     def isJobOld(self, created_on_date: str) -> bool:
-        """ Check if the job is old. """
+        ''' Check if the job is old. '''
         created_on_date_object = datetime.strptime(created_on_date, "%d-%m-%Y")
         current_date_object = datetime.now()
         date_difference = current_date_object - created_on_date_object
@@ -190,44 +161,53 @@ class JobTracker:
             return self.tracker_dict[job_name]
         return None
 
-    def getJobFolderGlobalPathFromJobName(self, job_name: str) -> str:
-        ''' Return the job folder global path from the job name. '''
-        self.readTrackerFile()
-
-        return self.tracker_dict[job_name]['job_folder_global_path']
-
-    def getMakeFilesDict(self, job_name) -> dict:
-        ''' Return the make files. '''
+    def getMakeFilesString(self, job_name: str) -> str:
+        ''' Return a sting representation of all make files. '''
 
         self.readTrackerFile()
 
-        return self.tracker_dict[job_name]['make_files']
+        return_string = ""
+        for file_dict in self.tracker_dict[job_name]['make_files'].values():
+            return_string += f'{file_dict["file_name"]}\n'
 
-    def getStaticAndDynamicJobNamesWithStatus(self, status: str) -> list[tuple]:
-        ''' Return a list containing all dynamic job names that have a given status '''
+        return return_string
+
+    def getJobValue(self, job_key: str, job_name: str):
+        ''' Return the job value (indicated with a job key) of a job. '''
+
+        self.readTrackerFile()
+
+        assert job_name in self.tracker_dict, f'{job_name} not found in tracker dict'
+        assert job_key in self.job_keys, f'job key {job_key} is not an existing job key'
+        assert job_key in self.tracker_dict[job_name], f'{job_key} not found in job {job_name}'
+
+        return self.tracker_dict[job_name][job_key]
+
+
+    def getStaticAndDynamicJobNames(self, filter_jobs_on=None, filter_str=None) -> list[tuple]:
+        ''' Return a list containing all static and dynamic job names that can be filtered on status and matching pattern. '''
+
+        if filter_jobs_on is not None:
+            assert filter_str is not None, 'filter string should not be None'
+            assert filter_jobs_on in {'status', 'match'}, f'filter jobs on status or match, not {filter_jobs_on}'
 
         self.readTrackerFile()
 
-        return [(job_name, job_dict['dynamic_job_name']) for job_name, job_dict in self.tracker_dict.items() if job_dict['status'] == status]
+        if filter_jobs_on is None:
+            return [(job_name, job_dict['dynamic_job_name']) for job_name, job_dict in self.tracker_dict.items()]
 
+        if filter_jobs_on == 'status':
+            return [(job_name, job_dict['dynamic_job_name']) for 
+                job_name, job_dict in self.tracker_dict.items() if job_dict['status'] == filter_str]
 
-    def getAllStaticAndDynamicJobNamesThatMatch(self, match_str: str) -> list[tuple]:
-        ''' Return a list containing all dynamic job names that match. '''
+        if filter_jobs_on == 'match':
+            return [(job_name, job_dict['dynamic_job_name']) for 
+                job_name, job_dict in self.tracker_dict.items() if filter_str.lower() in job_name.lower()]
 
-        self.readTrackerFile()
-        return [(job_name, job_dict['dynamic_job_name']) for 
-                job_name, job_dict in self.tracker_dict.items() if match_str.lower() in job_name.lower()]
-
-
-    def getAllStaticAndDynamicJobNames(self) -> list[tuple]:
-        ''' Return a list containing all dynamic job names. '''
-
-        self.readTrackerFile()
-        return [(job_name, job_dict['dynamic_job_name']) for job_name, job_dict in self.tracker_dict.items()]
-
+        raise ValueError('Should not reach this point')
 
     def getNumberOfJobsWithStatus(self, status_list: list) -> int:
-        """ Return the number of jobs that have a certain status. """
+        ''' Return the number of jobs that have a certain status. '''
 
         self.readTrackerFile()
         return len([job_key for job_key, job_value in self.tracker_dict.items() if job_value['status'] in status_list])
@@ -243,28 +223,6 @@ class JobTracker:
                     job_name = job_dict['job_name']
         return job_name
 
-    def isJobDone(self, job_name: str) -> bool:
-        ''' Return boolean indicating if a job is done. '''
-        self.readTrackerFile()
-
-        return all(file_dict['done'] for file_dict in self.tracker_dict[job_name]['make_files'].values())
-
-    def getMakeFilesString(self, job_name: str) -> str:
-        ''' Return a sting representation of all make files. '''
-
-        self.readTrackerFile()
-
-        return_string = ""
-        for file_dict in self.tracker_dict[job_name]['make_files'].values():
-            return_string += f'{file_dict["file_name"]}\n'
-
-        return return_string
-
-    def jobNameToSenderName(self, job_name: str):
-        ''' Return Sender name from job name. '''
-        self.readTrackerFile()
-
-        return self.tracker_dict[job_name]['sender_name']
 
     def makeJobNameUnique(self, job_name: str) -> str:
         ''' Make the job name unique.
@@ -296,19 +254,6 @@ class JobTracker:
             return job_name
         return job_name + '_(' + str(max_job_number + 1) + ')'
 
-    def jobGlobalPathToTrackerJobDict(self, tracker_dict: dict, job_folder_global_path: str) -> dict:
-        """ If exists, return job name and data from tracker dictionary
-        corresponding to the job with name job_folder_global_path. """
-        for job_dict in tracker_dict.values():
-            if job_folder_global_path == job_dict['job_folder_global_path']:
-                return job_dict
-        return None
-
-    def getNumberOfJobsInQueue(self) -> int:
-        ''' Return the number of jobs with status WACHTRIJ. '''
-        return self.getNumberOfJobsWithStatus(['WACHTRIJ'])
-
-
     def deleteOldJobs(self):
         ''' Delete the old jobs from tracker and file system. '''
 
@@ -316,8 +261,13 @@ class JobTracker:
 
         # remove old jobs
         n_old_jobs = 0
+
         for job_key, job_dict in self.tracker_dict.items():
-            if self.isJobOld(job_dict['created_on_date']) and job_dict['status'] != 'WACHTRIJ':
+            created_on_date_object = datetime.strptime(job_dict['created_on_date'], "%d-%m-%Y")
+            current_date_object = datetime.now()
+            date_difference = current_date_object - created_on_date_object
+
+            if date_difference.days > self.gv['DAYS_TO_KEEP_JOBS'] and job_dict['status'] != 'WACHTRIJ':
                 n_old_jobs += 1
                 self.deleteJob(job_key)
 
@@ -443,7 +393,7 @@ class JobTracker:
                                            in files_global_paths if file_path.endswith(self.gv['ACCEPTED_EXTENSIONS'])]
 
                     if len(make_files_global_paths) == 0:
-                        self.addJobDict(job_name, job_dict)
+                        self.addJob(job_name, None, None, job_dict=job_dict)
                         job_names_no_dates.remove(job_name)
                         file_global_path_list.remove(files_global_paths)
                         job_dict_list.remove(job_dict)
@@ -492,6 +442,7 @@ class JobTracker:
     def addNewFilestoTrackerFile(self, create_jobs_from_file_system_dialog): # pylint: disable=too-complex
         '''
         Synchronize job files on file system and tracker file by either:
+
             * adding the job files to the tracker file.
             or
             * removing the job files from file system.
@@ -501,9 +452,7 @@ class JobTracker:
         for job_folder_name in os.listdir(self.gv['JOBS_DIR_HOME']):
             job_folder_global_path = os.path.join(self.gv['JOBS_DIR_HOME'], job_folder_name)
 
-
-            job_dict = self.jobGlobalPathToTrackerJobDict(
-                    self.tracker_dict, job_folder_global_path)
+            job_dict = self.getJobDict(self.fileGlobalPathToJobName(job_folder_global_path))
 
             if job_dict is None:
                 continue

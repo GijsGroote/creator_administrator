@@ -1,6 +1,6 @@
-"""
+'''
 Functionality for moving/copying or searching in directories.
-"""
+'''
 
 import os
 import sys
@@ -14,7 +14,7 @@ from src.qmessagebox import  ErrorQMessageBox
 
 
 def copy_item(source_dir_global: str, target_dir_global: str):
-    """ Copy directory and subdirectories recursively. """
+    ''' Copy directory and subdirectories recursively. '''
 
     if os.path.exists(target_dir_global):
         return
@@ -26,7 +26,7 @@ def copy_item(source_dir_global: str, target_dir_global: str):
         shutil.copy(source_dir_global, target_dir_global)
         
 def delete_item(parent: QWidget, gv: dict, item_global_path: str):
-    """ Delete the file from the file system. """
+    ''' Delete the file from the file system. '''
 
     assert item_global_path.startswith((gv['DATA_DIR_HOME'], gv['TODO_DIR_HOME'])), f'Can only delete files in subdirectoreis of DATA_DIR_HOME or TODO_DIR_HOME.\nCannot delete {item_global_path}'
 
@@ -51,9 +51,12 @@ def open_file(file_global_path: str):
     assert os.path.exists(file_global_path), f'could not find file: {file_global_path}'
 
     if sys.platform == 'linux':
-        subprocess.Popen(['xdg-open', file_global_path])
+        subprocess.Popen(['xdg-open', file_global_path]) # pylint: disable=consider-using-with
+
+
     elif sys.platform == 'win32':
-        subprocess.Popen(['explorer', file_global_path])
+        with subprocess.Popen(['explorer', file_global_path]):
+            pass
     else: 
         raise ValueError(f'unknown platform: {sys.platform}')
 
@@ -63,9 +66,11 @@ def open_folder(folder_global_path: str):
     assert os.path.exists(folder_global_path), f'could not find folder: {folder_global_path}'
 
     if sys.platform == 'linux':
-        subprocess.Popen(['xdg-open', folder_global_path])
+        with subprocess.Popen(['xdg-open', folder_global_path]):
+            pass
     elif sys.platform == 'win32':
-        subprocess.Popen(['explorer', folder_global_path])
+        with subprocess.Popen(['explorer', folder_global_path]):
+            pass
     else: 
         raise ValueError(f'unknown platform: {sys.platform}')
 

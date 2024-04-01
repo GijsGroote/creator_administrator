@@ -1,6 +1,6 @@
-"""
+'''
 Global variables / Settings specific for the computer managing the laser machine.
-"""
+'''
 
 import json
 import os
@@ -186,4 +186,12 @@ gv['FIGURES_DIR_HOME'] = os.path.join(gv['REPO_DIR_HOME'], 'figures')
 
 gv['THREAD_POOL'] = QThreadPool() # the one and only threadpool
 
-
+# pylint: disable=consider-using-namedtuple-or-dataclass
+gv['TAB_QSTACK_POSITIONS'] = {'WACHTRIJ': {'QStackedWidget': 'wachtrijQStackedWidget', 
+                                   'tab_widget_position': 1},
+                              'VERWERKT':
+                                  {'QStackedWidget': 'verwerktQStackedWidget',
+                                   'tab_widget_position': 3},
+                              'AFGEKEURD':
+                                  {'QStackedWidget': 'afgekeurdQStackedWidget',
+                                   'tab_widget_position': 4}}

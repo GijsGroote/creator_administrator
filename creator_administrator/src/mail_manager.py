@@ -1,10 +1,10 @@
-"""
+'''
 
 Handle mail functionality.
 
 mail_item: openen .msg file or .eml file, or a string (directory path, dir containing .msg or .eml, or full path toward .msg or .eml)
 
-"""
+'''
 
 import os
 import sys
@@ -14,6 +14,8 @@ import time
 import http.client as httplib
 from unidecode import unidecode
 
+from src.directory_functions import  delete_directory_content
+
 if sys.platform == 'linux':
     import imaplib
     import email
@@ -22,15 +24,12 @@ if sys.platform == 'linux':
     from email.header import decode_header
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
-    from email.utils import parseaddr, formataddr, parsedate_to_datetime
+    from email.utils import parseaddr, formataddr
     from email.policy import default
-
-    from requests.exceptions import ConnectionError
 
 elif sys.platform == 'win32':
     from pywintypes import com_error
     from win32com import client
-    from src.directory_functions import  delete_directory_content
 else:
     raise ValueError(f'This software does not work for platform: {sys.platform}')
 
@@ -41,8 +40,9 @@ class MailManager():
 
         if sys.platform == 'win32':
 
-            self.outlook =  client.Dispatch("Outlook.Application").GetNamespace('MAPI')
-            
+            self.outlook =  client.Dispatch("Outlook.Application").GetNamespace('MAPI') # pylint: disable=used-before-assignment
+
+
             if gv['MAIL_INBOX_NAME'] == 'Inbox':
                 self.inbox = self.outlook.GetDefaultFolder(6)
             else:
@@ -51,13 +51,13 @@ class MailManager():
 
             try:
                 self.verwerkt_folder = self.inbox.Parent.Folders.Item("Verwerkt")
-            except com_error:
+            except com_error: # pylint: disable=used-before-assignment
                 self.verwerkt_folder = self.inbox.Parent.Folders.Add("Verwerkt")
 
         if sys.platform == 'linux':
             # specific to gmail and outlook
             self.smtp_server = 'smtp-mail.outlook.com'
-            self.smtp_port = 587 
+            self.smtp_port = 587
             self.imap_server = 'outlook.office365.com'
 
         # TODO: check folder 'Verwerkt" exists, if not create it.
@@ -80,65 +80,87 @@ class MailManager():
 
 
     def getNewValidMails(self) -> tuple[list, list]:
-        """ Return emails from Outlook inbox. """
-        valid_msgs = []
-        n_invalid_mails = 0
+        ''' Return emails from Outlook inbox. '''
+
         warnings = []
 
+        if not self.isThereInternet():
+            warnings.append('No internet connection detected')
+
         if sys.platform == 'win32':
-            if not self.isThereInternet():
-                warnings.append('No internet connection detected')
+            n_invalid_mails, valid_msgs, warnings = self.getNewValidMailsWin32(warnings)
 
-            temp_folder_global_path = os.path.join(self.gv['DATA_DIR_HOME'], 'TEMP')
-            delete_directory_content(None, self.gv, temp_folder_global_path)
+        elif sys.platform == 'linux':
+            n_invalid_mails, valid_msgs, warnings = self.getNewValidMailsLinux(warnings)
 
-            for message in self.inbox.Items:
-                if self.gv['ONLY_UNREAD_MAIL']:
-                    if message.UnRead:
-                        if self.isMailAValidJobRequest(message): 
-                            valid_msgs.append(self.saveMsgAndAttachmentsInTempFolder(message))              
-                        else:
-                            n_invalid_mails += 1
-                elif self.isMailAValidJobRequest(message):    
-                        
-                   
-                        valid_msgs.append(self.saveMsgAndAttachmentsInTempFolder(message))
-                else:
-                    n_invalid_mails += 1
-
-        if sys.platform == 'linux':
-
-            if not self.isThereInternet():
-                raise ConnectionError('No internet connection detected')
-
-            self.imapLogin()
-
-            if self.gv['ONLY_UNREAD_MAIL']:
-                status, response = self.imap_mail.search(None, 'UNSEEN')
-            else:
-                status, response = self.imap_mail.search(None, 'ALL')
-
-            if status != 'OK':
-                raise ValueError('Received status: {status} from mail server') 
-
-            for mail_id in response[0].split():
-                status, msg_data = self.imap_mail.fetch(mail_id, "(RFC822)")
-                if self.isMailAValidJobRequest(msg_data):
-                    valid_msgs.append(msg_data)
-                else:
-                    n_invalid_mails += 1
-
-            self.imapLogout()
-
+        else:
+            raise ValueError(f'software not applicable to platform {sys.platform}')
 
         if n_invalid_mails > 0:
             it_or_them = 'it' if n_invalid_mails == 1 else 'them'
             warnings.append(f'{n_invalid_mails} invalid mails detected (no or invalid attachments)\n Respond to {it_or_them} manually.')
 
         return valid_msgs, warnings
-    
+
+
+    def getNewValidMailsWin32(self, warnings: list) -> tuple[int, list, list]:
+        
+        valid_msgs = []
+        n_invalid_mails = 0
+
+        temp_folder_global_path = os.path.join(self.gv['DATA_DIR_HOME'], 'TEMP')
+        delete_directory_content(None, self.gv, temp_folder_global_path)
+
+
+        for message in self.inbox.Items:
+            if self.gv['ONLY_UNREAD_MAIL']:
+                if message.UnRead:
+                    if self.isMailAValidJobRequest(message):
+                        valid_msgs.append(self.saveMsgAndAttachmentsInTempFolder(message))
+                    else:
+                        n_invalid_mails += 1
+            elif self.isMailAValidJobRequest(message):
+
+
+                    valid_msgs.append(self.saveMsgAndAttachmentsInTempFolder(message))
+            else:
+                n_invalid_mails += 1
+
+        return n_invalid_mails, valid_msgs, warnings
+
+
+    def getNewValidMailsLinux(self, warnings: list) -> tuple[int, list, list]:
+
+        valid_msgs = []
+        n_invalid_mails = 0
+
+        self.imapLogin()
+
+        if self.gv['ONLY_UNREAD_MAIL']:
+            status, response = self.imap_mail.search(None, 'UNSEEN')
+        else:
+            status, response = self.imap_mail.search(None, 'ALL')
+
+        if status != 'OK':
+            raise ValueError('Received status: {status} from mail server')
+
+        for mail_id in response[0].split():
+            status, msg_data = self.imap_mail.fetch(mail_id, "(RFC822)")
+            if self.isMailAValidJobRequest(msg_data):
+                valid_msgs.append(msg_data)
+            else:
+                n_invalid_mails += 1
+
+        self.imapLogout()
+
+        return n_invalid_mails, valid_msgs, warnings
+
+
     def saveMsgAndAttachmentsInTempFolder(self, msg) -> str:
         ''' Save Outlook msg and attachments in a temperary folder. '''
+
+        assert sys.platform == 'win32', f'This function is only for win32, not for {sys.platform}'
+
         unique_mail_code = unidecode(self.getEmailAddress(msg)+'_'+str(msg.Size))+'_'+str(time.time())
 
         temp_folder_global_path = os.path.join(self.gv['DATA_DIR_HOME'], 'TEMP', unique_mail_code)
@@ -154,28 +176,26 @@ class MailManager():
         for attachment in msg.Attachments:
             attachment.SaveAsFile(os.path.join(temp_folder_global_path, unidecode(attachment.FileName)))
 
-        return temp_folder_global_path     
+        return temp_folder_global_path
 
 
     def moveEmailToVerwerktFolder(self,
                                   mail_item=None,
                                   sender_mail_adress=None,
                                   sender_mail_receive_time=None):
-        """ Move email to verwerkt folder. """
+        ''' Move email to verwerkt folder. '''
 
         if self.gv['MOVE_MAILS_TO_VERWERKT_FOLDER']:
             if sys.platform == 'win32':
-                # if isinstance(mail_item, str):
-                #     msg = self.mailItemToMailFile(mail_item)
                 assert sender_mail_adress is not None, 'sender_mail_adress is None'
                 assert sender_mail_receive_time is not None, 'sender_mail_receive_time is None'
-                
-                for message in self.inbox.Items:                   
+
+                for message in self.inbox.Items:
                     if sender_mail_adress == self.getEmailAddress(message) and\
                         sender_mail_receive_time == str(message.ReceivedTime):
                             message.UnRead = False
-                            message.Move(self.verwerkt_folder)               
-                
+                            message.Move(self.verwerkt_folder)
+
             if sys.platform == 'linux':
                 if not self.isThereInternet():
                     raise ConnectionError('Not connected to the internet')
@@ -192,9 +212,10 @@ class MailManager():
                     self.imap_mail.store(uid_msg_set, '+FLAGS', r'(\Deleted)')
 
                 self.imapLogout()
+            raise ValueError(f'software not applicable to platform {sys.platform}')
 
     def isMailAValidJobRequest(self, msg) -> bool:
-        """ Check if the requirements are met for a valid job request. """
+        ''' Check if the requirements are met for a valid job request. '''
 
         if sys.platform == 'win32':
 
@@ -209,21 +230,23 @@ class MailManager():
         if sys.platform == 'linux':
             attachments = self.getAttachments(msg)
             for attachment in attachments:
-                file_name = self.getAttachmentFileName(attachment)        
+                file_name = self.getAttachmentFileName(attachment)
                 if bool(file_name):
                     if file_name.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
                         return True
 
             return False
 
+        raise ValueError(f'software not applicable to platform {sys.platform}')
+
     def getMailBody(self, mail_item):
-        """ Return mail body. """
-        
+        ''' Return mail body. '''
+
         mail_file = self.mailItemToMailFile(mail_item)
 
         if sys.platform == 'win32':
             return mail_file.Body
-        
+
         if sys.platform == 'linux':
 
             # Check if the email is multipart
@@ -233,14 +256,14 @@ class MailManager():
                     if part.get_content_type() == 'text/html':
                         return part.get_payload(decode=True)
 
-            else:
-                # For non-multipart emails, check if the content type is HTML
-                if mail_file.get_content_type() == 'text/html':
-                    return mail_file.get_payload(decode=True)
+            elif mail_file.get_content_type() == 'text/html':
+                return mail_file.get_payload(decode=True)
+
+        raise ValueError(f'software not applicable to platform {sys.platform}')
 
 
     def getEmailAddress(self, mail_item) -> str:
-        """ Return the email adress. """
+        ''' Return the email adress. '''
         mail_file = self.mailItemToMailFile(mail_item)
 
         if sys.platform == 'win32':
@@ -262,11 +285,13 @@ class MailManager():
                 return str(match.group(1))
             raise ValueError(f'Could not convert {mail_name_long} to mail adress')
 
-        
+        raise ValueError(f'software not applicable to platform {sys.platform}')
+
+
     def getSenderMailReceiveTime(self, mail_item) -> str:
         ''' Return the time a mail was received. '''
 
-        mail_file = self.mailItemToMailFile(mail_item)       
+        mail_file = self.mailItemToMailFile(mail_item)
 
         if sys.platform == 'win32':
             return str(mail_file.ReceivedTime)
@@ -274,38 +299,35 @@ class MailManager():
         if sys.platform == 'linux':
             return str(mail_file['date'])
 
-    def getSenderName(self, mail_item) -> str:
-        """ Return the senders name. """
+        raise ValueError(f'software not applicable to platform {sys.platform}')
 
-        mail_file = self.mailItemToMailFile(mail_item)         
+    def getSenderName(self, mail_item) -> str:
+        ''' Return the senders name. '''
+
+        mail_file = self.mailItemToMailFile(mail_item)
 
         if sys.platform == 'win32':
-            
-            return str(mail_file.Sender)
-     
-        if sys.platform == 'linux':
-            # if isinstance(msg, str):
-            #     eml_file_global_path = self.getMailGlobalPathFromFolder(msg)
-            #     with open(eml_file_global_path, 'rb') as file:
-            #         msg = email.message_from_binary_file(file, policy=default)
-            # else:
-            #     msg = email.message_from_bytes(msg[0][1])
 
+            return str(mail_file.Sender)
+
+        if sys.platform == 'linux':
             return self.mailToName(mail_file.get('From'))
+
+        raise ValueError(f'software not applicable to platform {sys.platform}')
 
     def getMailSubject(self, mail_item) -> str:
         ''' Return the subject from mail file. '''
 
-        mail_file = self.mailItemToMailFile(mail_item)         
+        mail_file = self.mailItemToMailFile(mail_item)
 
         if sys.platform == 'win32':
             return str(mail_file.Subject)
 
-     
         if sys.platform == 'linux':
 
             return mail_file.get('Subject')
 
+        raise ValueError(f'software not applicable to platform {sys.platform}')
 
     def mailItemToMailFile(self, mail_item):
         ''' Return Msg from global path to mail.msg. '''
@@ -329,17 +351,21 @@ class MailManager():
                 with open(self.getMailGlobalPathFromFolder(mail_item), 'rb') as file:
                     return email.message_from_binary_file(file, policy=default)
 
-        raise ValueError('Could not parse mail_item of type {type(mail_item)} to a mail_file')
+            raise ValueError('Could not parse mail_item of type {type(mail_item)} to a mail_file')
+
+        raise ValueError(f'software not applicable to platform {sys.platform}')
 
 
     def getMailGlobalPathFromFolder(self, folder_global_path: str) -> str:
         ''' Return the global path toward a mail file in a folder. '''
+        mail_file_global_path = ''
 
         if sys.platform == 'win32':
             if folder_global_path.endswith('mail.msg'):
                 mail_file_global_path = folder_global_path
             else:
                 mail_file_global_path = os.path.join(folder_global_path, 'mail.msg')
+
         if sys.platform == 'linux':
             if folder_global_path.endswith('mail.eml'):
                 mail_file_global_path = folder_global_path
@@ -348,39 +374,41 @@ class MailManager():
 
         if os.path.exists(mail_file_global_path):
             return mail_file_global_path
-        else:
-            return None
-    
+
+        raise ValueError(f'software not applicable to platform {sys.platform}')
+
     def getAttachments(self, msg) -> list:
         ''' Return a list with attachment names. '''
 
         if sys.platform == 'win32':
             assert os.path.exists(msg), f'could not find directory {msg}'
             return [os.path.abspath(os.path.join(msg, file)) for file in os.listdir(msg) if not file.endswith('.msg')]
-        
+
         if sys.platform == 'linux':
-           attachments = []
-           for part in email.message_from_bytes(msg[0][1]).walk():
+            attachments = []
+            for part in email.message_from_bytes(msg[0][1]).walk():
 
-               if part.get_content_maintype() == 'multipart':
+                if part.get_content_maintype() == 'multipart':
+                    continue
+                if part.get('Content-Disposition') is None:
+                    continue
+
+                encoded_filename = part.get_filename()
+
+                if encoded_filename is None:
                    continue
-               if part.get('Content-Disposition') is None:
-                   continue
 
-               encoded_filename = part.get_filename()
+                attachments.append(part)
 
-               if encoded_filename is None:
-                   continue
+            return attachments
 
-               attachments.append(part)
-
-  
-           return attachments
+        raise ValueError(f'software not applicable to platform {sys.platform}')
 
     def getAttachmentFileName(self, attachment) -> str:
         ''' Return the attachment filename. '''
         if sys.platform == 'win32':
             return os.path.basename(attachment)
+
         if sys.platform == 'linux':
             encoded_filename = attachment.get_filename()
             filename, encoding = decode_header(encoded_filename)[0]
@@ -390,15 +418,19 @@ class MailManager():
 
             return filename.decode(encoding)
 
+        raise ValueError(f'software not applicable to platform {sys.platform}')
+
     def saveMail(self, msg, job_folder_global_path: str):
         ''' Save mail in a folder. '''
-        if sys.platform == 'win32': 
+        if sys.platform == 'win32':
             msg = self.mailItemToMailFile(msg)
             msg.saveAs(os.path.join(job_folder_global_path, 'mail.msg'))
 
         if sys.platform == 'linux':
             with open(os.path.join(job_folder_global_path, 'mail.eml'), 'wb') as mail_file:
                 mail_file.write(msg[0][1])
+
+        raise ValueError(f'software not applicable to platform {sys.platform}')
 
     def saveAttachment(self, attachment, file_name_global_path: str):
         ''' Save mail in a folder. '''
@@ -410,22 +442,23 @@ class MailManager():
             with open(file_name_global_path, 'wb') as file:
                 file.write(attachment.get_payload(decode=True))
 
+        raise ValueError(f'software not applicable to platform {sys.platform}')
 
     def replyToEmailFromFileUsingTemplate(self,
                     mail_item, # mail file, path toward folder containing mail file or mail file global path
                     template_file_name: str,
                     template_content: dict,
                     popup_reply=True):
-        """ Reply to .msg file using a template. """
+        ''' Reply to .msg file using a template. '''
         if not self.isThereInternet():
             raise ConnectionError('Not connected to the internet')
 
         if template_content is None:
             template_content = {}
 
-        if sys.platform == 'win32':            
+        if sys.platform == 'win32':
             msg = self.mailItemToMailFile(mail_item)
-            
+
             # load recipient_name in template
             template_content["{sender_name}"] = msg.Sender
 
@@ -475,8 +508,9 @@ class MailManager():
                 server.login(self.gv['MAIL_ADRESS'], self.gv['MAIL_PASSWORD'])
                 server.send_message(reply_mail)
 
+
     def mailToName(self, mail_name: str) -> str:
-        """ Convert mail in form first_name last_name <mail@adres.com> to a more friendly name. """
+        ''' Convert mail in form first_name last_name <mail@adres.com> to a more friendly name. '''
 
         matches = re.match(r"(.*?)\s*<(.*)>", mail_name)
 

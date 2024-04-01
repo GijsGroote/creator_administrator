@@ -32,12 +32,13 @@ class PrintAllJobsOverviewQListWidget(OverviewQListWidget):
     def refresh(self):
         ''' Initialise the list widget with jobs. '''
         self.clear()
-        self.initialize(self.job_tracker.getAllStaticAndDynamicJobNames())
+        self.initialize(self.job_tracker.getStaticAndDynamicJobNames())
 
     def refreshWithMatch(self, match_str: str):
         ''' Initialise with all jobs that match match_str. '''
         self.clear()
-        self.initialize(self.job_tracker.getAllStaticAndDynamicJobNamesThatMatch(match_str))
+        self.initialize(self.job_tracker.getStaticAndDynamicJobNames(
+            filter_jobs_on='match', filter_str=match_str))
 
     def displayItem(self, item_name: str):
         ''' Display the job page and load content for the highlighted job. '''
@@ -76,7 +77,8 @@ class PrintWachtrijJobsOverviewQListWidget(OverviewQListWidget):
     def refresh(self):
         ''' Initialise the list widget with jobs. '''
         self.clear()
-        self.initialize(PrintJobTracker(self).getStaticAndDynamicJobNamesWithStatus('WACHTRIJ'))
+        self.initialize(PrintJobTracker(self).getStaticAndDynamicJobNames(
+            filter_jobs_on='status', filter_str='WACHTRIJ'))
 
 
 class PrintGeslicedJobsOverviewQListWidget(OverviewQListWidget):
@@ -89,7 +91,8 @@ class PrintGeslicedJobsOverviewQListWidget(OverviewQListWidget):
     def refresh(self):
         ''' Initialise the list widget with jobs. '''
         self.clear()
-        self.initialize(PrintJobTracker(self).getStaticAndDynamicJobNamesWithStatus('GESLICED'))
+        self.initialize(PrintJobTracker(self).getStaticAndDynamicJobNames(
+            filter_jobs_on='status', filter_str='GESLICED'))
 
 
 class PrintPrintenJobsOverviewQListWidget(OverviewQListWidget):
@@ -102,7 +105,8 @@ class PrintPrintenJobsOverviewQListWidget(OverviewQListWidget):
     def refresh(self):
         ''' Initialise the list widget with jobs. '''
         self.clear()
-        self.initialize(PrintJobTracker(self).getStaticAndDynamicJobNamesWithStatus('AAN_HET_PRINTEN'))
+        self.initialize(PrintJobTracker(self).getStaticAndDynamicJobNames(
+            filter_jobs_on='status', filter_str='AAN_HET_PRINTEN'))
 
 
 class PrintVerwerktJobsOverviewQListWidget(OverviewQListWidget):
@@ -115,7 +119,8 @@ class PrintVerwerktJobsOverviewQListWidget(OverviewQListWidget):
     def refresh(self):
         ''' Initialise the list widget with jobs. '''
         self.clear()
-        self.initialize(PrintJobTracker(self).getStaticAndDynamicJobNamesWithStatus('VERWERKT'))
+        self.initialize(PrintJobTracker(self).getStaticAndDynamicJobNames(
+            filter_jobs_on='status', filter_str='VERWERKT'))
 
 
 class PrintAfgekeurdJobsOverviewQListWidget(OverviewQListWidget):
@@ -128,7 +133,8 @@ class PrintAfgekeurdJobsOverviewQListWidget(OverviewQListWidget):
     def refresh(self):
         ''' Initialise the list widget with jobs. '''
         self.clear()
-        self.initialize(PrintJobTracker(self).getStaticAndDynamicJobNamesWithStatus('AFGEKEURD'))
+        self.initialize(PrintJobTracker(self).getStaticAndDynamicJobNames(
+            filter_jobs_on='status', filter_str='AFGEKEURD'))
 
 class PrintJobContentQListWidget(JobContentQListWidget):
 

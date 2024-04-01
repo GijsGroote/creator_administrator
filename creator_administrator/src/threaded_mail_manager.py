@@ -60,23 +60,24 @@ class ThreadedMailManager():
             self.parent.refreshAllWidgets()
 
             
-    ''' below this point functions: Start <mail_type> MailWorker.
+     # below this point functions: Start <mail_type> MailWorker.
 
-        The following mail types exist:
-        - Recieved, informing the sender that the request was succesfully receieved
-        - Unclear, asking the sender for more information because the request is unclear
-        - Finished, asking the sender to pick up the request
-        - Declined, informing the sender that his request is declinded
+     #    The following mail types exist:
+     #    - Recieved, informing the sender that the request was succesfully receieved
+     #    - Unclear, asking the sender for more information because the request is unclear
+     #    - Finished, asking the sender to pick up the request
+     #    - Declined, informing the sender that his request is declinded
 
-    These MailWorker functions use the send <mail_type> Mail functions
-    '''
+    # These MailWorker functions use the send <mail_type> Mail functions
+    
     def startMailWorkerFromJobDict(self, job_dict: dict, mail_type: str):
         ''' Start a mail worker from only a job dictionary. '''
 
         mail_item=MailManager(self.gv).getMailGlobalPathFromFolder(job_dict['job_folder_global_path'])
 
         if mail_type=='RECEIVED':
-            template_content=JobTracker(parent=self.parent, gv=self.gv).getNumberOfJobsInQueue()
+            template_content=JobTracker(parent=self.parent, gv=self.gv).getNumberOfJobsWithStatus(['WACHTRIJ'])
+
         else:
             template_content={}
 
@@ -199,14 +200,14 @@ class ThreadedMailManager():
     def sendReceivedMail(self,
                         mail_item,
                         template_content: dict):
-        """ Send a confirmation mail. """
+        ''' Send a confirmation mail. '''
 
         # The MailManager object must be made in the scope of this function. 
         # otherwise Outlook raises an attribute error for an open share com object
         mail_manager = MailManager(self.gv)
         mail_manager.replyToEmailFromFileUsingTemplate(
                                 mail_item=mail_item,
-                                template_file_name="RECEIVED_MAIL_TEMPLATE",
+                                template_file_name='RECEIVED_MAIL_TEMPLATE',
                                 template_content=template_content,
                                 popup_reply=False)
 
@@ -220,20 +221,20 @@ class ThreadedMailManager():
         mail_manager = MailManager(self.gv)
         mail_manager.replyToEmailFromFileUsingTemplate(
                                 mail_item=mail_item,
-                                template_file_name="UNCLEAR_MAIL_TEMPLATE",
+                                template_file_name='UNCLEAR_MAIL_TEMPLATE',
                                 template_content=template_content,
                                 popup_reply=False)
 
     def sendFinishedMail(self,
                         mail_item: str,
                         template_content: dict):
-        """ Send a job is finished mail. """
+        ''' Send a job is finished mail. '''
         
         # The MailManager object must be made in the scope of this function. 
         # otherwise Outlook raises an attribute error for an open share com object
         MailManager(self.gv).replyToEmailFromFileUsingTemplate(
                                 mail_item=mail_item,
-                                template_file_name="FINISHED_MAIL_TEMPLATE",
+                                template_file_name='FINISHED_MAIL_TEMPLATE',
                                 template_content=template_content,
                                 popup_reply=False)
         
@@ -241,13 +242,13 @@ class ThreadedMailManager():
     def sendDeclinedMail(self,
                         mail_item,
                         template_content: dict):
-        """ Send a declined mail. """
+        ''' Send a declined mail. '''
         
         # The MailManager object must be made in the scope of this function. 
         # otherwise Outlook raises an attribute error for an open share com object
         MailManager(self.gv).replyToEmailFromFileUsingTemplate(
                                 mail_item=mail_item,
-                                template_file_name="DECLINED_MAIL_TEMPLATE",
+                                template_file_name='DECLINED_MAIL_TEMPLATE',
                                 template_content=template_content,
                                 popup_reply=True)
 
