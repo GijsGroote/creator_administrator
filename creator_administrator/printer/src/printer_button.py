@@ -49,7 +49,7 @@ class GeslicedQPushButton(JobsQPushButton):
                 except Exception:
                     pass # simply do not rename then
         
-        job_tracker.updateJobKey('status', job_name,
+        job_tracker.updateJobKey('dynamic_job_name', job_name,
                   get_date_from_dynamic_job_name(job_dict['dynamic_job_name'])+
                   gcode_files_to_max_print_time(gcode_files)+job_name)
 

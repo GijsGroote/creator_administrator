@@ -118,16 +118,6 @@ class TimedMessage(QDialog):
         self.deleteLater() 
         self.close()
 
-    def doNothing(self):
-        ''' Literally do nothing. '''
-        
-    def getMainWidget(self, widget):
-        while widget.parent() is not None:
-            print(f'the main widget is now {widget.objectName()}')
-            widget = widget.parent()
-
-        return widget 
-
 class ProgressBarSignals(QObject):
     progress = pyqtSignal(int)
     finished = pyqtSignal()
