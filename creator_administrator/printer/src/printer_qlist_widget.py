@@ -44,9 +44,6 @@ class PrintAllJobsOverviewQListWidget(OverviewQListWidget):
         ''' Display the job page and load content for the highlighted job. '''
 
         job_status = self.job_tracker.getJobDict(item_name)['status']
-
-        print(f'Where in the hell is this comign form {job_status}')
-
         main_window = self.parent().window()
 
         # A dialog with this list in it embedded should set self.main_window
