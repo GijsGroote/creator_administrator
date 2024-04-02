@@ -28,7 +28,7 @@ class GeslicedQPushButton(JobsQPushButton):
         job_tracker = PrintJobTracker(self)
 
 
-        job_dict =  job_tracker.obDict(job_name)
+        job_dict =  job_tracker.getJobDict(job_name)
 
         gcode_files = [gcode_file for
                        gcode_file in os.listdir(job_dict['job_folder_global_path'])
@@ -49,7 +49,7 @@ class GeslicedQPushButton(JobsQPushButton):
                 except Exception:
                     pass # simply do not rename then
         
-        job_tracker.updateJobKey('status', job_name,
+        job_tracker.updateJobKey('dynamic_job_name', job_name,
                   get_date_from_dynamic_job_name(job_dict['dynamic_job_name'])+
                   gcode_files_to_max_print_time(gcode_files)+job_name)
 
@@ -123,9 +123,9 @@ class PrintKlaarQPushButton(JobsQPushButton):
         
         job_folder_global_path = job_tracker.getJobValue('job_folder_global_path', job_name)
         job_tracker.updateJobKey('status', job_name, 'VERWERKT')
-        job_tracker.markFilesAsDone(job_name=job_name, done=True, all_files_done=True)
+        job_tracker.markFilesAsDone(job_name=job_name, file_global_path=None, done=True, all_files_done=True)
 
-        sender_name = job_tracker.obValue('sender_name', job_name)
+        sender_name = job_tracker.getJobValue('sender_name', job_name)
         self.window().refreshAllWidgets()
         self.parent().parent().setCurrentIndex(0)
 
@@ -159,7 +159,7 @@ class PrintAfgekeurdQPushButton(JobsQPushButton):
         if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]): # pylint: disable=use-a-generator
                     WarningQMessageBox(gv=gv, parent=self, text='No Afgekeurd mail send because: No mail file found')
         else:
-            sender_name = job_tracker.obValue('sender_name', job_name)
+            sender_name = job_tracker.getJobValue('sender_name', job_name)
 
             ThreadedMailManager(parent=self, gv=gv).startDeclinedMailWorker(
                 success_message=f'Job declined mail send to {sender_name}',
@@ -222,7 +222,7 @@ class PrintOptionsQPushButton(OptionsQPushButton):
             delete_directory_content(self.parent, gv, target_folder_global_path)
 
         job_name = self.getCurrentItemName()
-        print_file_dict =  self.job_tracker.obValue('make_files', job_name)
+        print_file_dict =  self.job_tracker.getJobValue('make_files', job_name)
                    
         for file_key, file_dict in print_file_dict.items():
             source_item_global_path = file_dict['file_global_path']
@@ -235,7 +235,7 @@ class PrintOptionsQPushButton(OptionsQPushButton):
         ''' Send a mail. '''
         job_name = self.getCurrentItemName()
 
-        job_dict = PrintJobTracker(parent=self).obDict(job_name)
+        job_dict = PrintJobTracker(parent=self).getJobDict(job_name)
 
         if job_dict is None:
             WarningQMessageBox(gv=gv, parent=self, text='No mail send because: Job Name could not be found')

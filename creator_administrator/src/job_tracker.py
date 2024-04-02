@@ -26,12 +26,12 @@ class JobTracker:
     def __init__(self, parent: QWidget, gv: dict):
         self.gv = gv
         self.parent= parent
-        self.job_keys = ['job_name', 'dynamic_job_name', 'status',
-                         'folder_path', 'created_on_date', 'make_files']
+        self.job_keys = ['job_name', 'job_folder_global_path', 'dynamic_job_name', 'status',
+                          'created_on_date', 'make_files', 'sender_name', 'sender_mail_adress', 'sender_mail_receive_time']
+        #TODO: its this actually needed? these job keys? sender_name is not always present for example
         self.tracker_file_path = gv['TRACKER_FILE_PATH']
         self.tracker_backup_file_path = gv['TRACKER_FILE_PATH'].replace("job_log.json",
                                         "job_log_backup.json")
-
 
     @abc.abstractmethod
     def addJob(self,
@@ -151,6 +151,12 @@ class JobTracker:
         current_date_object = datetime.now()
         date_difference = current_date_object - created_on_date_object
         return date_difference.days > self.gv['DAYS_TO_KEEP_JOBS']
+    
+    def isJobDone(self, job_name: str) -> bool:
+        ''' Return boolean indicating if a job is done. '''
+        self.readTrackerFile()
+
+        return all(file_dict['done'] for file_dict in self.tracker_dict[job_name]['make_files'].values())
 
     def getJobDict(self, job_name: str) -> dict:
         ''' Return the job dict from a job name. '''
