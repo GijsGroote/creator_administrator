@@ -196,7 +196,7 @@ class MailManager():
                             message.UnRead = False
                             message.Move(self.verwerkt_folder)
 
-            if sys.platform == 'linux':
+            elif sys.platform == 'linux':
                 if not self.isThereInternet():
                     raise ConnectionError('Not connected to the internet')
 
@@ -212,7 +212,9 @@ class MailManager():
                     self.imap_mail.store(uid_msg_set, '+FLAGS', r'(\Deleted)')
 
                 self.imapLogout()
-            raise ValueError(f'software not applicable to platform {sys.platform}')
+
+            else:
+                raise ValueError(f'software not applicable to platform {sys.platform}')
 
     def isMailAValidJobRequest(self, msg) -> bool:
         ''' Check if the requirements are met for a valid job request. '''
@@ -307,7 +309,6 @@ class MailManager():
         mail_file = self.mailItemToMailFile(mail_item)
 
         if sys.platform == 'win32':
-
             return str(mail_file.Sender)
 
         if sys.platform == 'linux':
@@ -324,14 +325,12 @@ class MailManager():
             return str(mail_file.Subject)
 
         if sys.platform == 'linux':
-
             return mail_file.get('Subject')
 
         raise ValueError(f'software not applicable to platform {sys.platform}')
 
     def mailItemToMailFile(self, mail_item):
         ''' Return Msg from global path to mail.msg. '''
-
 
         if sys.platform == 'win32':
             if isinstance(mail_item, client.CDispatch):
@@ -426,11 +425,12 @@ class MailManager():
             msg = self.mailItemToMailFile(msg)
             msg.saveAs(os.path.join(job_folder_global_path, 'mail.msg'))
 
-        if sys.platform == 'linux':
+        elif sys.platform == 'linux':
             with open(os.path.join(job_folder_global_path, 'mail.eml'), 'wb') as mail_file:
                 mail_file.write(msg[0][1])
 
-        raise ValueError(f'software not applicable to platform {sys.platform}')
+        else: 
+            raise ValueError(f'software not applicable to platform {sys.platform}')
 
     def saveAttachment(self, attachment, file_name_global_path: str):
         ''' Save mail in a folder. '''
@@ -438,11 +438,12 @@ class MailManager():
         if sys.platform == 'win32':
             shutil.copy(attachment, file_name_global_path)
 
-        if sys.platform == 'linux':
+        elif sys.platform == 'linux':
             with open(file_name_global_path, 'wb') as file:
                 file.write(attachment.get_payload(decode=True))
 
-        raise ValueError(f'software not applicable to platform {sys.platform}')
+        else:
+            raise ValueError(f'software not applicable to platform {sys.platform}')
 
     def replyToEmailFromFileUsingTemplate(self,
                     mail_item, # mail file, path toward folder containing mail file or mail file global path
@@ -476,7 +477,7 @@ class MailManager():
             else:
                 reply.Send()
 
-        if sys.platform == 'linux':
+        elif sys.platform == 'linux':
 
             eml = self.mailItemToMailFile(mail_item)
 
@@ -507,7 +508,8 @@ class MailManager():
                 server.starttls(context=context)
                 server.login(self.gv['MAIL_ADRESS'], self.gv['MAIL_PASSWORD'])
                 server.send_message(reply_mail)
-
+        else:
+            raise ValueError(f'software not applicable to platform {sys.platform}')
 
     def mailToName(self, mail_name: str) -> str:
         ''' Convert mail in form first_name last_name <mail@adres.com> to a more friendly name. '''
