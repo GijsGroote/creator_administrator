@@ -57,7 +57,7 @@ class OptionsQPushButton(JobsQPushButton):
 
     def moveJobToWachtrij(self):
         job_name = self.getCurrentItemName()
-        self.job_tracker.markFilesAsDone(job_name=job_name, done=False, all_files_done=True)
+        self.job_tracker.markFilesAsDone(job_name=job_name, file_global_path=None, done=False, all_files_done=True)
         self.moveJobTo('WACHTRIJ')
         self.window().refreshAllWidgets()
         self.parent().parent().setCurrentIndex(0)

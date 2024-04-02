@@ -29,7 +29,7 @@ class LaserKlaarQPushButton(JobsQPushButton):
         job_tracker.updateJobKey('status', job_name, 'VERWERKT')
         job_tracker.markFilesAsDone(job_name=job_name, done=True, all_files_done=True)
 
-        sender_name = job_tracker.obValue('sender_name', job_name)
+        sender_name = job_tracker.getJobValue('sender_name', job_name)
         self.window().refreshAllWidgets()
         self.parent().parent().setCurrentIndex(0)
 
@@ -79,10 +79,10 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
                 # hey this material is done!
 
                 self.job_tracker.updateJobKey('status', job_name, 'VERWERKT')
-                sender_name = self.job_tracker.obValue('sender_name', job_name)
+                sender_name = self.job_tracker.getJobValue('sender_name', job_name)
                 job_folder_global_path = self.job_tracker.getJobValue('job_folder_global_path', job_name)
                 done_files = ''
-                for laser_file_dict in self.job_tracker.obDict(job_name)['make_files'].values():
+                for laser_file_dict in self.job_tracker.getJobDict(job_name)['make_files'].values():
                     done_files += laser_file_dict['file_name']+'\n'
                 InfoQMessageBox(self, f'For {sender_name} put into Uitgifterek:\n{done_files}')
             
@@ -119,7 +119,7 @@ class LaserAfgekeurdQPushButton(JobsQPushButton):
         if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]): # pylint: disable=use-a-generator
                     WarningQMessageBox(gv=gv, parent=self, text='No Afgekeurd mail send because: No mail file found')
         else:
-            sender_name = job_tracker.obValue('sender_name', job_name)
+            sender_name = job_tracker.getJobValue('sender_name', job_name)
 
             ThreadedMailManager(parent=self, gv=gv).startDeclinedMailWorker(
                 success_message=f'Job declined mail send to {sender_name}',
@@ -191,7 +191,7 @@ class LaserOptionsQPushButton(OptionsQPushButton):
                 copy_item(file_global_path, os.path.join(target_folder_global_path, file_name))
         else:
             job_name = self.getCurrentItemName()
-            laser_file_dict =  LaserJobTracker(self).obValue('make_files', job_name)
+            laser_file_dict =  LaserJobTracker(self).getJobValue('make_files', job_name)
 
             for file_key, file_dict in laser_file_dict.items():
                 source_item_global_path = file_dict['file_global_path']
@@ -204,7 +204,7 @@ class LaserOptionsQPushButton(OptionsQPushButton):
         ''' Send a mail. '''
         job_name = self.getCurrentItemName()
 
-        job_dict = LaserJobTracker(parent=self).obDict(job_name)
+        job_dict = LaserJobTracker(parent=self).getJobDict(job_name)
 
         if job_dict is None:
             WarningQMessageBox(gv=gv, parent=self, text='No mail send because: Job Name could not be found')
