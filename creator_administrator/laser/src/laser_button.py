@@ -27,7 +27,7 @@ class LaserKlaarQPushButton(JobsQPushButton):
         
         job_folder_global_path = job_tracker.getJobValue('job_folder_global_path', job_name)
         job_tracker.updateJobKey('status', job_name, 'VERWERKT')
-        job_tracker.markFilesAsDone(job_name=job_name, done=True, all_files_done=True)
+        job_tracker.markFilesAsDone(job_name=job_name, file_global_path=None, done=True, all_files_done=True)
 
         sender_name = job_tracker.getJobValue('sender_name', job_name)
         self.window().refreshAllWidgets()
@@ -70,9 +70,9 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
             job_name = self.job_tracker.fileGlobalPathToJobName(file_global_path)
 
             # material done, mark it done
-            self.job_tracker.markFileAsDone(job_name=job_name,
-                                                 file_global_path=file_global_path,
-                                                 done=True)
+            self.job_tracker.markFilesAsDone(job_name=job_name,
+                                            file_global_path=file_global_path,
+                                            done=True)
 
             # if all is done, display message
             if self.job_tracker.isJobDone(job_name):

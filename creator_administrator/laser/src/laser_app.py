@@ -46,7 +46,6 @@ class LaserMainWindow(MainWindow):
         self.threaded_mail_manager.getValidMailsFromInbox()
 
 
-
     def openSelectFilesDialog(self):
         ''' Open dialog to select multiple files. '''
         dialog = FilesSelectQDialog(self, gv)

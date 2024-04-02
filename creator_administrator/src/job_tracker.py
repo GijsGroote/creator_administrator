@@ -151,6 +151,12 @@ class JobTracker:
         current_date_object = datetime.now()
         date_difference = current_date_object - created_on_date_object
         return date_difference.days > self.gv['DAYS_TO_KEEP_JOBS']
+    
+    def isJobDone(self, job_name: str) -> bool:
+        ''' Return boolean indicating if a job is done. '''
+        self.readTrackerFile()
+
+        return all(file_dict['done'] for file_dict in self.tracker_dict[job_name]['make_files'].values())
 
     def getJobDict(self, job_name: str) -> dict:
         ''' Return the job dict from a job name. '''
