@@ -23,8 +23,13 @@
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QTabWidget" name="tabWidget">
+       <property name="font">
+        <font>
+         <pointsize>14</pointsize>
+        </font>
+       </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab">
         <attribute name="title">
@@ -37,7 +42,7 @@
             <widget class="QGroupBox" name="groupBox_4">
              <property name="font">
               <font>
-               <pointsize>11</pointsize>
+               <pointsize>14</pointsize>
               </font>
              </property>
              <property name="title">
@@ -50,7 +55,7 @@
                  <widget class="QLabel" name="label_6">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="toolTip">
@@ -68,7 +73,7 @@
                  <spacer name="horizontalSpacer_9">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="orientation">
@@ -86,7 +91,7 @@
                  <widget class="QCheckBox" name="moveMailToVerwerktCheckBox">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -98,7 +103,7 @@
                  <spacer name="horizontalSpacer_8">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="orientation">
@@ -116,7 +121,7 @@
                  <widget class="QLabel" name="label_4">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="toolTip">
@@ -134,7 +139,7 @@
                  <widget class="QCheckBox" name="onlyUnreadMailCheckBox">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -146,7 +151,7 @@
                  <widget class="QCheckBox" name="sendMailThreadedCheckBox">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -158,7 +163,7 @@
                  <spacer name="horizontalSpacer_17">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="orientation">
@@ -176,7 +181,7 @@
                  <widget class="QLabel" name="label_17">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="toolTip">
@@ -199,7 +204,7 @@
             <widget class="QGroupBox" name="groupBox_6">
              <property name="font">
               <font>
-               <pointsize>11</pointsize>
+               <pointsize>14</pointsize>
               </font>
              </property>
              <property name="title">
@@ -212,7 +217,7 @@
                  <widget class="QLabel" name="label_9">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="toolTip">
@@ -234,7 +239,7 @@ Inside this mail template:
                  <widget class="QLabel" name="label_15">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="toolTip">
@@ -254,7 +259,7 @@ Inside this mail template:
                  <widget class="SelectFileQPushButton" name="selectFinishedTemplateButton">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -266,7 +271,7 @@ Inside this mail template:
                  <widget class="SelectFileQPushButton" name="selectReceivedTemplateButton">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -278,7 +283,7 @@ Inside this mail template:
                  <spacer name="horizontalSpacer_13">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="orientation">
@@ -296,7 +301,7 @@ Inside this mail template:
                  <spacer name="horizontalSpacer_15">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="orientation">
@@ -314,7 +319,7 @@ Inside this mail template:
                  <widget class="QLabel" name="label_13">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="toolTip">
@@ -335,7 +340,7 @@ Inside this mail template:
                  <spacer name="horizontalSpacer_16">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="orientation">
@@ -353,7 +358,7 @@ Inside this mail template:
                  <widget class="SelectFileQPushButton" name="selectDeclinedTemplateButton">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -370,7 +375,7 @@ Inside this mail template:
             <widget class="QGroupBox" name="groupBox">
              <property name="font">
               <font>
-               <pointsize>11</pointsize>
+               <pointsize>14</pointsize>
               </font>
              </property>
              <property name="title">
@@ -383,7 +388,7 @@ Inside this mail template:
                  <widget class="QLabel" name="label_10">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -398,7 +403,7 @@ Inside this mail template:
                  <spacer name="horizontalSpacer_2">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="orientation">
@@ -416,7 +421,7 @@ Inside this mail template:
                  <widget class="QCheckBox" name="darkModeCheckBox">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -433,7 +438,7 @@ Inside this mail template:
             <widget class="QGroupBox" name="groupBox_2">
              <property name="font">
               <font>
-               <pointsize>11</pointsize>
+               <pointsize>14</pointsize>
               </font>
              </property>
              <property name="title">
@@ -446,7 +451,7 @@ Inside this mail template:
                  <widget class="SelectFolderQPushButton" name="selectTodoDirectoryButton">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -458,7 +463,7 @@ Inside this mail template:
                  <widget class="SelectFolderQPushButton" name="selectDataDirectoryButton">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -470,7 +475,7 @@ Inside this mail template:
                  <spacer name="horizontalSpacer_18">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="orientation">
@@ -488,7 +493,7 @@ Inside this mail template:
                  <widget class="QCheckBox" name="emptyTodoDirCheckBox">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -500,7 +505,7 @@ Inside this mail template:
                  <spacer name="horizontalSpacer_3">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="orientation">
@@ -518,7 +523,7 @@ Inside this mail template:
                  <widget class="QLabel" name="label_19">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="toolTip">
@@ -533,7 +538,7 @@ Inside this mail template:
                  <widget class="QLabel" name="label">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="toolTip">
@@ -551,7 +556,7 @@ Inside this mail template:
                  <widget class="QLabel" name="label_3">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="toolTip">
@@ -569,7 +574,7 @@ Inside this mail template:
                  <spacer name="horizontalSpacer_4">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="orientation">
@@ -587,7 +592,7 @@ Inside this mail template:
                  <widget class="QLabel" name="label_5">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="toolTip">
@@ -608,7 +613,7 @@ Inside this mail template:
                  <spacer name="horizontalSpacer_10">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="orientation">
@@ -626,7 +631,7 @@ Inside this mail template:
                  <widget class="QLineEdit" name="daysToKeepJobsLineEdit">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -640,7 +645,7 @@ Inside this mail template:
                <widget class="QLabel" name="label_12">
                 <property name="font">
                  <font>
-                  <pointsize>11</pointsize>
+                  <pointsize>14</pointsize>
                  </font>
                 </property>
                 <property name="text">
@@ -655,7 +660,7 @@ Inside this mail template:
             <widget class="QGroupBox" name="groupBox_5">
              <property name="font">
               <font>
-               <pointsize>11</pointsize>
+               <pointsize>14</pointsize>
               </font>
              </property>
              <property name="title">
@@ -668,7 +673,7 @@ Inside this mail template:
                  <spacer name="horizontalSpacer_6">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="orientation">
@@ -686,7 +691,7 @@ Inside this mail template:
                  <widget class="QLabel" name="label_7">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="toolTip">
@@ -704,7 +709,7 @@ Inside this mail template:
                  <widget class="QCheckBox" name="dispTempMessageCheckBox">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -716,7 +721,7 @@ Inside this mail template:
                  <widget class="QLabel" name="label_8">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="toolTip">
@@ -734,7 +739,7 @@ Inside this mail template:
                  <spacer name="horizontalSpacer_5">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="orientation">
@@ -752,7 +757,7 @@ Inside this mail template:
                  <widget class="QCheckBox" name="dispWarnMessageCheckBox">
                   <property name="font">
                    <font>
-                    <pointsize>11</pointsize>
+                    <pointsize>14</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -921,7 +926,7 @@ Inside this mail template:
                   <x>0</x>
                   <y>0</y>
                   <width>793</width>
-                  <height>589</height>
+                  <height>572</height>
                  </rect>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_9">
@@ -968,7 +973,7 @@ Inside this mail template:
       <widget class="QDialogButtonBox" name="buttonBox">
        <property name="font">
         <font>
-         <pointsize>11</pointsize>
+         <pointsize>14</pointsize>
         </font>
        </property>
        <property name="orientation">

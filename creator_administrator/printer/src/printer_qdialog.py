@@ -1,7 +1,9 @@
 import os
 import re
 
+
 from PyQt6.QtWidgets import QWidget
+
 
 from src.qdialog import CreateJobsFromMailQDialog, CreateJobsFromFileSystemQDialog, SearchJobDialog
 from src.qmessagebox import TimedMessage
@@ -218,6 +220,4 @@ class PrintSearchJobDialog(SearchJobDialog):
     def __init__(self, parent: QWidget, *args, **kwargs):
         ui_global_path = os.path.join(gv['LOCAL_UI_DIR'], 'search_job_dialog.ui')
         super().__init__(parent, ui_global_path, *args, **kwargs)
-
-
 

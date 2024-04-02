@@ -9,6 +9,12 @@ from PyQt6.uic import loadUi
 
 from src.directory_functions import shorten_folder_name
 from src.qmessagebox import WarningQMessageBox, TimedMessage
+from src.validate import (
+        check_int,
+        check_extensions_tuple,
+        check_comma_seperated_tuple,
+        check_html,
+        check_is_directory)
 
 
 class SettingsQDialog(QDialog):
@@ -25,15 +31,15 @@ class SettingsQDialog(QDialog):
         ''' Load the existing settings. '''
 
         self.daysToKeepJobsLineEdit.setText(str(gv['DAYS_TO_KEEP_JOBS']))
-        self.daysToKeepJobsLineEdit.textChanged.connect(partial(self.checkInt, self.daysToKeepJobsLineEdit))
+        self.daysToKeepJobsLineEdit.textChanged.connect(partial(check_int, self.daysToKeepJobsLineEdit, self.gv))
 
         self.acceptedExtentionsLineEdit.setText(str(gv['ACCEPTED_EXTENSIONS'])[1:-1].replace("'", ''))
         self.acceptedExtentionsLineEdit.textChanged.connect(
-                partial(self.checkExtensionsTuple, self.acceptedExtentionsLineEdit))
+                partial(check_extensions_tuple, self.acceptedExtentionsLineEdit, self.gv))
 
         self.acceptedMaterialsLineEdit.setText(str(gv['ACCEPTED_MATERIALS'])[1:-1].replace("'", ''))
         self.acceptedMaterialsLineEdit.textChanged.connect(
-                partial(self.checkMaterialTuple, self.acceptedMaterialsLineEdit))
+                partial(check_comma_seperated_tuple, self.acceptedMaterialsLineEdit, self.gv))
 
 
         for variable_name, check_box in (('DARK_THEME', self.darkModeCheckBox),
@@ -56,7 +62,7 @@ class SettingsQDialog(QDialog):
                 widget_button.setStartingDirectory(os.path.dirname(gv[template_name]))
                 widget_button.setText(shorten_folder_name(gv[template_name], 45))
                 widget_button.file_global_path = gv[template_name]
-            widget_button.clicked.connect(partial(self.checkHTML, widget_button))
+            widget_button.clicked.connect(partial(check_html, widget_button, self.gv))
 
 
         for folder_name, widget_button in (('DATA_DIR_HOME', self.selectDataDirectoryButton),
@@ -64,7 +70,7 @@ class SettingsQDialog(QDialog):
             widget_button.setStartingDirectory(gv[folder_name])
             widget_button.setText(shorten_folder_name(gv[folder_name], 45))
             widget_button.folder_global_path = gv[folder_name]
-            widget_button.clicked.connect(partial(self.checkIsDirectory, widget_button))
+            widget_button.clicked.connect(partial(check_is_directory, widget_button, self.gv))
 
 
     def applySettings(self):
@@ -83,13 +89,13 @@ class SettingsQDialog(QDialog):
         ''' Validate general (not machine specific) settings. '''
 
         check_types_and_warnings = [
-            (not self.checkInt(self.daysToKeepJobsLineEdit),
+            (not check_int(self.daysToKeepJobsLineEdit, self.gv),
             f'Days to Store Jobs is not an number but {self.daysToKeepJobsLineEdit.text()}'),
 
-            (not self.checkExtensionsTuple(self.acceptedExtentionsLineEdit),
+            (not check_extensions_tuple(self.acceptedExtentionsLineEdit, self.gv),
             'Accepted Extensions could not be convered to a list of extensions'),
 
-            (not self.checkMaterialTuple(self.acceptedMaterialsLineEdit),
+            (not check_comma_seperated_tuple(self.acceptedMaterialsLineEdit, self.gv),
             'Accepted Materials could not be convered to a list of materials')]
 
         # first, check types, otherwise type errors might break upcoming checks
@@ -102,10 +108,10 @@ class SettingsQDialog(QDialog):
             (int(self.daysToKeepJobsLineEdit.text()) < 0,
             f'Days to Store Jobs is not an positive number but {self.daysToKeepJobsLineEdit.text()}'),
 
-            (not self.checkIsDirectory(self.selectDataDirectoryButton),
+            (not check_is_directory(self.selectDataDirectoryButton, self.gv),
             f'Data Directory {self.selectDataDirectoryButton.folder_global_path} is not a directory'),
 
-            (not self.checkIsDirectory(self.selectTodoDirectoryButton),
+            (not check_is_directory(self.selectTodoDirectoryButton, self.gv),
             f'Todo Directory {self.selectTodoDirectoryButton.folder_global_path} is not a directory'),
          ]
 
@@ -117,7 +123,7 @@ class SettingsQDialog(QDialog):
                     (not os.path.exists(widget_button.file_global_path),
                     f'Template {template_name} path {widget_button.file_global_path} does not exist'))
 
-                check_and_warnings.append((not (self.checkHTML(widget_button)),
+                check_and_warnings.append((not (check_html(widget_button, self.gv)),
                 f'Template {template_name} should be an HTML file and is {widget_button.file_global_path}'))
 
 
@@ -176,73 +182,6 @@ class SettingsQDialog(QDialog):
     @abc.abstractmethod
     def saveMachineSettings(self):
         ''' Save the settings specific to a mahichine (3D printer / laser cutter). '''
-
-    def checkInt(self, widget: QWidget) -> bool:
-        try:
-            int(widget.text())
-            widget.setStyleSheet(f'background-color: {self.gv["GOOD_COLOR_RGBA"]};')
-            return True
-
-        except ValueError:
-            widget.setStyleSheet(f'background-color: {self.gv["BAD_COLOR_RGBA"]};')
-            return False
-
-    def checkExtensionsTuple(self, widget: QWidget) -> bool:
-        try:
-            tuple(widget.text().split(', '))
-
-        except ValueError:
-            widget.setStyleSheet(f'background-color: {self.gv["GOOD_COLOR_RGBA"]};')
-            return False
-
-        for string in widget.text().split(', '):
-            if not (string.startswith('.') and string[1:].isalnum()):
-                widget.setStyleSheet(f'background-color: {self.gv["BAD_COLOR_RGBA"]};')
-                return False
-
-        widget.setStyleSheet(f'background-color: {self.gv["GOOD_COLOR_RGBA"]};')
-        return True
-
-    def checkMaterialTuple(self, widget: QWidget) -> bool:
-        try:
-            tuple(widget.text().split(', '))
-
-        except ValueError:
-            widget.setStyleSheet(f'background-color: {self.gv["BAD_COLOR_RGBA"]};')
-            return False
-
-        for string in widget.text().split(', '):
-            if not string.isalpha():
-                widget.setStyleSheet(f'background-color: {self.gv["BAD_COLOR_RGBA"]};')
-                return False
-
-        widget.setStyleSheet(f'background-color: {self.gv["GOOD_COLOR_RGBA"]};')
-        return True
-
-
-    def checkHTML(self, widget: QWidget) -> bool:
-        if not widget.file_global_path.lower().endswith('.html'):
-            widget.setStyleSheet(f'background-color: {self.gv["BAD_COLOR_RGBA"]};')
-            return False
-
-        widget.setStyleSheet(f'background-color: {self.gv["GOOD_COLOR_RGBA"]};')
-        return True
-
-    def checkFileExists(self, widget: QWidget, file_path: str) -> bool:
-        if os.path.exists(file_path):
-            widget.setStyleSheet(f'background-color: {self.gv["GOOD_COLOR_RGBA"]};')
-            return True
-
-        widget.setStyleSheet(f'background-color: {self.gv["BAD_COLOR_RGBA"]};')
-        return False
-
-    def checkIsDirectory(self, widget: QWidget) -> bool:
-        if not os.path.isdir(widget.folder_global_path):
-            widget.setStyleSheet(f'background-color: {self.gv["BAD_COLOR_RGBA"]};')
-            return False
-
-        widget.setStyleSheet(f'background-color: {self.gv["GOOD_COLOR_RGBA"]};')
-        return True
 
     @abc.abstractmethod
     def restartApp(self):
