@@ -50,7 +50,6 @@ class SettingsQDialog(QDialog):
 
 
         for template_name, widget_button in (('RECEIVED_MAIL_TEMPLATE', self.selectReceivedTemplateButton),
-                                             ('UNCLEAR_MAIL_TEMPLATE', self.selectUnclearTemplateButton),
                                              ('FINISHED_MAIL_TEMPLATE', self.selectFinishedTemplateButton),
                                              ('DECLINED_MAIL_TEMPLATE', self.selectDeclinedTemplateButton)):
             if template_name in gv:
@@ -70,17 +69,18 @@ class SettingsQDialog(QDialog):
 
     def applySettings(self):
         ''' Save Settigns accepted function. '''
-        if self.validateAll():
+        if self.validateSettings() and self.validateMachineSettings():
             # save and restart application
             self.saveSettings()
+            self.saveMachineSettings()
             TimedMessage(self, self.gv, 'Settings saved, Restarting Creator Administrator.')
             self.close()
             self.parent().close()
             self.restartApp()
 
 
-    def validateAll(self) -> bool:
-        ''' Validate all input forms. '''
+    def validateSettings(self) -> bool:
+        ''' Validate general (not machine specific) settings. '''
 
         check_types_and_warnings = [
             (not self.checkInt(self.daysToKeepJobsLineEdit),
@@ -95,7 +95,7 @@ class SettingsQDialog(QDialog):
         # first, check types, otherwise type errors might break upcoming checks
         for check, warning_string in check_types_and_warnings:
             if check:
-                WarningQMessageBox(self.gv, self, warning_string)
+                WarningQMessageBox(self, self.gv, warning_string)
                 return False
 
         check_and_warnings = [
@@ -110,7 +110,6 @@ class SettingsQDialog(QDialog):
          ]
 
         for template_name, widget_button in (('RECEIVED_MAIL_TEMPLATE', self.selectReceivedTemplateButton),
-                                             ('UNCLEAR_MAIL_TEMPLATE', self.selectUnclearTemplateButton),
                                              ('FINISHED_MAIL_TEMPLATE', self.selectFinishedTemplateButton),
                                              ('DECLINED_MAIL_TEMPLATE', self.selectDeclinedTemplateButton)):
             if widget_button.file_global_path is not None:
@@ -129,8 +128,13 @@ class SettingsQDialog(QDialog):
                 return False
         return True
 
+    @abc.abstractmethod
+    def validateMachineSettings(self) -> bool:
+        ''' Validate the machine specific settings. '''
+
+
     def saveSettings(self):
-        ''' Save the settins to a JSON file. '''
+        ''' Save the settings to a JSON file. '''
 
         with open(self.gv['SETTINGS_FILE_PATH'], 'r') as settings_file:
             settings_dict = json.load(settings_file)
@@ -157,7 +161,6 @@ class SettingsQDialog(QDialog):
             settings_dict[checkbox_name] = 'true' if widget.isChecked() else 'false'
 
         for template_name, widget_button in (('RECEIVED_MAIL_TEMPLATE', self.selectReceivedTemplateButton),
-                                             ('UNCLEAR_MAIL_TEMPLATE', self.selectUnclearTemplateButton),
                                              ('FINISHED_MAIL_TEMPLATE', self.selectFinishedTemplateButton),
                                              ('DECLINED_MAIL_TEMPLATE', self.selectDeclinedTemplateButton)):
             if widget_button.file_global_path is not None:
@@ -169,6 +172,10 @@ class SettingsQDialog(QDialog):
 
         with open(self.gv['SETTINGS_FILE_PATH'], 'w' ) as settings_file:
             json.dump(settings_dict, settings_file, indent=4)
+    
+    @abc.abstractmethod
+    def saveMachineSettings(self):
+        ''' Save the settings specific to a mahichine (3D printer / laser cutter). '''
 
     def checkInt(self, widget: QWidget) -> bool:
         try:
