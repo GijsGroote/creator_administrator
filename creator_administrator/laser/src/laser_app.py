@@ -107,7 +107,7 @@ class LaserMainWindow(MainWindow):
 
     def openEditSettingsDialog(self):
         ''' Open dialog to edit the settings. '''
-        LaserSettingsQDialog(self, gv).exec()
+        LaserSettingsQDialog(self).exec()
 
     def openSearchJobDialog(self):
         ''' Open the search job dialog. '''

@@ -33,11 +33,19 @@ class SettingsQDialog(QDialog):
         self.daysToKeepJobsLineEdit.setText(str(gv['DAYS_TO_KEEP_JOBS']))
         self.daysToKeepJobsLineEdit.textChanged.connect(partial(check_int, self.daysToKeepJobsLineEdit, self.gv))
 
-        self.acceptedExtentionsLineEdit.setText(str(gv['ACCEPTED_EXTENSIONS'])[1:-1].replace("'", ''))
+        if len(gv['ACCEPTED_EXTENSIONS']) == 1:
+            self.acceptedExtentionsLineEdit.setText(str(gv['ACCEPTED_EXTENSIONS'][0]))
+        else:
+            self.acceptedExtentionsLineEdit.setText(str(gv['ACCEPTED_EXTENSIONS'])[1:-1].replace("'", ''))
+
         self.acceptedExtentionsLineEdit.textChanged.connect(
                 partial(check_extensions_tuple, self.acceptedExtentionsLineEdit, self.gv))
 
-        self.acceptedMaterialsLineEdit.setText(str(gv['ACCEPTED_MATERIALS'])[1:-1].replace("'", ''))
+        if len(gv['ACCEPTED_MATERIALS']) == 1:
+            self.acceptedMaterialsLineEdit.setText(str(gv['ACCEPTED_MATERIALS'][0]))
+        else:
+            self.acceptedMaterialsLineEdit.setText(str(gv['ACCEPTED_MATERIALS'])[1:-1].replace("'", ''))
+
         self.acceptedMaterialsLineEdit.textChanged.connect(
                 partial(check_comma_seperated_tuple, self.acceptedMaterialsLineEdit, self.gv))
 
@@ -134,10 +142,6 @@ class SettingsQDialog(QDialog):
                 return False
         return True
 
-    @abc.abstractmethod
-    def validateMachineSettings(self) -> bool:
-        ''' Validate the machine specific settings. '''
-
 
     def saveSettings(self):
         ''' Save the settings to a JSON file. '''
@@ -179,6 +183,10 @@ class SettingsQDialog(QDialog):
         with open(self.gv['SETTINGS_FILE_PATH'], 'w' ) as settings_file:
             json.dump(settings_dict, settings_file, indent=4)
     
+    @abc.abstractmethod
+    def validateMachineSettings(self) -> bool:
+        ''' Validate the machine specific settings. '''
+
     @abc.abstractmethod
     def saveMachineSettings(self):
         ''' Save the settings specific to a mahichine (3D printer / laser cutter). '''

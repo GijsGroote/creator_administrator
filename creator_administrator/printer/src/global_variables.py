@@ -71,6 +71,7 @@ if not os.path.exists(settings_file_path):
         "DATA_DIR_HOME": data_dir_home,
         "ACCEPTED_EXTENSIONS": ".stl, .step, .3mf, .obj, .amf",
         "ACCEPTED_MATERIALS": "PLA, ABS",
+        "DEFAULT_PRINTER_NAME": "Prusa MK4",
         "DAYS_TO_KEEP_JOBS": "15",
         "DARK_THEME": "true",
         "DISPLAY_TEMP_MESSAGES": "true",
@@ -118,6 +119,7 @@ with open(settings_file_path, 'r') as settings_file:
 
     gv['ACCEPTED_EXTENSIONS'] = tuple(gv_data['ACCEPTED_EXTENSIONS'].split(', '))
     gv['ACCEPTED_MATERIALS'] = tuple(gv_data['ACCEPTED_MATERIALS'].split(', '))
+    gv['DEFAULT_PRINTER_NAME'] = gv_data['DEFAULT_PRINTER_NAME']
 
     gv['DAYS_TO_KEEP_JOBS'] = int(gv_data['DAYS_TO_KEEP_JOBS'])
     gv['DARK_THEME'] = gv_data['DARK_THEME'] == 'true'

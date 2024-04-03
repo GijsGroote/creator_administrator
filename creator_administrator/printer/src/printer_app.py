@@ -109,7 +109,7 @@ class PrintMainWindow(MainWindow):
 
     def openEditSettingsDialog(self):
         ''' Open dialog to edit the settings. '''
-        PrintSettingsQDialog(self, gv).exec()
+        PrintSettingsQDialog(self).exec()
 
     def openSearchJobDialog(self):
         ''' Open the search job dialog. '''

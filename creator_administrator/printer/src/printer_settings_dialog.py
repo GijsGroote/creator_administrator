@@ -21,27 +21,31 @@ from global_variables import gv
 
 class PrintSettingsQDialog(SettingsQDialog):
 
-    def __init__(self, parent, gv: dict, *args, **kwargs):
+    def __init__(self, parent, *args, **kwargs):
         ui_global_path = os.path.join(gv['LOCAL_UI_DIR'], 'settings_dialog.ui')
         super().__init__(parent, ui_global_path, gv, *args, **kwargs)
 
-        self.addPrinterPushButton.clicked.connect(self.addNewSpecialPrinter)
+        self.addPrinterDictList = []
 
-    @abc.abstractmethod
+        self.addPrinterPushButton.clicked.connect(self.addNewSpecialPrinter)
+        self.defaultPrinterNameLineEdit.setText(str(gv['DEFAULT_PRINTER_NAME']))
+
     def saveMachineSettings(self):
-        ''' Save the settings specific to a mahichine (3D printer / laser cutter). '''
+        ''' Save the machine specific settings. '''
 
         with open(self.gv['SETTINGS_FILE_PATH'], 'r') as settings_file:
             settings_dict = json.load(settings_file)
 
+            settings_dict['DEFAULT_PRINTER_NAME'] = self.defaultPrinterNameLineEdit.text()
+
         with open(self.gv['SETTINGS_FILE_PATH'], 'w' ) as settings_file:
             json.dump(settings_dict, settings_file, indent=4)
 
-    @abc.abstractmethod
     def validateMachineSettings(self) -> bool:
         ''' Validate the machine specific settings. '''
-        check_and_warnings = []
-                # check input values
+
+        check_and_warnings = [(not self.defaultPrinterNameLineEdit.text() == '', 'printer name cannot be empty')]
+        # check input values
         for check, warning_string in check_and_warnings:
             if check:
                 WarningQMessageBox(self, self.gv, warning_string)
@@ -56,8 +60,9 @@ class PrintSettingsQDialog(SettingsQDialog):
 
     def addNewSpecialPrinter(self):
         ''' Add a new special printer. '''
-        AddPrinterQDialog(self).exec()
-
+        add_printer_dialog = AddPrinterQDialog(self)
+        if add_printer_dialog.exec() == 1:
+            self.addPrinterDictList.append(add_printer_dialog.add_printer_dict)
 
 class AddPrinterQDialog(QDialog):
     ''' Add a new special printer dialog. '''
@@ -65,9 +70,9 @@ class AddPrinterQDialog(QDialog):
     def __init__(self, parent: QWidget, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
+        self.add_printer_dict = None
+
         loadUi(os.path.join(gv['LOCAL_UI_DIR'], 'add_printer_dialog.ui'), self)
-
-
 
         self.buttonBox.accepted.connect(self.applySettings)
         self.addPropertyButton.clicked.connect(self.applyNewProperty)
@@ -91,19 +96,8 @@ class AddPrinterQDialog(QDialog):
         print(f"data_type {data_type}")
 
 
-    def applySettings(self):
-        ''' Validate and save settings. '''
 
-
-        if self.validateSettings():
-            self.saveSettings()
-            TimedMessage(self, gv, 'Settings saved, Restarting Creator Administrator.')
-            self.close()
-            self.parent().close()
-            self.restartApp()
-
-
-    def validateSettings(self) -> bool:
+    def validateMachineSettings(self) -> bool:
         ''' Validate general (not machine specific) settings. '''
 
 #         check_types_and_warnings = [

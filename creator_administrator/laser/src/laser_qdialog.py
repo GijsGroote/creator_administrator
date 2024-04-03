@@ -61,12 +61,12 @@ class CreateLaserJobsFromMailQDialog(CreateJobsFromMailQDialog):
         for material in materials:
             if material.lower() in attachment_name.lower():
                 self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(material))
-        match = re.search(r'\d+\.?\d*(?=mm)', attachment_name)
+        match = re.search(r'\d+\.?\d*(?=mm)', attachment_name.lower())
 
         if match:
             self.thicknessQLineEdit.setText(match.group())
 
-        match = re.search(r"\d+\.?\d*(?=x_)", attachment_name)
+        match = re.search(r"\d+\.?\d*(?=x_)", attachment_name.lower())
         if match:
             self.amountQLineEdit.setText(match.group())
         else:
@@ -202,7 +202,8 @@ class CreateLaserJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
         self.thicknessQLineEdit.clear()
         self.amountQLineEdit.clear()
 
-        materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()).union(self.new_materials_list))
+        materials = list(set(gv['ACCEPTED_MATERIALS']).union(
+            self.job_tracker.getExistingMaterials()).union(self.new_materials_list))
         self.materialQComboBox.addItems(materials)
         self.materialQComboBox.addItem(self.new_material_text)
 
@@ -210,11 +211,11 @@ class CreateLaserJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
         for material in materials:
             if material.lower() in file_name.lower():
                 self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(material))
-        match = re.search(r"\d+\.?\d*(?=mm)", file_name)
+        match = re.search(r"\d+\.?\d*(?=mm)", file_name.lower())
         if match:
             self.thicknessQLineEdit.setText(match.group())
 
-        match = re.search(r"\d+\.?\d*(?=x_)", file_name)
+        match = re.search(r"\d+\.?\d*(?=x_)", file_name.lower())
         if match:
             self.amountQLineEdit.setText(match.group())
         else:

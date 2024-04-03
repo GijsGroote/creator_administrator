@@ -57,7 +57,7 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         self.materialQComboBox.addItem(self.new_material_text)
 
         # guess the amount
-        match = re.search(r"\d+\.?\d*(?=x_)", attachment_name)
+        match = re.search(r"\d+\.?\d*(?=x_)", attachment_name.lower())
         if match:
             self.amountQLineEdit.setText(match.group())
         else:
@@ -173,7 +173,7 @@ class CreatePrintJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
         self.materialQComboBox.addItem(self.new_material_text)
 
         # guess the amount
-        match = re.search(r"\d+\.?\d*(?=x_)", file_name)
+        match = re.search(r"\d+\.?\d*(?=x_)", file_name.lower())
         if match:
             self.amountQLineEdit.setText(match.group())
         else:

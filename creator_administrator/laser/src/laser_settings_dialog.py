@@ -8,9 +8,11 @@ from src.settings_dialog import SettingsQDialog
 from src.qmessagebox import WarningQMessageBox
 from src.directory_functions import shorten_folder_name
 
+from global_variables import gv
+
 class LaserSettingsQDialog(SettingsQDialog):
 
-    def __init__(self, parent, gv: dict, *args, **kwargs):
+    def __init__(self, parent, *args, **kwargs):
         ui_global_path = os.path.join(gv['LOCAL_UI_DIR'], 'settings_dialog.ui')
         super().__init__(parent, ui_global_path, gv, *args, **kwargs)
 
