@@ -2,7 +2,7 @@ import os
 import re
 
 
-from PyQt6.QtWidgets import QWidget
+from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QVBoxLayout, QHBoxLayout
 
 
 from src.qdialog import CreateJobsFromMailQDialog, CreateJobsFromFileSystemQDialog, SearchJobDialog
@@ -30,9 +30,37 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
                          *args,
                          **kwargs)
 
-        # TODO; settings based on printer profile
 
+        self.printPropertyScrollArea.setHidden(True)
+
+        for printer_dict in gv['SPECIAL_PRINTERS'].values():
+            self.printerComboBox.addItem(printer_dict['printer_name'])
+
+        self.printerComboBox.currentIndexChanged.connect(self.onPrinterComboBoxChanged)
         self.loadJobContent()
+
+
+    def onPrinterComboBoxChanged(self):
+        ''' Add the printer properties to the comboBox. '''
+        # self.printPropertyScrollArea.clear()
+
+        scroll_widget = QWidget()
+        vertical_layout = QVBoxLayout(scroll_widget)
+
+
+        for property_dict in gv['SPECIAL_PRINTERS'][self.printerComboBox.currentText()]['properties'].values():
+            horizontal_layout = QHBoxLayout()
+
+            label = QLabel(property_dict['property_name'])
+            text_input = QLineEdit()
+            horizontal_layout.addWidget(label)
+            horizontal_layout.addWidget(text_input)
+
+            # Add horizontal layout to the main vertical layout
+            vertical_layout.addLayout(horizontal_layout)
+
+        scroll_widget.setLayout(vertical_layout)
+        self.printPropertyScrollArea.setWidget(scroll_widget)
 
 
     def loadItemContent(self):
@@ -40,6 +68,19 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
 
         attachment = self.temp_make_items[self.make_item_counter]
         attachment_name = self.mail_manager.getAttachmentFileName(attachment)
+
+        if self.requested_parameters_dict is not None and\
+                attachment_name in self.requested_parameters_dict and\
+                'printer_name' in self.requested_parameters_dict[attachment_name]:
+
+            self.printerComboBox.setCurrentIndex(self.printerComboBox.findText(
+                self.requested_parameters_dict[attachment_name]['printer_name']))
+
+            self.loadRequestedParameters(self.requested_parameters_dict[attachment_name]['printer_name'])
+
+        else:
+            self.printPropertyScrollArea.setHidden(True)
+
 
         self.attachmentProgressQLabel.setText(f'Attachment ({self.make_item_counter+1}/{len(self.temp_make_items)})')
         self.attachmentNameQLabel.setText(attachment_name)
@@ -63,6 +104,17 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         else:
             self.amountQLineEdit.setText('1')
 
+    def loadRequestedParameters(self, requested_attachment_dict: dict):
+        ''' Load the requested parameters. '''
+
+        self.printPropertyScrollArea.setHidden(False)
+
+        for property_dict in gv['SPECIAL_PRINTERS'][requested_attachment_dict]['properties'].values():
+
+            print(f"add  {property_dict['property_name']}")
+
+            # self.printer_dict['properties'].values():
+            # self.printPropertyScrollArea.addRow(QLabel(property_dict['property_name'], self))
 
     def collectItemInfo(self):
         ''' Collect material amount info. '''

@@ -252,15 +252,26 @@ class MailManager():
         if sys.platform == 'linux':
 
             # Check if the email is multipart
+            mail_body = None
             if mail_file.is_multipart():
                 for part in mail_file.walk():
                     # Check each part for HTML content
                     if part.get_content_type() == 'text/html':
-                        return part.get_payload(decode=True)
+                        mail_body = part.get_payload(decode=True)
+
+                    if part.get_content_type() == 'text/plain':
+                        mail_body = part.get_payload(decode=True)
 
             elif mail_file.get_content_type() == 'text/html':
-                return mail_file.get_payload(decode=True)
+                mail_body = mail_file.get_payload(decode=True)
 
+            if isinstance(mail_body, bytes):
+                mail_body = mail_body.decode('utf-8')
+
+            if mail_body is not None:
+                return mail_body
+
+            raise ValueError(f'Could not get mail Body from mail file type {type(mail_file)}')
         raise ValueError(f'software not applicable to platform {sys.platform}')
 
 

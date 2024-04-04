@@ -99,6 +99,7 @@ if not os.path.exists(settings_file_path):
 # Global Variables (gv)
 gv = {'SETTINGS_FILE_PATH': settings_file_path,
       'DATA_DIR_HOME': data_dir_home,
+      'TEMP_DIR_HOME': temp_dir_home,
       'JOBS_DIR_HOME': jobs_dir_home,
       'TRACKER_FILE_PATH': tracker_file_path}
 

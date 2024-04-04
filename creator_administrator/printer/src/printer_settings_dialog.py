@@ -10,6 +10,7 @@ from PyQt6.uic import loadUi
 
 from src.settings_dialog import SettingsQDialog
 from src.qmessagebox import WarningQMessageBox
+from src.qdialog import SelectOptionsQDialog
 from src.validate import (
         check_empty,
         check_extensions_tuple,
@@ -26,7 +27,9 @@ class PrintSettingsQDialog(SettingsQDialog):
         self.special_printers_dicts = gv['SPECIAL_PRINTERS']
         self.refreshSpecialPrinterScrollArea()
 
-        self.addPrinterPushButton.clicked.connect(self.addNewSpecialPrinter)
+        self.addPrinterPushButton.clicked.connect(self.addPrinter)
+        self.removePrinterPushButton.clicked.connect(self.removePrinter)
+
         self.defaultPrinterNameLineEdit.setText(str(gv['DEFAULT_PRINTER_NAME']))
 
     def saveMachineSettings(self):
@@ -36,7 +39,6 @@ class PrintSettingsQDialog(SettingsQDialog):
             settings_dict = json.load(settings_file)
 
             settings_dict['DEFAULT_PRINTER_NAME'] = self.defaultPrinterNameLineEdit.text()
-            print(f"saveing the special printers {self.special_printers_dicts}")
             settings_dict['SPECIAL_PRINTERS'] = self.special_printers_dicts
 
         with open(gv['SETTINGS_FILE_PATH'], 'w' ) as settings_file:
@@ -45,9 +47,7 @@ class PrintSettingsQDialog(SettingsQDialog):
     def validateMachineSettings(self) -> bool:
         ''' Validate the machine specific settings. '''
 
-        check_and_warnings = [
-            (check_empty(self.defaultPrinterNameLineEdit, gv), 'Printer Name cannot be empty')
-         ]
+        check_and_warnings = [(check_empty(self.defaultPrinterNameLineEdit, gv), 'Printer Name cannot be empty')]
 
         # check input values
         for check, warning_string in check_and_warnings:
@@ -62,13 +62,30 @@ class PrintSettingsQDialog(SettingsQDialog):
             f'{os.path.join(gv["REPO_DIR_HOME"], "printer/src/printer_app.py")}'
                         +'"', shell=True)
 
-    def addNewSpecialPrinter(self):
+    def addPrinter(self):
         ''' Add a new special printer. '''
         add_printer_dialog = AddPrinterQDialog(self)
         add_printer_dialog.exec()
         if add_printer_dialog.add_printer_dict is not None:
-            self.special_printers_dicts['printer_'+str(len(self.special_printers_dicts)+1)] = add_printer_dialog.add_printer_dict
+            printer_name = add_printer_dialog.add_printer_dict['printer_name']
+            if printer_name in self.special_printers_dicts:
+                WarningQMessageBox(self, gv, f'A printer with name {printer_name} already exists')
+                return
+
+            self.special_printers_dicts[printer_name] = add_printer_dialog.add_printer_dict
             self.refreshSpecialPrinterScrollArea()
+
+    def removePrinter(self):
+        ''' Remove a special printer. '''
+
+        printer_list = [(key+': '+value['printer_name'], key) for key, value in self.special_printers_dicts.items()]
+        dialog = SelectOptionsQDialog(self, gv, printer_list, question='Select printers to remove')
+
+        if dialog.exec() == 1:
+            remove_printer_keys = [item.data(1) for item in dialog.optionsQListWidget.selectedItems()]
+            [self.special_printers_dicts.pop(remove_key) for remove_key in remove_printer_keys]
+
+        self.refreshSpecialPrinterScrollArea()
 
     def refreshSpecialPrinterScrollArea(self):
         ''' Refresh property widget. '''

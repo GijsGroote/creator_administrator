@@ -978,6 +978,13 @@ Inside this mail template:
               </spacer>
              </item>
              <item>
+              <widget class="QPushButton" name="removePrinterPushButton">
+               <property name="text">
+                <string>Remove Printer</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QPushButton" name="addPrinterPushButton">
                <property name="text">
                 <string>Add Printer</string>

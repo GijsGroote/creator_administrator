@@ -1,4 +1,5 @@
 import os
+import json
 import abc
 import webbrowser
 import datetime
@@ -12,7 +13,7 @@ from PyQt6.uic import loadUi
 
 from src.mail_manager import MailManager
 from src.job_tracker import JobTracker
-from src.qmessagebox import TimedMessage
+from src.qmessagebox import TimedMessage, WarningQMessageBox
 from src.directory_functions import copy_item
 
 
@@ -135,6 +136,23 @@ class CreateJobsFromMailQDialog(CreateJobsQDialog):
         self.temp_make_files_dict = {}
         self.temp_store_files_dict = {}
 
+        self.requested_parameters_dict = None
+        for attachment in self.mail_manager.getAttachments(job_msg):
+            attachment_name = self.mail_manager.getAttachmentFileName(attachment)
+            if attachment_name.lower().endswith('.json'):
+                requested_print_parameters_name = 'requested_print_parameters.json'
+                self.mail_manager.saveAttachment(attachment,
+                                         os.path.join(self.gv['TEMP_DIR_HOME'], 
+                                          requested_print_parameters_name))
+
+                try:
+                    with open(os.path.join(self.gv['TEMP_DIR_HOME'], 
+                                           requested_print_parameters_name), 'r') as requested_parameters_file:
+                        self.requested_parameters_dict = json.load(requested_parameters_file)
+                except json.decoder.JSONDecodeError as e:
+                    WarningQMessageBox(self, self.gv,
+                                   f'Error loading requested printer parameters for {self.temp_sender_name}\n{str(e)}')
+
         for attachment in self.mail_manager.getAttachments(job_msg):
             attachment_name = self.mail_manager.getAttachmentFileName(attachment)
             if attachment_name.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
@@ -150,8 +168,6 @@ class CreateJobsFromMailQDialog(CreateJobsQDialog):
 
 
         mail_body = self.mail_manager.getMailBody(job_msg)
-        if isinstance(mail_body, bytes):
-            mail_body = mail_body.decode('utf-8')
 
         self.mailBodyLabel.setText(mail_body)
         self.loadItemContent()
@@ -397,6 +413,7 @@ class SelectOptionsQDialog(QDialog):
         super().__init__(parent, *args, **kwargs)
         self.gv = gv
 
+        assert len(options) > 0, f'options should contain at least one option, it contains {len(option)}'
 
         loadUi(os.path.join(self.gv['GLOBAL_UI_DIR'], 'select_options_dialog.ui'), self)
         self.label.setText(question)
@@ -411,21 +428,30 @@ class SelectOptionsQDialog(QDialog):
         QShortcut(QKeySequence('Ctrl+p'), self).activated.connect(self.toPreviousRow)
         QShortcut(QKeySequence('Ctrol+n'), self).activated.connect(self.toNextRow)
 
-        for (option, option_data, done) in options:
-
+        for option_tuple in options:
             item = QListWidgetItem()
-            item.setData(1, option_data)
+            item.setFont(QFont('Cantarell', 14))
+            if isinstance(option_tuple, str):
+                item.setText(option_tuple)
 
-            if isinstance(done, bool):
-                if done:
+            elif len(option_tuple) == 2:
+                option, option_data = option_tuple
+                item.setText(option)
+                item.setData(1, option_data)
+
+            elif len(options[0]) == 3:
+                option, option_data, option_bool = option_tuple
+                if option_bool:
                     item.setText('✅ '+option)
                 else:
                     item.setText('❎ '+option)
-            else:
-                    item.setText(option)
+                item.setData(1, option_data)
 
-            item.setFont(QFont('Cantarell', 14))
+            else: 
+                raise ValueError(f'tuples in options list should be of length 2 or 3 not {len(options[0])}') 
+
             self.optionsQListWidget.addItem(item)
+
 
     def toNextRow(self):
         opt_ql_widget = self.optionsQListWidget

@@ -73,7 +73,7 @@ class PrintAangezetQPushButton(JobsQPushButton):
 
         for job_file in os.listdir(job_folder_global_path):
             if job_file.endswith('.gcode'):
-                gcode_files_name_and_global_path.append((job_file, os.path.join(job_folder_global_path, job_file), 'done'))
+                gcode_files_name_and_global_path.append((job_file, os.path.join(job_folder_global_path, job_file)))
 
 
         if len(gcode_files_name_and_global_path) <= 1:
