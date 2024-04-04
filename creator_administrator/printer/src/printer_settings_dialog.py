@@ -1,21 +1,19 @@
 import os
 import json
-import abc
 import subprocess
 from functools import partial
 
 
-from PyQt6.QtWidgets import QDialog, QWidget
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QDialog, QWidget, QVBoxLayout, QLabel
 from PyQt6.uic import loadUi
 
 from src.settings_dialog import SettingsQDialog
 from src.qmessagebox import WarningQMessageBox
 from src.validate import (
-        check_int,
+        check_empty,
         check_extensions_tuple,
-        check_comma_seperated_tuple,
-        check_html,
-        check_is_directory)
+        check_comma_seperated_tuple)
 
 from global_variables import gv
 
@@ -25,7 +23,8 @@ class PrintSettingsQDialog(SettingsQDialog):
         ui_global_path = os.path.join(gv['LOCAL_UI_DIR'], 'settings_dialog.ui')
         super().__init__(parent, ui_global_path, gv, *args, **kwargs)
 
-        self.addPrinterDictList = []
+        self.special_printers_dicts = gv['SPECIAL_PRINTERS']
+        self.refreshSpecialPrinterScrollArea()
 
         self.addPrinterPushButton.clicked.connect(self.addNewSpecialPrinter)
         self.defaultPrinterNameLineEdit.setText(str(gv['DEFAULT_PRINTER_NAME']))
@@ -33,36 +32,70 @@ class PrintSettingsQDialog(SettingsQDialog):
     def saveMachineSettings(self):
         ''' Save the machine specific settings. '''
 
-        with open(self.gv['SETTINGS_FILE_PATH'], 'r') as settings_file:
+        with open(gv['SETTINGS_FILE_PATH'], 'r') as settings_file:
             settings_dict = json.load(settings_file)
 
             settings_dict['DEFAULT_PRINTER_NAME'] = self.defaultPrinterNameLineEdit.text()
+            print(f"saveing the special printers {self.special_printers_dicts}")
+            settings_dict['SPECIAL_PRINTERS'] = self.special_printers_dicts
 
-        with open(self.gv['SETTINGS_FILE_PATH'], 'w' ) as settings_file:
+        with open(gv['SETTINGS_FILE_PATH'], 'w' ) as settings_file:
             json.dump(settings_dict, settings_file, indent=4)
 
     def validateMachineSettings(self) -> bool:
         ''' Validate the machine specific settings. '''
 
-        check_and_warnings = [(not self.defaultPrinterNameLineEdit.text() == '', 'printer name cannot be empty')]
+        check_and_warnings = [
+            (check_empty(self.defaultPrinterNameLineEdit, gv), 'Printer Name cannot be empty')
+         ]
+
         # check input values
         for check, warning_string in check_and_warnings:
-            if check:
-                WarningQMessageBox(self, self.gv, warning_string)
+            if not check:
+                WarningQMessageBox(self, gv, warning_string)
                 return False
         return True
 
     def restartApp(self):
         ''' Restart the application. '''
         subprocess.call("python " + '"'+
-            f'{os.path.join(self.gv["REPO_DIR_HOME"], "printer/src/printer_app.py")}'
+            f'{os.path.join(gv["REPO_DIR_HOME"], "printer/src/printer_app.py")}'
                         +'"', shell=True)
 
     def addNewSpecialPrinter(self):
         ''' Add a new special printer. '''
         add_printer_dialog = AddPrinterQDialog(self)
-        if add_printer_dialog.exec() == 1:
-            self.addPrinterDictList.append(add_printer_dialog.add_printer_dict)
+        add_printer_dialog.exec()
+        if add_printer_dialog.add_printer_dict is not None:
+            self.special_printers_dicts['printer_'+str(len(self.special_printers_dicts)+1)] = add_printer_dialog.add_printer_dict
+            self.refreshSpecialPrinterScrollArea()
+
+    def refreshSpecialPrinterScrollArea(self):
+        ''' Refresh property widget. '''
+
+        content_widget = QWidget()
+        scroll_layout = QVBoxLayout(content_widget)
+
+
+        for printer_key, printer_value in self.special_printers_dicts.items():
+
+            printer_str = f'{printer_key.replace("_", " ").capitalize()}: <big><big>{printer_value["printer_name"]}</big></big><hr>'\
+                    f'<br>&nbsp;&nbsp;&nbsp;&nbsp;Accepted Extensions: <big><big>{printer_value["ACCEPTED_EXTENSIONS"]}</big></big>'\
+                                   f'<br>&nbsp;&nbsp;&nbsp;&nbsp;Accepted Materials:&nbsp;&nbsp;<big><big>{printer_value["ACCEPTED_MATERIALS"]}</big></big>'
+
+            for property_key, property_dict in printer_value['properties'].items():
+
+                printer_str += f'<br>&nbsp;&nbsp;&nbsp;&nbsp;{property_key.replace("_", " ").capitalize()}:&nbsp;&nbsp;'\
+                        f'<big><big>{property_dict["property_name"]}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'\
+                        f'</big></big> Data Type:<big><big> {property_dict["data_type"]}</big></big>'
+
+                if 'custom_list_of_strings' in property_dict:
+                    printer_str += f'<big><big> = {property_dict["custom_list_of_strings"]}</big></big>'
+
+            scroll_layout.addWidget(QLabel(printer_str+'<br>', self))
+
+        scroll_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.scrollArea.setWidget(content_widget)
 
 class AddPrinterQDialog(QDialog):
     ''' Add a new special printer dialog. '''
@@ -71,9 +104,11 @@ class AddPrinterQDialog(QDialog):
         super().__init__(parent, *args, **kwargs)
 
         self.add_printer_dict = None
+        self.properties = {}
 
         loadUi(os.path.join(gv['LOCAL_UI_DIR'], 'add_printer_dialog.ui'), self)
 
+        self.custom_list_of_strings = 'Custom List of Strings'
         self.buttonBox.accepted.connect(self.applySettings)
         self.addPropertyButton.clicked.connect(self.applyNewProperty)
 
@@ -81,75 +116,96 @@ class AddPrinterQDialog(QDialog):
         self.customListLabel.setHidden(True)
         self.dataTypeQComboBox.currentIndexChanged.connect(self.onDataTypeQComboBoxChanged)
 
-        self.customListLineEdit.textChanged.connect(
-                partial(check_comma_seperated_tuple, self.customListLineEdit, gv))
+
+        self.printerNameLineEdit.textChanged.connect(partial(check_empty, self.printerNameLineEdit, gv))
+        self.acceptedMaterialsLineEdit.textChanged.connect(partial(check_comma_seperated_tuple, self.acceptedMaterialsLineEdit, gv))
+        self.acceptedExtensionsLineEdit.textChanged.connect(partial(check_extensions_tuple, self.acceptedExtensionsLineEdit, gv))
+ 
+        self.newPropertyNameLineEdit.textChanged.connect(partial(check_empty, self.newPropertyNameLineEdit, gv))
+
+        self.customListLineEdit.textChanged.connect(partial(check_comma_seperated_tuple, self.customListLineEdit, gv))
 
     def applyNewProperty(self):
         ''' Validate and add new property. '''
-        if self.newPropertyNameLineEdit.text() == '':
-            return
 
-        if self.dataTypeQComboBox ==  'Custom List of Stings':
-            data_type = self.customListLineEdit.text()
-        else:
-            data_type = self.dataTypeQComboBox.text()
-        print(f"data_type {data_type}")
+        check_and_warnings = [(check_empty(self.newPropertyNameLineEdit, gv), 'New Property Name cannot be emtpy')]
 
+        if self.dataTypeQComboBox.currentText() == self.custom_list_of_strings:
+            check_and_warnings.append((check_comma_seperated_tuple(self.customListLineEdit, gv), f'{self.custom_list_of_strings} is not a comma seperated list of strings'))
 
+        # check input values
+        for check, warning_string in check_and_warnings:
+            if not check:
+                WarningQMessageBox(self, gv, warning_string)
+                return
 
-    def validateMachineSettings(self) -> bool:
+        self.addProperty()
+
+    def applySettings(self):
+        ''' Validate and save settings. '''
+        if self.validateNewPrinterSettings():
+            self.add_printer_dict = {'printer_name': self.printerNameLineEdit.text(),
+                'ACCEPTED_EXTENSIONS': self.acceptedExtensionsLineEdit.text(),
+                'ACCEPTED_MATERIALS': self.acceptedMaterialsLineEdit.text(),
+                'properties': self.properties}
+            self.close()
+        
+    def validateNewPrinterSettings(self) -> bool:
         ''' Validate general (not machine specific) settings. '''
 
-#         check_types_and_warnings = [
-#             (not self.checkInt(self.daysToKeepJobsLineEdit),
-#             f'Days to Store Jobs is not an number but {self.daysToKeepJobsLineEdit.text()}'),
+        check_and_warnings = [
+            (check_empty(self.printerNameLineEdit, gv), 'Printer Name cannot be empty'),
+            (check_comma_seperated_tuple(self.acceptedMaterialsLineEdit, gv), 'Accepted Materials is not a comma seperated list of values'),
+            (check_extensions_tuple(self.acceptedExtensionsLineEdit, gv), 'Accepted Materials is not comma seperated list of extensions such as: .3mf, .stl'),
+         ]
 
-#             (not self.checkExtensionsTuple(self.acceptedExtentionsLineEdit),
-#             'Accepted Extensions could not be convered to a list of extensions'),
+        # check input values
+        for check, warning_string in check_and_warnings:
+            if not check:
+                WarningQMessageBox(self, gv, warning_string)
+                return False
+        return True
 
-#             (not self.checkMaterialTuple(self.acceptedMaterialsLineEdit),
-#             'Accepted Materials could not be convered to a list of materials')]
+    def addProperty(self):
+        ''' Add property to widget. '''
+        property_key = 'property_'+str(len(self.properties)+1)
 
-#         # first, check types, otherwise type errors might break upcoming checks
-#         for check, warning_string in check_types_and_warnings:
-#             if check:
-#                 WarningQMessageBox(self, self.gv, warning_string)
-#                 return False
+        self.properties[property_key] = {'property_name': self.newPropertyNameLineEdit.text(),
+                                         'data_type': self.dataTypeQComboBox.currentText()}
 
-#         check_and_warnings = [
-#             (int(self.daysToKeepJobsLineEdit.text()) < 0,
-#             f'Days to Store Jobs is not an positive number but {self.daysToKeepJobsLineEdit.text()}'),
+        if self.dataTypeQComboBox.currentText() == self.custom_list_of_strings:
+            self.properties[property_key]['custom_list_of_strings'] = self.customListLineEdit.text()
 
-#             (not self.checkIsDirectory(self.selectDataDirectoryButton),
-#             f'Data Directory {self.selectDataDirectoryButton.folder_global_path} is not a directory'),
+        self.newPropertyNameLineEdit.clear()
+        self.newPropertyNameLineEdit.setStyleSheet("") 
+        self.customListLineEdit.clear()
+        self.customListLineEdit.setStyleSheet("") 
 
-#             (not self.checkIsDirectory(self.selectTodoDirectoryButton),
-#             f'Todo Directory {self.selectTodoDirectoryButton.folder_global_path} is not a directory'),
-#          ]
+        self.refreshPropetyScrollArea()
 
-#         for template_name, widget_button in (('RECEIVED_MAIL_TEMPLATE', self.selectReceivedTemplateButton),
-#                                              ('FINISHED_MAIL_TEMPLATE', self.selectFinishedTemplateButton),
-#                                              ('DECLINED_MAIL_TEMPLATE', self.selectDeclinedTemplateButton)):
-#             if widget_button.file_global_path is not None:
-#                 check_and_warnings.append(
-#                     (not os.path.exists(widget_button.file_global_path),
-#                     f'Template {template_name} path {widget_button.file_global_path} does not exist'))
+    def refreshPropetyScrollArea(self):
+        ''' Refresh property widget. '''
 
-#                 check_and_warnings.append((not (self.checkHTML(widget_button)),
-#                 f'Template {template_name} should be an HTML file and is {widget_button.file_global_path}'))
+        content_widget = QWidget()
+        scroll_layout = QVBoxLayout(content_widget)
+
+        for property_key, property_dict in self.properties.items():
+
+            property_str = f'{property_key.replace("_", " ").capitalize()}: <big><big>{property_dict["property_name"]}</big></big><hr>'\
+                    f'<br>&nbsp;&nbsp;&nbsp;&nbsp;Data Type:<big><big> {property_dict["data_type"]}</big></big>'
+
+            if 'custom_list_of_strings' in property_dict:
+                property_str += f' = <big><big>{property_dict["custom_list_of_strings"]}</big></big>'
+
+            scroll_layout.addWidget(QLabel(property_str+'<br>', self))
 
 
-#         # check input values
-#         for check, warning_string in check_and_warnings:
-#             if check:
-#                 WarningQMessageBox(self.gv, self, warning_string)
-#                 return False
-#         return True
-        pass
+        scroll_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.scrollArea.setWidget(content_widget)
 
     def onDataTypeQComboBoxChanged(self):
         ''' Show/hide custom list option. '''
-        if self.dataTypeQComboBox.currentText() == 'Custom List of Stings':
+        if self.dataTypeQComboBox.currentText() == self.custom_list_of_strings:
             self.customListLineEdit.setHidden(False)
             self.customListLabel.setHidden(False)
         else:

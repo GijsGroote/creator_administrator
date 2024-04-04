@@ -3,7 +3,15 @@ import os
 
 from PyQt6.QtWidgets import QWidget
 
-def check_int(widget: QWidget, gv) -> bool:
+def check_empty(widget: QWidget, gv: dict) -> bool:
+    if widget.text() == '':
+        widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
+        return False
+
+    widget.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')
+    return True
+
+def check_int(widget: QWidget, gv: dict) -> bool:
     try:
         int(widget.text())
         widget.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')
@@ -13,7 +21,7 @@ def check_int(widget: QWidget, gv) -> bool:
         widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
         return False
 
-def check_extensions_tuple(widget: QWidget, gv) -> bool:
+def check_extensions_tuple(widget: QWidget, gv: dict) -> bool:
     try:
         tuple(widget.text().split(', '))
 
@@ -29,7 +37,7 @@ def check_extensions_tuple(widget: QWidget, gv) -> bool:
     widget.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')
     return True
 
-def check_comma_seperated_tuple(widget: QWidget, gv) -> bool:
+def check_comma_seperated_tuple(widget: QWidget, gv: dict) -> bool:
     try:
         tuple(widget.text().split(', '))
 
@@ -46,7 +54,7 @@ def check_comma_seperated_tuple(widget: QWidget, gv) -> bool:
     return True
 
 
-def check_html(widget: QWidget, gv) -> bool:
+def check_html(widget: QWidget, gv: dict) -> bool:
     if not widget.file_global_path.lower().endswith('.html'):
         widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
         return False
@@ -54,7 +62,7 @@ def check_html(widget: QWidget, gv) -> bool:
     widget.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')
     return True
 
-def check_file_exists(widget: QWidget, file_path: str, gv) -> bool:
+def check_file_exists(widget: QWidget, file_path: str, gv: dict) -> bool:
     if os.path.exists(file_path):
         widget.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')
         return True
@@ -62,7 +70,7 @@ def check_file_exists(widget: QWidget, file_path: str, gv) -> bool:
     widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
     return False
 
-def check_is_directory(widget: QWidget, gv) -> bool:
+def check_is_directory(widget: QWidget, gv: dict) -> bool:
 
     if not os.path.isdir(widget.folder_global_path):
         widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')

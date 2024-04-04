@@ -34,7 +34,7 @@ class LaserKlaarQPushButton(JobsQPushButton):
         self.parent().parent().setCurrentIndex(0)
 
         if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]): # pylint: disable=use-a-generator
-            WarningQMessageBox(gv=gv, parent=self, text='No Job finished mail send because: No mail file found')
+            WarningQMessageBox(parent=self, gv=gv, text='No Job finished mail send because: No mail file found')
         else:
             ThreadedMailManager(parent=self, gv=gv).startMailWorker(
                     sender_name=sender_name,

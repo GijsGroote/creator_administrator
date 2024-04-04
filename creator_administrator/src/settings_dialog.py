@@ -97,29 +97,29 @@ class SettingsQDialog(QDialog):
         ''' Validate general (not machine specific) settings. '''
 
         check_types_and_warnings = [
-            (not check_int(self.daysToKeepJobsLineEdit, self.gv),
+            (check_int(self.daysToKeepJobsLineEdit, self.gv),
             f'Days to Store Jobs is not an number but {self.daysToKeepJobsLineEdit.text()}'),
 
-            (not check_extensions_tuple(self.acceptedExtentionsLineEdit, self.gv),
+            (check_extensions_tuple(self.acceptedExtentionsLineEdit, self.gv),
             'Accepted Extensions could not be convered to a list of extensions'),
 
-            (not check_comma_seperated_tuple(self.acceptedMaterialsLineEdit, self.gv),
+            (check_comma_seperated_tuple(self.acceptedMaterialsLineEdit, self.gv),
             'Accepted Materials could not be convered to a list of materials')]
 
         # first, check types, otherwise type errors might break upcoming checks
         for check, warning_string in check_types_and_warnings:
-            if check:
+            if not check:
                 WarningQMessageBox(self, self.gv, warning_string)
                 return False
 
         check_and_warnings = [
-            (int(self.daysToKeepJobsLineEdit.text()) < 0,
+            (int(self.daysToKeepJobsLineEdit.text()) >= 0,
             f'Days to Store Jobs is not an positive number but {self.daysToKeepJobsLineEdit.text()}'),
 
-            (not check_is_directory(self.selectDataDirectoryButton, self.gv),
+            (check_is_directory(self.selectDataDirectoryButton, self.gv),
             f'Data Directory {self.selectDataDirectoryButton.folder_global_path} is not a directory'),
 
-            (not check_is_directory(self.selectTodoDirectoryButton, self.gv),
+            (check_is_directory(self.selectTodoDirectoryButton, self.gv),
             f'Todo Directory {self.selectTodoDirectoryButton.folder_global_path} is not a directory'),
          ]
 
@@ -128,17 +128,17 @@ class SettingsQDialog(QDialog):
                                              ('DECLINED_MAIL_TEMPLATE', self.selectDeclinedTemplateButton)):
             if widget_button.file_global_path is not None:
                 check_and_warnings.append(
-                    (not os.path.exists(widget_button.file_global_path),
+                    (os.path.exists(widget_button.file_global_path),
                     f'Template {template_name} path {widget_button.file_global_path} does not exist'))
 
-                check_and_warnings.append((not (check_html(widget_button, self.gv)),
+                check_and_warnings.append((check_html(widget_button, self.gv),
                 f'Template {template_name} should be an HTML file and is {widget_button.file_global_path}'))
 
 
         # check input values
         for check, warning_string in check_and_warnings:
-            if check:
-                WarningQMessageBox(self.gv, self, warning_string)
+            if not check:
+                WarningQMessageBox(self, self.gv, warning_string)
                 return False
         return True
 

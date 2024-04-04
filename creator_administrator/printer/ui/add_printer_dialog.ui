@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../figures/logo.ico</normaloff>../../figures/logo.ico</iconset>
+    <normaloff>../../../../../../../../figures/logo.ico</normaloff>../../../../../../../../figures/logo.ico</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -136,7 +136,7 @@
          </item>
          <item>
           <property name="text">
-           <string>Custom List of Stings</string>
+           <string>Custom List of Strings</string>
           </property>
          </item>
          <item>
@@ -182,7 +182,7 @@
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Seperate by comma's&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Example: &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;wood, oil, stove, green&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
-          <string>Custom List of Stings:</string>
+          <string>Custom List of Strings:</string>
          </property>
          <property name="buddy">
           <cstring>customListLineEdit</cstring>
@@ -311,22 +311,6 @@
  </tabstops>
  <resources/>
  <connections>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>Dialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>228</x>
-     <y>546</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>

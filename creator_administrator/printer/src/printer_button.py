@@ -130,7 +130,7 @@ class PrintKlaarQPushButton(JobsQPushButton):
         self.parent().parent().setCurrentIndex(0)
 
         if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]): # pylint: disable=use-a-generator
-            WarningQMessageBox(gv=gv, parent=self, text='No Job finished mail send because: No mail file found')
+            WarningQMessageBox(parent=self, gv=gv, text='No Job finished mail send because: No mail file found')
         else:
             ThreadedMailManager(parent=self, gv=gv).startMailWorker(
                     sender_name=sender_name,
@@ -238,11 +238,11 @@ class PrintOptionsQPushButton(OptionsQPushButton):
         job_dict = PrintJobTracker(parent=self).getJobDict(job_name)
 
         if job_dict is None:
-            WarningQMessageBox(gv=gv, parent=self, text='No mail send because: Job Name could not be found')
+            WarningQMessageBox(parent=self, gv=gv, text='No mail send because: Job Name could not be found')
             return
 
         if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_dict['job_folder_global_path'])]): # pylint: disable=use-a-generator
-            WarningQMessageBox(gv=gv, parent=self, text='No Job finished mail send because: No mail file found')
+            WarningQMessageBox(parent=self, gv=gv, text='No Job finished mail send because: No mail file found')
             return
 
         ThreadedMailManager(parent=self, gv=gv).startMailWorker(
