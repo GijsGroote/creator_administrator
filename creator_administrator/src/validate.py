@@ -79,3 +79,12 @@ def check_is_directory(widget: QWidget, gv: dict) -> bool:
     widget.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')
     return True
 
+def validate_properties(widget: QWidget, properties_dict: dict) -> bool:
+    ''' Validate if all properties. '''
+
+    # No properties to check
+    if properties_dict is None:
+        return True
+    # for prope
+    # TODO make this functiosn
+    return True

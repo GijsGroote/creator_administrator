@@ -9,9 +9,11 @@ from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QVBoxLayout, QHBoxLayout
 from src.qdialog import CreateJobsFromMailQDialog, CreateJobsFromFileSystemQDialog, SearchJobDialog
 from src.qmessagebox import TimedMessage
 from src.threaded_mail_manager import ThreadedMailManager
+from src.validate import validate_properties
 
 from printer_job_tracker import PrintJobTracker
 from printer_validate import validate_material_info
+
 
 from global_variables import gv
 
@@ -35,6 +37,8 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         self.printPropertyScrollArea.setHidden(True)
         self.printPropertyScrollArea.setWidgetResizable(True)
 
+        self.requested_item_parameters_dict = None
+
 
         for printer_dict in gv['SPECIAL_PRINTERS'].values():
             self.printerComboBox.addItem(printer_dict['printer_name'])
@@ -47,14 +51,22 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
 
         content_widget = QWidget()
         vertical_layout = QVBoxLayout(content_widget)
-        self.property_qline_edit = {}
+        self.printer_properties = {}
         form_layout = QFormLayout()
         form_layout.setFormAlignment(Qt.AlignmentFlag.AlignLeft)
 
-        for property_dict in gv['SPECIAL_PRINTERS'][self.printerComboBox.currentText()]['properties'].values():
-            label = QLabel(property_dict['property_name'])
+        selected_printer = self.printerComboBox.currentText()
+
+
+        # make all label and line edits that belong to the requested printer
+        for property_name, property_dict in gv['SPECIAL_PRINTERS'][selected_printer]['properties'].items():
+            label = QLabel(property_name)
             qline_edit = QLineEdit()
-            self.property_qline_edit[property_dict['property_name']] = qline_edit
+
+            print(gv['SPECIAL_PRINTERS'][selected_printer]['properties'])
+
+            self.printer_properties[property_name] = {'qline_edit_widget': qline_edit, 
+               'data_type': gv['SPECIAL_PRINTERS'][selected_printer]['properties'][property_name]['data_type']}
             form_layout.addRow(label, qline_edit)
             vertical_layout.addLayout(form_layout)
 
@@ -64,30 +76,13 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         # adjust height of scoll area
         self.printPropertyScrollArea.setMinimumHeight(content_widget.sizeHint().height())
 
-    def loadRequestedParametersforAttachment(self, requested_parameters_dict: dict):
-        ''' Load the requested parameters. '''
-
-        self.printPropertyScrollArea.setHidden(False)
-
-        # laod in material, and check some accepted extensions maaaaybe.
-
-        for property_dict in gv['SPECIAL_PRINTERS'][requested_parameters_dict['printer_name']]['properties'].values():
-
-            if property_dict['property_name'] in requested_parameters_dict:
-                requested_text = requested_parameters_dict[property_dict['property_name']]
-                self.property_qline_edit[property_dict['property_name']].setText(requested_text)
-
-            else:
-                print(f"The requested parametr {property_dict['property_name']} is not in the requested parametres, implement going to the default value.")
-
-
-
     def loadItemContent(self):
         ''' Load content of attachment into dialog. '''
 
         attachment = self.temp_make_items[self.make_item_counter]
         attachment_name = self.mail_manager.getAttachmentFileName(attachment)
 
+        # load requested parameters
         if self.requested_parameters_dict is not None and\
                 attachment_name in self.requested_parameters_dict and\
                 'printer_name' in self.requested_parameters_dict[attachment_name]:
@@ -95,10 +90,12 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
             self.printerComboBox.setCurrentIndex(self.printerComboBox.findText(
                 self.requested_parameters_dict[attachment_name]['printer_name']))
 
-            self.loadRequestedParametersforAttachment(self.requested_parameters_dict[attachment_name])
+            self.requested_item_parameters_dict = self.requested_parameters_dict[attachment_name]
+            self.loadRequestedParametersforAttachment()
 
         else:
             self.printPropertyScrollArea.setHidden(True)
+            self.requested_item_parameters_dict = None
 
 
         self.attachmentProgressQLabel.setText(f'Attachment ({self.make_item_counter+1}/{len(self.temp_make_items)})')
@@ -116,12 +113,51 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         self.materialQComboBox.addItems(materials)
         self.materialQComboBox.addItem(self.new_material_text)
 
+        # guess the material
+        for material in materials:
+            if material.lower() in attachment_name.lower():
+                self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(material))
+
         # guess the amount
         match = re.search(r"\d+\.?\d*(?=x_)", attachment_name.lower())
         if match:
             self.amountQLineEdit.setText(match.group())
         else:
             self.amountQLineEdit.setText('1')
+
+
+    def loadRequestedParametersforAttachment(self):
+        ''' Load the requested parameters. '''
+
+        self.printPropertyScrollArea.setHidden(False)
+
+        if 'material' in self.requested_item_parameters_dict:
+            if self.requested_item_parameters_dict['material'].lower() in self.materialQComboBox:
+                self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(self.requested_item_parameters_dict['material']))
+            else:
+                self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(self.new_material_text))
+                self.newMaterialQLineEdit.setHidden(False)
+                self.newMaterialQLineEdit.setText(self.requested_item_parameters_dict['material'])
+
+        if 'amount' in self.requested_item_parameters_dict:
+            try:
+                amount_int = int(self.requested_item_parameters_dict['amount'])
+                self.amountQLineEdit.setText(amount_int)
+
+            except ValueError:
+                pass
+
+
+        for property_name, property_dict in gv['SPECIAL_PRINTERS'][self.requested_item_parameters_dict['printer_name']]['properties'].items():
+
+            if property_name in self.requested_item_parameters_dict:
+                requested_text = self.requested_item_parameters_dict[property_name]
+                self.printer_properties[property_name]['qline_edit_widget'].setText(requested_text)
+
+            else:
+                print(f"The requested parametr {property_name} is not in the requested parametres, implement going to the default value.")
+
+
 
     def collectItemInfo(self):
         ''' Collect material amount info. '''
@@ -133,6 +169,9 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         amount = self.amountQLineEdit.text()
 
         if not validate_material_info(self, material, amount):
+            return
+
+        if not validate_properties(self, self.printer_properties):
             return
 
         attachment = self.temp_make_items[self.make_item_counter]
@@ -149,12 +188,21 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
 
         file_global_path = os.path.join(self.temp_job_folder_global_path, file_name)
 
-        self.temp_make_files_dict[self.temp_job_name + '_' + file_name] = {
-                            'file_name': file_name,
-                            'file_global_path': file_global_path,
-                            'material': material,
-                            'amount': amount,
-                            'done': False}
+        file_dict = {
+            'file_name': file_name,
+            'file_global_path': file_global_path,
+            'printer': self.printerComboBox.currentText(),
+            'material': material,
+            'amount': amount,
+            'done': False}
+
+        if self.printer_properties is not None:
+            for property_name, property_dict in self.printer_properties.items():
+                file_dict[property_name] = property_dict['qline_edit_widget'].text()
+
+        self.temp_make_files_dict[self.temp_job_name + '_' + file_name] = file_dict
+
+
 
         self.temp_store_files_dict[file_name] = {'attachment': attachment,
                                                  'target_file_global_path': file_global_path}
