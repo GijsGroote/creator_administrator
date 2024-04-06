@@ -72,12 +72,20 @@ def check_file_exists(widget: QWidget, file_path: str, gv: dict) -> bool:
 
 def check_is_directory(widget: QWidget, gv: dict) -> bool:
 
-    if not os.path.isdir(widget.folder_global_path):
-        widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
-        return False
+    if os.path.isdir(widget.folder_global_path):
+        widget.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')
+        return True
 
-    widget.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')
-    return True
+    widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
+    return False
+
+def check_is_executable(widget: QWidget, gv: dict) -> bool:
+
+    if os.path.isfile(widget.file_global_path) and widget.file_global_path.endswith('.exe'):
+        widget.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')
+        return True
+    widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
+    return False
 
 def validate_properties(widget: QWidget, properties_dict: dict) -> bool:
     ''' Validate if all properties. '''

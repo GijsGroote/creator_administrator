@@ -13,7 +13,7 @@ from src.qmessagebox import WarningQMessageBox
 from src.qdialog import SelectOptionsQDialog
 from src.validate import (
         check_empty,
-        check_extensions_tuple,
+        check_is_executable,
         check_comma_seperated_tuple)
 
 from global_variables import gv
@@ -174,7 +174,7 @@ class AddPrinterQDialog(QDialog):
         check_and_warnings = [
             (check_empty(self.printerNameLineEdit, gv), 'Printer Name cannot be empty'),
             (check_comma_seperated_tuple(self.acceptedMaterialsLineEdit, gv), 'Accepted Materials is not a comma seperated list of values'),
-            (check_extensions_tuple(self.acceptedExtensionsLineEdit, gv), 'Accepted Materials is not comma seperated list of extensions such as: .3mf, .stl'),
+            (check_is_executable(self.slicerExecutableButton, gv), 'Select an Executable, .exe file, not {self.slicerExecutableButton.file_global_path}'),
          ]
 
         # check input values
