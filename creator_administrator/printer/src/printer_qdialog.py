@@ -2,7 +2,8 @@ import os
 import re
 
 
-from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QVBoxLayout, QHBoxLayout
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QVBoxLayout, QHBoxLayout, QSizePolicy, QFormLayout
 
 
 from src.qdialog import CreateJobsFromMailQDialog, CreateJobsFromFileSystemQDialog, SearchJobDialog
@@ -32,6 +33,8 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
 
 
         self.printPropertyScrollArea.setHidden(True)
+        self.printPropertyScrollArea.setWidgetResizable(True)
+
 
         for printer_dict in gv['SPECIAL_PRINTERS'].values():
             self.printerComboBox.addItem(printer_dict['printer_name'])
@@ -39,28 +42,44 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         self.printerComboBox.currentIndexChanged.connect(self.onPrinterComboBoxChanged)
         self.loadJobContent()
 
-
     def onPrinterComboBoxChanged(self):
         ''' Add the printer properties to the comboBox. '''
-        # self.printPropertyScrollArea.clear()
 
-        scroll_widget = QWidget()
-        vertical_layout = QVBoxLayout(scroll_widget)
-
+        content_widget = QWidget()
+        vertical_layout = QVBoxLayout(content_widget)
+        self.property_qline_edit = {}
+        form_layout = QFormLayout()
+        form_layout.setFormAlignment(Qt.AlignmentFlag.AlignLeft)
 
         for property_dict in gv['SPECIAL_PRINTERS'][self.printerComboBox.currentText()]['properties'].values():
-            horizontal_layout = QHBoxLayout()
-
             label = QLabel(property_dict['property_name'])
-            text_input = QLineEdit()
-            horizontal_layout.addWidget(label)
-            horizontal_layout.addWidget(text_input)
+            qline_edit = QLineEdit()
+            self.property_qline_edit[property_dict['property_name']] = qline_edit
+            form_layout.addRow(label, qline_edit)
+            vertical_layout.addLayout(form_layout)
 
-            # Add horizontal layout to the main vertical layout
-            vertical_layout.addLayout(horizontal_layout)
+        content_widget.setLayout(vertical_layout)
+        self.printPropertyScrollArea.setWidget(content_widget)
 
-        scroll_widget.setLayout(vertical_layout)
-        self.printPropertyScrollArea.setWidget(scroll_widget)
+        # adjust height of scoll area
+        self.printPropertyScrollArea.setMinimumHeight(content_widget.sizeHint().height())
+
+    def loadRequestedParametersforAttachment(self, requested_parameters_dict: dict):
+        ''' Load the requested parameters. '''
+
+        self.printPropertyScrollArea.setHidden(False)
+
+        # laod in material, and check some accepted extensions maaaaybe.
+
+        for property_dict in gv['SPECIAL_PRINTERS'][requested_parameters_dict['printer_name']]['properties'].values():
+
+            if property_dict['property_name'] in requested_parameters_dict:
+                requested_text = requested_parameters_dict[property_dict['property_name']]
+                self.property_qline_edit[property_dict['property_name']].setText(requested_text)
+
+            else:
+                print(f"The requested parametr {property_dict['property_name']} is not in the requested parametres, implement going to the default value.")
+
 
 
     def loadItemContent(self):
@@ -76,7 +95,7 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
             self.printerComboBox.setCurrentIndex(self.printerComboBox.findText(
                 self.requested_parameters_dict[attachment_name]['printer_name']))
 
-            self.loadRequestedParameters(self.requested_parameters_dict[attachment_name]['printer_name'])
+            self.loadRequestedParametersforAttachment(self.requested_parameters_dict[attachment_name])
 
         else:
             self.printPropertyScrollArea.setHidden(True)
@@ -103,18 +122,6 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
             self.amountQLineEdit.setText(match.group())
         else:
             self.amountQLineEdit.setText('1')
-
-    def loadRequestedParameters(self, requested_attachment_dict: dict):
-        ''' Load the requested parameters. '''
-
-        self.printPropertyScrollArea.setHidden(False)
-
-        for property_dict in gv['SPECIAL_PRINTERS'][requested_attachment_dict]['properties'].values():
-
-            print(f"add  {property_dict['property_name']}")
-
-            # self.printer_dict['properties'].values():
-            # self.printPropertyScrollArea.addRow(QLabel(property_dict['property_name'], self))
 
     def collectItemInfo(self):
         ''' Collect material amount info. '''
