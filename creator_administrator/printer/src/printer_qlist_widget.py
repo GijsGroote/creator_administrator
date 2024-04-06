@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import QStackedWidget, QTabWidget, QWidget, QDialog
 
 from printer_job_tracker import PrintJobTracker 
 from global_variables import gv
+from directory_functions import open_file
 
 from src.qlist_widget import OverviewQListWidget, JobContentQListWidget
 
@@ -145,8 +146,13 @@ class PrintJobContentQListWidget(JobContentQListWidget):
 
     def fileDoubleClicked(self, clicked_file):
         ''' Double click on a file (or item) to open it. '''
-        pass
-        # TODO: check if the file is make file, then check the slicer required, open using that specific slicer then
-        # PrintJobTracker(self)
-        # open_file(clicked_file.data(1), executable_global_path)
+
+        # check if file is a maker file, open in the specified executable
+        job_tracker = PrintJobTracker(self)
+        slicer_executable_global_path = job_tracker.globalPathToExecutable(clicked_file.data(1))
+
+        if slicer_executable_global_path is None:
+            open_file(clicked_file.data(1))
+        else:
+            open_file(clicked_file.data(1), executable_global_path=slicer_executable_global_path)
 

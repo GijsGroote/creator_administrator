@@ -75,6 +75,24 @@ class PrintJobTracker(JobTracker):
                     
         return materials
 
+    def globalPathToExecutable(self, file_global_path: str) -> str:
+        ''' 
+        Check if the file global path is an existing make file.
+
+        if so return path to slicer executable.
+        '''
+        self.readTrackerFile()
+
+        for job_dict in self.tracker_dict.values():
+            for file_dict in job_dict['make_files'].values():
+                if file_global_path == file_dict['file_global_path']:
+                    if 'slicer_executable_global_path' in file_dict:
+                        return file_dict['slicer_executable_global_path']
+                    return 'default todo'
+
+        return None
+
+
     def checkHealth(self):
         ''' Synchonize job tracker and files on file system. '''
 
