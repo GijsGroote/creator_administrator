@@ -45,7 +45,7 @@ def delete_directory_content(parent: QWidget, gv: dict, folder_global_path: str)
         for item in os.listdir(folder_global_path):
             delete_item(parent, gv, os.path.join(folder_global_path, item))
 
-def open_file(file_global_path: str):
+def open_file(file_global_path: str, executable_global_path=None):
     ''' Open a folder in the default file explorer. '''
 
     assert os.path.exists(file_global_path), f'could not find file: {file_global_path}'
@@ -55,8 +55,13 @@ def open_file(file_global_path: str):
 
 
     elif sys.platform == 'win32':
-        with subprocess.Popen(['explorer', file_global_path]):
-            pass
+        if executable_global_path is not None:
+            assert os.path.exists(executable_global_path), f'executable {executable_global_path} does not exist'
+            subprocess.Popen([executable_global_path, file_global_path]) # pylint: disable=consider-using-with
+
+        else:
+            subprocess.Popen(['explorer', file_global_path]) # pylint: disable=consider-using-with
+
     else: 
         raise ValueError(f'unknown platform: {sys.platform}')
 

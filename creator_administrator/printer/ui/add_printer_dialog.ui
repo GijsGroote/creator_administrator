@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>651</width>
+    <width>779</width>
     <height>568</height>
    </rect>
   </property>
@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../../../../../../../../../../../../../figures/logo.ico</normaloff>../../../../../../../../../../../../../../figures/logo.ico</iconset>
+    <normaloff>../../../../../../../../../../../../../../../../../figures/logo.ico</normaloff>../../../../../../../../../../../../../../../../../figures/logo.ico</iconset>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
@@ -83,7 +83,12 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="SelectFileQPushButton" name="pushButton">
+        <widget class="SelectFileQPushButton" name="slicerExecutablePushButton">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Select Executable</string>
          </property>
@@ -255,6 +260,27 @@
          </property>
         </widget>
        </item>
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="propertyDefaultValueLineEdit">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Default Value</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>
@@ -272,8 +298,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>629</width>
-          <height>234</height>
+          <width>757</width>
+          <height>191</height>
          </rect>
         </property>
        </widget>

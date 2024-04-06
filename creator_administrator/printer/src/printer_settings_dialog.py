@@ -8,6 +8,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QDialog, QWidget, QVBoxLayout, QLabel
 from PyQt6.uic import loadUi
 
+from src.directory_functions import shorten_folder_name
 from src.settings_dialog import SettingsQDialog
 from src.qmessagebox import WarningQMessageBox
 from src.qdialog import SelectOptionsQDialog
@@ -31,6 +32,12 @@ class PrintSettingsQDialog(SettingsQDialog):
         self.removePrinterPushButton.clicked.connect(self.removePrinter)
 
         self.defaultPrinterNameLineEdit.setText(str(gv['DEFAULT_PRINTER_NAME']))
+        self.defaultPrinterNameLineEdit.textChanged.connect(
+                partial(check_empty, self.defaultPrinterNameLineEdit, gv))
+
+        self.defaultAcceptedMaterialsLineEdit.textChanged.connect(
+                partial(check_comma_seperated_tuple, self.defaultAcceptedMaterialsLineEdit, gv))
+
 
     def saveMachineSettings(self):
         ''' Save the machine specific settings. '''
@@ -96,21 +103,25 @@ class PrintSettingsQDialog(SettingsQDialog):
 
         for printer_key, printer_value in self.special_printers_dicts.items():
 
-            printer_str = f'{printer_key.replace("_", " ").capitalize()}: <big><big>{printer_value["printer_name"]}</big></big><hr>'\
-                    f'<br>&nbsp;&nbsp;&nbsp;&nbsp;Accepted Extensions: <big><big>{printer_value["ACCEPTED_EXTENSIONS"]}</big></big>'\
-                                   f'<br>&nbsp;&nbsp;&nbsp;&nbsp;Accepted Materials:&nbsp;&nbsp;<big><big>{printer_value["ACCEPTED_MATERIALS"]}</big></big>'
+            slicer_global_path = 'System Default'
+            if 'slicer_executable_global_path' in printer_value:
+                slicer_global_path = shorten_folder_name(printer_value['slicer_executable_global_path'], 45)
+
+            printer_str = f'<big><big>{printer_value["printer_name"]}<hr>'\
+                    f'<br>&nbsp;&nbsp;&nbsp;&nbsp; Printer Name: {printer_key}'\
+                    f'<br>&nbsp;&nbsp;&nbsp;&nbsp; Slicer: {slicer_global_path}'\
+                    f'<br>&nbsp;&nbsp;&nbsp;&nbsp; Accepted Materials:&nbsp;&nbsp;'\
+                    f'{printer_value["ACCEPTED_MATERIALS"]}</big></big>'
 
             for property_name, property_dict in printer_value['properties'].items():
 
-                printer_str += f'<br>&nbsp;&nbsp;&nbsp;&nbsp;<big><big>{property_name}</big></big>'\
+                printer_str += f'<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<big><big>{property_name}</big></big>'\
                         f'<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'\
                         f'</big></big> Data Type:<big><big> {property_dict["data_type"]}</big></big>'
 
                 if 'custom_list_of_strings' in property_dict:
                     printer_str += f'<big><big> = {property_dict["custom_list_of_strings"]}</big></big>'
                 printer_str += '<br>'
-
-
 
             scroll_layout.addWidget(QLabel(printer_str+'<br>', self))
 
@@ -137,11 +148,20 @@ class AddPrinterQDialog(QDialog):
         self.dataTypeQComboBox.currentIndexChanged.connect(self.onDataTypeQComboBoxChanged)
 
 
+
         self.printerNameLineEdit.textChanged.connect(partial(check_empty, self.printerNameLineEdit, gv))
  
+
+        self.acceptedMaterialsLineEdit.textChanged.connect(
+                partial(check_comma_seperated_tuple, self.acceptedMaterialsLineEdit, gv))
+
         self.newPropertyNameLineEdit.textChanged.connect(partial(check_empty, self.newPropertyNameLineEdit, gv))
 
         self.customListLineEdit.textChanged.connect(partial(check_comma_seperated_tuple, self.customListLineEdit, gv))
+
+        # TODO: add the default value, check it when data type selection changed
+        # self.propertyDefaultValueLineEdit.textChanged(
+
 
     def applyNewProperty(self):
         ''' Validate and add new property. '''
@@ -164,7 +184,7 @@ class AddPrinterQDialog(QDialog):
         if self.validateNewPrinterSettings():
             self.add_printer_dict = {'printer_name': self.printerNameLineEdit.text(),
                 'ACCEPTED_EXTENSIONS': self.acceptedExtensionsLineEdit.text(),
-                'SLICER_EXECUTABLE_PATH': self.slicerExecutablePushButton.text(), # TODO
+                'SLICER_EXECUTABLE_PATH': self.slicerExecutablePushButton.text(),
                 'properties': self.properties}
             self.close()
         
@@ -174,7 +194,7 @@ class AddPrinterQDialog(QDialog):
         check_and_warnings = [
             (check_empty(self.printerNameLineEdit, gv), 'Printer Name cannot be empty'),
             (check_comma_seperated_tuple(self.acceptedMaterialsLineEdit, gv), 'Accepted Materials is not a comma seperated list of values'),
-            (check_is_executable(self.slicerExecutableButton, gv), 'Select an Executable, .exe file, not {self.slicerExecutableButton.file_global_path}'),
+            (check_is_executable(self.slicerExecutablePushButton, gv), f'Select an Executable, .exe file, not {self.slicerExecutableButton.file_global_path}'),
          ]
 
         # check input values

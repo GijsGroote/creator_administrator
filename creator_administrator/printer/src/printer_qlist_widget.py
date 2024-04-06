@@ -143,3 +143,10 @@ class PrintJobContentQListWidget(JobContentQListWidget):
         self.gv = gv
 
 
+    def fileDoubleClicked(self, clicked_file):
+        ''' Double click on a file (or item) to open it. '''
+        pass
+        # TODO: check if the file is make file, then check the slicer required, open using that specific slicer then
+        # PrintJobTracker(self)
+        # open_file(clicked_file.data(1), executable_global_path)
+

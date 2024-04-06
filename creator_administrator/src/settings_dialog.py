@@ -42,12 +42,12 @@ class SettingsQDialog(QDialog):
                 partial(check_extensions_tuple, self.acceptedExtentionsLineEdit, self.gv))
 
         if len(gv['ACCEPTED_MATERIALS']) == 1:
-            self.acceptedMaterialsLineEdit.setText(str(gv['ACCEPTED_MATERIALS'][0]))
+            self.defaultAcceptedMaterialsLineEdit.setText(str(gv['ACCEPTED_MATERIALS'][0]))
         else:
-            self.acceptedMaterialsLineEdit.setText(str(gv['ACCEPTED_MATERIALS'])[1:-1].replace("'", ''))
+            self.defaultAcceptedMaterialsLineEdit.setText(str(gv['ACCEPTED_MATERIALS'])[1:-1].replace("'", ''))
 
-        self.acceptedMaterialsLineEdit.textChanged.connect(
-                partial(check_comma_seperated_tuple, self.acceptedMaterialsLineEdit, self.gv))
+        self.defaultAcceptedMaterialsLineEdit.textChanged.connect(
+                partial(check_comma_seperated_tuple, self.defaultAcceptedMaterialsLineEdit, self.gv))
 
 
         for variable_name, check_box in (('DARK_THEME', self.darkModeCheckBox),
@@ -103,7 +103,7 @@ class SettingsQDialog(QDialog):
             (check_extensions_tuple(self.acceptedExtentionsLineEdit, self.gv),
             'Accepted Extensions could not be convered to a list of extensions'),
 
-            (check_comma_seperated_tuple(self.acceptedMaterialsLineEdit, self.gv),
+            (check_comma_seperated_tuple(self.defaultAcceptedMaterialsLineEdit, self.gv),
             'Accepted Materials could not be convered to a list of materials')]
 
         # first, check types, otherwise type errors might break upcoming checks
@@ -150,7 +150,7 @@ class SettingsQDialog(QDialog):
             settings_dict = json.load(settings_file)
 
         settings_dict['ACCEPTED_EXTENSIONS'] = self.acceptedExtentionsLineEdit.text()
-        settings_dict['ACCEPTED_MATERIALS'] =  self.acceptedMaterialsLineEdit.text()
+        settings_dict['ACCEPTED_MATERIALS'] =  self.defaultAcceptedMaterialsLineEdit.text()
         settings_dict['DAYS_TO_KEEP_JOBS'] = self.daysToKeepJobsLineEdit.text()
 
         if sys.platform == 'win32':
