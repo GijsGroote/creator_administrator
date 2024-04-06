@@ -15,13 +15,37 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../../../../../../../figures/logo.ico</normaloff>../../../../../../../../figures/logo.ico</iconset>
+    <normaloff>../../../../../../../../../../../../../../figures/logo.ico</normaloff>../../../../../../../../../../../../../../figures/logo.ico</iconset>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <layout class="QFormLayout" name="formLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Printer Name:</string>
+         </property>
+         <property name="buddy">
+          <cstring>printerNameLineEdit</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="printerNameLineEdit">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+        </widget>
+       </item>
        <item row="1" column="0">
         <widget class="QLabel" name="label_2">
          <property name="font">
@@ -54,35 +78,34 @@
           </font>
          </property>
          <property name="text">
-          <string>Accepted Extensions:</string>
-         </property>
-         <property name="buddy">
-          <cstring>acceptedExtensionsLineEdit</cstring>
+          <string>Slicer Executable:</string>
          </property>
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QLineEdit" name="acceptedExtensionsLineEdit">
-         <property name="font">
-          <font>
-           <pointsize>14</pointsize>
-          </font>
+        <widget class="SelectFileQPushButton" name="pushButton">
+         <property name="text">
+          <string>Select Executable</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="0" colspan="2">
-        <widget class="Line" name="line_2">
-         <property name="font">
-          <font>
-           <pointsize>14</pointsize>
-          </font>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
+      </layout>
+     </item>
+     <item>
+      <widget class="Line" name="line_2">
+       <property name="font">
+        <font>
+         <pointsize>14</pointsize>
+        </font>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QFormLayout" name="formLayout_2">
+       <item row="0" column="0">
         <widget class="QLabel" name="label_4">
          <property name="font">
           <font>
@@ -97,7 +120,16 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="newPropertyNameLineEdit">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
         <widget class="QLabel" name="label_6">
          <property name="font">
           <font>
@@ -112,7 +144,7 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
+       <item row="1" column="1">
         <widget class="QComboBox" name="dataTypeQComboBox">
          <property name="font">
           <font>
@@ -171,7 +203,7 @@
          </item>
         </widget>
        </item>
-       <item row="6" column="0">
+       <item row="2" column="0">
         <widget class="QLabel" name="customListLabel">
          <property name="font">
           <font>
@@ -189,7 +221,7 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="1">
+       <item row="2" column="1">
         <widget class="QLineEdit" name="customListLineEdit">
          <property name="font">
           <font>
@@ -198,7 +230,7 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="0">
+       <item row="3" column="0">
         <spacer name="horizontalSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -211,7 +243,7 @@
          </property>
         </spacer>
        </item>
-       <item row="7" column="1">
+       <item row="3" column="1">
         <widget class="QPushButton" name="addPropertyButton">
          <property name="font">
           <font>
@@ -220,39 +252,6 @@
          </property>
          <property name="text">
           <string>Add New Property</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QLineEdit" name="newPropertyNameLineEdit">
-         <property name="font">
-          <font>
-           <pointsize>14</pointsize>
-          </font>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
-         <property name="font">
-          <font>
-           <pointsize>14</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Printer Name:</string>
-         </property>
-         <property name="buddy">
-          <cstring>printerNameLineEdit</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="printerNameLineEdit">
-         <property name="font">
-          <font>
-           <pointsize>14</pointsize>
-          </font>
          </property>
         </widget>
        </item>
@@ -274,7 +273,7 @@
           <x>0</x>
           <y>0</y>
           <width>629</width>
-          <height>231</height>
+          <height>234</height>
          </rect>
         </property>
        </widget>
@@ -299,10 +298,16 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SelectFileQPushButton</class>
+   <extends>QPushButton</extends>
+   <header>button.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>printerNameLineEdit</tabstop>
   <tabstop>acceptedMaterialsLineEdit</tabstop>
-  <tabstop>acceptedExtensionsLineEdit</tabstop>
   <tabstop>newPropertyNameLineEdit</tabstop>
   <tabstop>dataTypeQComboBox</tabstop>
   <tabstop>customListLineEdit</tabstop>

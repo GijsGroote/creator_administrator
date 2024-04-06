@@ -100,14 +100,17 @@ class PrintSettingsQDialog(SettingsQDialog):
                     f'<br>&nbsp;&nbsp;&nbsp;&nbsp;Accepted Extensions: <big><big>{printer_value["ACCEPTED_EXTENSIONS"]}</big></big>'\
                                    f'<br>&nbsp;&nbsp;&nbsp;&nbsp;Accepted Materials:&nbsp;&nbsp;<big><big>{printer_value["ACCEPTED_MATERIALS"]}</big></big>'
 
-            for property_key, property_dict in printer_value['properties'].items():
+            for property_name, property_dict in printer_value['properties'].items():
 
-                printer_str += f'<br>&nbsp;&nbsp;&nbsp;&nbsp;{property_key.replace("_", " ").capitalize()}:&nbsp;&nbsp;'\
-                        f'<big><big>{property_dict["property_name"]}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'\
+                printer_str += f'<br>&nbsp;&nbsp;&nbsp;&nbsp;<big><big>{property_name}</big></big>'\
+                        f'<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'\
                         f'</big></big> Data Type:<big><big> {property_dict["data_type"]}</big></big>'
 
                 if 'custom_list_of_strings' in property_dict:
                     printer_str += f'<big><big> = {property_dict["custom_list_of_strings"]}</big></big>'
+                printer_str += '<br>'
+
+
 
             scroll_layout.addWidget(QLabel(printer_str+'<br>', self))
 
@@ -135,8 +138,6 @@ class AddPrinterQDialog(QDialog):
 
 
         self.printerNameLineEdit.textChanged.connect(partial(check_empty, self.printerNameLineEdit, gv))
-        self.acceptedMaterialsLineEdit.textChanged.connect(partial(check_comma_seperated_tuple, self.acceptedMaterialsLineEdit, gv))
-        self.acceptedExtensionsLineEdit.textChanged.connect(partial(check_extensions_tuple, self.acceptedExtensionsLineEdit, gv))
  
         self.newPropertyNameLineEdit.textChanged.connect(partial(check_empty, self.newPropertyNameLineEdit, gv))
 
@@ -163,7 +164,7 @@ class AddPrinterQDialog(QDialog):
         if self.validateNewPrinterSettings():
             self.add_printer_dict = {'printer_name': self.printerNameLineEdit.text(),
                 'ACCEPTED_EXTENSIONS': self.acceptedExtensionsLineEdit.text(),
-                'ACCEPTED_MATERIALS': self.acceptedMaterialsLineEdit.text(),
+                'SLICER_EXECUTABLE_PATH': self.slicerExecutablePushButton.text(), # TODO
                 'properties': self.properties}
             self.close()
         
