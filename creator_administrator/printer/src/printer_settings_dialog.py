@@ -46,6 +46,7 @@ class PrintSettingsQDialog(SettingsQDialog):
             settings_dict = json.load(settings_file)
 
             settings_dict['DEFAULT_PRINTER_NAME'] = self.defaultPrinterNameLineEdit.text()
+            settings_dict['DEFAULT_SLICER_EXECUTABLE_PATH'] = self.defaultSlicerExecutable.text()
             settings_dict['SPECIAL_PRINTERS'] = self.special_printers_dicts
 
         with open(gv['SETTINGS_FILE_PATH'], 'w' ) as settings_file:
@@ -54,7 +55,9 @@ class PrintSettingsQDialog(SettingsQDialog):
     def validateMachineSettings(self) -> bool:
         ''' Validate the machine specific settings. '''
 
-        check_and_warnings = [(check_empty(self.defaultPrinterNameLineEdit, gv), 'Printer Name cannot be empty')]
+        check_and_warnings = [(check_empty(self.defaultPrinterNameLineEdit, gv), 'Printer Name cannot be empty'),
+                              (check_is_executable(self.defaultSlicerExecutable, gv), 
+                               f'Executable {self.defaultSlicerExecutable.text()} is not an executable')]
 
         # check input values
         for check, warning_string in check_and_warnings:
