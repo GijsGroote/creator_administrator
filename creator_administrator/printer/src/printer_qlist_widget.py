@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QStackedWidget, QTabWidget, QWidget, QDialog
 
 from printer_job_tracker import PrintJobTracker 
 from global_variables import gv
-from directory_functions import open_file
+from src.directory_functions import open_file
 
 from src.qlist_widget import OverviewQListWidget, JobContentQListWidget
 
@@ -151,8 +151,13 @@ class PrintJobContentQListWidget(JobContentQListWidget):
         job_tracker = PrintJobTracker(self)
         slicer_executable_global_path = job_tracker.globalPathToExecutable(clicked_file.data(1))
 
+        print(f'int {slicer_executable_global_path} he fileDOubeclicked func')
+
         if slicer_executable_global_path is None:
+            print('open file please')
             open_file(clicked_file.data(1))
         else:
+            print('open with ')
+            print(slicer_executable_global_path)
             open_file(clicked_file.data(1), executable_global_path=slicer_executable_global_path)
 

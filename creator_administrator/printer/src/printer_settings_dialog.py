@@ -35,6 +35,14 @@ class PrintSettingsQDialog(SettingsQDialog):
         self.defaultPrinterNameLineEdit.textChanged.connect(
                 partial(check_empty, self.defaultPrinterNameLineEdit, gv))
 
+        if 'DEFAULT_SLICER_EXECUTABLE_PATH' in gv:
+            self.defaultSlicerExecutablePushButton.setText(
+                shorten_folder_name(str(gv['DEFAULT_SLICER_EXECUTABLE_PATH']), 45))
+            self.defaultSlicerExecutablePushButton.file_global_path = gv['DEFAULT_SLICER_EXECUTABLE_PATH']
+        else:
+            self.defaultSlicerExecutablePushButton.setText('System Default')
+
+
         self.defaultAcceptedMaterialsLineEdit.textChanged.connect(
                 partial(check_comma_seperated_tuple, self.defaultAcceptedMaterialsLineEdit, gv))
 
@@ -46,7 +54,7 @@ class PrintSettingsQDialog(SettingsQDialog):
             settings_dict = json.load(settings_file)
 
             settings_dict['DEFAULT_PRINTER_NAME'] = self.defaultPrinterNameLineEdit.text()
-            settings_dict['DEFAULT_SLICER_EXECUTABLE_PATH'] = self.defaultSlicerExecutable.text()
+            settings_dict['DEFAULT_SLICER_EXECUTABLE_PATH'] = self.defaultSlicerExecutablePushButton.text()
             settings_dict['SPECIAL_PRINTERS'] = self.special_printers_dicts
 
         with open(gv['SETTINGS_FILE_PATH'], 'w' ) as settings_file:
@@ -56,8 +64,8 @@ class PrintSettingsQDialog(SettingsQDialog):
         ''' Validate the machine specific settings. '''
 
         check_and_warnings = [(check_empty(self.defaultPrinterNameLineEdit, gv), 'Printer Name cannot be empty'),
-                              (check_is_executable(self.defaultSlicerExecutable, gv), 
-                               f'Executable {self.defaultSlicerExecutable.text()} is not an executable')]
+                              (check_is_executable(self.defaultSlicerExecutablePushButton, gv), 
+                               f'Slicer executable {self.defaultSlicerExecutablePushButton.file_global_path} is not an executable')]
 
         # check input values
         for check, warning_string in check_and_warnings:
@@ -106,13 +114,13 @@ class PrintSettingsQDialog(SettingsQDialog):
 
         for printer_key, printer_value in self.special_printers_dicts.items():
 
-            slicer_global_path = 'System Default'
-            if 'slicer_executable_global_path' in printer_value:
-                slicer_global_path = shorten_folder_name(printer_value['slicer_executable_global_path'], 45)
+            slicer_executable_path = 'System Default'
+            if 'SLICER_EXECUTABLE_PATH' in printer_value:
+                slicer_executable_path = shorten_folder_name(printer_value['SLICER_EXECUTABLE_PATH'], 45)
 
             printer_str = f'<big><big>{printer_value["printer_name"]}<hr>'\
                     f'<br>&nbsp;&nbsp;&nbsp;&nbsp; Printer Name: {printer_key}'\
-                    f'<br>&nbsp;&nbsp;&nbsp;&nbsp; Slicer: {slicer_global_path}'\
+                    f'<br>&nbsp;&nbsp;&nbsp;&nbsp; Slicer: {slicer_executable_path}'\
                     f'<br>&nbsp;&nbsp;&nbsp;&nbsp; Accepted Materials:&nbsp;&nbsp;'\
                     f'{printer_value["ACCEPTED_MATERIALS"]}</big></big>'
 
@@ -186,7 +194,7 @@ class AddPrinterQDialog(QDialog):
         ''' Validate and save settings. '''
         if self.validateNewPrinterSettings():
             self.add_printer_dict = {'printer_name': self.printerNameLineEdit.text(),
-                'ACCEPTED_EXTENSIONS': self.acceptedExtensionsLineEdit.text(),
+                'ACCEPTED_MATERIALS': self.acceptedMaterialsLineEdit.text(),
                 'SLICER_EXECUTABLE_PATH': self.slicerExecutablePushButton.text(),
                 'properties': self.properties}
             self.close()
@@ -197,7 +205,7 @@ class AddPrinterQDialog(QDialog):
         check_and_warnings = [
             (check_empty(self.printerNameLineEdit, gv), 'Printer Name cannot be empty'),
             (check_comma_seperated_tuple(self.acceptedMaterialsLineEdit, gv), 'Accepted Materials is not a comma seperated list of values'),
-            (check_is_executable(self.slicerExecutablePushButton, gv), f'Select an Executable, .exe file, not {self.slicerExecutableButton.file_global_path}'),
+            (check_is_executable(self.slicerExecutablePushButton, gv), f'Select an Executable, .exe file, not {self.slicerExecutablePushButton.file_global_path}'),
          ]
 
         # check input values

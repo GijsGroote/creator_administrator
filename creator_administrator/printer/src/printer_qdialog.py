@@ -38,9 +38,11 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         self.printPropertyScrollArea.setWidgetResizable(True)
 
         self.requested_item_parameters_dict = None
+        self.printer_properties = None
 
-
+        self.printerComboBox.addItem(gv['DEFAULT_PRINTER_NAME'])
         for printer_dict in gv['SPECIAL_PRINTERS'].values():
+            print(f"add the tingy {printer_dict['printer_name']}")
             self.printerComboBox.addItem(printer_dict['printer_name'])
 
         self.printerComboBox.currentIndexChanged.connect(self.onPrinterComboBoxChanged)
@@ -48,6 +50,7 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
 
     def onPrinterComboBoxChanged(self):
         ''' Add the printer properties to the comboBox. '''
+        print(f'fuckingfuckfuicxkf{self.printerComboBox.currentText()}')
 
         content_widget = QWidget()
         vertical_layout = QVBoxLayout(content_widget)
@@ -57,6 +60,9 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
 
         selected_printer = self.printerComboBox.currentText()
 
+        # TODO: find why this is needed, an emtpy printer should not be added to start with
+        if selected_printer == '':
+            return
 
         # make all label and line edits that belong to the requested printer
         for property_name, property_dict in gv['SPECIAL_PRINTERS'][selected_printer]['properties'].items():
@@ -171,7 +177,8 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         if not validate_material_info(self, material, amount):
             return
 
-        if not validate_properties(self, self.printer_properties):
+        
+        if self.printer_properties is not None and not validate_properties(self, self.printer_properties):
             return
 
         attachment = self.temp_make_items[self.make_item_counter]
@@ -191,7 +198,7 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         file_dict = {
             'file_name': file_name,
             'file_global_path': file_global_path,
-            'printer': self.printerComboBox.currentText(),
+            'printer_name': self.printerComboBox.currentText(),
             'material': material,
             'amount': amount,
             'done': False}

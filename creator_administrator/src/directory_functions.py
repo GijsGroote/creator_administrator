@@ -57,9 +57,11 @@ def open_file(file_global_path: str, executable_global_path=None):
     elif sys.platform == 'win32':
         if executable_global_path is not None:
             assert os.path.exists(executable_global_path), f'executable {executable_global_path} does not exist'
+            print(f'open {file_global_path} with {executable_global_path}')
             subprocess.Popen([executable_global_path, file_global_path]) # pylint: disable=consider-using-with
 
         else:
+            print('open with defautl exporlr')
             subprocess.Popen(['explorer', file_global_path]) # pylint: disable=consider-using-with
 
     else: 

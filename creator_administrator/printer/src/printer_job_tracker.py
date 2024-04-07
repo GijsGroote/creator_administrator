@@ -1,3 +1,4 @@
+import json
 import os
 from datetime import datetime
 
@@ -81,15 +82,16 @@ class PrintJobTracker(JobTracker):
 
         if so return path to slicer executable.
         '''
+        assert file_global_path.lower().endswith(gv['ACCEPTED_EXTENSIONS']), f'file global path should end with an accepted extension'
         self.readTrackerFile()
 
         for job_dict in self.tracker_dict.values():
             for file_dict in job_dict['make_files'].values():
                 if file_global_path == file_dict['file_global_path']:
-                    if 'slicer_executable_global_path' in file_dict:
-                        return file_dict['slicer_executable_global_path']
-                    return 'default todo'
-
+                    if file_dict['printer_name'] == gv['DEFAULT_PRINTER_NAME']:
+                        return gv['DEFAULT_SLICER_EXECUTABLE_PATH']
+                    else:
+                        return gv['SPECIAL_PRINTERS'][file_dict['printer_name']]['SLICER_EXECUTABLE_PATH']
         return None
 
 

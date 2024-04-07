@@ -107,6 +107,10 @@ gv = {'SETTINGS_FILE_PATH': settings_file_path,
 with open(settings_file_path, 'r') as settings_file:
     gv_data = json.load(settings_file)
     gv['REPO_DIR_HOME'] = gv_data['REPO_DIR_HOME']
+    
+    if 'DEFAULT_SLICER_EXECUTABLE_PATH' in gv_data:
+        gv['DEFAULT_SLICER_EXECUTABLE_PATH'] = gv_data['DEFAULT_SLICER_EXECUTABLE_PATH']
+
 
     if 'SPECIAL_PRINTERS' in gv_data:
         gv['SPECIAL_PRINTERS'] = gv_data['SPECIAL_PRINTERS']

@@ -81,7 +81,9 @@ def check_is_directory(widget: QWidget, gv: dict) -> bool:
 
 def check_is_executable(widget: QWidget, gv: dict) -> bool:
 
-    if os.path.isfile(widget.file_global_path) and widget.file_global_path.endswith('.exe'):
+    if widget.file_global_path is not None and\
+        os.path.isfile(widget.file_global_path) and\
+              widget.file_global_path.endswith('.exe'):
         widget.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')
         return True
     widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
