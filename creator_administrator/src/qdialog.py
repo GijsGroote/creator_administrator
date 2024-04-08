@@ -126,16 +126,23 @@ class CreateJobsFromMailQDialog(CreateJobsQDialog):
         ''' Load content of mail into dialog. '''
 
         job_msg = self.jobs[self.job_counter]
-        self.temp_sender_name = self.mail_manager.getSenderName(job_msg)
 
+        self.temp_sender_name = self.mail_manager.getSenderName(job_msg)
         self.temp_job_name = self.job_tracker.makeJobNameUnique(self.temp_sender_name)
         self.temp_job_folder_name = str(datetime.date.today().strftime('%d-%m'))+'_'+self.temp_job_name
         self.temp_job_folder_global_path = os.path.join(os.path.join(self.gv['JOBS_DIR_HOME'], self.temp_job_folder_name))
-
         self.temp_make_items = []
         self.temp_make_files_dict = {}
         self.temp_store_files_dict = {}
 
+        self.mailFromQLabel.setText(self.temp_sender_name)
+        self.mailProgressQLabel.setText(f'Mail ({self.job_counter+1}/{len(self.jobs)})')
+        self.subjectQLabel.setText(self.mail_manager.getMailSubject(job_msg))
+
+        self.mailBodyLabel.setText(self.mail_manager.getMailBody(job_msg))
+
+
+        # detect special printer request
         self.requested_parameters_dict = None
         for attachment in self.mail_manager.getAttachments(job_msg):
             attachment_name = self.mail_manager.getAttachmentFileName(attachment)
@@ -153,6 +160,7 @@ class CreateJobsFromMailQDialog(CreateJobsQDialog):
                     WarningQMessageBox(self, self.gv,
                                    f'Error loading requested printer parameters for {self.temp_sender_name}\n{str(e)}')
 
+        # store files in dict
         for attachment in self.mail_manager.getAttachments(job_msg):
             attachment_name = self.mail_manager.getAttachmentFileName(attachment)
             if attachment_name.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
@@ -162,14 +170,6 @@ class CreateJobsFromMailQDialog(CreateJobsQDialog):
                 self.temp_store_files_dict[attachment_name] = {'attachment': attachment,
                                              'target_file_global_path': target_file_global_path}
 
-        self.mailFromQLabel.setText(self.temp_sender_name)
-        self.mailProgressQLabel.setText(f'Mail ({self.job_counter+1}/{len(self.jobs)})')
-        self.subjectQLabel.setText(self.mail_manager.getMailSubject(job_msg))
-
-
-        mail_body = self.mail_manager.getMailBody(job_msg)
-
-        self.mailBodyLabel.setText(mail_body)
         self.loadItemContent()
 
 

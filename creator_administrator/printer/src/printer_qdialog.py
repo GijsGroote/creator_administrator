@@ -12,7 +12,7 @@ from src.threaded_mail_manager import ThreadedMailManager
 from src.validate import check_property 
 
 from printer_job_tracker import PrintJobTracker
-from printer_validate import validate_material_info
+from printer_validate import validate_material_info, validate_print_properties
 
 
 from global_variables import gv
@@ -37,50 +37,18 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         self.printPropertyScrollArea.setHidden(True)
         self.printPropertyScrollArea.setWidgetResizable(True)
 
-        self.requested_item_parameters_dict = None
-        self.printer_properties = None
+        self.requested_item_parameters_dict = {} 
+        self.printer_properties = {}
+        self.form_layout = None
+
 
         self.printerComboBox.addItem(gv['DEFAULT_PRINTER_NAME'])
         for printer_dict in gv['SPECIAL_PRINTERS'].values():
-            print(f"add the tingy {printer_dict['printer_name']}")
-            self.printerComboBox.addItem(printer_dict['printer_name'])
+            self.printerComboBox.addItem(printer_dict['PRINTER_NAME'])
 
         self.printerComboBox.currentIndexChanged.connect(self.onPrinterComboBoxChanged)
         self.loadJobContent()
 
-    def onPrinterComboBoxChanged(self):
-        ''' Add the printer properties to the comboBox. '''
-        print(f'fuckingfuckfuicxkf{self.printerComboBox.currentText()}')
-
-        content_widget = QWidget()
-        vertical_layout = QVBoxLayout(content_widget)
-        self.printer_properties = {}
-        form_layout = QFormLayout()
-        form_layout.setFormAlignment(Qt.AlignmentFlag.AlignLeft)
-
-        selected_printer = self.printerComboBox.currentText()
-
-        # TODO: find why this is needed, an emtpy printer should not be added to start with
-        if selected_printer == '':
-            return
-
-        # make all label and line edits that belong to the requested printer
-        for property_name, property_dict in gv['SPECIAL_PRINTERS'][selected_printer]['properties'].items():
-            label = QLabel(property_name)
-            qline_edit = QLineEdit()
-
-            print(gv['SPECIAL_PRINTERS'][selected_printer]['properties'])
-
-            self.printer_properties[property_name] = {'qline_edit_widget': qline_edit, 
-               'data_type': gv['SPECIAL_PRINTERS'][selected_printer]['properties'][property_name]['data_type']}
-            form_layout.addRow(label, qline_edit)
-            vertical_layout.addLayout(form_layout)
-
-        content_widget.setLayout(vertical_layout)
-        self.printPropertyScrollArea.setWidget(content_widget)
-
-        # adjust height of scoll area
-        self.printPropertyScrollArea.setMinimumHeight(content_widget.sizeHint().height())
 
     def loadItemContent(self):
         ''' Load content of attachment into dialog. '''
@@ -88,34 +56,19 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         attachment = self.temp_make_items[self.make_item_counter]
         attachment_name = self.mail_manager.getAttachmentFileName(attachment)
 
-        # load requested parameters
-        if self.requested_parameters_dict is not None and\
-                attachment_name in self.requested_parameters_dict and\
-                'printer_name' in self.requested_parameters_dict[attachment_name]:
-
-            self.printerComboBox.setCurrentIndex(self.printerComboBox.findText(
-                self.requested_parameters_dict[attachment_name]['printer_name']))
-
-            self.requested_item_parameters_dict = self.requested_parameters_dict[attachment_name]
-            self.loadRequestedParametersforAttachment()
-
-        else:
-            self.printPropertyScrollArea.setHidden(True)
-            self.requested_item_parameters_dict = None
-
-
         self.attachmentProgressQLabel.setText(f'Attachment ({self.make_item_counter+1}/{len(self.temp_make_items)})')
         self.attachmentNameQLabel.setText(attachment_name)
-
-        # initially hide option for new material
-        self.newMaterialQLabel.setHidden(True)
-        self.newMaterialQLineEdit.setHidden(True)
 
         self.materialQComboBox.clear()
         self.newMaterialQLineEdit.clear()
         self.amountQLineEdit.clear()
 
-        materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()).union(self.new_materials_list))
+        # initially hide option for new material
+        self.newMaterialQLabel.setHidden(True)
+        self.newMaterialQLineEdit.setHidden(True)
+
+        materials = list(set(gv['ACCEPTED_MATERIALS']).union(\
+                self.job_tracker.getExistingMaterials()).union(self.new_materials_list))
         self.materialQComboBox.addItems(materials)
         self.materialQComboBox.addItem(self.new_material_text)
 
@@ -132,17 +85,86 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
             self.amountQLineEdit.setText('1')
 
 
+        if self.requested_parameters_dict is not None and\
+                attachment_name in self.requested_parameters_dict and\
+                'PRINTER_NAME' in self.requested_parameters_dict[attachment_name]:
+
+            self.printerComboBox.setCurrentIndex(self.printerComboBox.findText(
+                self.requested_parameters_dict[attachment_name]['printer_name']))
+
+            self.requested_item_parameters_dict = self.requested_parameters_dict[attachment_name]
+
+        else:
+            self.requested_item_parameters_dict = None
+            self.printerComboBox.setCurrentIndex(self.printerComboBox.findText(gv['DEFAULT_PRINTER_NAME']))
+
+    def onPrinterComboBoxChanged(self):
+        ''' Add the printer properties to the comboBox. '''
+
+        if self.printerComboBox.currentText() == gv['DEFAULT_PRINTER_NAME']:
+            self.printPropertyScrollArea.setHidden(True)
+            return
+
+        self.printPropertyScrollArea.setHidden(False)
+        self.makeSpecialPrinterPropertyFields()
+
+    def makeSpecialPrinterPropertyFields(self):
+        ''' Make the labels and text input widgets for the special printer currently selected. '''
+
+        # clear and clean everything
+        self.materialQComboBox.clear()
+        self.printer_properties = {}
+        
+
+
+        if self.form_layout is not None:
+            # It could be that this loop needs some deleteLater
+            while self.form_layout.rowCount() > 0:
+                self.form_layout.removeRow(0)
+            self.form_layout.update()
+
+        self.form_layout = QFormLayout()
+        self.form_layout.setFormAlignment(Qt.AlignmentFlag.AlignLeft)
+
+        # Make the widgets
+        content_widget = QWidget()
+        selected_printer = self.printerComboBox.currentText()
+
+        # make all label and line edits that belong to the requested printer
+        for property_name, property_dict in gv['SPECIAL_PRINTERS'][selected_printer]['PROPERTIES'].items():
+            label = QLabel(property_name)
+            qline_edit = QLineEdit()
+
+            self.printer_properties[property_name] = {'qline_edit_widget': qline_edit, 
+               'data_type': gv['SPECIAL_PRINTERS'][selected_printer]['PROPERTIES'][property_name]['DATA_TYPE']}
+
+            self.form_layout.addRow(label, qline_edit)
+
+        content_widget.setLayout(self.form_layout)
+        self.printPropertyScrollArea.setWidget(content_widget)
+
+        # adjust height of scoll area
+        self.printPropertyScrollArea.setMinimumHeight(content_widget.sizeHint().height())
+
+        materials = list(set(gv['SPECIAL_PRINTERS'][selected_printer]['ACCEPTED_MATERIALS']).union(
+            self.job_tracker.getExistingMaterials()).union(self.new_materials_list))
+
+        self.materialQComboBox.addItems(materials)
+        self.materialQComboBox.addItem(self.new_material_text)
+
+        if self.requested_item_parameters_dict is not None:
+            self.loadRequestedParametersforAttachment()
+
     def loadRequestedParametersforAttachment(self):
         ''' Load the requested parameters. '''
 
-        self.printPropertyScrollArea.setHidden(False)
-
         if 'material' in self.requested_item_parameters_dict:
             if self.requested_item_parameters_dict['material'].lower() in self.materialQComboBox:
+
+
                 self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(self.requested_item_parameters_dict['material']))
             else:
                 self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(self.new_material_text))
-                self.newMaterialQLineEdit.setHidden(False)
                 self.newMaterialQLineEdit.setText(self.requested_item_parameters_dict['material'])
 
         if 'amount' in self.requested_item_parameters_dict:
@@ -153,16 +175,18 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
             except ValueError:
                 pass
 
-
-        for property_name, property_dict in gv['SPECIAL_PRINTERS'][self.requested_item_parameters_dict['printer_name']]['properties'].items():
+        # Load requested parameters into the text widgets
+        for property_name, property_dict in gv['SPECIAL_PRINTERS']\
+        [self.requested_item_parameters_dict['printer_name']]['PROPERTIES'].items():
 
             if property_name in self.requested_item_parameters_dict:
                 requested_text = self.requested_item_parameters_dict[property_name]
                 self.printer_properties[property_name]['qline_edit_widget'].setText(requested_text)
 
             else:
-                print(f"The requested parametr {property_name} is not in the requested parametres, implement going to the default value.")
-
+                self.printer_properties[property_name]['qline_edit_widget'].setText(
+                    gv['SPECIAL_PRINTERS'][self.requested_item_parameters_dict['printer_name']]\
+                    ['PROPERTIES'][property_name]['DEFAULT_VALUE'])
 
 
     def collectItemInfo(self):
@@ -177,10 +201,8 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         if not validate_material_info(self, material, amount):
             return
 
-        
-        # TODO: this requires some correct implementation
-        # if self.printer_properties is not None and not check_property(self, self.printer_properties):
-        #     return
+        if not validate_print_properties(self, self.printer_properties):
+            return
 
         attachment = self.temp_make_items[self.make_item_counter]
         original_file_name = self.mail_manager.getAttachmentFileName(attachment)
@@ -204,9 +226,8 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
             'amount': amount,
             'done': False}
 
-        if self.printer_properties is not None:
-            for property_name, property_dict in self.printer_properties.items():
-                file_dict[property_name] = property_dict['qline_edit_widget'].text()
+        for property_name, property_dict in self.printer_properties.items():
+            file_dict[property_name] = property_dict['qline_edit_widget'].text()
 
         self.temp_make_files_dict[self.temp_job_name + '_' + file_name] = file_dict
 
@@ -284,7 +305,7 @@ class CreatePrintJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
         self.amountQLineEdit.clear()
 
         materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()).union(self.new_materials_list))
-        self.materialQComboBox.addItems(materials)
+        self.materialQComboBox.addItems(materials.upper())
         self.materialQComboBox.addItem(self.new_material_text)
 
         # guess the amount

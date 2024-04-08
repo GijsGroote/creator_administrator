@@ -245,4 +245,3 @@ class AddPrinterQDialog(QDialog):
 
         check_property(self.propertyDefaultValueLineEdit,
                       self.dataTypeQComboBox.currentText(), gv)
-

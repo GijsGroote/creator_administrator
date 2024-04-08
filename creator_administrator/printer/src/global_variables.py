@@ -114,9 +114,13 @@ with open(settings_file_path, 'r') as settings_file:
 
     if 'SPECIAL_PRINTERS' in gv_data:
         gv['SPECIAL_PRINTERS'] = gv_data['SPECIAL_PRINTERS']
+        for key, printer in gv_data['SPECIAL_PRINTERS'].items():
+            gv['SPECIAL_PRINTERS'][key]['ACCEPTED_MATERIALS'] = tuple(
+                    gv_data['SPECIAL_PRINTERS'][key]['ACCEPTED_MATERIALS'].split(', '))
 
     else:
         gv['SPECIAL_PRINTERS'] = {}
+
 
     if 'MAIL_NAME' in gv_data and\
         'MAIL_ADRESS' in gv_data and\
