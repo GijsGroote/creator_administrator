@@ -17,7 +17,7 @@
    <iconset>
     <normaloff>../../../../../../../../../../../../../../../../../figures/logo.ico</normaloff>../../../../../../../../../../../../../../../../../figures/logo.ico</iconset>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
@@ -173,11 +173,6 @@
          </item>
          <item>
           <property name="text">
-           <string>Custom List of Strings</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
            <string>Any Integer</string>
           </property>
          </item>
@@ -209,25 +204,19 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="customListLabel">
+        <widget class="QLabel" name="label_5">
          <property name="font">
           <font>
            <pointsize>14</pointsize>
           </font>
          </property>
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Seperate by comma's&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Example: &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;wood, oil, stove, green&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
          <property name="text">
-          <string>Custom List of Strings:</string>
-         </property>
-         <property name="buddy">
-          <cstring>customListLineEdit</cstring>
+          <string>Default Value</string>
          </property>
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QLineEdit" name="customListLineEdit">
+        <widget class="QLineEdit" name="propertyDefaultValueLineEdit">
          <property name="font">
           <font>
            <pointsize>14</pointsize>
@@ -260,27 +249,6 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
-        <widget class="QLineEdit" name="propertyDefaultValueLineEdit">
-         <property name="font">
-          <font>
-           <pointsize>14</pointsize>
-          </font>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="label_5">
-         <property name="font">
-          <font>
-           <pointsize>14</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Default Value</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </item>
      <item>
@@ -299,7 +267,7 @@
           <x>0</x>
           <y>0</y>
           <width>757</width>
-          <height>191</height>
+          <height>229</height>
          </rect>
         </property>
        </widget>
@@ -336,7 +304,6 @@
   <tabstop>acceptedMaterialsLineEdit</tabstop>
   <tabstop>newPropertyNameLineEdit</tabstop>
   <tabstop>dataTypeQComboBox</tabstop>
-  <tabstop>customListLineEdit</tabstop>
   <tabstop>addPropertyButton</tabstop>
   <tabstop>scrollArea</tabstop>
  </tabstops>

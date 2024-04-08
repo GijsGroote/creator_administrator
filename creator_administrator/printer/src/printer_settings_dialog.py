@@ -150,27 +150,25 @@ class AddPrinterQDialog(QDialog):
 
         loadUi(os.path.join(gv['LOCAL_UI_DIR'], 'add_printer_dialog.ui'), self)
 
-        self.custom_list_of_strings = 'Custom List of Strings'
         self.buttonBox.accepted.connect(self.applySettings)
         self.addPropertyButton.clicked.connect(self.applyNewProperty)
 
         self.customListLineEdit.setHidden(True)
         self.customListLabel.setHidden(True)
-        self.dataTypeQComboBox.currentIndexChanged.connect(self.onDataTypeQComboBoxChanged)
 
-
+        self.dataTypeQComboBox.currentIndexChanged.connect(self.checkDefaultPropertyValue)
+        self.propertyDefaultValueLineEdit.textChanged.connect(self.checkDefaultPropertyValue)
 
         self.printerNameLineEdit.textChanged.connect(partial(check_empty, self.printerNameLineEdit, gv))
- 
 
         self.acceptedMaterialsLineEdit.textChanged.connect(
                 partial(check_comma_seperated_tuple, self.acceptedMaterialsLineEdit, gv))
 
         self.newPropertyNameLineEdit.textChanged.connect(partial(check_empty, self.newPropertyNameLineEdit, gv))
 
-        self.customListLineEdit.textChanged.connect(partial(check_comma_seperated_tuple, self.customListLineEdit, gv))
 
         # TODO: add the default value, check it when data type selection changed
+
         # self.propertyDefaultValueLineEdit.textChanged(
 
 
@@ -178,9 +176,6 @@ class AddPrinterQDialog(QDialog):
         ''' Validate and add new property. '''
 
         check_and_warnings = [(check_empty(self.newPropertyNameLineEdit, gv), 'New Property Name cannot be emtpy')]
-
-        if self.dataTypeQComboBox.currentText() == self.custom_list_of_strings:
-            check_and_warnings.append((check_comma_seperated_tuple(self.customListLineEdit, gv), f'{self.custom_list_of_strings} is not a comma seperated list of strings'))
 
         # check input values
         for check, warning_string in check_and_warnings:
@@ -222,9 +217,6 @@ class AddPrinterQDialog(QDialog):
         self.properties[property_key] = {'property_name': self.newPropertyNameLineEdit.text(),
                                          'data_type': self.dataTypeQComboBox.currentText()}
 
-        if self.dataTypeQComboBox.currentText() == self.custom_list_of_strings:
-            self.properties[property_key]['custom_list_of_strings'] = self.customListLineEdit.text()
-
         self.newPropertyNameLineEdit.clear()
         self.newPropertyNameLineEdit.setStyleSheet("") 
         self.customListLineEdit.clear()
@@ -243,20 +235,18 @@ class AddPrinterQDialog(QDialog):
             property_str = f'{property_key.replace("_", " ").capitalize()}: <big><big>{property_dict["property_name"]}</big></big><hr>'\
                     f'<br>&nbsp;&nbsp;&nbsp;&nbsp;Data Type:<big><big> {property_dict["data_type"]}</big></big>'
 
-            if 'custom_list_of_strings' in property_dict:
-                property_str += f' = <big><big>{property_dict["custom_list_of_strings"]}</big></big>'
-
             scroll_layout.addWidget(QLabel(property_str+'<br>', self))
 
 
         scroll_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.scrollArea.setWidget(content_widget)
 
-    def onDataTypeQComboBoxChanged(self):
-        ''' Show/hide custom list option. '''
-        if self.dataTypeQComboBox.currentText() == self.custom_list_of_strings:
-            self.customListLineEdit.setHidden(False)
-            self.customListLabel.setHidden(False)
-        else:
-            self.customListLineEdit.setHidden(True)
-            self.customListLabel.setHidden(True)
+    def checkDefaultPropertyValue(self):
+        ''' Check if the default property value is a valid input. '''
+        data_type = self.dataTypeQComboBox.currentText()
+
+        self.propertyDefaultValueLineEdit.text()
+
+
+
+
