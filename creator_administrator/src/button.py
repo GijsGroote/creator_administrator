@@ -5,7 +5,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QShortcut, QKeySequence
 from PyQt6.QtWidgets import QPushButton, QFileDialog, QMenu, QWidget
 
-from src.directory_functions import open_folder
+from src.directory_functions import open_folder, shorten_folder_name
 from src.qlist_widget import ContentQListWidget
 from src.job_tracker import JobTracker
 
@@ -143,24 +143,25 @@ class SelectFileQPushButton(QPushButton):
         self.start_dir_global_path = os.path.expanduser('~')
         self.file_global_path = None
 
-    def setStartingDirectory(self, start_dir_global_path: str):
+    def setCurrentFile(self, current_file_global_path: str):
         ''' Set the starting directory. '''
-        assert os.path.exists(start_dir_global_path), f"{start_dir_global_path} does not exist"
-        assert os.path.isdir(start_dir_global_path), f"{start_dir_global_path} is not a directory"
-        self.start_dir_global_path = start_dir_global_path
+        assert os.path.exists(current_file_global_path), f"{current_file_global_path} does not exist"
+        self.start_dir_global_path = os.path.dirname(current_file_global_path)
+        self.file_global_path = current_file_global_path
+        self.setText(shorten_folder_name(str(current_file_global_path)))
 
 
     def on_click(self):
       # Get list of selected file paths
 
-        file_path, _ = QFileDialog.getOpenFileName(
+        file_global_path, _ = QFileDialog.getOpenFileName(
             self,
             'Select File',
             self.start_dir_global_path,
             'All Files (*)')
 
-        self.setText(str(file_path))# TODO: shorten this path
-        self.file_global_path = file_path
+        self.setText(shorten_folder_name(str(file_global_path)))
+        self.file_global_path = file_global_path
 
 
 class SelectFolderQPushButton(QPushButton):
@@ -172,11 +173,14 @@ class SelectFolderQPushButton(QPushButton):
         self.clicked.connect(self.on_click)
         self.start_dir_global_path = os.path.expanduser('~')
 
-    def setStartingDirectory(self, start_dir_global_path: str):
+    def setCurrentFolder(self, current_dir_global_path: str):
         ''' Set the starting directory. '''
-        assert os.path.exists(start_dir_global_path), f"{start_dir_global_path} does not exist"
-        assert os.path.isdir(start_dir_global_path), f"{start_dir_global_path} is not a directory"
-        self.start_dir_global_path = start_dir_global_path
+        assert os.path.exists(current_dir_global_path), f"{current_dir_global_path} does not exist"
+        assert os.path.isdir(current_dir_global_path), f"{current_dir_global_path} is not a directory"
+        self.start_dir_global_path = os.path.dirname(current_dir_global_path)
+        self.folder_global_path = current_dir_global_path
+        self.setText(shorten_folder_name(str(current_dir_global_path)))
+
 
     def on_click(self):
         self.folder_global_path = QFileDialog.getExistingDirectory(self,
@@ -184,12 +188,5 @@ class SelectFolderQPushButton(QPushButton):
             self.start_dir_global_path,
             QFileDialog.Option.ShowDirsOnly)
 
-        folder_name_short = self.folder_global_path
-
-        max_char_length = 50
-
-        if len(folder_name_short) > max_char_length:
-            folder_name_short = '../'+folder_name_short[-max_char_length+3:]
-
-        self.setText(folder_name_short)
+        self.setText(shorten_folder_name(self.folder_global_path))
 

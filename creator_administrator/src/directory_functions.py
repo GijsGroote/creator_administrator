@@ -81,7 +81,7 @@ def open_folder(folder_global_path: str):
     else: 
         raise ValueError(f'unknown platform: {sys.platform}')
 
-def shorten_folder_name(path: str, max_char_length: int) -> str:
+def shorten_folder_name(path: str, max_char_length=45) -> str:
         ''' Return a short folder name. '''
         if len(path) <= 2:
             return path

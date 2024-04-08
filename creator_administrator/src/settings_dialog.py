@@ -67,17 +67,13 @@ class SettingsQDialog(QDialog):
                                              ('FINISHED_MAIL_TEMPLATE', self.selectFinishedTemplateButton),
                                              ('DECLINED_MAIL_TEMPLATE', self.selectDeclinedTemplateButton)):
             if template_name in gv:
-                widget_button.setStartingDirectory(os.path.dirname(gv[template_name]))
-                widget_button.setText(shorten_folder_name(gv[template_name], 45))
-                widget_button.file_global_path = gv[template_name]
+                widget_button.setCurrentFile(gv[template_name])
             widget_button.clicked.connect(partial(check_html, widget_button, self.gv))
 
 
         for folder_name, widget_button in (('DATA_DIR_HOME', self.selectDataDirectoryButton),
                                            ('TODO_DIR_HOME', self.selectTodoDirectoryButton)):
-            widget_button.setStartingDirectory(gv[folder_name])
-            widget_button.setText(shorten_folder_name(gv[folder_name], 45))
-            widget_button.folder_global_path = gv[folder_name]
+            widget_button.setCurrentFolder(gv[folder_name])
             widget_button.clicked.connect(partial(check_is_directory, widget_button, self.gv))
 
 

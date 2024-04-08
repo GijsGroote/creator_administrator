@@ -26,7 +26,7 @@ class LaserSettingsQDialog(SettingsQDialog):
 
         if template_name in self.gv:
             widget_button.setStartingDirectory(os.path.dirname(self.gv[template_name]))
-            widget_button.setText(shorten_folder_name(self.gv[template_name], 45))
+            widget_button.setText(shorten_folder_name(self.gv[template_name]))
             widget_button.file_global_path = self.gv[template_name]
         widget_button.clicked.connect(partial(self.checkHTML, widget_button))
 

@@ -9,7 +9,7 @@ from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QVBoxLayout, QHBoxLayout
 from src.qdialog import CreateJobsFromMailQDialog, CreateJobsFromFileSystemQDialog, SearchJobDialog
 from src.qmessagebox import TimedMessage
 from src.threaded_mail_manager import ThreadedMailManager
-from src.validate import validate_property
+from src.validate import check_property 
 
 from printer_job_tracker import PrintJobTracker
 from printer_validate import validate_material_info
@@ -179,7 +179,7 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
 
         
         # TODO: this requires some correct implementation
-        # if self.printer_properties is not None and not validate_property(self, self.printer_properties):
+        # if self.printer_properties is not None and not check_property(self, self.printer_properties):
         #     return
 
         attachment = self.temp_make_items[self.make_item_counter]

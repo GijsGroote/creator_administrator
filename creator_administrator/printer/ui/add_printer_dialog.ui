@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../../../../../../../../../../../../../../../../figures/logo.ico</normaloff>../../../../../../../../../../../../../../../../../figures/logo.ico</iconset>
+    <normaloff>../../../../../../../../../../../../../../../../../../../../figures/logo.ico</normaloff>../../../../../../../../../../../../../../../../../../../../figures/logo.ico</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -80,6 +80,9 @@
          <property name="text">
           <string>Slicer Executable:</string>
          </property>
+         <property name="buddy">
+          <cstring>slicerExecutablePushButton</cstring>
+         </property>
         </widget>
        </item>
        <item row="2" column="1">
@@ -90,7 +93,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Select Executable</string>
+          <string>Select Executable..</string>
          </property>
         </widget>
        </item>
@@ -168,11 +171,6 @@
          </item>
          <item>
           <property name="text">
-           <string>String</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
            <string>Any Integer</string>
           </property>
          </item>
@@ -212,6 +210,9 @@
          </property>
          <property name="text">
           <string>Default Value</string>
+         </property>
+         <property name="buddy">
+          <cstring>propertyDefaultValueLineEdit</cstring>
          </property>
         </widget>
        </item>
@@ -302,8 +303,10 @@
  <tabstops>
   <tabstop>printerNameLineEdit</tabstop>
   <tabstop>acceptedMaterialsLineEdit</tabstop>
+  <tabstop>slicerExecutablePushButton</tabstop>
   <tabstop>newPropertyNameLineEdit</tabstop>
   <tabstop>dataTypeQComboBox</tabstop>
+  <tabstop>propertyDefaultValueLineEdit</tabstop>
   <tabstop>addPropertyButton</tabstop>
   <tabstop>scrollArea</tabstop>
  </tabstops>

@@ -89,7 +89,7 @@ def check_is_executable(widget: QWidget, gv: dict) -> bool:
     widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
     return False
 
-def validate_property(widget: QWidget, data_type: str, gv: dict) -> bool:
+def check_property(widget: QWidget, data_type: str, gv: dict) -> bool:
     ''' Validate if all properties. '''
 
     text = widget.text()
@@ -98,51 +98,46 @@ def validate_property(widget: QWidget, data_type: str, gv: dict) -> bool:
         widget.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')
         return True
 
-    elif data_type == 'Anything except Nothing':
+    if data_type == 'Anything Except Nothing':
         return check_empty(widget, gv)
 
-    elif data_type == 'Any Integer':
+    if data_type == 'Any Integer':
         return check_int(widget, gv)
 
-    elif data_type == 'integer > 0':
+    if data_type == 'Integer > 0':
         if check_int(widget, gv) and int(text) > 0:
             widget.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')
             return True
-        else:
-            widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
-            return False
+        widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
+        return False
 
-    elif data_type == 'Integer >= 0':
+    if data_type == 'Integer >= 0':
         if check_int(widget, gv) and int(text) >= 0:
             widget.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')
             return True
-        else:
-            widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
-            return False
+        widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
+        return False
 
-    elif data_type == 'Any Decimal Number':
+    if data_type == 'Any Decimal Number':
         if text.isdecimal():
             widget.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')
             return True
-        else:
-            widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
-            return False
+        widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
+        return False
 
-    elif data_type == 'Decimal Number > 0':
+    if data_type == 'Decimal Number > 0':
         if text.isdecimal() and float(text) > 0:
             widget.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')
             return True
-        else:
-            widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
-            return False
+        widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
+        return False
 
-    elif data_type == 'Decimal Number >= 0'
+    if data_type == 'Decimal Number >= 0':
         if text.isdecimal() and float(text) >= 0:
             widget.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')
             return True
-        else:
-            widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
-            return False
-    else:
-        raise ValueError(f'data type {data_type} not recognised')
+        widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
+        return False
+
+    raise ValueError(f'data type {data_type} not recognised')
 
