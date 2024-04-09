@@ -1,7 +1,6 @@
 import os
 import re
 
-
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QVBoxLayout, QHBoxLayout, QSizePolicy, QFormLayout
 
@@ -87,12 +86,12 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
 
         if self.requested_parameters_dict is not None and\
                 attachment_name in self.requested_parameters_dict and\
-                'PRINTER_NAME' in self.requested_parameters_dict[attachment_name]:
-
-            self.printerComboBox.setCurrentIndex(self.printerComboBox.findText(
-                self.requested_parameters_dict[attachment_name]['printer_name']))
+                'printer_name' in self.requested_parameters_dict[attachment_name]:
 
             self.requested_item_parameters_dict = self.requested_parameters_dict[attachment_name]
+        
+            self.printerComboBox.setCurrentIndex(self.printerComboBox.findText(
+                self.requested_parameters_dict[attachment_name]['printer_name']))
 
         else:
             self.requested_item_parameters_dict = None
@@ -114,8 +113,6 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         # clear and clean everything
         self.materialQComboBox.clear()
         self.printer_properties = {}
-        
-
 
         if self.form_layout is not None:
             # It could be that this loop needs some deleteLater
@@ -132,7 +129,7 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
 
         # make all label and line edits that belong to the requested printer
         for property_name, property_dict in gv['SPECIAL_PRINTERS'][selected_printer]['PROPERTIES'].items():
-            label = QLabel(property_name)
+            label = QLabel(property_dict['PROPERTY_NAME'])
             qline_edit = QLineEdit()
 
             self.printer_properties[property_name] = {'qline_edit_widget': qline_edit, 
@@ -176,8 +173,7 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
                 pass
 
         # Load requested parameters into the text widgets
-        for property_name, property_dict in gv['SPECIAL_PRINTERS']\
-        [self.requested_item_parameters_dict['printer_name']]['PROPERTIES'].items():
+        for property_name, property_dict in gv['SPECIAL_PRINTERS'][self.requested_item_parameters_dict['printer_name']]['PROPERTIES'].items():
 
             if property_name in self.requested_item_parameters_dict:
                 requested_text = self.requested_item_parameters_dict[property_name]
@@ -230,8 +226,6 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
             file_dict[property_name] = property_dict['qline_edit_widget'].text()
 
         self.temp_make_files_dict[self.temp_job_name + '_' + file_name] = file_dict
-
-
 
         self.temp_store_files_dict[file_name] = {'attachment': attachment,
                                                  'target_file_global_path': file_global_path}

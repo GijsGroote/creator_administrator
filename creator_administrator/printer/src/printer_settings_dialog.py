@@ -8,7 +8,6 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QDialog, QWidget, QVBoxLayout, QLabel
 from PyQt6.uic import loadUi
 
-from src.directory_functions import shorten_folder_name
 from src.settings_dialog import SettingsQDialog
 from src.qmessagebox import WarningQMessageBox
 from src.qdialog import SelectOptionsQDialog
@@ -37,9 +36,7 @@ class PrintSettingsQDialog(SettingsQDialog):
                 partial(check_empty, self.defaultPrinterNameLineEdit, gv))
 
         if 'DEFAULT_SLICER_EXECUTABLE_PATH' in gv:
-            self.defaultSlicerExecutablePushButton.setText(
-                shorten_folder_name(str(gv['DEFAULT_SLICER_EXECUTABLE_PATH'])))
-            self.defaultSlicerExecutablePushButton.file_global_path = gv['DEFAULT_SLICER_EXECUTABLE_PATH']
+            self.defaultSlicerExecutablePushButton.setCurrentFile(gv['DEFAULT_SLICER_EXECUTABLE_PATH'])
         else:
             self.defaultSlicerExecutablePushButton.setText('System Default')
 
@@ -58,7 +55,9 @@ class PrintSettingsQDialog(SettingsQDialog):
             settings_dict = json.load(settings_file)
 
             settings_dict['DEFAULT_PRINTER_NAME'] = self.defaultPrinterNameLineEdit.text()
-            settings_dict['DEFAULT_SLICER_EXECUTABLE_PATH'] = self.defaultSlicerExecutablePushButton.text()
+            print(f'waht is nto default slicer {self.defaultSlicerExecutablePushButton.file_global_path}')
+            if self.defaultSlicerExecutablePushButton.file_global_path != '':
+                settings_dict['DEFAULT_SLICER_EXECUTABLE_PATH'] = self.defaultSlicerExecutablePushButton.file_global_path
             settings_dict['SPECIAL_PRINTERS'] = self.special_printers_dicts
 
         with open(gv['SETTINGS_FILE_PATH'], 'w' ) as settings_file:
@@ -101,7 +100,7 @@ class PrintSettingsQDialog(SettingsQDialog):
     def removePrinter(self):
         ''' Remove a special printer. '''
 
-        printer_list = [(key+': '+value['PRINTER_NAME'], key) for key, value in self.special_printers_dicts.items()]
+        printer_list = [(value['PRINTER_NAME'], key) for key, value in self.special_printers_dicts.items()]
         dialog = SelectOptionsQDialog(self, gv, printer_list, question='Select printers to remove')
 
         if dialog.exec() == 1:
@@ -123,18 +122,25 @@ class PrintSettingsQDialog(SettingsQDialog):
 
             slicer_executable_path = 'System Default'
             if 'SLICER_EXECUTABLE_PATH' in printer_value:
-                slicer_executable_path = shorten_folder_name(printer_value['SLICER_EXECUTABLE_PATH'])
+                slicer_executable_path = printer_value['SLICER_EXECUTABLE_PATH']
+
+            accepted_materials_str = ''
+            for i, material in enumerate(printer_value['ACCEPTED_MATERIALS']):
+                if i > 0:
+                    accepted_materials_str+=', ' 
+                accepted_materials_str+=str(material) 
+
 
             printer_str = f'<big><big>{printer_value["PRINTER_NAME"]}<hr>'\
                     f'<br>{space} Printer Name: {space}{printer_key}'\
                     f'<br>{space} Slicer Executable: {space}{slicer_executable_path}'\
-                    f'<br>{space} Accepted Materials: {space}{printer_value["ACCEPTED_MATERIALS"]}'\
+                    f'<br>{space} Accepted Materials: {space}{accepted_materials_str}'\
                     f'<br>{space} Properties:</big></big><br>' 
 
             for property_name, property_dict in printer_value['PROPERTIES'].items():
 
                 printer_str += f''\
-                        f'<big><big><br>{space*2}Property Name: {space}{property_name}{space*2}<br>{space*2}Data Type: {space}{property_dict["DATA_TYPE"]}'\
+                        f'<big><big><br>{space*2}Property Name: {space}{property_dict["PROPERTY_NAME"]}{space*2}<br>{space*2}Data Type: {space}{property_dict["DATA_TYPE"]}'\
                         f'<br>{space*2}Default Value: {space}{property_dict["DEFAULT_VALUE"]}<br></big></big>'\
 
             scroll_layout.addWidget(QLabel(printer_str, self))
@@ -185,7 +191,7 @@ class AddPrinterQDialog(QDialog):
         if self.validateNewPrinterSettings():
             self.add_printer_dict = {'PRINTER_NAME': self.printerNameLineEdit.text(),
                 'ACCEPTED_MATERIALS': self.acceptedMaterialsLineEdit.text(),
-                'SLICER_EXECUTABLE_PATH': self.slicerExecutablePushButton.text(),
+                'SLICER_EXECUTABLE_PATH': self.slicerExecutablePushButton.file_global_path,
                 'PROPERTIES': self.properties}
             self.close()
         
@@ -198,7 +204,7 @@ class AddPrinterQDialog(QDialog):
             (check_comma_seperated_tuple(self.acceptedMaterialsLineEdit, gv),
                  'Accepted Materials is not a comma seperated list of values'),
             (check_is_executable(self.slicerExecutablePushButton, gv),
-                 f'Slicer Executable is {self.slicerExecutablePushButton.text()}, select a .exe file')]
+                 f'Slicer Executable is {self.slicerExecutablePushButton.file_global_path}, select a .exe file')]
 
         # check input values
         for check, warning_string in check_and_warnings:

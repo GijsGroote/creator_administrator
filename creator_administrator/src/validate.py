@@ -94,50 +94,80 @@ def check_property(widget: QWidget, data_type: str, gv: dict) -> bool:
 
     text = widget.text()
 
+    check = None
+
     if data_type == 'Anything':
+        check = check_is_anything(text)
+
+    elif data_type == 'Anything Except Nothing':
+        check = check_is_anything_except_nothing(text)
+
+    elif data_type == 'Any Integer':
+        check = check_is_any_integer(text)
+
+    elif data_type == 'Integer > 0':
+        check = check_is_integer_larger_than_zero(text)
+
+    elif data_type == 'Integer >= 0':
+        check = check_is_integer_larger_equel_zero(text)
+
+    elif data_type == 'Any Decimal Number':
+        check = check_is_any_decimal(text)
+
+    elif data_type == 'Decimal Number > 0':
+        check = check_is_decimal_larger_than_zero(text)
+
+    elif data_type == 'Decimal Number >= 0':
+        check = check_is_decimal_larger_equal_zero(text)
+
+    if check:
         widget.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')
+    elif not check:
+        widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
+    else:
+        raise ValueError(f'data type {data_type} not recognised')
+
+    return check
+
+def check_is_anything(input) -> bool:
+    if input is not None:
+        return True
+    return False
+
+def check_is_anything_except_nothing(input) -> bool:
+    if input is not None and input != '':
+        return True
+    return False
+
+def check_is_any_integer(input) -> bool:
+    try:
+        int(input)
         return True
 
-    if data_type == 'Anything Except Nothing':
-        return check_empty(widget, gv)
-
-    if data_type == 'Any Integer':
-        return check_int(widget, gv)
-
-    if data_type == 'Integer > 0':
-        if check_int(widget, gv) and int(text) > 0:
-            widget.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')
-            return True
-        widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
+    except ValueError:
         return False
 
-    if data_type == 'Integer >= 0':
-        if check_int(widget, gv) and int(text) >= 0:
-            widget.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')
-            return True
-        widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
-        return False
+def check_is_integer_larger_than_zero(input) -> bool:
+    if check_is_any_integer(input) and int(input) > 0:
+        return True
+    return False
 
-    if data_type == 'Any Decimal Number':
-        if text.isdecimal():
-            widget.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')
-            return True
-        widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
-        return False
+def check_is_integer_larger_equel_zero(input) -> bool:
+    if check_is_any_integer(input) and int(input) >= 0:
+        return True
+    return False
 
-    if data_type == 'Decimal Number > 0':
-        if text.isdecimal() and float(text) > 0:
-            widget.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')
-            return True
-        widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
-        return False
+def check_is_any_decimal(input) -> bool:
+    if input.isdecimal():
+        return True
+    return False
 
-    if data_type == 'Decimal Number >= 0':
-        if text.isdecimal() and float(text) >= 0:
-            widget.setStyleSheet(f'background-color: {gv["GOOD_COLOR_RGBA"]};')
-            return True
-        widget.setStyleSheet(f'background-color: {gv["BAD_COLOR_RGBA"]};')
-        return False
+def check_is_decimal_larger_than_zero(input) -> bool:
+    if check_is_any_decimal(input) and float(input) > 0:
+        return True
+    return False
 
-    raise ValueError(f'data type {data_type} not recognised')
-
+def check_is_decimal_larger_equal_zero(input) -> bool:
+    if check_is_any_decimal(input) and float(input) >= 0:
+        return True
+    return False

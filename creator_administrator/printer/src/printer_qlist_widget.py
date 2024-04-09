@@ -147,17 +147,10 @@ class PrintJobContentQListWidget(JobContentQListWidget):
     def fileDoubleClicked(self, clicked_file):
         ''' Double click on a file (or item) to open it. '''
 
-        # check if file is a maker file, open in the specified executable
-        job_tracker = PrintJobTracker(self)
-        slicer_executable_global_path = job_tracker.globalPathToExecutable(clicked_file.data(1))
-
-        print(f'int {slicer_executable_global_path} he fileDOubeclicked func')
-
-        if slicer_executable_global_path is None:
-            print('open file please')
-            open_file(clicked_file.data(1))
-        else:
-            print('open with ')
-            print(slicer_executable_global_path)
+        if clicked_file.data(1).lower().endswith(gv['ACCEPTED_EXTENSIONS']):
+            job_tracker = PrintJobTracker(self)
+            slicer_executable_global_path = job_tracker.globalPathToExecutable(clicked_file.data(1))
             open_file(clicked_file.data(1), executable_global_path=slicer_executable_global_path)
+        else:
+            open_file(clicked_file.data(1))
 
