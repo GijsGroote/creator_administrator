@@ -374,7 +374,7 @@ class JobTracker:
                                 'created_on_date': str(datetime.now().strftime("%d-%m-%Y")),
                                 'dynamic_job_name': str(datetime.now().strftime("%d-%m"))+'_'+job_name}
 
-                    mail_item_list = [os.path.join(job_folder_global_path, file) for file in os.listdir(job_folder_global_path) if file.endswith(('.eml', '.msg'))]
+                    mail_item_list = [os.path.join(job_folder_global_path, file) for file in os.listdir(job_folder_global_path) if file.lower().endswith(('.eml', '.msg'))]
                     if len(mail_item_list) > 0:
 
                         job_dict['sender_name'] = MailManager(self.gv).getSenderName(mail_item_list[0])
@@ -396,7 +396,7 @@ class JobTracker:
                         zip(copy.copy(job_names_no_dates), copy.copy(file_global_path_list), copy.copy(job_dict_list))):
 
                     make_files_global_paths = [file_path for file_path
-                                           in files_global_paths if file_path.endswith(self.gv['ACCEPTED_EXTENSIONS'])]
+                                           in files_global_paths if file_path.lower().endswith(self.gv['ACCEPTED_EXTENSIONS'])]
 
                     if len(make_files_global_paths) == 0:
                         self.addJob(job_name, None, None, job_dict=job_dict)
