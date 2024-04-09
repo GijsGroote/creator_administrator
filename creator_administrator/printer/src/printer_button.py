@@ -72,8 +72,8 @@ class PrintAangezetQPushButton(JobsQPushButton):
         gcode_files_name_and_global_path = []
 
         for job_file in os.listdir(job_folder_global_path):
-            if job_file.endswith('.gcode'):
-                gcode_files_name_and_global_path.append((job_file, os.path.join(job_folder_global_path, job_file)))
+            if job_file.lower().endswith('.gcode'):
+                gcode_files_name_and_global_path.append((job_file, os.path.join(job_folder_global_path, job_file), 'done'))
 
 
         if len(gcode_files_name_and_global_path) <= 1:
@@ -104,9 +104,6 @@ class PrintAangezetQPushButton(JobsQPushButton):
                         pass
 
 
-
-
-
 class PrintKlaarQPushButton(JobsQPushButton):
     ''' TODO. '''
 
@@ -124,16 +121,15 @@ class PrintKlaarQPushButton(JobsQPushButton):
         job_folder_global_path = job_tracker.getJobValue('job_folder_global_path', job_name)
         job_tracker.updateJobKey('status', job_name, 'VERWERKT')
         job_tracker.markFilesAsDone(job_name=job_name, file_global_path=None, done=True, all_files_done=True)
-
-        sender_name = job_tracker.getJobValue('sender_name', job_name)
+        
         self.window().refreshAllWidgets()
         self.parent().parent().setCurrentIndex(0)
 
-        if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]): # pylint: disable=use-a-generator
-            WarningQMessageBox(parent=self, gv=gv, text='No Job finished mail send because: No mail file found')
+        if not any([file.lower().endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]): # pylint: disable=use-a-generator
+            WarningQMessageBox(gv=gv, parent=self, text='No Job finished mail send because: No mail file found')
         else:
             ThreadedMailManager(parent=self, gv=gv).startMailWorker(
-                    sender_name=sender_name,
+                    sender_name=job_tracker.getJobValue('sender_name', job_name),
                     mail_type='FINISHED',
                     mail_item=job_folder_global_path)
 
@@ -156,7 +152,7 @@ class PrintAfgekeurdQPushButton(JobsQPushButton):
 
         job_folder_global_path = job_tracker.getJobValue('job_folder_global_path', job_name)
 
-        if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]): # pylint: disable=use-a-generator
+        if not any([file.lower().endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]): # pylint: disable=use-a-generator
                     WarningQMessageBox(gv=gv, parent=self, text='No Afgekeurd mail send because: No mail file found')
         else:
             sender_name = job_tracker.getJobValue('sender_name', job_name)
@@ -241,8 +237,8 @@ class PrintOptionsQPushButton(OptionsQPushButton):
             WarningQMessageBox(parent=self, gv=gv, text='No mail send because: Job Name could not be found')
             return
 
-        if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_dict['job_folder_global_path'])]): # pylint: disable=use-a-generator
-            WarningQMessageBox(parent=self, gv=gv, text='No Job finished mail send because: No mail file found')
+        if not any([file.lower().endswith(('.msg', '.eml')) for file in os.listdir(job_dict['job_folder_global_path'])]): # pylint: disable=use-a-generator
+            WarningQMessageBox(gv=gv, parent=self, text='No Job finished mail send because: No mail file found')
             return
 
         ThreadedMailManager(parent=self, gv=gv).startMailWorker(

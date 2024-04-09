@@ -242,14 +242,15 @@ class CreateJobsFromFileSystemQDialog(CreateJobsQDialog):
 
 
         for file_global_path in self.files_global_paths_list[self.job_counter]:
-            if file_global_path.endswith(self.gv['ACCEPTED_EXTENSIONS']):
+            if file_global_path.lower().endswith(self.gv['ACCEPTED_EXTENSIONS']):
                 temp_make_items.append(file_global_path)
             else:
                 store_file_name = os.path.basename(file_global_path)
                 target_file_global_path = os.path.join(self.temp_job_folder_global_path, store_file_name)
                 self.temp_store_files_dict[store_file_name] = {'source_file_global_path': file_global_path,
                                              'target_file_global_path': target_file_global_path}
-
+                
+        
         self.temp_make_items = temp_make_items
 
         self.jobNameQLabel.setText(self.temp_job_name)

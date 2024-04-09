@@ -371,13 +371,13 @@ class MailManager():
         mail_file_global_path = ''
 
         if sys.platform == 'win32':
-            if folder_global_path.endswith('mail.msg'):
+            if folder_global_path.lower().endswith('mail.msg'):
                 mail_file_global_path = folder_global_path
             else:
                 mail_file_global_path = os.path.join(folder_global_path, 'mail.msg')
 
         if sys.platform == 'linux':
-            if folder_global_path.endswith('mail.eml'):
+            if folder_global_path.lower().endswith('mail.eml'):
                 mail_file_global_path = folder_global_path
             else:
                 mail_file_global_path = os.path.join(folder_global_path, 'mail.eml')
@@ -392,7 +392,7 @@ class MailManager():
 
         if sys.platform == 'win32':
             assert os.path.exists(msg), f'could not find directory {msg}'
-            return [os.path.abspath(os.path.join(msg, file)) for file in os.listdir(msg) if not file.endswith('.msg')]
+            return [os.path.abspath(os.path.join(msg, file)) for file in os.listdir(msg) if not file.lower().endswith('.msg')]
 
         if sys.platform == 'linux':
             attachments = []
