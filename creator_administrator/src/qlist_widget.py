@@ -1,10 +1,11 @@
 import os
 import abc
+import json
 from operator import itemgetter
 
-from PyQt6.QtCore import Qt, QUrl, QSize
+from PyQt6.QtCore import Qt, QUrl
 from PyQt6.QtGui import QKeySequence, QShortcut, QFont, QDrag, QPixmap, QPainter, QColor
-from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QLabel, QWidget, QAbstractItemView
+from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QLabel, QWidget, QAbstractItemView, QMenu
 
 from src.directory_functions import open_file
 from src.job_tracker import JobTracker
@@ -27,13 +28,15 @@ class ContentQListWidgetItem(QListWidgetItem):
                 self.setText('❎ '+item_dict['file_name'])
         else:
             self.setText(item_dict['file_name'])
-
+        
+        # TODO: this is not robust to check if the file is a make file
+        if 'done' in item_dict:
+            self.setData(3, json.dumps(item_dict, indent=4))
 
         self.setData(1, item_dict['file_global_path'])
         self.setFont(QFont('Cantarell', 14))
 
-    def size(self):
-        return QSize(150, 40)
+
 
 class OverviewQListWidget(QListWidget):
     ''' Overview of multiple items in a list. '''
@@ -181,6 +184,31 @@ class JobContentQListWidget(ContentQListWidget):
         drag.setMimeData(mime)        
         drag.exec(Qt.DropAction.CopyAction)
 
+    def mousePressEvent(self, event):
+        print('a mouse press is detected')
+        if event.button() == Qt.MouseButton.RightButton:  
+            self.contextMenuEvent(event)
+
+    def contextMenuEvent(self, event):
+        context_menu = QMenu(self)
+        action1 = context_menu.addAction("Action 1")
+        action2 = context_menu.addAction("Action 2")
+        action = context_menu.exec(self.mapToGlobal(event.pos()))
+
+        if action == action1:
+            self.handle_action1()
+        elif action == action2:
+            self.handle_action2()
+
+    def handle_action1(self):
+        print("Action 1 selected")
+
+    def handle_action2(self):
+        print("Action 2 selected") 
+
+    # def size(self):
+    #     print('size function called')
+    #     return QSize(150, 40)
 
     def loadContent(self, item_name):
         self.clear()

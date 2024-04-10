@@ -140,9 +140,7 @@ class PrintJobContentQListWidget(JobContentQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
         super().__init__(parent, PrintJobTracker(self), *args, **kwargs)
-
         self.gv = gv
-
 
     def fileDoubleClicked(self, clicked_file):
         ''' Double click on a file (or item) to open it. '''

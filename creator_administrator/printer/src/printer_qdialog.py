@@ -128,12 +128,12 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         selected_printer = self.printerComboBox.currentText()
 
         # make all label and line edits that belong to the requested printer
-        for property_name, property_dict in gv['SPECIAL_PRINTERS'][selected_printer]['PROPERTIES'].items():
+        for property_key, property_dict in gv['SPECIAL_PRINTERS'][selected_printer]['PROPERTIES'].items():
             label = QLabel(property_dict['PROPERTY_NAME'])
             qline_edit = QLineEdit()
 
-            self.printer_properties[property_name] = {'qline_edit_widget': qline_edit, 
-               'data_type': gv['SPECIAL_PRINTERS'][selected_printer]['PROPERTIES'][property_name]['DATA_TYPE']}
+            self.printer_properties[property_dict['PROPERTY_NAME']] = {'qline_edit_widget': qline_edit, 
+               'data_type': gv['SPECIAL_PRINTERS'][selected_printer]['PROPERTIES'][property_key]['DATA_TYPE']}
 
             self.form_layout.addRow(label, qline_edit)
 
@@ -173,16 +173,16 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
                 pass
 
         # Load requested parameters into the text widgets
-        for property_name, property_dict in gv['SPECIAL_PRINTERS'][self.requested_item_parameters_dict['printer_name']]['PROPERTIES'].items():
+        for property_key, property_dict in gv['SPECIAL_PRINTERS'][self.requested_item_parameters_dict['printer_name']]['PROPERTIES'].items():
 
-            if property_name in self.requested_item_parameters_dict:
-                requested_text = self.requested_item_parameters_dict[property_name]
-                self.printer_properties[property_name]['qline_edit_widget'].setText(requested_text)
+            if property_dict['PROPERTY_NAME'] in self.requested_item_parameters_dict:
+                requested_text = self.requested_item_parameters_dict[property_dict['PROPERTY_NAME']]
+                self.printer_properties[property_dict['PROPERTY_NAME']]['qline_edit_widget'].setText(requested_text)
 
             else:
-                self.printer_properties[property_name]['qline_edit_widget'].setText(
+                self.printer_properties[property_dict['PROPERTY_NAME']]['qline_edit_widget'].setText(
                     gv['SPECIAL_PRINTERS'][self.requested_item_parameters_dict['printer_name']]\
-                    ['PROPERTIES'][property_name]['DEFAULT_VALUE'])
+                    ['PROPERTIES'][property_key]['DEFAULT_VALUE'])
 
 
     def collectItemInfo(self):
@@ -222,8 +222,8 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
             'amount': amount,
             'done': False}
 
-        for property_name, property_dict in self.printer_properties.items():
-            file_dict[property_name] = property_dict['qline_edit_widget'].text()
+        for property_key, property_dict in self.printer_properties.items():
+            file_dict[property_key] = property_dict['qline_edit_widget'].text()
 
         self.temp_make_files_dict[self.temp_job_name + '_' + file_name] = file_dict
 
