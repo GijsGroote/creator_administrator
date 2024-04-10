@@ -36,6 +36,7 @@ class PrintSettingsQDialog(SettingsQDialog):
                 partial(check_empty, self.defaultPrinterNameLineEdit, gv))
 
         if 'DEFAULT_SLICER_EXECUTABLE_PATH' in gv:
+            print(f'a bit unclear what you are {gv["DEFAULT_SLICER_EXECUTABLE_PATH"]}')
             self.defaultSlicerExecutablePushButton.setCurrentFile(gv['DEFAULT_SLICER_EXECUTABLE_PATH'])
         else:
             self.defaultSlicerExecutablePushButton.setText('System Default')
