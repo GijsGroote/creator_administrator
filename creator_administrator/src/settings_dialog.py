@@ -104,11 +104,7 @@ class SettingsQDialog(QDialog):
 
         # first, check types, otherwise type errors might break upcoming checks
         for check, warning_string in check_types_and_warnings:
-<<<<<<< HEAD
             if not check:
-=======
-            if check:
->>>>>>> main
                 WarningQMessageBox(self, self.gv, warning_string)
                 return False
 

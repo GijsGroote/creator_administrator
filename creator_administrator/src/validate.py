@@ -158,9 +158,13 @@ def check_is_integer_larger_equel_zero(input) -> bool:
     return False
 
 def check_is_any_decimal(input) -> bool:
-    if input.isdecimal():
+    if input is None:
+        return False
+    try: 
+        float(input)
         return True
-    return False
+    except ValueError:
+        return False
 
 def check_is_decimal_larger_than_zero(input) -> bool:
     if check_is_any_decimal(input) and float(input) > 0:

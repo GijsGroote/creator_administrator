@@ -299,7 +299,7 @@ class CreatePrintJobsFromFileSystemQDialog(CreateJobsFromFileSystemQDialog):
         self.amountQLineEdit.clear()
 
         materials = list(set(gv['ACCEPTED_MATERIALS']).union(self.job_tracker.getExistingMaterials()).union(self.new_materials_list))
-        self.materialQComboBox.addItems(materials.upper())
+        self.materialQComboBox.addItems(materials)
         self.materialQComboBox.addItem(self.new_material_text)
 
         # guess the amount
