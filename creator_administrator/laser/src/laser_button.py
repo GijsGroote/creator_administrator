@@ -33,7 +33,7 @@ class LaserKlaarQPushButton(JobsQPushButton):
         self.window().refreshAllWidgets()
         self.parent().parent().setCurrentIndex(0)
 
-        if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]): # pylint: disable=use-a-generator
+        if not any([file.lower().endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]): # pylint: disable=use-a-generator
             WarningQMessageBox(gv=gv, parent=self, text='No Job finished mail send because: No mail file found')
         else:
             ThreadedMailManager(parent=self, gv=gv).startMailWorker(
@@ -86,7 +86,7 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
                     done_files += laser_file_dict['file_name']+'\n'
                 InfoQMessageBox(self, f'For {sender_name} put into Uitgifterek:\n{done_files}')
             
-                if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]): # pylint: disable=use-a-generator
+                if not any([file.lower().endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]): # pylint: disable=use-a-generator
                     WarningQMessageBox(gv=gv, parent=self, text='No Job finished mail send because: No mail file found')
                 else:
                     ThreadedMailManager(parent=self, gv=gv).startMailWorker(
@@ -116,7 +116,7 @@ class LaserAfgekeurdQPushButton(JobsQPushButton):
         job_folder_global_path = job_tracker.getJobValue('job_folder_global_path', job_name)
 
         
-        if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]): # pylint: disable=use-a-generator
+        if not any([file.lower().endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]): # pylint: disable=use-a-generator
                     WarningQMessageBox(gv=gv, parent=self, text='No Afgekeurd mail send because: No mail file found')
         else:
             sender_name = job_tracker.getJobValue('sender_name', job_name)
@@ -210,7 +210,7 @@ class LaserOptionsQPushButton(OptionsQPushButton):
             WarningQMessageBox(gv=gv, parent=self, text='No mail send because: Job Name could not be found')
             return
 
-        if not any([file.endswith(('.msg', '.eml')) for file in os.listdir(job_dict['job_folder_global_path'])]): # pylint: disable=use-a-generator
+        if not any([file.lower().endswith(('.msg', '.eml')) for file in os.listdir(job_dict['job_folder_global_path'])]): # pylint: disable=use-a-generator
             WarningQMessageBox(gv=gv, parent=self, text='No Job finished mail send because: No mail file found')
             return
 
