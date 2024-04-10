@@ -262,7 +262,7 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
                 mail_type='RECEIVED',
                 mail_item=msg,
                 move_mail_to_verwerkt=True,
-                template_content= {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsWithStatus(['WACHTRIJ'])},
+                template_content= {"{jobs_in_queue}": self.job_tracker.getNumberOfJobsWithStatus(['WACHTRIJ', 'GESLICED'])},
                 sender_mail_adress=sender_mail_adress,
                 sender_mail_receive_time=sender_mail_receive_time)
 

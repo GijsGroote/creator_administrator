@@ -216,18 +216,18 @@ class JobTracker:
         ''' Return the number of jobs that have a certain status. '''
 
         self.readTrackerFile()
+
         return len([job_key for job_key, job_value in self.tracker_dict.items() if job_value['status'] in status_list])
 
     def fileGlobalPathToJobName(self, file_global_path: str) -> str:
-        ''' Return a job name from a file. '''
+        ''' Return a job name from file any file in the job folder. '''
         self.readTrackerFile()
 
-        job_name = None
         for job_dict in self.tracker_dict.values():
-            for make_file_dict in job_dict['make_files'].values():
-                if make_file_dict['file_global_path'] == file_global_path:
-                    job_name = job_dict['job_name']
-        return job_name
+            if file_global_path.startswith(job_dict['job_folder_global_path']):
+                return job_dict['job_name']
+            
+        return None
 
 
     def makeJobNameUnique(self, job_name: str) -> str:
@@ -272,6 +272,7 @@ class JobTracker:
             created_on_date_object = datetime.strptime(job_dict['created_on_date'], "%d-%m-%Y")
             current_date_object = datetime.now()
             date_difference = current_date_object - created_on_date_object
+
 
             if date_difference.days > self.gv['DAYS_TO_KEEP_JOBS'] and job_dict['status'] != 'WACHTRIJ':
                 n_old_jobs += 1
@@ -465,7 +466,6 @@ class JobTracker:
 
             # check if jobs are incomplete and must be repaired
             if not self.IsJobDictAndFileSystemInSync(job_dict, job_folder_global_path):
-
 
                 valid_file_names = [file_name for file_name in os.listdir(
                     job_folder_global_path) if file_name.lower().endswith(self.gv['ACCEPTED_EXTENSIONS'])]
