@@ -88,13 +88,15 @@ class PrintJobTracker(JobTracker):
         for job_dict in self.tracker_dict.values():
             for file_dict in job_dict['make_files'].values():
                 if file_global_path == file_dict['file_global_path']:
-                    if file_dict['printer_name'] == gv['DEFAULT_PRINTER_NAME']:
-                        if 'DEFAULT_SLICER_EXECUTABLE_PATH' in gv:
-                            return gv['DEFAULT_SLICER_EXECUTABLE_PATH']
-                        return None
-
+                    if 'printer_name' in file_dict:
+                        if file_dict['printer_name'] == gv['DEFAULT_PRINTER_NAME']:
+                            if 'DEFAULT_SLICER_EXECUTABLE_PATH' in gv:
+                                return gv['DEFAULT_SLICER_EXECUTABLE_PATH']
+                            return None
+                        else:
+                            return gv['SPECIAL_PRINTERS'][file_dict['printer_name']]['SLICER_EXECUTABLE_PATH']
                     else:
-                        return gv['SPECIAL_PRINTERS'][file_dict['printer_name']]['SLICER_EXECUTABLE_PATH']
+                        return None
         return None
 
 

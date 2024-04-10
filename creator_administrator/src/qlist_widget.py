@@ -149,6 +149,8 @@ class JobContentQListWidget(ContentQListWidget):
 
     def startDrag(self, event):
         ''' Start dragging an item. '''
+
+        print('start dragging an item')
         drag = QDrag(self)
 
         self.current_item = self.currentItem()
@@ -184,31 +186,27 @@ class JobContentQListWidget(ContentQListWidget):
         drag.setMimeData(mime)        
         drag.exec(Qt.DropAction.CopyAction)
 
-    def mousePressEvent(self, event):
-        print('a mouse press is detected')
-        if event.button() == Qt.MouseButton.RightButton:  
-            self.contextMenuEvent(event)
+    # def mousePressEvent(self, event):
+    #     print('a mouse press is detected')
+    #     if event.button() == Qt.MouseButton.RightButton:  
+    #         self.contextMenuEvent(event)
 
-    def contextMenuEvent(self, event):
-        context_menu = QMenu(self)
-        action1 = context_menu.addAction("Action 1")
-        action2 = context_menu.addAction("Action 2")
-        action = context_menu.exec(self.mapToGlobal(event.pos()))
+    # def contextMenuEvent(self, event):
+    #     context_menu = QMenu(self)
+    #     action1 = context_menu.addAction("Action 1")
+    #     action2 = context_menu.addAction("Action 2")
+    #     action = context_menu.exec(self.mapToGlobal(event.pos()))
 
-        if action == action1:
-            self.handle_action1()
-        elif action == action2:
-            self.handle_action2()
+    #     if action == action1:
+    #         self.handle_action1()
+    #     elif action == action2:
+    #         self.handle_action2()
 
-    def handle_action1(self):
-        print("Action 1 selected")
+    # def handle_action1(self):
+    #     print("Action 1 selected")
 
-    def handle_action2(self):
-        print("Action 2 selected") 
-
-    # def size(self):
-    #     print('size function called')
-    #     return QSize(150, 40)
+    # def handle_action2(self):
+    #     print("Action 2 selected") 
 
     def loadContent(self, item_name):
         self.clear()
