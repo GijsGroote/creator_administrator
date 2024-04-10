@@ -30,28 +30,28 @@ class GeslicedQPushButton(JobsQPushButton):
 
         job_dict =  job_tracker.getJobDict(job_name)
 
-        gcode_files = [gcode_file for
+        sliced_files = [gcode_file for
                        gcode_file in os.listdir(job_dict['job_folder_global_path'])
-                       if gcode_file.lower().endswith('.gcode')]
+                       if gcode_file.lower().endswith(gv['SLICED_FILE_EXTENSIONS'])]
 
-        if len(gcode_files) == 0:
-            WarningQMessageBox(self, gv, 'warning! no .gcode files detected, slice .stl files first')
+        if len(sliced_files) == 0:
+            WarningQMessageBox(self, gv, f'warning! no {gv["SLICED_FILE_EXTENSIONS"]} files detected, slice make files first')
+            return
 
-        else:
-            job_tracker.updateJobKey('status', job_name, 'GESLICED')
+        job_tracker.updateJobKey('status', job_name, 'GESLICED')
 
-            # Rename GCODE 
-            for gcode_file in gcode_files:
-                try:
-                    os.rename(os.path.join(job_dict['job_folder_global_path'], gcode_file),
-                              os.path.join(job_dict['job_folder_global_path'],
-                                   job_dict['job_name']+ '_' + gcode_file))
-                except Exception:
-                    pass # simply do not rename then
-        
+        # Rename GCODE 
+        for sliced_file in sliced_files:
+            try:
+                os.rename(os.path.join(job_dict['job_folder_global_path'], sliced_file),
+                            os.path.join(job_dict['job_folder_global_path'],
+                                job_dict['job_name']+ '_' + sliced_file))
+            except Exception:
+                pass # simply do not rename then
+    
         job_tracker.updateJobKey('dynamic_job_name', job_name,
-                  get_date_from_dynamic_job_name(job_dict['dynamic_job_name'])+
-                  gcode_files_to_max_print_time(gcode_files)+job_name)
+                get_date_from_dynamic_job_name(job_dict['dynamic_job_name'])+
+                gcode_files_to_max_print_time(sliced_files)+job_name)
 
         self.window().refreshAllWidgets()
         self.parent().parent().setCurrentIndex(0)

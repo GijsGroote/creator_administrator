@@ -116,7 +116,7 @@ with open(settings_file_path, 'r') as settings_file:
         gv['SPECIAL_PRINTERS'] = gv_data['SPECIAL_PRINTERS']
         for key, printer in gv_data['SPECIAL_PRINTERS'].items():
             gv['SPECIAL_PRINTERS'][key]['ACCEPTED_MATERIALS'] = tuple(
-                    gv_data['SPECIAL_PRINTERS'][key]['ACCEPTED_MATERIALS'].split(', '))
+                    gv_data['SPECIAL_PRINTERS'][key]['ACCEPTED_MATERIALS'])
 
     else:
         gv['SPECIAL_PRINTERS'] = {}
@@ -167,6 +167,8 @@ with open(settings_file_path, 'r') as settings_file:
             gv[mail_template] = os.path.join(
                     gv['REPO_DIR_HOME'],
                     'printer/email_templates', 'DEFAULT_'+mail_template+'.html')
+
+gv['SLICED_FILE_EXTENSIONS'] = tuple('.gcode, .bgcode, .gcode.3mf'.split(', '))
 
 if not os.path.exists(gv["TODO_DIR_HOME"]):
     os.mkdir(gv["TODO_DIR_HOME"])

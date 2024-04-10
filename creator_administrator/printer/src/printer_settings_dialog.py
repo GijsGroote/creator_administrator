@@ -36,7 +36,6 @@ class PrintSettingsQDialog(SettingsQDialog):
                 partial(check_empty, self.defaultPrinterNameLineEdit, gv))
 
         if 'DEFAULT_SLICER_EXECUTABLE_PATH' in gv:
-            print(f'a bit unclear what you are {gv["DEFAULT_SLICER_EXECUTABLE_PATH"]}')
             self.defaultSlicerExecutablePushButton.setCurrentFile(gv['DEFAULT_SLICER_EXECUTABLE_PATH'])
         else:
             self.defaultSlicerExecutablePushButton.setText('System Default')
@@ -56,8 +55,7 @@ class PrintSettingsQDialog(SettingsQDialog):
             settings_dict = json.load(settings_file)
 
             settings_dict['DEFAULT_PRINTER_NAME'] = self.defaultPrinterNameLineEdit.text()
-            print(f'waht is nto default slicer {self.defaultSlicerExecutablePushButton.file_global_path}')
-            if self.defaultSlicerExecutablePushButton.file_global_path != '':
+            if self.defaultSlicerExecutablePushButton.file_global_path is not None:
                 settings_dict['DEFAULT_SLICER_EXECUTABLE_PATH'] = self.defaultSlicerExecutablePushButton.file_global_path
             settings_dict['SPECIAL_PRINTERS'] = self.special_printers_dicts
 
@@ -94,6 +92,8 @@ class PrintSettingsQDialog(SettingsQDialog):
             if printer_name in self.special_printers_dicts:
                 WarningQMessageBox(self, gv, f'A printer with name {printer_name} already exists')
                 return
+
+
 
             self.special_printers_dicts[printer_name] = add_printer_dialog.add_printer_dict
             self.refreshSpecialPrinterScrollArea()
@@ -191,7 +191,7 @@ class AddPrinterQDialog(QDialog):
         ''' Validate and save settings. '''
         if self.validateNewPrinterSettings():
             self.add_printer_dict = {'PRINTER_NAME': self.printerNameLineEdit.text(),
-                'ACCEPTED_MATERIALS': self.acceptedMaterialsLineEdit.text(),
+                'ACCEPTED_MATERIALS': tuple(self.acceptedMaterialsLineEdit.text().split(', ')),
                 'SLICER_EXECUTABLE_PATH': self.slicerExecutablePushButton.file_global_path,
                 'PROPERTIES': self.properties}
             self.close()
