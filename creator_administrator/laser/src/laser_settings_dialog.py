@@ -7,6 +7,12 @@ from functools import partial
 from src.settings_dialog import SettingsQDialog
 from src.qmessagebox import WarningQMessageBox
 from src.directory_functions import shorten_folder_name
+from src.validate import (
+        check_empty,
+        check_is_executable,
+        check_comma_seperated_tuple,
+        check_property,
+        check_html)
 
 from global_variables import gv
 
@@ -25,10 +31,10 @@ class LaserSettingsQDialog(SettingsQDialog):
         widget_button = self.selectUnclearTemplateButton
 
         if template_name in self.gv:
-            widget_button.setStartingDirectory(os.path.dirname(self.gv[template_name]))
+            widget_button.setCurrentFile(os.path.dirname(self.gv[template_name]))
             widget_button.setText(shorten_folder_name(self.gv[template_name]))
             widget_button.file_global_path = self.gv[template_name]
-        widget_button.clicked.connect(partial(self.checkHTML, widget_button))
+        widget_button.clicked.connect(partial(check_html, widget_button, gv))
 
     def saveMachineSettings(self):
         ''' Save the settings specific to a mahichine (3D printer / laser cutter). '''
@@ -62,7 +68,7 @@ class LaserSettingsQDialog(SettingsQDialog):
                 (not os.path.exists(widget_button.file_global_path),
                 f'Template {template_name} path {widget_button.file_global_path} does not exist'))
 
-            check_and_warnings.append((not (self.checkHTML(widget_button)),
+            check_and_warnings.append((not (check_html(widget_button, gv)),
             f'Template {template_name} should be an HTML file and is {widget_button.file_global_path}'))
 
         # check input values
