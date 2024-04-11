@@ -144,13 +144,12 @@ class JobContentQListWidget(ContentQListWidget):
 
         self.job_tracker = job_tracker
 
-        self.setDragDropMode(QAbstractItemView.DragDropMode.DragDrop)
+        self.setDragDropMode(QAbstractItemView.DragDropMode.DragOnly)
 
 
     def startDrag(self, event):
         ''' Start dragging an item. '''
 
-        print('start dragging an item')
         drag = QDrag(self)
 
         self.current_item = self.currentItem()
