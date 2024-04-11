@@ -214,6 +214,12 @@ class PrintOptionsQPushButton(OptionsQPushButton):
         '''Copy the make files from a job to the todo folder. '''
     
         target_folder_global_path = gv['TODO_DIR_HOME']
+
+        if not os.path.exists(target_folder_global_path):
+            os.mkdir(target_folder_global_path)
+
+        target_folder_global_path = gv['TODO_DIR_HOME']
+
         if gv['EMPTY_TODO_DIR_BEFORE_EXPORT']:
             delete_directory_content(self.parent, gv, target_folder_global_path)
 
