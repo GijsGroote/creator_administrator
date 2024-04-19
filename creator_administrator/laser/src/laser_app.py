@@ -16,6 +16,7 @@ from laser_qdialog import CreateLaserJobsFromFileSystemQDialog, CreateLaserJobsF
 
 class LaserMainWindow(MainWindow):
     def __init__(self, *args, **kwargs):
+        
         ui_global_path = os.path.join(gv['LOCAL_UI_DIR'], 'laser_main_window.ui')
         super().__init__(ui_global_path, gv, *args, **kwargs)
 

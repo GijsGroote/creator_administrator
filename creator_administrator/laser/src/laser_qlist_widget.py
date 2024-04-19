@@ -149,14 +149,12 @@ class LaserMaterialContentQListWidget(ContentQListWidget):
                 self).getLaserFilesWithMaterialThicknessInfo(material, thickness)
 
         for (dxf_name, dxf_global_path, done) in laser_file_info_list:
-            item = QListWidgetItem()
-            item.setData(1, dxf_global_path)
 
-            # Indicate if done with emotico
-            if done:
-                item.setText('✅ '+dxf_name)
-            else:
+            if not done:
+                item = QListWidgetItem()
+                item.setData(1, dxf_global_path)
+                item.setFont(QFont('Cantarell', 14))
+
+                # Indicate if done with emotico
                 item.setText('❎ '+dxf_name)
-
-            item.setFont(QFont('Cantarell', 14))
-            self.addItem(item)
+                self.addItem(item)
