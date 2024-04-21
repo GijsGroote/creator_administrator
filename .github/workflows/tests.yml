@@ -26,5 +26,5 @@ jobs:
       run: poetry install
       
     - name: Run tests
-      run: poetry run python -m unittest
+      run: python -m unittest
       working-directory: ../
