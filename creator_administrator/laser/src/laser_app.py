@@ -121,12 +121,13 @@ class LaserMainApp(QtWidgets.QApplication):
         super().__init__(argv)
 
     def build(self):
-        return LaserMainWindow()
+        main_window = LaserMainWindow()
+        main_window.show()
+        return main_window
         
     def run(self):
         self.exec()
     
-
 
 if __name__ == '__main__':
     laser_app = LaserMainApp(sys.argv)

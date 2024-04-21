@@ -1,9 +1,10 @@
 import sys
 import os
+from typing import List
 
 from PyQt6 import QtWidgets
 
-from creator_administrator.laser.src.global_variables import gv
+from creator_administrator.printer.src.global_variables import gv
 
 from src.app import MainWindow
 from src.qmessagebox import WarningQMessageBox
@@ -116,8 +117,21 @@ class PrintMainWindow(MainWindow):
         PrintSearchJobDialog(self).exec()
 
 
+class PrinterMainApp(QtWidgets.QApplication):
+
+    def __init__(self, argv: List[str]) -> None:
+        super().__init__(argv)
+
+    def build(self):
+        main_window = PrintMainWindow()
+        main_window.show()
+        return main_window
+        
+    def run(self):
+        self.exec()
+
 if __name__ == '__main__':
-    app = QtWidgets.QApplication(sys.argv)
-    printer_window = PrintMainWindow()
-    printer_window.show()
-    app.exec()
+
+    printer_app = PrinterMainApp(sys.argv)
+    printer_app.build()
+    printer_app.run()
