@@ -144,11 +144,11 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
 
     def guessPropertyFieldsForItem(self):
         ''' Load/guess what printer parameters from file name. '''
-        attachment_name = self.attachmentNameQLabel.text.lower()
+        attachment_name = self.attachmentNameQLabel.text().lower()
 
         # guess the material
         for n_material in range(self.materialQComboBox.count()):
-            material = combo_box.itemText(n_material)
+            material = self.materialQComboBox.itemText(n_material)
 
             if material.lower() in attachment_name:
                 self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(material))

@@ -4,9 +4,10 @@ import os
 from PyQt6.QtWidgets import QWidget
 
 from src.button import JobsQPushButton, OptionsQPushButton
-from src.directory_functions import delete_directory_content, copy_item
+from src.directory_functions import delete_directory_content, copy_item, is_file_locked
 from src.qmessagebox import TimedMessage, WarningQMessageBox, YesOrNoMessageBox 
 from src.threaded_mail_manager import ThreadedMailManager
+from src.mail_manager import MailManager
 from src.qdialog import SelectOptionsQDialog
 
 from global_variables import gv
@@ -105,7 +106,6 @@ class PrintAangezetQPushButton(JobsQPushButton):
 
 
 class PrintKlaarQPushButton(JobsQPushButton):
-    ''' TODO. '''
 
     def __init__(self, *args, parent=None, **kwargs):
         super().__init__(parent, *args, **kwargs)
@@ -119,6 +119,11 @@ class PrintKlaarQPushButton(JobsQPushButton):
         job_tracker = PrintJobTracker(self)
         
         job_folder_global_path = job_tracker.getJobValue('job_folder_global_path', job_name)
+        if is_file_locked(MailManager(gv).getMailGlobalPathFromFolder(job_folder_global_path)):
+            if not YesOrNoMessageBox(self, 'Another program is using the mail file, close it and proceed.',
+                            yes_button_text='Proceed', no_button_text='Cancel').answer():
+                return
+
         job_tracker.updateJobKey('status', job_name, 'VERWERKT')
         job_tracker.markFilesAsDone(job_name=job_name, file_global_path=None, done=True, all_files_done=True)
         
@@ -146,11 +151,18 @@ class PrintAfgekeurdQPushButton(JobsQPushButton):
 
         job_name = self.getCurrentItemName()
         job_tracker = PrintJobTracker(self)
+
+        job_folder_global_path = job_tracker.getJobValue('job_folder_global_path', job_name)
+
+        if is_file_locked(MailManager(gv).getMailGlobalPathFromFolder(job_folder_global_path)):
+            if not YesOrNoMessageBox(self, 'Another program is using the mail file, close it and proceed.',
+                            yes_button_text='Proceed', no_button_text='Cancel').answer():
+                return
+
         job_tracker.updateJobKey('status', job_name, 'AFGEKEURD')
         self.window().refreshAllWidgets()
         self.parent().parent().setCurrentIndex(0)
 
-        job_folder_global_path = job_tracker.getJobValue('job_folder_global_path', job_name)
 
         if not any([file.lower().endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]): # pylint: disable=use-a-generator
                     WarningQMessageBox(gv=gv, parent=self, text='No Afgekeurd mail send because: No mail file found')
@@ -247,7 +259,15 @@ class PrintOptionsQPushButton(OptionsQPushButton):
             WarningQMessageBox(gv=gv, parent=self, text='No Job finished mail send because: No mail file found')
             return
 
+        mail_file_global_path = MailManager(gv).getMailGlobalPathFromFolder(job_dict['job_folder_global_path'])
+
+        if is_file_locked(mail_file_global_path):
+            if not YesOrNoMessageBox(self, 'Another program is using the mail file, close it and proceed.',
+                                 yes_button_text='Proceed', no_button_text='Cancel').answer():
+                return
+
+
         ThreadedMailManager(parent=self, gv=gv).startMailWorker(
                 sender_name=job_dict['sender_name'],
                 mail_type=mail_type,
-                mail_item=job_dict['job_folder_global_path'])
+                mail_item=mail_file_global_path)

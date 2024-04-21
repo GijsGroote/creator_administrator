@@ -25,8 +25,14 @@ class LaserKlaarQPushButton(JobsQPushButton):
     def on_click(self):
         job_name = self.getCurrentItemName()
         job_tracker = LaserJobTracker(self)
-        
+
         job_folder_global_path = job_tracker.getJobValue('job_folder_global_path', job_name)
+
+        if is_file_locked(MailManager(gv).getMailGlobalPathFromFolder(job_folder_global_path)):
+            if not YesOrNoMessageBox(self, 'Another program is using the mail file, close it and proceed.',
+                                 yes_button_text='Proceed', no_button_text='Cancel').answer():
+                return
+        
         job_tracker.updateJobKey('status', job_name, 'VERWERKT')
         job_tracker.markFilesAsDone(job_name=job_name, file_global_path=None, done=True, all_files_done=True)
 
@@ -36,6 +42,7 @@ class LaserKlaarQPushButton(JobsQPushButton):
 
         if not any([file.lower().endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]): # pylint: disable=use-a-generator
             WarningQMessageBox(gv=gv, parent=self, text='No Job finished mail send because: No mail file found')
+
         else:
             ThreadedMailManager(parent=self, gv=gv).startMailWorker(
                     sender_name=sender_name,
@@ -79,9 +86,15 @@ class MateriaalKlaarQPushButton(JobsQPushButton):
             if self.job_tracker.isJobDone(job_name):
                 # hey this material is done!
 
-                self.job_tracker.updateJobKey('status', job_name, 'VERWERKT')
-                sender_name = self.job_tracker.getJobValue('sender_name', job_name)
                 job_folder_global_path = self.job_tracker.getJobValue('job_folder_global_path', job_name)
+                sender_name = self.job_tracker.getJobValue('sender_name', job_name)
+
+                if is_file_locked(MailManager(gv).getMailGlobalPathFromFolder(job_folder_global_path)):
+                    if not YesOrNoMessageBox(self, f'Another program is using the mail file for {sender_name}, close it and proceed.',
+                                        yes_button_text='Proceed', no_button_text='Cancel').answer():
+                        return
+
+                self.job_tracker.updateJobKey('status', job_name, 'VERWERKT')
                 done_files = ''
                 for laser_file_dict in self.job_tracker.getJobDict(job_name)['make_files'].values():
                     done_files += laser_file_dict['file_name']+'\n'
@@ -110,11 +123,19 @@ class LaserAfgekeurdQPushButton(JobsQPushButton):
     def on_click(self):
         job_name = self.getCurrentItemName()
         job_tracker = LaserJobTracker(self)
+
+        job_folder_global_path = job_tracker.getJobValue('job_folder_global_path', job_name)
+        mail_file_global_path = MailManager(gv).getMailGlobalPathFromFolder(job_folder_global_path)
+
+        if is_file_locked(mail_file_global_path):
+            if not YesOrNoMessageBox(self, 'Another program is using the mail file, close it and proceed.',
+                                 yes_button_text='Proceed', no_button_text='Cancel').answer():
+                return
+
         job_tracker.updateJobKey('status', job_name, 'AFGEKEURD')
         self.window().refreshAllWidgets()
         self.parent().parent().setCurrentIndex(0)
 
-        job_folder_global_path = job_tracker.getJobValue('job_folder_global_path', job_name)
 
         
         if not any([file.lower().endswith(('.msg', '.eml')) for file in os.listdir(job_folder_global_path)]): # pylint: disable=use-a-generator
@@ -215,7 +236,7 @@ class LaserOptionsQPushButton(OptionsQPushButton):
             WarningQMessageBox(gv=gv, parent=self, text='No Job finished mail send because: No mail file found')
             return
 
-        mail_file_global_path = MailManager().getMailGlobalPathFromFolder(job_dict['job_folder_global_path'])
+        mail_file_global_path = MailManager(gv).getMailGlobalPathFromFolder(job_dict['job_folder_global_path'])
 
         if is_file_locked(mail_file_global_path):
             if not YesOrNoMessageBox(self, 'Another program is using the mail file, close it and proceed.',
