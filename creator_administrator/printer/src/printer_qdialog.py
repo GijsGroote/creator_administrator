@@ -58,31 +58,6 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         self.attachmentProgressQLabel.setText(f'Attachment ({self.make_item_counter+1}/{len(self.temp_make_items)})')
         self.attachmentNameQLabel.setText(attachment_name)
 
-        self.materialQComboBox.clear()
-        self.newMaterialQLineEdit.clear()
-        self.amountQLineEdit.clear()
-
-        # initially hide option for new material
-        self.newMaterialQLabel.setHidden(True)
-        self.newMaterialQLineEdit.setHidden(True)
-
-        materials = list(set(gv['ACCEPTED_MATERIALS']).union(\
-                self.job_tracker.getExistingMaterials()).union(self.new_materials_list))
-        self.materialQComboBox.addItems(materials)
-        self.materialQComboBox.addItem(self.new_material_text)
-
-        # guess the material
-        for material in materials:
-            if material.lower() in attachment_name.lower():
-                self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(material))
-
-        # guess the amount
-        match = re.search(r"\d+\.?\d*(?=x_)", attachment_name.lower())
-        if match:
-            self.amountQLineEdit.setText(match.group())
-        else:
-            self.amountQLineEdit.setText('1')
-
 
         if self.requested_parameters_dict is not None and\
                 attachment_name in self.requested_parameters_dict and\
@@ -97,18 +72,36 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
             self.requested_item_parameters_dict = None
             self.printerComboBox.setCurrentIndex(self.printerComboBox.findText(gv['DEFAULT_PRINTER_NAME']))
 
-    def onPrinterComboBoxChanged(self):
-        ''' Add the printer properties to the comboBox. '''
+        # create print property fields
+        self.makePrinterPropertyFieldsForItem()
+        self.makeSpecialPrinterPropertyFieldsForItem()
 
-        if self.printerComboBox.currentText() == gv['DEFAULT_PRINTER_NAME']:
-            self.printPropertyScrollArea.setHidden(True)
-            return
+        # guess what should be in the property fields
+        self.guessPropertyFieldsForItem()
+        self.guessSpecialPropertyFieldsForItem()
 
-        self.printPropertyScrollArea.setHidden(False)
-        self.makeSpecialPrinterPropertyFields()
 
-    def makeSpecialPrinterPropertyFields(self):
+    def makePrinterPropertyFieldsForItem(self):
+        ''' Load material into material propery field. '''
+
+        self.materialQComboBox.clear()
+        self.newMaterialQLineEdit.clear()
+        self.amountQLineEdit.clear()
+
+        # initially hide option for new material
+        self.newMaterialQLabel.setHidden(True)
+        self.newMaterialQLineEdit.setHidden(True)
+
+        materials = list(set(gv['ACCEPTED_MATERIALS']).union(\
+                self.job_tracker.getExistingMaterials()).union(self.new_materials_list))
+        self.materialQComboBox.addItems(materials)
+        self.materialQComboBox.addItem(self.new_material_text)
+
+    def makeSpecialPrinterPropertyFieldsForItem(self):
         ''' Make the labels and text input widgets for the special printer currently selected. '''
+
+        if self.requested_item_parameters_dict is None:
+            return
 
         # clear and clean everything
         self.materialQComboBox.clear()
@@ -127,6 +120,12 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         content_widget = QWidget()
         selected_printer = self.printerComboBox.currentText()
 
+        materials = list(set(gv['SPECIAL_PRINTERS'][selected_printer]['ACCEPTED_MATERIALS']).union(
+            self.job_tracker.getExistingMaterials()).union(self.new_materials_list))
+
+        self.materialQComboBox.addItems(materials)
+        self.materialQComboBox.addItem(self.new_material_text)
+
         # make all label and line edits that belong to the requested printer
         for property_key, property_dict in gv['SPECIAL_PRINTERS'][selected_printer]['PROPERTIES'].items():
             label = QLabel(property_dict['PROPERTY_NAME'])
@@ -143,26 +142,31 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         # adjust height of scoll area
         self.printPropertyScrollArea.setMinimumHeight(content_widget.sizeHint().height())
 
-        materials = list(set(gv['SPECIAL_PRINTERS'][selected_printer]['ACCEPTED_MATERIALS']).union(
-            self.job_tracker.getExistingMaterials()).union(self.new_materials_list))
+    def guessPropertyFieldsForItem(self):
+        ''' Load/guess what printer parameters from file name. '''
+        attachment_name = self.attachmentNameQLabel.text.lower()
 
-        self.materialQComboBox.addItems(materials)
-        self.materialQComboBox.addItem(self.new_material_text)
+        # guess the material
+        for n_material in range(self.materialQComboBox.count()):
+            material = combo_box.itemText(n_material)
 
-        if self.requested_item_parameters_dict is not None:
-            self.loadRequestedParametersforAttachment()
+            if material.lower() in attachment_name:
+                self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(material))
 
-    def loadRequestedParametersforAttachment(self):
+        # guess the amount
+        match = re.search(r"\d+\.?\d*(?=x_)", attachment_name)
+        if match:
+            self.amountQLineEdit.setText(match.group())
+        else:
+            self.amountQLineEdit.setText('1')
+
+
+
+    def guessSpecialPropertyFieldsForItem(self):
         ''' Load the requested parameters. '''
 
-        if 'material' in self.requested_item_parameters_dict:
-            if self.requested_item_parameters_dict['material'].lower() in self.materialQComboBox:
-
-
-                self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(self.requested_item_parameters_dict['material']))
-            else:
-                self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(self.new_material_text))
-                self.newMaterialQLineEdit.setText(self.requested_item_parameters_dict['material'])
+        if self.requested_item_parameters_dict is None:
+            return
 
         if 'amount' in self.requested_item_parameters_dict:
             try:
@@ -173,7 +177,8 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
                 pass
 
         # Load requested parameters into the text widgets
-        for property_key, property_dict in gv['SPECIAL_PRINTERS'][self.requested_item_parameters_dict['printer_name']]['PROPERTIES'].items():
+        for property_key, property_dict in gv['SPECIAL_PRINTERS'][self.
+                          requested_item_parameters_dict['printer_name']]['PROPERTIES'].items():
 
             if property_dict['PROPERTY_NAME'] in self.requested_item_parameters_dict:
                 requested_text = self.requested_item_parameters_dict[property_dict['PROPERTY_NAME']]
@@ -183,6 +188,25 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
                 self.printer_properties[property_dict['PROPERTY_NAME']]['qline_edit_widget'].setText(
                     gv['SPECIAL_PRINTERS'][self.requested_item_parameters_dict['printer_name']]\
                     ['PROPERTIES'][property_key]['DEFAULT_VALUE'])
+
+
+            if 'material' in self.requested_item_parameters_dict:
+                if self.requested_item_parameters_dict['material'].lower() in self.materialQComboBox:
+                    self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(self.requested_item_parameters_dict['material']))
+                else:
+
+                    self.materialQComboBox.setCurrentIndex(self.materialQComboBox.findText(self.new_material_text))
+                    self.newMaterialQLineEdit.setText(self.requested_item_parameters_dict['material'])
+
+
+    def onPrinterComboBoxChanged(self):
+        ''' Add the printer properties to the comboBox. '''
+
+        if self.printerComboBox.currentText() in gv['SPECIAL_PRINTERS']:
+            self.printPropertyScrollArea.setHidden(False)
+
+        self.printPropertyScrollArea.setHidden(True)
+
 
 
     def collectItemInfo(self):

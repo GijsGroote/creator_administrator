@@ -4,10 +4,11 @@ from functools import partial
 from PyQt6.QtWidgets import QWidget
 
 from src.button import JobsQPushButton, OptionsQPushButton
-from src.directory_functions import delete_directory_content
+from src.directory_functions import delete_directory_content, is_file_locked
 from src.qdialog import SelectOptionsQDialog
 from src.directory_functions import copy_item
-from src.qmessagebox import TimedMessage, WarningQMessageBox, InfoQMessageBox
+from src.qmessagebox import TimedMessage, WarningQMessageBox, InfoQMessageBox, YesOrNoMessageBox
+from src.mail_manager import MailManager
 from src.threaded_mail_manager import ThreadedMailManager
 
 from convert import split_material_name
@@ -214,7 +215,14 @@ class LaserOptionsQPushButton(OptionsQPushButton):
             WarningQMessageBox(gv=gv, parent=self, text='No Job finished mail send because: No mail file found')
             return
 
+        mail_file_global_path = MailManager().getMailGlobalPathFromFolder(job_dict['job_folder_global_path'])
+
+        if is_file_locked(mail_file_global_path):
+            if not YesOrNoMessageBox(self, 'Another program is using the mail file, close it and proceed.',
+                                 yes_button_text='Proceed', no_button_text='Cancel').answer():
+                return
+
         ThreadedMailManager(parent=self, gv=gv).startMailWorker(
                 sender_name=job_dict['sender_name'],
                 mail_type=mail_type,
-                mail_item=job_dict['job_folder_global_path'])
+                mail_item=mail_file_global_path)

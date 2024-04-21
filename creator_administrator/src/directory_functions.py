@@ -11,8 +11,6 @@ import subprocess
 from PyQt6.QtWidgets import QWidget
 from src.qmessagebox import  ErrorQMessageBox
 
-
-
 def copy_item(source_dir_global: str, target_dir_global: str):
     ''' Copy directory and subdirectories recursively. '''
 
@@ -86,3 +84,18 @@ def shorten_folder_name(path: str, max_char_length=45) -> str:
         if len(path) > max_char_length:
             path = '..'+path[-max_char_length+2:]
         return path
+
+def is_file_locked(file_global_path: str):
+    ''' Check if another program uses a file. '''
+    assert os.path.exists(file_global_path), f'file {file_global_path} does not exist'
+
+    # Try to open the file in write mode
+    try:
+        with open(file_global_path, 'a') as f:
+            pass
+    except IOError:
+        # If IOError is raised, the file is locked
+        return True
+    # If no IOError is raised, the file is not locked
+    return False
+

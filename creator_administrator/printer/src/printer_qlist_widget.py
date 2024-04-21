@@ -99,7 +99,6 @@ class PrintPrintenJobsOverviewQListWidget(OverviewQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
-        print(f"parent: {parent} {parent.objectName()}")
 
         self.refresh()
 
@@ -110,10 +109,6 @@ class PrintPrintenJobsOverviewQListWidget(OverviewQListWidget):
 
         self.initialize(job_tracker.getStaticAndDynamicJobNames(
             filter_jobs_on='status', filter_str='AAN_HET_PRINTEN'))
-
-        print(f"parent(): {self.parent()} {self.parent().objectName()}")
-        for child in self.parent().children():
-            print(f"the child name {child.objectName()}")
 
         self.parent().findChild(QLabel, 'nPrintingJobsLabel').setText(str(
                 job_tracker.getNumberOfJobsWithStatus(['AAN_HET_PRINTEN'])))
