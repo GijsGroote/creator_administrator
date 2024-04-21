@@ -2,12 +2,14 @@ name: Run Tests
 
 on:
   push:
-    branches-ignore:
-      - '*'
+    branches: [dev, master]
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.11]
     
     steps:
     - name: Checkout code
