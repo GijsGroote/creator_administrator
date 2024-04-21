@@ -1,7 +1,7 @@
 
 import os
 
-# from creator_administrator.laser.src.laser_app import LaserMainApp
+from laser.src.laser_app import LaserMainApp
 
 import unittest
 
