@@ -24,5 +24,8 @@ jobs:
     - name: Install dependencies
       run: poetry install
       
+    - name: Change directory 
+      run : cd ../
+
     - name: Run tests
       run: poetry run python -m unittest
