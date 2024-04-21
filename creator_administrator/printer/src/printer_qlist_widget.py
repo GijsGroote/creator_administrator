@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QStackedWidget, QTabWidget, QWidget, QDialog
+from PyQt6.QtWidgets import QStackedWidget, QTabWidget, QWidget, QDialog, QLabel
 
 from printer_job_tracker import PrintJobTracker 
 from global_variables import gv
@@ -99,14 +99,24 @@ class PrintPrintenJobsOverviewQListWidget(OverviewQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
+        print(f"parent: {parent} {parent.objectName()}")
 
         self.refresh()
 
     def refresh(self):
         ''' Initialise the list widget with jobs. '''
         self.clear()
-        self.initialize(PrintJobTracker(self).getStaticAndDynamicJobNames(
+        job_tracker = PrintJobTracker(self)
+
+        self.initialize(job_tracker.getStaticAndDynamicJobNames(
             filter_jobs_on='status', filter_str='AAN_HET_PRINTEN'))
+
+        print(f"parent(): {self.parent()} {self.parent().objectName()}")
+        for child in self.parent().children():
+            print(f"the child name {child.objectName()}")
+
+        self.parent().findChild(QLabel, 'nPrintingJobsLabel').setText(str(
+                job_tracker.getNumberOfJobsWithStatus(['AAN_HET_PRINTEN'])))
 
 
 class PrintVerwerktJobsOverviewQListWidget(OverviewQListWidget):

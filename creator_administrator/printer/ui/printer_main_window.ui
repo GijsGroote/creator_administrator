@@ -35,7 +35,7 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_7">
+   <layout class="QVBoxLayout" name="verticalLayout_15">
     <item>
      <widget class="JobsQTabWidget" name="jobsQTabWidget">
       <property name="sizePolicy">
@@ -45,7 +45,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="allJobsTab">
        <attribute name="title">
@@ -350,106 +350,148 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_12">
         <item>
-         <widget class="QStackedWidget" name="printenQStackedWidget">
-          <property name="currentIndex">
-           <number>0</number>
-          </property>
-          <widget class="QWidget" name="jobListPage_4">
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
-            <item>
-             <widget class="PrintPrintenJobsOverviewQListWidget" name="printenJobsQListWidget">
-              <property name="font">
-               <font>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="jobPage_4">
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_16">
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_10"/>
+          </item>
+          <item>
+           <widget class="QStackedWidget" name="printenQStackedWidget">
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <widget class="QWidget" name="jobListPage_4">
+             <layout class="QHBoxLayout" name="horizontalLayout_15">
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_26">
+               <layout class="QVBoxLayout" name="verticalLayout_13">
                 <item>
-                 <spacer name="horizontalSpacer_13">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
+                 <layout class="QHBoxLayout" name="horizontalLayout_5">
+                  <item>
+                   <spacer name="horizontalSpacer_5">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="label">
+                    <property name="text">
+                     <string>Jobs Currently Printing:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="nPrintingJobsLabel">
+                    <property name="text">
+                     <string>n_printing_jobs</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                 <item>
-                 <widget class="QLabel" name="jobQLabel_7">
-                  <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;job_name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_14">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="PrintJobContentQListWidget" name="listWidget_14"/>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_27">
-                <item>
-                 <widget class="BackQPushButton" name="backPushButton_9">
-                  <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Esc&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                  </property>
-                  <property name="text">
-                   <string>Back</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="PrintKlaarQPushButton" name="afgekeurdOptionsQPushButton_6">
-                  <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Ctrl+K&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                  </property>
-                  <property name="text">
-                   <string>Print Klaar</string>
-                  </property>
-                  <property name="shortcut">
-                   <string>Ctrl+K</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="PrintOptionsQPushButton" name="printenOptionsQPushButton">
-                  <property name="text">
-                   <string>Options</string>
+                 <widget class="PrintPrintenJobsOverviewQListWidget" name="printenJobsQListWidget">
+                  <property name="font">
+                   <font>
+                    <pointsize>14</pointsize>
+                   </font>
                   </property>
                  </widget>
                 </item>
                </layout>
               </item>
              </layout>
-            </item>
-           </layout>
-          </widget>
-         </widget>
+            </widget>
+            <widget class="QWidget" name="jobPage_4">
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout_16">
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_26">
+                  <item>
+                   <spacer name="horizontalSpacer_13">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="jobQLabel_7">
+                    <property name="text">
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;job_name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_14">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="PrintJobContentQListWidget" name="listWidget_14"/>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_27">
+                  <item>
+                   <widget class="BackQPushButton" name="backPushButton_9">
+                    <property name="toolTip">
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Esc&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    </property>
+                    <property name="text">
+                     <string>Back</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="PrintKlaarQPushButton" name="afgekeurdOptionsQPushButton_6">
+                    <property name="toolTip">
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shortcut: Ctrl+K&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    </property>
+                    <property name="text">
+                     <string>Print Klaar</string>
+                    </property>
+                    <property name="shortcut">
+                     <string>Ctrl+K</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="PrintOptionsQPushButton" name="printenOptionsQPushButton">
+                    <property name="text">
+                     <string>Options</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
