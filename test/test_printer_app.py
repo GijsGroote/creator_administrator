@@ -1,7 +1,7 @@
 
 import os
 
-from creator_administrator.printer.src.printer_app import PrinterMainApp
+from printer.src.printer_app import PrinterMainApp
 
 import unittest
 
