@@ -4,9 +4,6 @@ on:
   push:
     branches: [main, develop]
 
-defaults:
-  run:
-    working-directory: ../
 
 jobs:
   build:
@@ -30,3 +27,4 @@ jobs:
       
     - name: Run tests
       run: poetry run python -m unittest
+      working-directory: ../
