@@ -1,6 +1,7 @@
 
 import os
 
+print(f'you can display tis {os.getcwd()}')
 from creator_administrator.printer.src.printer_app import PrinterMainApp
 
 import unittest
