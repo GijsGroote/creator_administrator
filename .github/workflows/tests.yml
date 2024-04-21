@@ -4,6 +4,10 @@ on:
   push:
     branches: [main, develop]
 
+defaults:
+  run:
+    working-directory: ./createor_administrator/
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,8 +28,5 @@ jobs:
     - name: Install dependencies
       run: poetry install
       
-    - name: Change directory 
-      run : cd ../
-
     - name: Run tests
       run: poetry run python -m unittest
