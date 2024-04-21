@@ -1,8 +1,11 @@
 
 import os
+import sys
 
-print(f'you can display tis {os.getcwd()}')
-from creator_administrator.printer.src.printer_app import PrinterMainApp
+print(f'can you please just goto the correct folder {os.path.abspath('creator_adminstrator/laser/src/')}')
+sys.path.append(os.path.abspath('creator_adminstrator/laser/src/'))
+
+from printer.src.printer_app import PrinterMainApp
 
 import unittest
 

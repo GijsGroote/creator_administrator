@@ -1,5 +1,4 @@
 
-import os
 
 from laser.src.laser_app import LaserMainApp
 
