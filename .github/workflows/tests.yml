@@ -14,10 +14,10 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
         
     - name: Install Poetry
       run: curl -sSL https://install.python-poetry.org | python -
@@ -26,5 +26,5 @@ jobs:
       run: poetry install
       
     - name: Run tests
-      run: poetry run python -m unittest ../test/test_laser_app.py
+      run: poetry run python -m unittest creator_administrator/test/test_laser_app.py
       
