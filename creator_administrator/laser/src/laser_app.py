@@ -1,9 +1,10 @@
 import sys
 import os
+from typing import List
 
 from PyQt6 import QtWidgets
 
-from global_variables import gv
+from creator_administrator.laser.src.global_variables import gv
 
 from src.app import MainWindow
 from src.qmessagebox import WarningQMessageBox
@@ -114,8 +115,20 @@ class LaserMainWindow(MainWindow):
         ''' Open the search job dialog. '''
         LaserSearchJobDialog(self).exec()
 
+class LaserMainApp(QtWidgets.QApplication):
+
+    def __init__(self, argv: List[str]) -> None:
+        super().__init__(argv)
+
+    def build(self):
+        return LaserMainWindow()
+        
+    def run(self):
+        self.exec()
+    
+
+
 if __name__ == '__main__':
-    app = QtWidgets.QApplication(sys.argv)
-    laser_window = LaserMainWindow()
-    laser_window.show()
-    app.exec()
+    laser_app = LaserMainApp(sys.argv)
+    laser_app.build()
+    laser_app.run()

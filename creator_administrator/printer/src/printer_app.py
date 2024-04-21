@@ -3,7 +3,7 @@ import os
 
 from PyQt6 import QtWidgets
 
-from global_variables import gv
+from creator_administrator.laser.src.global_variables import gv
 
 from src.app import MainWindow
 from src.qmessagebox import WarningQMessageBox

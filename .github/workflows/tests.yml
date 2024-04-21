@@ -1,0 +1,28 @@
+name: Run Tests
+
+on:
+  push:
+    branches-ignore:
+      - '*'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.11'  # Change this to your Python version
+        
+    - name: Install Poetry
+      run: curl -sSL https://install.python-poetry.org | python -
+      
+    - name: Install dependencies
+      run: poetry install
+      
+    - name: Run tests
+      run: poetry run python tests/test_laser_app/test.py
