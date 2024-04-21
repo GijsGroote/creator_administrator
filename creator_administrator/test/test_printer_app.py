@@ -2,11 +2,7 @@
 import os
 import sys
 
-print(f'can you please just goto the correct folder'\
-       f'{os.path.abspath("creator_adminstrator/laser/src/")}')
-sys.path.append(os.path.abspath('creator_adminstrator/laser/src/'))
-
-from printer.src.printer_app import PrinterMainApp
+from creator_administrator.printer.src.printer_app import PrinterMainApp
 
 import unittest
 
