@@ -6,7 +6,7 @@ on:
 
 defaults:
   run:
-    working-directory: ./createor_administrator/
+    working-directory: ../
 
 jobs:
   build:
