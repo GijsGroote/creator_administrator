@@ -26,5 +26,5 @@ jobs:
       run: poetry install
       
     - name: Run tests
-      run: poetry run python -m unittest creator_administrator/test/test_laser_app.py
+      run: poetry run python -m unittest creator_administrator/test/test_printer_app.py
       
