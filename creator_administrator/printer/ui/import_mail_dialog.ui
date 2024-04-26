@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1035</width>
-    <height>654</height>
+    <height>653</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -80,7 +80,7 @@
            <item>
             <widget class="QLabel" name="mailProgressQLabel">
              <property name="text">
-              <string>Mail (?/x)</string>
+              <string>mail (?/x)</string>
              </property>
             </widget>
            </item>
@@ -139,7 +139,7 @@
           <x>0</x>
           <y>0</y>
           <width>1013</width>
-          <height>196</height>
+          <height>195</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
