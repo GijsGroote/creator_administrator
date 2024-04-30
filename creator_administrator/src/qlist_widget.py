@@ -5,7 +5,7 @@ from operator import itemgetter
 
 from PyQt6.QtCore import Qt, QUrl
 from PyQt6.QtGui import QKeySequence, QShortcut, QFont, QDrag, QPixmap, QPainter, QColor
-from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QLabel, QWidget, QAbstractItemView, QMenu
+from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QLabel, QWidget, QAbstractItemView
 
 from src.directory_functions import open_file
 from src.job_tracker import JobTracker

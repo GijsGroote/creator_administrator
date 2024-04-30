@@ -20,3 +20,11 @@ pyqtdarktheme = "^2.1.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = [
+    "creator_administrator/tests",
+]
