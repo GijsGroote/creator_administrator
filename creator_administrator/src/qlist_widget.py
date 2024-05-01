@@ -1,11 +1,12 @@
 import os
 import abc
+import time
 import json
 from operator import itemgetter
 
 from PyQt6.QtCore import Qt, QUrl
 from PyQt6.QtGui import QKeySequence, QShortcut, QFont, QDrag, QPixmap, QPainter, QColor
-from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QLabel, QWidget, QAbstractItemView
+from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QLabel, QWidget, QAbstractItemView, QMenu
 
 from src.directory_functions import open_file
 from src.job_tracker import JobTracker
@@ -37,16 +38,16 @@ class ContentQListWidgetItem(QListWidgetItem):
         self.setFont(QFont('Cantarell', 14))
 
 
-
 class OverviewQListWidget(QListWidget):
     ''' Overview of multiple items in a list. '''
 
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent, gv: dict, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
+        self.last_right_click_time = None 
+        self.gv = gv
         # shortcut on the Enter key
         QShortcut(QKeySequence(Qt.Key.Key_Return), self).activated.connect(self.itemEnterPressed)
-        self.itemDoubleClicked.connect(self.itemIsDoubleClicked)
 
     # Some child classes overwrite this function
     def displayItem(self, item_name: str):
@@ -97,10 +98,49 @@ class OverviewQListWidget(QListWidget):
         if current_item is not None:
             self.displayItem(current_item.data(1))
 
-    # itemDoubleClicked already defined, call it itemIsDoubleClicked
-    def itemIsDoubleClicked(self, clicked_item):
-        ''' Display the content of the item clicked. '''
-        self.displayItem(clicked_item.data(1))
+
+    def mousePressEvent(self, event):
+
+        if self.itemAt(event.pos()) is None:
+            return
+        else:
+            self.setCurrentItem(self.itemAt(event.pos()))
+
+        if event.button() == Qt.MouseButton.LeftButton:  
+            if self.last_right_click_time is None:
+                self.last_right_click_time = time.time()
+                # self.startDrag(event)
+
+            elif int(time.time() - self.last_right_click_time) < 1:
+                self.displayItem(self.currentItem().data(1))
+                self.last_right_click_time = time.time()
+
+            else:
+                self.last_right_click_time = time.time()
+                # self.startDrag(event)
+
+
+        elif event.button() == Qt.MouseButton.RightButton:  
+            self.contextMenuEvent(event)
+
+    def contextMenuEvent(self, event):
+        context_menu = QMenu(self)
+        change_job_name_action = context_menu.addAction("Change Job Name")
+        action = context_menu.exec(self.mapToGlobal(event.pos()))
+
+        if action == change_job_name_action:
+            self.change_job_name()
+
+
+    def change_job_name(self):
+        print("change Job Name is not yet implemented ")
+
+
+
+    def openItem(self, item):
+        ''' Double click on a file (or item) to open it. '''
+        assert isinstance(item, QListWidgetItem), f'item should be type QListWidgetItem and is {type(QListWidgetItem)}'
+        open_file(item.data(1))
 
     @abc.abstractmethod
     def refresh(self):
@@ -109,43 +149,56 @@ class OverviewQListWidget(QListWidget):
 class ContentQListWidget(QListWidget):
     ''' Keep content in a list widget. '''
 
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent, gv: dict, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.current_item_name = None
+        self.gv = gv
+        self.last_right_click_time = None 
 
         # shortcut for the Enter button
         QShortcut(QKeySequence(Qt.Key.Key_Return), self).activated.connect(self.itemEnterPressed)
-        self.itemDoubleClicked.connect(self.fileDoubleClicked)
 
-    def refresh(self):
-        if self.current_item_name is not None:
-            self.clear()
-            self.loadContent(self.current_item_name)
+    def mousePressEvent(self, event):
 
-    def itemEnterPressed(self):
-        current_file = self.currentItem()
-        
-        if current_file is not None:
-            self.fileDoubleClicked(current_file)
+        if self.itemAt(event.pos()) is None:
+            return
+        else:
+            self.setCurrentItem(self.itemAt(event.pos()))
 
-    def fileDoubleClicked(self, clicked_file):
-        ''' Double click on a file (or item) to open it. '''
-        open_file(clicked_file.data(1))
+        if event.button() == Qt.MouseButton.LeftButton:  
+            if self.last_right_click_time is None:
+                print(f"file is single clicked clicked")
+                self.last_right_click_time = time.time()
+                self.startDrag(event)
+
+            elif int(time.time() - self.last_right_click_time) < 1:
+                self.openItem(self.currentItem())
+                self.last_right_click_time = time.time()
+
+            else:
+                self.last_right_click_time = time.time()
+                self.startDrag(event)
 
 
-    @abc.abstractmethod
-    def loadContent(self, item_name):
-        ''' load the content. '''
+        elif event.button() == Qt.MouseButton.RightButton:  
+            self.contextMenuEvent(event)
 
-class JobContentQListWidget(ContentQListWidget):
+    def contextMenuEvent(self, event):
+        context_menu = QMenu(self)
+        action1 = context_menu.addAction("Action 1")
+        action2 = context_menu.addAction("Action 2")
+        action = context_menu.exec(self.mapToGlobal(event.pos()))
 
-    def __init__(self, parent: QWidget, job_tracker: JobTracker, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
+        if action == action1:
+            self.handle_action1()
+        elif action == action2:
+            self.handle_action2()
 
-        self.job_tracker = job_tracker
+    def handle_action1(self):
+        print("Action 1 selected")
 
-        self.setDragDropMode(QAbstractItemView.DragDropMode.DragOnly)
-
+    def handle_action2(self):
+        print("Action 2 selected") 
 
     def startDrag(self, event):
         ''' Start dragging an item. '''
@@ -185,27 +238,36 @@ class JobContentQListWidget(ContentQListWidget):
         drag.setMimeData(mime)        
         drag.exec(Qt.DropAction.CopyAction)
 
-    # def mousePressEvent(self, event):
-    #     print('a mouse press is detected')
-    #     if event.button() == Qt.MouseButton.RightButton:  
-    #         self.contextMenuEvent(event)
+    def refresh(self):
+        if self.current_item_name is not None:
+            self.clear()
+            self.loadContent(self.current_item_name)
 
-    # def contextMenuEvent(self, event):
-    #     context_menu = QMenu(self)
-    #     action1 = context_menu.addAction("Action 1")
-    #     action2 = context_menu.addAction("Action 2")
-    #     action = context_menu.exec(self.mapToGlobal(event.pos()))
+    def itemEnterPressed(self):
+        if self.currentItem() is not None:
+            self.openItem(self.currentItem())
 
-    #     if action == action1:
-    #         self.handle_action1()
-    #     elif action == action2:
-    #         self.handle_action2()
+    def openItem(self, item):
+        ''' Double click on a file (or item) to open it. '''
+        assert isinstance(item, QListWidgetItem), f'item should be type QListWidgetItem and is {type(QListWidgetItem)}'
+        open_file(item.data(1))
 
-    # def handle_action1(self):
-    #     print("Action 1 selected")
+    @abc.abstractmethod
+    def loadContent(self, item_name):
+        ''' load the content. '''
 
-    # def handle_action2(self):
-    #     print("Action 2 selected") 
+class JobContentQListWidget(ContentQListWidget):
+
+    def __init__(self, parent: QWidget, gv: dict, job_tracker: JobTracker, *args, **kwargs):
+        super().__init__(parent, gv, *args, **kwargs)
+
+
+        self.job_tracker = job_tracker
+        self.last_right_click_time = None 
+
+        self.setDragDropMode(QAbstractItemView.DragDropMode.DragOnly)
+
+
 
     def loadContent(self, item_name):
         self.clear()

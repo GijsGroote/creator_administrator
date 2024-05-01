@@ -1,8 +1,7 @@
 import sys
 import os
-from typing import List
 
-from PyQt6 import QtWidgets
+from PyQt6.QtWidgets import QApplication
 
 from creator_administrator.laser.src.global_variables import gv
 
@@ -16,6 +15,7 @@ from laser_settings_dialog import LaserSettingsQDialog
 from laser_qdialog import CreateLaserJobsFromFileSystemQDialog, CreateLaserJobsFromMailQDialog, LaserSearchJobDialog
 
 class LaserMainWindow(MainWindow):
+
     def __init__(self, *args, **kwargs):
         
         ui_global_path = os.path.join(gv['LOCAL_UI_DIR'], 'laser_main_window.ui')
@@ -115,9 +115,9 @@ class LaserMainWindow(MainWindow):
         ''' Open the search job dialog. '''
         LaserSearchJobDialog(self).exec()
 
-class LaserMainApp(QtWidgets.QApplication):
+class LaserMainApp(QApplication):
 
-    def __init__(self, argv: List[str]) -> None:
+    def __init__(self, argv: list[str]) -> None:
         super().__init__(argv)
 
     def build(self):
