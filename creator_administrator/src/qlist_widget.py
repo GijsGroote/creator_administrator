@@ -10,7 +10,7 @@ from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QLabel, QWidget, QAbst
 
 from src.directory_functions import open_file
 from src.job_tracker import JobTracker
-
+from src.qdialog import QuestionsQDialog
 
 class ContentQListWidgetItem(QListWidgetItem):
     ''' Item to add to QListWidget. '''
@@ -39,13 +39,15 @@ class ContentQListWidgetItem(QListWidgetItem):
 
 
 class OverviewQListWidget(QListWidget):
-    ''' Overview of multiple items in a list. '''
+    ''' Overview of multiple items/jobs in a list. '''
 
-    def __init__(self, parent, gv: dict, *args, **kwargs):
+    def __init__(self, parent, gv: dict, job_tracker: JobTracker, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
-        self.last_right_click_time = None 
         self.gv = gv
+        self.job_tracker = job_tracker
+        self.last_left_click_time = None 
+
         # shortcut on the Enter key
         QShortcut(QKeySequence(Qt.Key.Key_Return), self).activated.connect(self.itemEnterPressed)
 
@@ -100,6 +102,7 @@ class OverviewQListWidget(QListWidget):
 
 
     def mousePressEvent(self, event):
+        ''' Handle single click, dubble click and dragging for the mouse cursor. '''
 
         if self.itemAt(event.pos()) is None:
             return
@@ -107,18 +110,15 @@ class OverviewQListWidget(QListWidget):
             self.setCurrentItem(self.itemAt(event.pos()))
 
         if event.button() == Qt.MouseButton.LeftButton:  
-            if self.last_right_click_time is None:
-                self.last_right_click_time = time.time()
-                # self.startDrag(event)
+            if self.last_left_click_time is None:
+                self.last_left_click_time = time.time()
 
-            elif int(time.time() - self.last_right_click_time) < 1:
+            elif int(time.time() - self.last_left_click_time) < 1:
                 self.displayItem(self.currentItem().data(1))
-                self.last_right_click_time = time.time()
+                self.last_left_click_time = time.time()
 
             else:
-                self.last_right_click_time = time.time()
-                # self.startDrag(event)
-
+                self.last_left_click_time = time.time()
 
         elif event.button() == Qt.MouseButton.RightButton:  
             self.contextMenuEvent(event)
@@ -133,7 +133,19 @@ class OverviewQListWidget(QListWidget):
 
 
     def change_job_name(self):
-        print("change Job Name is not yet implemented ")
+
+        dlg = QuestionsQDialog(self, self.gv,
+                           f'Enter new job name for job {self.currentItem().data(1)}')
+
+
+        if dlg.exec() == 1:
+            # update job name
+            self.job_tracker.updateJobName(self.currentItem().data(1), 
+                self.job_tracker.makeJobNameUnique(str(dlg.answerLineEdit.text())))
+
+        # refresh Jobs
+        self.refresh()
+
 
 
 
@@ -149,11 +161,13 @@ class OverviewQListWidget(QListWidget):
 class ContentQListWidget(QListWidget):
     ''' Keep content in a list widget. '''
 
-    def __init__(self, parent, gv: dict, *args, **kwargs):
+    def __init__(self, parent, gv: dict, job_tracker: JobTracker, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
+
         self.current_item_name = None
         self.gv = gv
-        self.last_right_click_time = None 
+        self.job_tracker = job_tracker
+        self.last_left_click_time = None 
 
         # shortcut for the Enter button
         QShortcut(QKeySequence(Qt.Key.Key_Return), self).activated.connect(self.itemEnterPressed)
@@ -166,17 +180,16 @@ class ContentQListWidget(QListWidget):
             self.setCurrentItem(self.itemAt(event.pos()))
 
         if event.button() == Qt.MouseButton.LeftButton:  
-            if self.last_right_click_time is None:
-                print(f"file is single clicked clicked")
-                self.last_right_click_time = time.time()
+            if self.last_left_click_time is None:
+                self.last_left_click_time = time.time()
                 self.startDrag(event)
 
-            elif int(time.time() - self.last_right_click_time) < 1:
+            elif int(time.time() - self.last_left_click_time) < 1:
                 self.openItem(self.currentItem())
-                self.last_right_click_time = time.time()
+                self.last_left_click_time = time.time()
 
             else:
-                self.last_right_click_time = time.time()
+                self.last_left_click_time = time.time()
                 self.startDrag(event)
 
 
@@ -185,20 +198,22 @@ class ContentQListWidget(QListWidget):
 
     def contextMenuEvent(self, event):
         context_menu = QMenu(self)
-        action1 = context_menu.addAction("Action 1")
-        action2 = context_menu.addAction("Action 2")
+        file_done_action = context_menu.addAction("Mark file as Done")
+        file_not_done_actions = context_menu.addAction("Mark file as not Done")
         action = context_menu.exec(self.mapToGlobal(event.pos()))
 
-        if action == action1:
-            self.handle_action1()
-        elif action == action2:
-            self.handle_action2()
+        if action == file_done_action:
+            self.markFileAsDone()
+        elif action == file_not_done_actions:
+            self.markFileAsNotDone()
 
-    def handle_action1(self):
-        print("Action 1 selected")
+    def markFileAsDone(self):
+        self.job_tracker.markFilesAsDone(self.current_item_name, self.currentItem().data(1), True)
+        self.refresh()
 
-    def handle_action2(self):
-        print("Action 2 selected") 
+    def markFileAsNotDone(self):
+        self.job_tracker.markFilesAsDone(self.current_item_name, self.currentItem().data(1), False)
+        self.refresh()
 
     def startDrag(self, event):
         ''' Start dragging an item. '''
@@ -259,14 +274,9 @@ class ContentQListWidget(QListWidget):
 class JobContentQListWidget(ContentQListWidget):
 
     def __init__(self, parent: QWidget, gv: dict, job_tracker: JobTracker, *args, **kwargs):
-        super().__init__(parent, gv, *args, **kwargs)
-
-
-        self.job_tracker = job_tracker
-        self.last_right_click_time = None 
+        super().__init__(parent, gv, job_tracker, *args, **kwargs)
 
         self.setDragDropMode(QAbstractItemView.DragDropMode.DragOnly)
-
 
 
     def loadContent(self, item_name):

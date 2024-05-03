@@ -145,6 +145,20 @@ class JobTracker:
 
         self.writeTrackerFile()
 
+    def updateJobName(self, job_name: str, new_job_name: str):
+        ''' Update job name to new job name. '''
+        self.readTrackerFile()
+
+        assert job_name in self.tracker_dict, f'could not find job name {job_name} in tracker file.'
+        assert new_job_name not in self.tracker_dict, f'already found new job name {job_name} in tracker file.'
+
+        job_dict = self.tracker_dict.pop(job_name)
+        job_dict['job_name'] = new_job_name
+        job_dict['dynamic_job_name'] = job_dict['dynamic_job_name'].replace(job_name, new_job_name)
+        self.tracker_dict[new_job_name] = job_dict
+
+        self.writeTrackerFile()
+
     def isJobOld(self, created_on_date: str) -> bool:
         ''' Check if the job is old. '''
         created_on_date_object = datetime.strptime(created_on_date, "%d-%m-%Y")
@@ -236,6 +250,7 @@ class JobTracker:
         if the job name already exists append _(NUMBER) to job name to make it unique
         if the job_name is unique but job_name_(NUMBER) exist then return job_name_(NUMBER+1).
         '''
+
         job_name = unidecode(job_name)
 
         max_job_number = 0

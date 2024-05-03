@@ -12,9 +12,7 @@ from laser_job_tracker import LaserJobTracker
 class LaserAllJobsOverviewQListWidget(OverviewQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
-        super().__init__(parent, gv, *args, **kwargs)
-
-        self.job_tracker = LaserJobTracker(self)
+        super().__init__(parent, gv, LaserJobTracker(self), *args, **kwargs)
 
         self.refresh()
 
@@ -58,7 +56,7 @@ class LaserAllJobsOverviewQListWidget(OverviewQListWidget):
 class LaserWachtrijJobsOverviewQListWidget(OverviewQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
-        super().__init__(parent, gv, *args, **kwargs)
+        super().__init__(parent, gv, LaserJobTracker(self), *args, **kwargs)
 
         self.refresh()
 
@@ -71,7 +69,7 @@ class LaserWachtrijJobsOverviewQListWidget(OverviewQListWidget):
 class LaserMaterialOverviewQListWidget(OverviewQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
-        super().__init__(parent, gv, *args, **kwargs)
+        super().__init__(parent, gv, LaserJobTracker(self), *args, **kwargs)
 
         self.initialize(self.getItemNames())
 
@@ -102,7 +100,7 @@ class LaserMaterialOverviewQListWidget(OverviewQListWidget):
 class LaserVerwerktJobsOverviewQListWidget(OverviewQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
-        super().__init__(parent, gv, *args, **kwargs)
+        super().__init__(parent, gv, LaserJobTracker(self), *args, **kwargs)
 
         self.refresh()
 
@@ -116,7 +114,7 @@ class LaserVerwerktJobsOverviewQListWidget(OverviewQListWidget):
 class LaserAfgekeurdJobsOverviewQListWidget(OverviewQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
-        super().__init__(parent, gv, *args, **kwargs)
+        super().__init__(parent, gv, LaserJobTracker(self), *args, **kwargs)
 
         self.refresh()
 
@@ -136,7 +134,7 @@ class LaserJobContentQListWidget(JobContentQListWidget):
 class LaserMaterialContentQListWidget(ContentQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
-        super().__init__(parent, gv, *args, **kwargs)
+        super().__init__(parent, gv, LaserJobTracker(self), *args, **kwargs)
 
     def loadContent(self, item_name):
         self.clear()

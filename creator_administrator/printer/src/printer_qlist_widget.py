@@ -9,7 +9,7 @@ from src.qlist_widget import OverviewQListWidget, JobContentQListWidget
 class PrintAllJobsOverviewQListWidget(OverviewQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
-        super().__init__(parent, gv, *args, **kwargs)
+        super().__init__(parent, gv, PrintJobTracker(self), *args, **kwargs)
 
         self.job_tracker = PrintJobTracker(self)
 
@@ -70,7 +70,7 @@ class PrintAllJobsOverviewQListWidget(OverviewQListWidget):
 class PrintWachtrijJobsOverviewQListWidget(OverviewQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
-        super().__init__(parent, gv, *args, **kwargs)
+        super().__init__(parent, gv, PrintJobTracker(self), *args, **kwargs)
 
         self.refresh()
 
@@ -84,7 +84,7 @@ class PrintWachtrijJobsOverviewQListWidget(OverviewQListWidget):
 class PrintGeslicedJobsOverviewQListWidget(OverviewQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
-        super().__init__(parent, gv, *args, **kwargs)
+        super().__init__(parent, gv, PrintJobTracker(self), *args, **kwargs)
 
         self.refresh()
 
@@ -98,7 +98,7 @@ class PrintGeslicedJobsOverviewQListWidget(OverviewQListWidget):
 class PrintPrintenJobsOverviewQListWidget(OverviewQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
-        super().__init__(parent, gv, *args, **kwargs)
+        super().__init__(parent, gv, PrintJobTracker(self), *args, **kwargs)
 
         self.refresh()
 
@@ -117,7 +117,7 @@ class PrintPrintenJobsOverviewQListWidget(OverviewQListWidget):
 class PrintVerwerktJobsOverviewQListWidget(OverviewQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
-        super().__init__(parent, gv, *args, **kwargs)
+        super().__init__(parent, gv, PrintJobTracker(self), *args, **kwargs)
 
         self.refresh()
 
@@ -131,7 +131,7 @@ class PrintVerwerktJobsOverviewQListWidget(OverviewQListWidget):
 class PrintAfgekeurdJobsOverviewQListWidget(OverviewQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
-        super().__init__(parent, gv, *args, **kwargs)
+        super().__init__(parent, gv, PrintJobTracker(self), *args, **kwargs)
 
         self.refresh()
 

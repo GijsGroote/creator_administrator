@@ -406,7 +406,6 @@ class FolderSelectQDialog(SelectQDialog):
 
         self.accept()
 
-
 class SelectOptionsQDialog(QDialog):
     ''' Select one of the options. '''
 
@@ -494,4 +493,42 @@ class AboutDialog(QDialog):
     def openGithubInBrowser(self, _):
         ''' Open Github in browser. '''
         webbrowser.open('https://github.com/GijsGroote/creator_administrator/')
+
+
+class QuestionsQDialog(QDialog):
+    ''' Anser a simple question. '''
+
+    def __init__(self, parent: QWidget, gv: dict, question: str, *args, validate_answer_function=None, unvalid_answer_str=None, **kwargs):
+
+        super().__init__(parent, *args, **kwargs)
+
+        loadUi(os.path.join(gv['GLOBAL_UI_DIR'], 'text_input_dialog.ui'), self)
+
+        self.answer = None
+        self.validate_answer_function = validate_answer_function
+        self.unvalid_answer_str = unvalid_answer_str
+        self.gv = gv
+        self.questionLabel.setText(question)
+        self.buttonBox.accepted.connect(self.validate)
+
+    def validate(self):
+
+        answer = self.answerLineEdit.text()
+
+        if answer == '':
+            dlg = QMessageBox(self)
+            dlg.setText('Enter Answer')
+            dlg.exec()
+            return
+
+        if self.validate_answer_function is not None and not self.validate_answer_function(answer):
+            assert self.unvalid_answer_str is not None, 'unvalid_answer_str is None'
+            dlg = QMessageBox(self)
+            dlg.setText(self.unvalid_answer_str)
+            dlg.exec()
+            return
+
+        self.answer = str(answer)
+        self.accept()
+
 
