@@ -444,7 +444,7 @@ class SelectOptionsQDialog(QDialog):
                 if option_bool:
                     item.setText('✅ '+option)
                 else:
-                    item.setText('❎ '+option)
+                    item.setText('❌ '+option)
                 item.setData(1, option_data)
 
             else: 

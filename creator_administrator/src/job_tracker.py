@@ -487,9 +487,15 @@ class JobTracker:
 
                 new_make_files = []
                 for file in valid_file_names:
+
+                    # for make_file_dict in job_dict['make_files'].values():
+                        # print(make_file_dict['file_global_path'])
+
                     if not any([os.path.basename( # pylint: disable=use-a-generator
                         make_file_dict['file_global_path'])==file for make_file_dict in job_dict['make_files'].values()]):
                         new_make_files.append(os.path.join(job_folder_global_path, file))
+
+                        # print(f'appending this file now {file}')
 
                 # add/delete new files
                 if len(new_make_files) > 0:
