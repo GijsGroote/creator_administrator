@@ -12,7 +12,6 @@ for path in os.listdir(folder_path):
         groupname = match.group(1)
         
     else:
-        print(f'could not find group name in {path}') 
         exit(1)
 
 

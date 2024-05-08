@@ -1,3 +1,5 @@
+from functools import partial
+
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import QStackedWidget, QListWidgetItem, QLabel, QTabWidget, QWidget, QDialog
 
@@ -10,9 +12,7 @@ from laser_job_tracker import LaserJobTracker
 class LaserAllJobsOverviewQListWidget(OverviewQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
-
-        self.job_tracker = LaserJobTracker(self)
+        super().__init__(parent, gv, LaserJobTracker(self), *args, **kwargs)
 
         self.refresh()
 
@@ -56,7 +56,7 @@ class LaserAllJobsOverviewQListWidget(OverviewQListWidget):
 class LaserWachtrijJobsOverviewQListWidget(OverviewQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
+        super().__init__(parent, gv, LaserJobTracker(self), *args, **kwargs)
 
         self.refresh()
 
@@ -69,11 +69,9 @@ class LaserWachtrijJobsOverviewQListWidget(OverviewQListWidget):
 class LaserMaterialOverviewQListWidget(OverviewQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
+        super().__init__(parent, gv, LaserJobTracker(self), *args, **kwargs)
 
         self.initialize(self.getItemNames())
-
-        self.itemDoubleClicked.connect(self.itemIsDoubleClicked)
 
 
     def getItemNames(self) -> list:
@@ -102,7 +100,7 @@ class LaserMaterialOverviewQListWidget(OverviewQListWidget):
 class LaserVerwerktJobsOverviewQListWidget(OverviewQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
+        super().__init__(parent, gv, LaserJobTracker(self), *args, **kwargs)
 
         self.refresh()
 
@@ -116,7 +114,7 @@ class LaserVerwerktJobsOverviewQListWidget(OverviewQListWidget):
 class LaserAfgekeurdJobsOverviewQListWidget(OverviewQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
+        super().__init__(parent, gv, LaserJobTracker(self), *args, **kwargs)
 
         self.refresh()
 
@@ -129,13 +127,14 @@ class LaserAfgekeurdJobsOverviewQListWidget(OverviewQListWidget):
 class LaserJobContentQListWidget(JobContentQListWidget):
 
     def __init__(self, parent: QWidget, *args, **kwargs):
-        super().__init__(parent, LaserJobTracker(self), *args, **kwargs)
+        super().__init__(parent, gv, LaserJobTracker(self), *args, **kwargs)
 
         self.gv = gv
 
 class LaserMaterialContentQListWidget(ContentQListWidget):
 
-    # no init method required if it does not add anything
+    def __init__(self, parent: QWidget, *args, **kwargs):
+        super().__init__(parent, gv, LaserJobTracker(self), *args, **kwargs)
 
     def loadContent(self, item_name):
         self.clear()
