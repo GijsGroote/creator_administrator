@@ -35,6 +35,12 @@ jobs:
     - name: Install dependencies
       run: poetry install
 
+    - name: Get directory
+        run: ls /creator_administrator/printer/
+
+    - name: Get directory
+        run: ls /creator_administrator/printer/email_templates
+
     - name: Run Pytest
       run: poetry run pytest
 
