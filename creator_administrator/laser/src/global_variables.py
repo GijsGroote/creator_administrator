@@ -177,8 +177,8 @@ with open(settings_file_path, 'r') as settings_file:
                 sys.path.append('./creator_administrator/laser/src/email_templates')
 
 
-                print(f"IN CREATOR ADIMN/laser/src/email_tempaltes")
-                print(f"actually, what can you see then? {os.listdir('./creator_administrator/laser/src/email_templates')}")
+                print(f"IN CREATOR ADIMN/laser/email_templates")
+                print(f"actually, what can you see then? {os.listdir('./creator_administrator/laser/email_templates')}")
                 print("end")
 
 
