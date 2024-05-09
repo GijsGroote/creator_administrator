@@ -46,6 +46,7 @@ settings_file_path = os.path.join(data_dir_home, 'laser_settings.json')
 
 # Create default settings file 
 if not os.path.exists(settings_file_path):
+    print(f"We create a settigns file")
 
     this_file_path = os.path.dirname(os.path.realpath(__file__))
     if sys.platform == 'win32':
@@ -158,7 +159,7 @@ with open(settings_file_path, 'r') as settings_file:
             else:
 
                 print(f"NOOOO mail template {mail_template} exists!")
-                raise FileNotFoundError(f'does Files {os.listdir(os.path.dirname(gv_data[mail_template]))} exist? {os.path.exists(os.listdir(os.path.dirname(gv_data[mail_template])))}'\
+                raise FileNotFoundError(f'does Files {os.path.dirname(gv_data[mail_template])} exist? {os.path.exists(os.path.dirname(gv_data[mail_template]))}'\
                         f'does this: {os.listdir(os.path.dirname(os.path.dirname(gv_data[mail_template])))} exist? {os.path.exists(os.path.dirname(os.path.dirname(gv_data[mail_template])))}'\
 '{os.listdir(os.path.dirname(os.path.dirname(gv_data[mail_template])))}  gv_data[could not find file: {gv_data[mail_template]}')
 
