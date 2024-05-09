@@ -1,6 +1,8 @@
 import sys
+import os
 import pytest
 
+sys.path.append(os.path.abspath('./'))
 from laser.src.laser_app import LaserMainWindow, LaserMainApp
 
 @pytest.fixture(scope="module")

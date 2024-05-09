@@ -2,6 +2,7 @@
 import os
 import sys
 
+sys.path.append(os.path.abspath('./'))
 from creator_administrator.printer.src.printer_app import PrinterMainApp
 
 import unittest

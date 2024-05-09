@@ -1,11 +1,12 @@
 
 
 import sys
+import os
 import pytest
 
-from laser.src.laser_app import LaserMainApp, LaserMainWindow
 
-from PyQt6.QtWidgets import QApplication
+sys.path.append(os.path.abspath('./'))
+from laser.src.laser_app import LaserMainApp, LaserMainWindow
 
 
 @pytest.fixture(scope="module")
