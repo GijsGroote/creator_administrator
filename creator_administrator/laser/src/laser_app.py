@@ -29,7 +29,6 @@ class LaserMainWindow(MainWindow):
         self.job_tracker.checkHealth()
         self.refreshAllWidgets()
 
-
         # menu bar actions
         self.importFromMailAction.triggered.connect(self.handleNewValidMails)
         self.selectFilesAction.triggered.connect(self.openSelectFilesDialog)

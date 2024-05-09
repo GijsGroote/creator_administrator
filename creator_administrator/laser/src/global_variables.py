@@ -62,8 +62,12 @@ if not os.path.exists(settings_file_path):
     desktop_dir_home = os.path.join(os.path.expanduser('~'), 'Desktop')
     if os.path.exists(desktop_dir_home):
         todo_dir_home = os.path.join(desktop_dir_home, 'Laser TODO')
+
+    elif os.path.exists(os.path.expanduser('~')):
+        todo_dir_home = os.path.join(os.path.expanduser('~'), 'Print TODO')
+
     else:
-        raise ValueError('Could not find users Desktop directory')
+        raise ValueError('Could not create TODO directory')
 
     default_settings_dict = {
         "REPO_DIR_HOME": repo_dir_home,
