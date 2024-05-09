@@ -7,6 +7,8 @@ import os
 import sys
 import shutil
 
+sys.path.append(os.path.abspath('../email_templates'))
+
 from PyQt6.QtCore import QThreadPool
 
 if sys.platform == 'linux':
