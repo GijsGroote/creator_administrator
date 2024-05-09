@@ -161,7 +161,7 @@ with open(settings_file_path, 'r') as settings_file:
             else:
 
                 print(f"actually, what can you see then? {os.listdir('./')}")
-                print(f"IN CREATOR ADIMN")
+                print(f"IN CREATOR ADIMN")  
                 print(f"actually, what can you see then? {os.listdir('./creator_administrator')}")
                 print("")
 
@@ -173,6 +173,9 @@ with open(settings_file_path, 'r') as settings_file:
                 print(f"IN CREATOR ADIMN/laser/src")
                 print(f"actually, what can you see then? {os.listdir('./creator_administrator/laser/src')}")
                 print("")
+
+                sys.path.append('./creator_administrator/laser/src/email_templates')
+
 
                 print(f"IN CREATOR ADIMN/laser/src/email_tempaltes")
                 print(f"actually, what can you see then? {os.listdir('./creator_administrator/laser/src/email_templates')}")
