@@ -161,6 +161,23 @@ with open(settings_file_path, 'r') as settings_file:
             else:
 
                 print(f"actually, what can you see then? {os.listdir('./')}")
+                print(f"IN CREATOR ADIMN")
+                print(f"actually, what can you see then? {os.listdir('./creator_administrator')}")
+                print("")
+
+                print(f"IN CREATOR ADIMN/laser")
+                print(f"actually, what can you see then? {os.listdir('./creator_administrator/laser')}")
+                print("")
+
+
+                print(f"IN CREATOR ADIMN/laser/src")
+                print(f"actually, what can you see then? {os.listdir('./creator_administrator/laser/src')}")
+                print("")
+
+                print(f"IN CREATOR ADIMN/laser/src/email_tempaltes")
+                print(f"actually, what can you see then? {os.listdir('./creator_administrator/laser/src/email_templates')}")
+                print("end")
+
 
                 print(f"NOOOO mail template {mail_template} exists!")
                 raise FileNotFoundError(f'does Files {os.path.dirname(gv_data[mail_template])} exist? {os.path.exists(os.path.dirname(gv_data[mail_template]))}'\
