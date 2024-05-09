@@ -160,8 +160,8 @@ with open(settings_file_path, 'r') as settings_file:
 
                 print(f"NOOOO mail template {mail_template} exists!")
                 raise FileNotFoundError(f'does Files {os.path.dirname(gv_data[mail_template])} exist? {os.path.exists(os.path.dirname(gv_data[mail_template]))}'\
-                        f'does this: {os.listdir(os.path.dirname(os.path.dirname(gv_data[mail_template])))} exist? {os.path.exists(os.path.dirname(os.path.dirname(gv_data[mail_template])))}'\
-'{os.listdir(os.path.dirname(os.path.dirname(gv_data[mail_template])))}  gv_data[could not find file: {gv_data[mail_template]}')
+                        f'does this: {os.path.dirname(os.path.dirname(gv_data[mail_template]))} exist? {os.path.exists(os.path.dirname(gv_data[mail_template]))}'\
+'{os.path.dirname(os.path.dirname(gv_data[mail_template]))}  gv_data[could not find file: {gv_data[mail_template]}')
 
         else:
             gv[mail_template] = os.path.join(
