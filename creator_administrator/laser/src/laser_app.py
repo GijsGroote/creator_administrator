@@ -3,7 +3,9 @@ import os
 
 from PyQt6.QtWidgets import QApplication
 
+print(f"sys path is {sys.path}")
 sys.path.append(os.path.abspath('./')) # to find gv and prevent ModuleNotFoundError
+print(f"after appendign itself path is {sys.path}")
 from creator_administrator.laser.src.global_variables import gv
 
 from src.app import MainWindow
