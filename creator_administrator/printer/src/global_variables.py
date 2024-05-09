@@ -164,6 +164,7 @@ with open(settings_file_path, 'r') as settings_file:
 
         if mail_template in gv_data:
             if os.path.exists(gv_data[mail_template]):
+                print(f"can you find this right {gv_data[mail_template]}")
                 gv[mail_template] = gv_data[mail_template]
             else:
                 raise FileNotFoundError(f'could not find file: {gv_data[mail_template]}')
