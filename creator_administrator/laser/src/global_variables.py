@@ -89,8 +89,10 @@ if not os.path.exists(settings_file_path):
         "RECEIVED_MAIL_TEMPLATE": os.path.join(repo_dir_home, "laser/email_templates/DEFAULT_RECEIVED_MAIL_TEMPLATE.html"),
         "UNCLEAR_MAIL_TEMPLATE": os.path.join(repo_dir_home, "laser/email_templates/DEFAULT_UNCLEAR_MAIL_TEMPLATE.html"),
         "FINISHED_MAIL_TEMPLATE": os.path.join(repo_dir_home, "laser/email_templates/DEFAULT_FINISHED_MAIL_TEMPLATE.html"),
-        "DECLINED_MAIL_TEMPLATE": os.path.join(repo_dir_home, "laser/email_templates/DEFAULT_DECLINED_MAIL_TEMPLATE.html")
-    }
+        "DECLINED_MAIL_TEMPLATE": os.path.join(repo_dir_home, "laser/email_templates/DEFAULT_DECLINED_MAIL_TEMPLATE.html")}
+
+    
+    print(f'the file on default which we search is {default_settings_dict["RECEIVED_MAIL_TEMPLATE"]} and odes is exist? {os.path.exists(default_settings_dict["RECEIVED_MAIL_TEMPLATE"])}')
 
     if sys.platform == 'linux':
         default_settings_dict["MAIL_NAME"] = "Fill in Your Name"
