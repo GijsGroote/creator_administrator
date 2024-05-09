@@ -152,7 +152,7 @@ with open(settings_file_path, 'r') as settings_file:
             if os.path.exists(gv_data[mail_template]):
                 gv[mail_template] = gv_data[mail_template]
             else:
-                raise FileNotFoundError(f'could not find file: {gv_data[mail_template]}')
+                raise FileNotFoundError(f'Files there are: {os.listdir(os.path.dirname(gv_data[mail_template]))}  gv_data[could not find file: {gv_data[mail_template]}')
         else:
             gv[mail_template] = os.path.join(
                     gv['REPO_DIR_HOME'],
