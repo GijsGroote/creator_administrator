@@ -36,12 +36,12 @@ jobs:
       run: poetry install
 
     - name: Open Web Client Directory
-      working-directory: creator_administrator/printer/
+      working-directory: creator_administrator/laser/
       run: |
         ls -la
 
     - name: Open Web Client Directory
-      working-directory: creator_administrator/printer/email_templates
+      working-directory: creator_administrator/laser/email_templates
       run: |
         ls -la
 
