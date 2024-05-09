@@ -154,7 +154,7 @@ with open(settings_file_path, 'r') as settings_file:
                           'UNCLEAR_MAIL_TEMPLATE'):
 
         if mail_template in gv_data:
-            print(f"found mail template in data")
+            print(f"search for mail template {gv_data[mail_template]}")
             if os.path.exists(gv_data[mail_template]):
                 print(f"mail template {mail_template} exists!")
                 gv[mail_template] = gv_data[mail_template]
