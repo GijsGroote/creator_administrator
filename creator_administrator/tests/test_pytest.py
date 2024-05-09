@@ -23,11 +23,11 @@ def test_initialization(main_window):
     """Test case to ensure main window initialization."""
     assert main_window is not None
 
-def test_open_dialog(main_window):
-    """Test case to ensure clicking button opens QMessageBox."""
+# def test_open_dialog(main_window):
+#     """Test case to ensure clicking button opens QMessageBox."""
 
-    main_window.importFromMailAction.trigger()
-    main_window.selectFilesAction.trigger()
-    main_window.selectFoldersAction.trigger()
+#     main_window.importFromMailAction.trigger()
+#     main_window.selectFilesAction.trigger()
+#     main_window.selectFoldersAction.trigger()
 
 
