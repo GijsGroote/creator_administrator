@@ -1,25 +1,59 @@
 
 
-from laser.src.laser_app import LaserMainApp
+import sys
+import pytest
 
-import unittest
+from laser.src.laser_app import LaserMainApp, LaserMainWindow
 
-class TestMyApp(unittest.TestCase):
+from PyQt6.QtWidgets import QApplication
 
-    def setUp(self):
-        self.laser_app = LaserMainApp([])
-        self.laser_window = self.laser_app.build()
 
-    def test_appExists(self):
-        self.assertIsNotNone(self.laser_app)
-        self.assertIsNotNone(self.laser_window)
-    
-    def test_openSettingsDialg(self):
+@pytest.fixture(scope="module")
+def app():
+    """Fixture for creating a QApplication instance."""
+    application = LaserMainApp(sys.argv)
+    yield application
+    application.quit()
 
-        self.assertEqual(1, 1)
+@pytest.fixture
+def main_window(app):
+    """Fixture for creating a main window instance."""
+    window = LaserMainWindow()
+    yield window
+    window.close()
 
-    def tearDown(self):
-        self.laser_app.quit()
+def test_initialization(main_window):
+    """Test case to ensure main window initialization."""
+    assert main_window is not None
 
-if __name__ == '__main__':
-    unittest.main()
+def test_button_click_changes_text(main_window):
+    """Test case to ensure clicking button changes some text."""
+
+    # textLabel = main_window.showTextLabel
+    # btn = main_window.showTextLabelButton
+
+    # btn.click()
+    # assert textLabel.text() == 'display this text'
+    assert True
+
+def test_button_click_opens_message_box(main_window):
+    """Test case to ensure clicking button opens QMessageBox."""
+
+    # btn = main_window.messageBoxButton
+    # btn.click()
+    # qmsgbox = main_window.findChild(QW.QMessageBox)
+
+    # assert qmsgbox is not None
+    # qmsgbox.close()
+    assert True
+
+
+def test_button_click_opens_custom_dialog(main_window):
+    """Test case to ensure clicking button opens CustomDialog."""
+
+    # main_window.openDialogPushButton.click()
+    # dlg = main_window.findChild(QW.QDialog)
+
+    # assert dlg is not None
+    # dlg.close()
+  

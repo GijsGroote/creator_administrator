@@ -16,15 +16,24 @@ Unidecode = "^1.3.8"
 pywin32 = {version = "^306", platform = "win32"}
 pyqtdarktheme = "^2.1.0"
 
+[tool.poetry.dev-dependencies]
+pytest = "^8.2.0"
+pylint = "^3.1.0"
+pylint-fail-under = "^0.3.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "-ra -q"
-testpaths = [
-    "creator_administrator/tests",
-]
+pythonpath = ["."]
+testpaths = ["creator_administrator/tests"]
+addopts = "-v -ra -q"
+log_cli = true
+log_cli_level = "INFO"
+log_format = "%(asctime)s %(levelname)s %(message)s"
+log_date_format = "%Y-%m-%d %H:%M:%S"
+filterwarnings = "ignore"
+cache_dir = ".pytest_cache"
+
