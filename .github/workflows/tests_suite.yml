@@ -14,7 +14,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -35,11 +35,15 @@ jobs:
     - name: Install dependencies
       run: poetry install
 
-    - name: Get directory
-        run: ls /creator_administrator/printer/
+    - name: Open Web Client Directory
+      working-directory: creator_administrator/printer/
+      run: |
+        ls -la
 
-    - name: Get directory
-        run: ls /creator_administrator/printer/email_templates
+    - name: Open Web Client Directory
+      working-directory: creator_administrator/printer/email_templates
+      run: |
+        ls -la
 
     - name: Run Pytest
       run: poetry run pytest
