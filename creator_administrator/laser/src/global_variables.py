@@ -7,7 +7,7 @@ import os
 import sys
 import shutil
 
-sys.path.append(os.path.abspath('../email_templates'))
+# sys.path.append(os.path.abspath('../email_templates'))
 
 from PyQt6.QtCore import QThreadPool
 
@@ -151,10 +151,17 @@ with open(settings_file_path, 'r') as settings_file:
                           'UNCLEAR_MAIL_TEMPLATE'):
 
         if mail_template in gv_data:
+            print(f"found mail template in data")
             if os.path.exists(gv_data[mail_template]):
+                print(f"mail template {mail_template} exists!")
                 gv[mail_template] = gv_data[mail_template]
             else:
-                raise FileNotFoundError(f'Files there are: {os.listdir(os.path.dirname(gv_data[mail_template]))}  gv_data[could not find file: {gv_data[mail_template]}')
+
+                print(f"NOOOO mail template {mail_template} exists!")
+                raise FileNotFoundError(f'does Files {os.listdir(os.path.dirname(gv_data[mail_template]))} exist? {os.path.exists(os.listdir(os.path.dirname(gv_data[mail_template])))}'\
+                        f'does this: {os.listdir(os.path.dirname(os.path.dirname(gv_data[mail_template])))} exist? {os.path.exists(os.path.dirname(os.path.dirname(gv_data[mail_template])))}'\
+'{os.listdir(os.path.dirname(os.path.dirname(gv_data[mail_template])))}  gv_data[could not find file: {gv_data[mail_template]}')
+
         else:
             gv[mail_template] = os.path.join(
                     gv['REPO_DIR_HOME'],
