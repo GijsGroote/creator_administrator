@@ -160,6 +160,8 @@ with open(settings_file_path, 'r') as settings_file:
                 gv[mail_template] = gv_data[mail_template]
             else:
 
+                print(f"actually, what can you see then? {os.listdir('./')}")
+
                 print(f"NOOOO mail template {mail_template} exists!")
                 raise FileNotFoundError(f'does Files {os.path.dirname(gv_data[mail_template])} exist? {os.path.exists(os.path.dirname(gv_data[mail_template]))}'\
                         f'does this: {os.path.dirname(os.path.dirname(gv_data[mail_template]))} exist? {os.path.exists(os.path.dirname(gv_data[mail_template]))}'\
