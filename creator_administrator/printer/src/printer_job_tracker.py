@@ -18,7 +18,7 @@ class PrintJobTracker(JobTracker):
 
     def __init__(self, parent: QWidget):
         super().__init__(parent, gv)
-        self.job_keys.append('split_job')
+        # self.job_keys.append('split_job')
 
         self.checkTrackerFileHealth()
 
