@@ -230,11 +230,16 @@ class CreatePrintJobsFromMailQDialog(CreateJobsFromMailQDialog):
         attachment = self.temp_make_items[self.make_item_counter]
         original_file_name = self.mail_manager.getAttachmentFileName(attachment)
 
-        if material in original_file_name and\
-            amount in original_file_name:
-            file_name= original_file_name
-        else:
-            file_name = material+'_'+amount+'x_'+original_file_name
+        file_name_prefix = ''
+
+        # TODO: this might be usefull later
+        # if material not in original_file_name:
+        #     file_name_prefix += material+'_'
+        
+        if amount+'x_' not in original_file_name:
+            file_name_prefix += str(amount)+'x_'
+        
+        file_name = file_name_prefix + original_file_name
 
         file_global_path = os.path.join(self.temp_job_folder_global_path, file_name)
 
