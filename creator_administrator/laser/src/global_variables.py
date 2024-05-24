@@ -78,7 +78,7 @@ if not os.path.exists(settings_file_path):
         "EMPTY_TODO_DIR_BEFORE_EXPORT": "true",
         "ONLY_UNREAD_MAIL": "false",
         "MOVE_MAILS_TO_VERWERKT_FOLDER": "true",
-        "SEND_MAILS_ON_SEPERATE_THREAD": "false",
+        "SEND_MAILS_ON_SEPERATE_THREAD": "true",
         "RECEIVED_MAIL_TEMPLATE": os.path.join(repo_dir_home, "laser/email_templates/DEFAULT_RECEIVED_MAIL_TEMPLATE.html"),
         "UNCLEAR_MAIL_TEMPLATE": os.path.join(repo_dir_home, "laser/email_templates/DEFAULT_UNCLEAR_MAIL_TEMPLATE.html"),
         "FINISHED_MAIL_TEMPLATE": os.path.join(repo_dir_home, "laser/email_templates/DEFAULT_FINISHED_MAIL_TEMPLATE.html"),

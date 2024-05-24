@@ -93,6 +93,7 @@ class TimedMessage(QDialog):
             gv['THREAD_POOL'].start(self.runner)
 
             QShortcut(QKeySequence(Qt.Key.Key_Escape), self).activated.connect(self.exit)
+            QShortcut(QKeySequence(Qt.Key.Key_Enter), self).activated.connect(self.exit)
 
             self.exec()
 

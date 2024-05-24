@@ -79,7 +79,7 @@ if not os.path.exists(settings_file_path):
         "EMPTY_TODO_DIR_BEFORE_EXPORT": "true",
         "ONLY_UNREAD_MAIL": "false",
         "MOVE_MAILS_TO_VERWERKT_FOLDER": "true",
-        "SEND_MAILS_ON_SEPERATE_THREAD": "false",
+        "SEND_MAILS_ON_SEPERATE_THREAD": "true",
         "RECEIVED_MAIL_TEMPLATE": os.path.join(repo_dir_home, "printer/email_templates/DEFAULT_RECEIVED_MAIL_TEMPLATE.html"),
         "FINISHED_MAIL_TEMPLATE": os.path.join(repo_dir_home, "printer/email_templates/DEFAULT_FINISHED_MAIL_TEMPLATE.html"),
         "DECLINED_MAIL_TEMPLATE": os.path.join(repo_dir_home, "printer/email_templates/DEFAULT_DECLINED_MAIL_TEMPLATE.html")
@@ -121,13 +121,14 @@ with open(settings_file_path, 'r') as settings_file:
     else:
         gv['SPECIAL_PRINTERS'] = {}
 
-
-    if 'MAIL_NAME' in gv_data and\
-        'MAIL_ADRESS' in gv_data and\
-        'MAIL_PASSWORD' in gv_data:
-
-        gv['MAIL_NAME'] = gv_data['MAIL_NAME']
+    # TODO, For loop this below
+    if 'MAIL_ADRESS' in gv_data:
         gv['MAIL_ADRESS'] = gv_data['MAIL_ADRESS']
+    
+    if 'MAIL_NAME' in gv_data:
+        gv['MAIL_NAME'] = gv_data['MAIL_NAME']
+    
+    if 'MAIL_PASSWORD' in gv_data:        
         gv['MAIL_PASSWORD'] = gv_data['MAIL_PASSWORD']
     
     gv['TODO_DIR_HOME'] = gv_data['TODO_DIR_HOME']
