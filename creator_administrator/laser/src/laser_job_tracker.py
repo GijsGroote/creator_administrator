@@ -6,7 +6,7 @@ from PyQt6.QtWidgets import QWidget
 
 from src.job_tracker import JobTracker
 
-from global_variables import gv
+from laser.src.global_variables import gv
 
 class LaserJobTracker(JobTracker):
     '''

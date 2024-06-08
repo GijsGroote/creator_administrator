@@ -6,13 +6,13 @@ from PyQt6.QtWidgets import QApplication
 print(f"sys path is {sys.path}")
 sys.path.append(os.path.abspath('./')) # to find gv and prevent ModuleNotFoundError
 print(f"after appendign itself path is {sys.path}")
-from creator_administrator.laser.src.global_variables import gv
 
 from src.app import MainWindow
 from src.qmessagebox import WarningQMessageBox
 from src.threaded_mail_manager import ThreadedMailManager
 from src.qdialog import FilesSelectQDialog, FolderSelectQDialog
 
+from laser.src.global_variables import gv
 from laser.src.laser_job_tracker import LaserJobTracker
 from laser.src.laser_settings_dialog import LaserSettingsQDialog
 from laser.src.laser_qdialog import CreateLaserJobsFromFileSystemQDialog, CreateLaserJobsFromMailQDialog, LaserSearchJobDialog

@@ -8,10 +8,10 @@ from src.qlist_widget import JobContentQListWidget
 from src.qmessagebox import TimedMessage
 from src.threaded_mail_manager import ThreadedMailManager
 
-from laser_job_tracker import LaserJobTracker
-from laser_validate import validate_material_info
+from laser.src.laser_job_tracker import LaserJobTracker
+from laser.src.laser_validate import validate_material_info
 
-from global_variables import gv
+from laser.src.global_variables import gv
 
 
 class CreateLaserJobsFromMailQDialog(CreateJobsFromMailQDialog):

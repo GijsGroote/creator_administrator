@@ -5,9 +5,9 @@ from PyQt6.QtWidgets import QStackedWidget, QListWidgetItem, QLabel, QTabWidget,
 
 from src.qlist_widget import OverviewQListWidget, ContentQListWidget, JobContentQListWidget
 
-from global_variables import gv
-from convert import split_material_name
-from laser_job_tracker import LaserJobTracker
+from laser.src.global_variables import gv
+from laser.src.convert import split_material_name
+from laser.src.laser_job_tracker import LaserJobTracker
 
 class LaserAllJobsOverviewQListWidget(OverviewQListWidget):
 

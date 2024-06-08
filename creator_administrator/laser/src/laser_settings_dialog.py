@@ -14,7 +14,7 @@ from src.validate import (
         check_property,
         check_html)
 
-from global_variables import gv
+from laser.src.global_variables import gv
 
 class LaserSettingsQDialog(SettingsQDialog):
 

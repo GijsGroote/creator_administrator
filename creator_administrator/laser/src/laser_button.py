@@ -11,9 +11,9 @@ from src.qmessagebox import TimedMessage, WarningQMessageBox, InfoQMessageBox, Y
 from src.mail_manager import MailManager
 from src.threaded_mail_manager import ThreadedMailManager
 
-from convert import split_material_name
-from global_variables import gv
-from laser_job_tracker import LaserJobTracker
+from laser.src.convert import split_material_name
+from laser.src.global_variables import gv
+from laser.src.laser_job_tracker import LaserJobTracker
 
 class LaserKlaarQPushButton(JobsQPushButton):
 
