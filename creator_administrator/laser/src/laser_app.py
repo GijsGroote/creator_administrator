@@ -37,6 +37,7 @@ class LaserMainWindow(MainWindow):
     def __init__(self, *args, **kwargs):
         
         ui_global_path = os.path.join(gv['LOCAL_UI_DIR'], 'laser_main_window.ui')
+        print(f"FINT THIS THING {ui_global_path}: does it exist? {os.path.exists(ui_global_path)}")
         super().__init__(ui_global_path, gv, *args, **kwargs)
 
         self.valid_msgs = []
