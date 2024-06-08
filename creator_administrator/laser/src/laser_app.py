@@ -3,9 +3,24 @@ import os
 
 from PyQt6.QtWidgets import QApplication
 
-print(f"sys path is {sys.path}")
-sys.path.append(os.path.abspath('./')) # to find gv and prevent ModuleNotFoundError
-print(f"after appendign itself path is {sys.path}")
+# Add paths to make prevent ModuleNotFoundError
+if all(dir_name in os.listdir(os.path.abspath('./')) for dir_name in ['laser', 'src']):
+    sys.path.append(os.path.abspath('./'))
+    sys.path.append(os.path.join(os.path.abspath('./'), 'src')) 
+    sys.path.append(os.path.join(os.path.abspath('./'), 'laser')) 
+
+
+elif all(dir_name in os.listdir(os.path.join(os.path.abspath('./'), 'creator_administrator')) for dir_name in ['laser', 'src']):
+    sys.path.append(os.path.abspath('./creator_administrator'))
+    sys.path.append(os.path.join(os.path.abspath('./'), 'creator_administrator/src')) 
+    sys.path.append(os.path.join(os.path.abspath('./'), 'creator_administrator/laser')) 
+
+# elif all(dir_name in os.listdir(os.path.join(os.path.abspath('./'), 'creator_administrator/creator_administrator')) for dir_name in ['laser', 'src']):
+
+#     print(f"you are in the root dir: {os.path.abspath('./')}")
+#     sys.path.append(os.path.abspath('./creator_administrator'))
+#     sys.path.append(os.path.join(os.path.abspath('./'), 'creator_administrator/creator_administrator/src')) 
+#     sys.path.append(os.path.join(os.path.abspath('./'), 'creator_administrator/creator_administrator/laser')) 
 
 from src.app import MainWindow
 from src.qmessagebox import WarningQMessageBox
