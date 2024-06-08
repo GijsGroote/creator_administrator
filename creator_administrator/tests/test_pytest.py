@@ -2,7 +2,21 @@ import sys
 import os
 import pytest
 
-sys.path.append(os.path.abspath('./'))
+
+# Add paths to make prevent ModuleNotFoundError
+if all(dir_name in os.listdir(os.path.abspath('./')) for dir_name in ['laser', 'src']):
+    sys.path.append(os.path.abspath('./'))
+    sys.path.append(os.path.join(os.path.abspath('./'), 'src')) 
+    sys.path.append(os.path.join(os.path.abspath('./'), 'laser')) 
+
+
+elif all(dir_name in os.listdir(os.path.join(os.path.abspath('./'), 'creator_administrator')) for dir_name in ['laser', 'src']):
+    sys.path.append(os.path.abspath('./creator_administrator'))
+    sys.path.append(os.path.join(os.path.abspath('./'), 'creator_administrator/src')) 
+    sys.path.append(os.path.join(os.path.abspath('./'), 'creator_administrator/laser')) 
+
+
+
 from laser.src.laser_app import LaserMainWindow, LaserMainApp
 
 @pytest.fixture(scope="module")

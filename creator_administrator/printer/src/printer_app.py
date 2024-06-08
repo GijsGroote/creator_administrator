@@ -4,7 +4,19 @@ from typing import List
 
 from PyQt6 import QtWidgets
 
-sys.path.append(os.path.abspath('./')) # to find gv and prevent ModuleNotFoundError
+# Add paths to make prevent ModuleNotFoundError
+if all(dir_name in os.listdir(os.path.abspath('./')) for dir_name in ['laser', 'src']):
+    sys.path.append(os.path.abspath('./'))
+    sys.path.append(os.path.join(os.path.abspath('./'), 'src')) 
+    sys.path.append(os.path.join(os.path.abspath('./'), 'laser')) 
+
+
+elif all(dir_name in os.listdir(os.path.join(os.path.abspath('./'), 'creator_administrator')) for dir_name in ['laser', 'src']):
+    sys.path.append(os.path.abspath('./creator_administrator'))
+    sys.path.append(os.path.join(os.path.abspath('./'), 'creator_administrator/src')) 
+    sys.path.append(os.path.join(os.path.abspath('./'), 'creator_administrator/laser')) 
+
+# TODO: add all printer.src paths please, update above
 from creator_administrator.printer.src.global_variables import gv
 
 from src.app import MainWindow
