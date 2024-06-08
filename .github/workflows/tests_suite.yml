@@ -48,7 +48,7 @@ jobs:
         ls -la
 
     - name: Run Pytest
-      # working-directory: creator_administrator/laser/ui
+      working-directory: creator_administrator/laser/ui
       run: poetry run pytest
 
     - name: Run Pylint on src
