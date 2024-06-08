@@ -91,6 +91,7 @@ if not os.path.exists(settings_file_path):
         "FINISHED_MAIL_TEMPLATE": os.path.join(repo_dir_home, "laser/email_templates/DEFAULT_FINISHED_MAIL_TEMPLATE.html"),
         "DECLINED_MAIL_TEMPLATE": os.path.join(repo_dir_home, "laser/email_templates/DEFAULT_DECLINED_MAIL_TEMPLATE.html")}
 
+    print(f"Repo dir home exists? {os.path.exists(repo_dir_home)}\n")
     
     print(f'the file on default which we search is {default_settings_dict["RECEIVED_MAIL_TEMPLATE"]} and odes is exist? {os.path.exists(default_settings_dict["RECEIVED_MAIL_TEMPLATE"])}')
 
@@ -159,35 +160,35 @@ with open(settings_file_path, 'r') as settings_file:
                 print(f"mail template {mail_template} exists!")
                 gv[mail_template] = gv_data[mail_template]
             else:
+                print(f"mail template {mail_template} was not found...!")
 
-                print(f"actually, what can you see then? {os.listdir('./')}")
-                print(f"IN CREATOR ADIMN")  
-                print(f"actually, what can you see then? {os.listdir('./creator_administrator')}")
-                print("")
+                # print(f"actually, what can you see then? {os.listdir('./')}")
+                # print(f"IN CREATOR ADIMN")  
+                # print(f"actually, what can you see then? {os.listdir('./creator_administrator')}")
+                # print("")
 
-                print(f"IN CREATOR ADIMN/laser")
-                print(f"actually, what can you see then? {os.listdir('./creator_administrator/laser')}")
-                print("")
-
-
-                print(f"IN CREATOR ADIMN/laser/src")
-                print(f"actually, what can you see then? {os.listdir('./creator_administrator/laser/src')}")
-                print("")
-
-                sys.path.append('./creator_administrator/laser/src/email_templates')
+                # print(f"IN CREATOR ADIMN/laser")
+                # print(f"actually, what can you see then? {os.listdir('./creator_administrator/laser')}")
+                # print("")
 
 
-                print(f"IN CREATOR ADIMN/laser/email_templates")
-                print(f"actually, what can you see then? {os.listdir('./creator_administrator/laser/email_templates')}")
-                print("end")
+                # print(f"IN CREATOR ADIMN/laser/src")
+                # print(f"actually, what can you see then? {os.listdir('./creator_administrator/laser/src')}")
+                # print("")
+
+                # sys.path.append('./creator_administrator/laser/src/email_templates')
 
 
-                print(f"NOOOO mail template {mail_template} exists!")
-                raise FileNotFoundError(f'does Files {os.path.dirname(gv_data[mail_template])} exist? {os.path.exists(os.path.dirname(gv_data[mail_template]))}'\
-                        f'does this: {os.path.dirname(os.path.dirname(gv_data[mail_template]))} exist? {os.path.exists(os.path.dirname(gv_data[mail_template]))}'\
-'{os.path.dirname(os.path.dirname(gv_data[mail_template]))}  gv_data[could not find file: {gv_data[mail_template]}')
+                print(f"IN CREATOR ADIMN/laser/email_templates:{os.listdir('./creator_administrator/laser/email_templates')}\n")
+
+
+                # raise FileNotFoundError(f'does Files {os.path.dirname(gv_data[mail_template])} exist? {os.path.exists(os.path.dirname(gv_data[mail_template]))}'\
+                #         f'does this: {os.path.dirname(os.path.dirname(gv_data[mail_template]))} exist? {os.path.exists(os.path.dirname(gv_data[mail_template]))}'\
+# '{os.path.dirname(os.path.dirname(gv_data[mail_template]))}  gv_data[could not find file: {gv_data[mail_template]}')
 
         else:
+            print(f"we could not find the specified fiel, thus take the defautl template: {'DEFAULT_'+mail_template+'.html'} which does exists? {os.path.join( gv['REPO_DIR_HOME'], 'laser/email_templates', 'DEFAULT_'+mail_template+'.html')}")
+
             gv[mail_template] = os.path.join(
                     gv['REPO_DIR_HOME'],
                     'laser/email_templates', 'DEFAULT_'+mail_template+'.html')
