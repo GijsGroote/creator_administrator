@@ -4,16 +4,18 @@ import os
 from PyQt6.QtWidgets import QApplication
 
 # Add paths to make prevent ModuleNotFoundError
-if all(dir_name in os.listdir(os.path.abspath('./')) for dir_name in ['laser', 'src']):
+if all(dir_name in os.listdir(os.path.abspath('./')) for dir_name in ['laser', 'src', 'ui']):
     sys.path.append(os.path.abspath('./'))
     sys.path.append(os.path.join(os.path.abspath('./'), 'src')) 
     sys.path.append(os.path.join(os.path.abspath('./'), 'laser')) 
+    sys.path.append(os.path.join(os.path.abspath('./'), 'ui')) 
 
 
-elif all(dir_name in os.listdir(os.path.join(os.path.abspath('./'), 'creator_administrator')) for dir_name in ['laser', 'src']):
+elif all(dir_name in os.listdir(os.path.join(os.path.abspath('./'), 'creator_administrator')) for dir_name in ['laser', 'src', 'ui']):
     sys.path.append(os.path.abspath('./creator_administrator'))
     sys.path.append(os.path.join(os.path.abspath('./'), 'creator_administrator/src')) 
     sys.path.append(os.path.join(os.path.abspath('./'), 'creator_administrator/laser')) 
+    sys.path.append(os.path.join(os.path.abspath('./'), 'creator_administrator/ui')) 
 
 # elif all(dir_name in os.listdir(os.path.join(os.path.abspath('./'), 'creator_administrator/creator_administrator')) for dir_name in ['laser', 'src']):
 
