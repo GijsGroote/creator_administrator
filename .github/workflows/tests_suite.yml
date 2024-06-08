@@ -36,19 +36,18 @@ jobs:
       run: poetry install
 
 
-      # delete this below
-    - name: Open Web Client Directory
-      working-directory: creator_administrator/laser/ui
-      run: |
-        ls -la
-      # delete this below
-    - name: Open Web Client Directory
-      working-directory: creator_administrator/laser
-      run: |
-        ls -la
+      # # delete this below
+    # - name: Open Web Client Directory
+      # working-directory: creator_administrator/laser/ui
+      # run: |
+      #   ls -la
+      # # delete this below
+    # - name: Open Web Client Directory
+      # working-directory: creator_administrator/laser
+      # run: |
+      #   ls -la
 
     - name: Run Pytest
-      working-directory: creator_administrator/laser/ui
       run: poetry run pytest
 
     - name: Run Pylint on src
