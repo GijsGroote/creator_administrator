@@ -35,13 +35,10 @@ jobs:
     - name: Install dependencies
       run: poetry install
 
-    - name: Open Web Client Directory
-      working-directory: creator_administrator/laser/
-      run: |
-        ls -la
 
+      # delete this below
     - name: Open Web Client Directory
-      working-directory: creator_administrator/laser/email_templates
+      working-directory: creator_administrator/laser/ui
       run: |
         ls -la
 
