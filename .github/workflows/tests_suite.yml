@@ -46,7 +46,7 @@ jobs:
         ls -la
 
     - name: Run Pytest
-      run: poetry run pytest
+      run: poetry run PYTHONPATH=$(pwd)/creator_administrator pytest
 
     - name: Run Pylint on src
       run: poetry run pylint --fail-under=8.0 --recursive=y --enable=W creator_administrator/src
