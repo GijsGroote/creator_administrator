@@ -13,9 +13,9 @@ from src.qmessagebox import WarningQMessageBox
 from src.threaded_mail_manager import ThreadedMailManager
 from src.qdialog import FilesSelectQDialog, FolderSelectQDialog
 
-from laser_job_tracker import LaserJobTracker
-from laser_settings_dialog import LaserSettingsQDialog
-from laser_qdialog import CreateLaserJobsFromFileSystemQDialog, CreateLaserJobsFromMailQDialog, LaserSearchJobDialog
+from laser.src.laser_job_tracker import LaserJobTracker
+from laser.src.laser_settings_dialog import LaserSettingsQDialog
+from laser.src.laser_qdialog import CreateLaserJobsFromFileSystemQDialog, CreateLaserJobsFromMailQDialog, LaserSearchJobDialog
 
 class LaserMainWindow(MainWindow):
 
