@@ -29,8 +29,6 @@ def app():
 @pytest.fixture
 def main_window(app):
     """Fixture for creating a main window instance."""
-    print(f"test this please: What is in directory this?: {os.listdir(os.path.abspath('./'))}")
-    print(f"test this please: What is in directory this?: {os.path.join(os.path.abspath('./'), 'creator_administrator/laser/ui')}")
     window = LaserMainWindow()
     yield window
     window.close()

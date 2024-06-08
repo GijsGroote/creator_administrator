@@ -17,12 +17,6 @@ elif all(dir_name in os.listdir(os.path.join(os.path.abspath('./'), 'creator_adm
     sys.path.append(os.path.join(os.path.abspath('./'), 'creator_administrator/laser')) 
     sys.path.append(os.path.join(os.path.abspath('./'), 'creator_administrator/ui')) 
 
-# elif all(dir_name in os.listdir(os.path.join(os.path.abspath('./'), 'creator_administrator/creator_administrator')) for dir_name in ['laser', 'src']):
-
-#     print(f"you are in the root dir: {os.path.abspath('./')}")
-#     sys.path.append(os.path.abspath('./creator_administrator'))
-#     sys.path.append(os.path.join(os.path.abspath('./'), 'creator_administrator/creator_administrator/src')) 
-#     sys.path.append(os.path.join(os.path.abspath('./'), 'creator_administrator/creator_administrator/laser')) 
 
 from src.app import MainWindow
 from src.qmessagebox import WarningQMessageBox
