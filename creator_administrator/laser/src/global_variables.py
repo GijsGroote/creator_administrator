@@ -51,6 +51,7 @@ if not os.path.exists(settings_file_path):
     this_file_path = os.path.dirname(os.path.realpath(__file__))
     if sys.platform == 'win32':
         repo_folder_name = r'creator_administrator\creator_administrator'
+
     elif sys.platform == 'linux':
         repo_folder_name = 'creator_administrator/creator_administrator'
     else:
@@ -58,7 +59,9 @@ if not os.path.exists(settings_file_path):
     
     if repo_folder_name in this_file_path:
         root, _ = this_file_path.split(repo_folder_name)
+
         repo_dir_home = os.path.join(root, repo_folder_name)
+        print(f"REPO DIR HOME MADE: {repo_dir_home}")
     else:
         raise ValueError(f'could not find folder {repo_folder_name}')
 
