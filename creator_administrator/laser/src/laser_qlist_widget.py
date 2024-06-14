@@ -155,5 +155,5 @@ class LaserMaterialContentQListWidget(ContentQListWidget):
                 item.setFont(QFont('Cantarell', 14))
 
                 # Indicate if done with emotico
-                item.setText('❎ '+dxf_name)
+                item.setText('❌ '+dxf_name)
                 self.addItem(item)

@@ -442,7 +442,7 @@ class SelectOptionsQDialog(QDialog):
             elif len(options[0]) == 3:
                 option, option_data, option_bool = option_tuple
                 if option_bool:
-                    item.setText('✅ '+option)
+                    item.setText('✔️️ '+option)
                 else:
                     item.setText('❌ '+option)
                 item.setData(1, option_data)

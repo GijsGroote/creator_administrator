@@ -24,7 +24,7 @@ class ContentQListWidgetItem(QListWidgetItem):
 
         if 'done' in item_dict:
             if item_dict['done']:
-                self.setText('✅ '+item_dict['file_name'])
+                self.setText('✔️ '+item_dict['file_name'])
             else:
                 self.setText('❌ '+item_dict['file_name'])
         else:
