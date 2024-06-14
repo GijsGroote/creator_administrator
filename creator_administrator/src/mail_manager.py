@@ -43,14 +43,14 @@ class MailManager():
             self.outlook =  client.Dispatch("Outlook.Application").GetNamespace('MAPI') # pylint: disable=used-before-assignment
 
             if 'MAIL_ADRESS' in gv.keys():
-                self.inbox = self.outlook.Folders[mail_adress].Folders('Inbox')
-                self.inbox = self.outlook.Folders[mail_adress].Folders[gv['MAIL_INBOX_NAME']]
+                self.inbox = self.outlook.Folders[gv['MAIL_ADRESS']].Folders('Inbox')
+                self.inbox = self.outlook.Folders[gv['MAIL_ADRESS']].Folders[gv['MAIL_INBOX_NAME']]
             else:
                 mail_adress = self.outlook.Session.Accounts.Item(1).DeliveryStore.DisplayName
                 if gv['MAIL_INBOX_NAME'] == 'Inbox':
                     self.inbox = self.outlook.GetDefaultFolder(6)
                 else:
-                    self.inbox = self.outlook.Folders[mail_adress].Folders[gv['MAIL_INBOX_NAME']]
+                    self.inbox = self.outlook.Folders[gv['MAIL_ADRESS']].Folders[gv['MAIL_INBOX_NAME']]
             try:
                 self.verwerkt_folder = self.inbox.Parent.Folders.Item("Verwerkt")
             except com_error: # pylint: disable=used-before-assignment
