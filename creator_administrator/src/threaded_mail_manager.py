@@ -268,6 +268,8 @@ class ThreadedMailManager():
         ''' Handle the mail Error. '''
         assert isinstance(exc, Exception), f'Expected type Exception, received type: {type(exc)}'
 
+        raise exc
+
         if isinstance(exc, ConnectionError):
             ErrorQMessageBox(
                     self.parent,
