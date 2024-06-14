@@ -10,37 +10,16 @@ import shutil
 from PyQt6.QtCore import QThreadPool
 
 if sys.platform == 'linux':
-    data_dir_home = os.path.join(os.path.expanduser('~'), '.creator_administrator')
+    settings_dir_home = os.path.join(os.path.expanduser('~'), '.creator_administrator')
 elif sys.platform == 'win32':
-    data_dir_home = os.path.join(os.getenv('LOCALAPPDATA'), 'Creator Administrator')
+    settings_dir_home = os.path.join(os.getenv('LOCALAPPDATA'), 'Creator Administrator')
 else: 
     raise ValueError(f'This software does not work for platform: {sys.platform}')
 
-if not os.path.exists(data_dir_home):
-    os.mkdir(data_dir_home)
+if not os.path.exists(settings_dir_home):
+    os.mkdir(settings_dir_home)
 
-jobs_dir_home = os.path.join(data_dir_home, 'print_jobs')
-tracker_file_path = os.path.join(data_dir_home, 'print_job_log.json')
-
-if not os.path.exists(jobs_dir_home):
-    os.mkdir(jobs_dir_home)
-
-temp_dir_home = os.path.join(data_dir_home, 'TEMP')
-if not os.path.exists(temp_dir_home):
-    os.mkdir(temp_dir_home)
-
-for temp_item in os.listdir(temp_dir_home):
-    try:
-        shutil.rmtree(os.path.join(temp_dir_home, temp_item))
-
-    except NotADirectoryError:
-        os.remove(os.path.join(temp_dir_home, temp_item))
-
-    except PermissionError:
-        pass
-
-    
-settings_file_path = os.path.join(data_dir_home, 'print_settings.json')
+settings_file_path = os.path.join(settings_dir_home, 'print_settings.json')
 
 # Create default settings file 
 if not os.path.exists(settings_file_path):
@@ -65,43 +44,67 @@ if not os.path.exists(settings_file_path):
     else:
         raise ValueError('Could not find users Desktop directory')
 
-    default_settings_dict = {
-        "REPO_DIR_HOME": repo_dir_home,
-        "TODO_DIR_HOME": todo_dir_home,
-        "DATA_DIR_HOME": data_dir_home,
-        "ACCEPTED_EXTENSIONS": ".stl, .step, .3mf, .obj, .amf",
-        "ACCEPTED_MATERIALS": "PLA, ABS",
-        "DEFAULT_PRINTER_NAME": "Prusa MK4",
-        "DAYS_TO_KEEP_JOBS": "15",
-        "DARK_THEME": "true",
-        "DISPLAY_TEMP_MESSAGES": "true",
-        "DISPLAY_WARNING_MESSAGES": "true",
-        "EMPTY_TODO_DIR_BEFORE_EXPORT": "true",
-        "ONLY_UNREAD_MAIL": "false",
-        "MOVE_MAILS_TO_VERWERKT_FOLDER": "true",
-        "SEND_MAILS_ON_SEPERATE_THREAD": "true",
-        "RECEIVED_MAIL_TEMPLATE": os.path.join(repo_dir_home, "printer/email_templates/DEFAULT_RECEIVED_MAIL_TEMPLATE.html"),
-        "FINISHED_MAIL_TEMPLATE": os.path.join(repo_dir_home, "printer/email_templates/DEFAULT_FINISHED_MAIL_TEMPLATE.html"),
-        "DECLINED_MAIL_TEMPLATE": os.path.join(repo_dir_home, "printer/email_templates/DEFAULT_DECLINED_MAIL_TEMPLATE.html")
-    }
+    with open(os.path.join(repo_dir_home, 'printer/email_templates/print_settings_template.json'), 'r') as settings_template_file:
+        default_settings_dict = json.load(settings_template_file)
 
-    if sys.platform == 'linux':
-        default_settings_dict["MAIL_NAME"] = "Fill in Your Name"
-        default_settings_dict["MAIL_INBOX_NAME"] = "Inbox"
-        default_settings_dict["MAIL_ADRESS"] = "Fill in Your Mail Adress"
 
-        default_settings_dict["MAIL_PASSWORD"]= "Fill in Your Mail Password"
+        default_settings_dict ["REPO_DIR_HOME"] = repo_dir_home
+        default_settings_dict ["TODO_DIR_HOME"] = todo_dir_home
+        default_settings_dict ["DATA_DIR_HOME"] = settings_dir_home 
+        default_settings_dict ["RECEIVED_MAIL_TEMPLATE"] = os.path.join(repo_dir_home, "printer/email_templates/DEFAULT_RECEIVED_MAIL_TEMPLATE.html"),
+        default_settings_dict ["FINISHED_MAIL_TEMPLATE"] = os.path.join(repo_dir_home, "printer/email_templates/DEFAULT_FINISHED_MAIL_TEMPLATE.html"),
+        default_settings_dict ["DECLINED_MAIL_TEMPLATE"] = os.path.join(repo_dir_home, "printer/email_templates/DEFAULT_DECLINED_MAIL_TEMPLATE.html")
 
-    with open(os.path.join(data_dir_home, 'print_settings.json'), 'w') as settings_file:
+        if sys.platform == 'linux':
+            default_settings_dict["MAIL_NAME"] = "Fill in Your Name"
+            default_settings_dict["MAIL_INBOX_NAME"] = "Inbox"
+            default_settings_dict["MAIL_ADRESS"] = "Fill in Your Mail Adress"
+
+            default_settings_dict["MAIL_PASSWORD"]= "Fill in Your Mail Password"
+
+    with open(os.path.join(settings_dir_home, 'print_settings.json'), 'w') as settings_file:
         json.dump(default_settings_dict, settings_file, indent=4)
 
+
+
+with open(settings_file_path, 'r') as settings_file:
+    gv_data = json.load(settings_file)
+    if 'DATA_DIR_HOME' in gv_data:
+        data_dir_home = gv_data['DATA_DIR_HOME']
+    else:
+        data_dir_home = settings_dir_home
+
+
+jobs_dir_home = os.path.join(data_dir_home, 'print_jobs')
+tracker_file_path = os.path.join(data_dir_home, 'print_job_log.json')
+
+if not os.path.exists(jobs_dir_home):
+    os.mkdir(jobs_dir_home)
+
+temp_dir_home = os.path.join(data_dir_home, 'TEMP')
+if not os.path.exists(temp_dir_home):
+    os.mkdir(temp_dir_home)
+
+for temp_item in os.listdir(temp_dir_home):
+    try:
+        shutil.rmtree(os.path.join(temp_dir_home, temp_item))
+
+    except NotADirectoryError:
+        os.remove(os.path.join(temp_dir_home, temp_item))
+
+    except PermissionError:
+        pass
+
     
-# Global Variables (gv)
 gv = {'SETTINGS_FILE_PATH': settings_file_path,
       'DATA_DIR_HOME': data_dir_home,
       'TEMP_DIR_HOME': temp_dir_home,
       'JOBS_DIR_HOME': jobs_dir_home,
       'TRACKER_FILE_PATH': tracker_file_path}
+
+
+    
+# Global Variables (gv)
 
 # Load settings into global variables (gv)
 with open(settings_file_path, 'r') as settings_file:

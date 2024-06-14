@@ -10,37 +10,17 @@ import shutil
 from PyQt6.QtCore import QThreadPool
 
 if sys.platform == 'linux':
-    data_dir_home = os.path.join(os.path.expanduser('~'), '.creator_administrator')
+    settings_dir_home = os.path.join(os.path.expanduser('~'), '.creator_administrator')
 elif sys.platform == 'win32':
-    data_dir_home = os.path.join(os.getenv('LOCALAPPDATA'), 'Creator Administrator')
+    settings_dir_home = os.path.join(os.getenv('LOCALAPPDATA'), 'Creator Administrator')
 else: 
     raise ValueError(f'This software does not work for platform: {sys.platform}')
 
-if not os.path.exists(data_dir_home):
-    os.mkdir(data_dir_home)
 
-jobs_dir_home = os.path.join(data_dir_home, 'laser_jobs')
-tracker_file_path = os.path.join(data_dir_home, 'laser_job_log.json')
+if not os.path.exists(settings_dir_home):
+    os.mkdir(settings_dir_home)
 
-if not os.path.exists(jobs_dir_home):
-    os.mkdir(jobs_dir_home)
-
-temp_dir_home = os.path.join(data_dir_home, 'TEMP')
-if not os.path.exists(temp_dir_home):
-    os.mkdir(temp_dir_home)
-
-for temp_item in os.listdir(temp_dir_home):
-    try:
-        shutil.rmtree(os.path.join(temp_dir_home, temp_item))
-
-    except NotADirectoryError:
-        os.remove(os.path.join(temp_dir_home, temp_item))
-
-    except PermissionError:
-        pass
-
-    
-settings_file_path = os.path.join(data_dir_home, 'laser_settings.json')
+settings_file_path = os.path.join(settings_dir_home, 'laser_settings.json')
 
 # Create default settings file 
 if not os.path.exists(settings_file_path):
@@ -61,40 +41,62 @@ if not os.path.exists(settings_file_path):
 
     desktop_dir_home = os.path.join(os.path.expanduser('~'), 'Desktop')
     if os.path.exists(desktop_dir_home):
-        todo_dir_home = os.path.join(desktop_dir_home, 'Laser TODO')
+        todo_dir_home = os.path.join(desktop_dir_home, 'Print TODO')
     else:
         raise ValueError('Could not find users Desktop directory')
 
-    default_settings_dict = {
-        "REPO_DIR_HOME": repo_dir_home,
-        "TODO_DIR_HOME": todo_dir_home,
-        "DATA_DIR_HOME": data_dir_home,
-        "ACCEPTED_EXTENSIONS": ".dxf, .dwg",
-        "ACCEPTED_MATERIALS": "steel, alu",
-        "DAYS_TO_KEEP_JOBS": "15",
-        "DARK_THEME": "true",
-        "DISPLAY_TEMP_MESSAGES": "true",
-        "DISPLAY_WARNING_MESSAGES": "true",
-        "EMPTY_TODO_DIR_BEFORE_EXPORT": "true",
-        "ONLY_UNREAD_MAIL": "false",
-        "MOVE_MAILS_TO_VERWERKT_FOLDER": "true",
-        "SEND_MAILS_ON_SEPERATE_THREAD": "true",
-        "RECEIVED_MAIL_TEMPLATE": os.path.join(repo_dir_home, "laser/email_templates/DEFAULT_RECEIVED_MAIL_TEMPLATE.html"),
-        "UNCLEAR_MAIL_TEMPLATE": os.path.join(repo_dir_home, "laser/email_templates/DEFAULT_UNCLEAR_MAIL_TEMPLATE.html"),
-        "FINISHED_MAIL_TEMPLATE": os.path.join(repo_dir_home, "laser/email_templates/DEFAULT_FINISHED_MAIL_TEMPLATE.html"),
-        "DECLINED_MAIL_TEMPLATE": os.path.join(repo_dir_home, "laser/email_templates/DEFAULT_DECLINED_MAIL_TEMPLATE.html")
-    }
+    with open(os.path.join(repo_dir_home, 'laser/email_templates/laser_settings_template.json'), 'r') as settings_template_file:
+        default_settings_dict = json.load(settings_template_file)
 
-    if sys.platform == 'linux':
-        default_settings_dict["MAIL_NAME"] = "Fill in Your Name"
-        default_settings_dict["MAIL_INBOX_NAME"] = "Inbox"
-        default_settings_dict["MAIL_ADRESS"] = "Fill in Your Mail Adress"
+        default_settings_dict ["REPO_DIR_HOME"] = repo_dir_home
+        default_settings_dict ["TODO_DIR_HOME"] = todo_dir_home
+        default_settings_dict ["DATA_DIR_HOME"] = settings_dir_home 
+        default_settings_dict ["RECEIVED_MAIL_TEMPLATE"] = os.path.join(repo_dir_home, "laser/email_templates/DEFAULT_RECEIVED_MAIL_TEMPLATE.html"),
+        default_settings_dict ["FINISHED_MAIL_TEMPLATE"] = os.path.join(repo_dir_home, "laser/email_templates/DEFAULT_FINISHED_MAIL_TEMPLATE.html"),
+        default_settings_dict ["DECLINED_MAIL_TEMPLATE"] = os.path.join(repo_dir_home, "laser/email_templates/DEFAULT_DECLINED_MAIL_TEMPLATE.html")
+        default_settings_dict ["UNCLEAR_MAIL_TEMPLATE"] = os.path.join(repo_dir_home, "laser/email_templates/DEFAULT_UNCLEAR_MAIL_TEMPLATE.html"),
 
-        default_settings_dict["MAIL_PASSWORD"]= "Fill in Your Mail Password"
 
-    with open(os.path.join(data_dir_home, 'laser_settings.json'), 'w') as settings_file:
+        if sys.platform == 'linux':
+            default_settings_dict["MAIL_NAME"] = "Fill in Your Name"
+            default_settings_dict["MAIL_INBOX_NAME"] = "Inbox"
+            default_settings_dict["MAIL_ADRESS"] = "Fill in Your Mail Adress"
+
+            default_settings_dict["MAIL_PASSWORD"]= "Fill in Your Mail Password"
+
+    with open(settings_file_path, 'w') as settings_file:
         json.dump(default_settings_dict, settings_file, indent=4)
 
+
+
+with open(settings_file_path, 'r') as settings_file:
+    gv_data = json.load(settings_file)
+    if 'DATA_DIR_HOME' in gv_data:
+        data_dir_home = gv_data['DATA_DIR_HOME']
+    else:
+        data_dir_home = settings_dir_home
+
+
+jobs_dir_home = os.path.join(data_dir_home, 'print_jobs')
+tracker_file_path = os.path.join(data_dir_home, 'print_job_log.json')
+
+if not os.path.exists(jobs_dir_home):
+    os.mkdir(jobs_dir_home)
+
+temp_dir_home = os.path.join(data_dir_home, 'TEMP')
+if not os.path.exists(temp_dir_home):
+    os.mkdir(temp_dir_home)
+
+for temp_item in os.listdir(temp_dir_home):
+    try:
+        shutil.rmtree(os.path.join(temp_dir_home, temp_item))
+
+    except NotADirectoryError:
+        os.remove(os.path.join(temp_dir_home, temp_item))
+
+    except PermissionError:
+        pass
+    
     
 # Global Variables (gv)
 gv = {'SETTINGS_FILE_PATH': settings_file_path,
@@ -107,13 +109,21 @@ with open(settings_file_path, 'r') as settings_file:
     gv_data = json.load(settings_file)
     gv['REPO_DIR_HOME'] = gv_data['REPO_DIR_HOME']
 
-    if 'MAIL_NAME' in gv_data and\
-        'MAIL_ADRESS' in gv_data and\
-        'MAIL_PASSWORD' in gv_data:
-
-        gv['MAIL_NAME'] = gv_data['MAIL_NAME']
+    # TODO, For loop this below
+    if 'MAIL_ADRESS' in gv_data:
         gv['MAIL_ADRESS'] = gv_data['MAIL_ADRESS']
+    
+    if 'MAIL_NAME' in gv_data:
+        gv['MAIL_NAME'] = gv_data['MAIL_NAME']
+    
+    if 'MAIL_PASSWORD' in gv_data:        
         gv['MAIL_PASSWORD'] = gv_data['MAIL_PASSWORD']
+
+    if 'MAIL_INBOX_NAME' in gv_data:
+        gv['MAIL_INBOX_NAME'] = gv_data['MAIL_INBOX_NAME']
+
+    else:
+        gv['MAIL_INBOX_NAME'] = 'Inbox'
     
     gv['TODO_DIR_HOME'] = gv_data['TODO_DIR_HOME']
 
@@ -123,21 +133,12 @@ with open(settings_file_path, 'r') as settings_file:
     gv['DAYS_TO_KEEP_JOBS'] = int(gv_data['DAYS_TO_KEEP_JOBS'])
     gv['DARK_THEME'] = gv_data['DARK_THEME'] == 'true'
 
-
     gv['ONLY_UNREAD_MAIL'] = gv_data['ONLY_UNREAD_MAIL'] == 'true'
     gv['MOVE_MAILS_TO_VERWERKT_FOLDER'] = gv_data['MOVE_MAILS_TO_VERWERKT_FOLDER'] == 'true'
     gv['SEND_MAILS_ON_SEPERATE_THREAD'] = gv_data['SEND_MAILS_ON_SEPERATE_THREAD'] == 'true'
     gv['EMPTY_TODO_DIR_BEFORE_EXPORT'] =  gv_data['EMPTY_TODO_DIR_BEFORE_EXPORT'] == 'true'
     gv['DISPLAY_TEMP_MESSAGES'] = gv_data['DISPLAY_TEMP_MESSAGES'] == 'true'
     gv['DISPLAY_WARNING_MESSAGES'] = gv_data['DISPLAY_WARNING_MESSAGES'] == 'true'
-
-
-
-    if 'MAIL_INBOX_NAME' in gv_data:
-        gv['MAIL_INBOX_NAME'] = gv_data['MAIL_INBOX_NAME']
-    else:
-        gv['MAIL_INBOX_NAME'] = 'Inbox'
-
 
     for mail_template in ('RECEIVED_MAIL_TEMPLATE',
                           'DECLINED_MAIL_TEMPLATE',
